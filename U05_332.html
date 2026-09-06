@@ -1,0 +1,1372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Unit 05 Section 3.3.2 - Collaboration Software</title>
+    
+    <!-- Load Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load HTML2Canvas for Certificate -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- Load Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Qwitcher+Grypen:wght@700&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #0f172a; }
+        .tab-content { display: none; animation: fadeIn 0.3s ease-in-out; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Scrollbar styling */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #e2e8f0; }
+        ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #2563eb; }
+
+        /* Custom UI Elements */
+        .glass-panel { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+        .hover-lift { transition: transform 0.2s, box-shadow 0.2s; }
+        .hover-lift:hover { transform: translateY(-3px); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); }
+
+        /* Lab Specific Styles */
+        .drag-item { cursor: grab; user-select: none; transition: transform 0.1s; }
+        .drag-item:active { cursor: grabbing; transform: scale(0.95); }
+        .drop-zone { transition: background-color 0.2s, border-color 0.2s; }
+        .drop-zone.drag-over { background-color: #dbeafe; border-color: #3b82f6; }
+        
+        .perm-btn { transition: all 0.2s; }
+        .perm-btn.active { background-color: #3b82f6; color: white; border-color: #2563eb; }
+
+        /* Retro Game Styles (Sokoban / Data Pusher) */
+        #game-container { position: relative; width: 100%; max-width: 500px; margin: 0 auto; }
+        #game-canvas { 
+            background-color: #0f172a; 
+            border: 4px solid #475569; 
+            border-radius: 8px; 
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); 
+            image-rendering: pixelated;
+            width: 100%;
+            height: auto;
+            aspect-ratio: 1/1;
+        }
+        .pixel-font { font-family: 'Press Start 2P', cursive; }
+        .dpad-btn { 
+            background: #334155; color: white; border: 2px solid #475569; border-radius: 8px; 
+            display: flex; align-items: center; justify-content: center; font-size: 1.5rem;
+            user-select: none; touch-action: manipulation; transition: background 0.1s;
+        }
+        .dpad-btn:active { background: #475569; transform: scale(0.95); }
+
+        /* Certificate Styles */
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .font-body { font-family: 'Lora', serif; }
+        .font-script { font-family: 'Qwitcher Grypen', cursive; }
+        
+        .cert-preview-container { width: 100%; overflow: auto; display: flex; justify-content: center; background: #e2e8f0; padding: 2rem; border-radius: 0.5rem; }
+        #certificate {
+            width: 1056px !important; height: 816px !important; flex-shrink: 0; background-color: #ffffff; position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); overflow: hidden;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1056" height="816"><rect width="1056" height="816" fill="%23f8fafc"/><path d="M0,0 L300,0 L0,300 Z" fill="%23bfdbfe" opacity="0.5"/><path d="M1056,816 L756,816 L1056,516 Z" fill="%23bfdbfe" opacity="0.5"/><rect x="40" y="40" width="976" height="736" fill="none" stroke="%233b82f6" stroke-width="4"/><rect x="48" y="48" width="960" height="720" fill="none" stroke="%2393c5fd" stroke-width="2"/></svg>');
+            background-size: cover; border: 4px solid #cbd5e1;
+        }
+        .cert-seal {
+            position: absolute; left: 100px; bottom: 80px; width: 150px; height: 150px; border-radius: 50%;
+            background: linear-gradient(135deg, #1e40af, #3b82f6, #1d4ed8);
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3), inset 0 0 10px rgba(255,255,255,0.3); z-index: 10;
+        }
+        .cert-seal::after {
+            content: ''; position: absolute; top: 6px; left: 6px; right: 6px; bottom: 6px;
+            border-radius: 50%; border: 2px dashed rgba(255,255,255,0.7);
+        }
+        .cert-seal-text { color: white; text-align: center; font-family: 'Inter', sans-serif; font-weight: bold; font-size: 14px; z-index: 11; letter-spacing: 1px;}
+        
+        @media (max-width: 1100px) { #certificate { transform: scale(0.7); transform-origin: top left; margin-bottom: -240px; margin-right: -310px; } }
+        @media (max-width: 768px) { #certificate { transform: scale(0.4); transform-origin: top left; margin-bottom: -490px; margin-right: -630px; } }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <nav class="bg-blue-800 text-white shadow-xl sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-users-viewfinder text-2xl text-blue-300"></i>
+                    <span class="font-bold text-xl tracking-wider hidden sm:inline-block">Unit 05: Collaboration Software</span>
+                    <span class="font-bold text-xl tracking-wider sm:hidden">3.3.2</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-1">
+                        <button onclick="switchTab('briefing')" class="nav-btn bg-blue-900 px-4 py-2 rounded-md text-sm font-semibold hover:bg-blue-600 transition shadow-inner" id="nav-briefing"><i class="fa-solid fa-book-open mr-2"></i>Briefing</button>
+                        <button onclick="switchTab('activity')" class="nav-btn px-4 py-2 rounded-md text-sm font-semibold hover:bg-blue-600 transition" id="nav-activity"><i class="fa-solid fa-flask mr-2"></i>Lab Activity</button>
+                        <button onclick="switchTab('quiz')" class="nav-btn px-4 py-2 rounded-md text-sm font-semibold hover:bg-blue-600 transition" id="nav-quiz"><i class="fa-solid fa-clipboard-check mr-2"></i>Quiz</button>
+                        <button onclick="switchTab('game')" class="nav-btn px-4 py-2 rounded-md text-sm font-semibold text-gray-400 cursor-not-allowed transition" id="nav-game" disabled><i class="fa-solid fa-lock mr-2"></i>Game</button>
+                        <button onclick="switchTab('cert')" class="nav-btn hidden px-4 py-2 rounded-md text-sm font-semibold text-yellow-300 hover:bg-blue-600 transition" id="nav-cert"><i class="fa-solid fa-award mr-2"></i>Certificate</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Nav -->
+        <div class="md:hidden flex flex-wrap justify-center gap-1 py-2 px-2 bg-blue-900 border-t border-blue-700">
+            <button onclick="switchTab('briefing')" class="nav-btn-mobile px-3 py-1 text-sm rounded bg-blue-800 font-semibold shadow-inner" id="nav-briefing-mobile">Briefing</button>
+            <button onclick="switchTab('activity')" class="nav-btn-mobile px-3 py-1 text-sm rounded font-semibold" id="nav-activity-mobile">Lab</button>
+            <button onclick="switchTab('quiz')" class="nav-btn-mobile px-3 py-1 text-sm rounded font-semibold" id="nav-quiz-mobile">Quiz</button>
+            <button onclick="switchTab('game')" class="nav-btn-mobile px-3 py-1 text-sm rounded text-gray-400 cursor-not-allowed font-semibold" id="nav-game-mobile" disabled><i class="fa-solid fa-lock"></i></button>
+            <button onclick="switchTab('cert')" id="nav-cert-mobile" class="hidden px-2 py-1 text-sm text-yellow-300 rounded font-semibold"><i class="fa-solid fa-award"></i></button>
+        </div>
+    </nav>
+
+    <main class="flex-grow w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <!-- BRIEFING SECTION -->
+        <div id="briefing-section" class="tab-content active no-print">
+            <div class="text-center mb-10">
+                <span class="inline-block py-1 px-3 rounded-full bg-blue-100 text-blue-800 font-bold text-sm mb-3 tracking-wide uppercase">Section 3.3.2</span>
+                <h1 class="text-3xl md:text-5xl font-extrabold text-slate-900 mb-4 tracking-tight">Collaboration Software</h1>
+                <p class="text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed">Explore the digital tools designed to help individuals and teams work together effectively, communicate instantly, and share resources regardless of physical location.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- Tile 1 -->
+                <div class="bg-white rounded-2xl shadow-lg border-t-8 border-indigo-500 overflow-hidden flex flex-col hover-lift">
+                    <div class="p-6 flex-grow">
+                        <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-4">
+                            <i class="fa-regular fa-comments text-2xl text-indigo-600"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold mb-3 text-slate-800">Communication Tools</h2>
+                        <ul class="space-y-3 text-slate-600 mb-4">
+                            <li><i class="fa-solid fa-check text-indigo-500 mr-2"></i><strong>Email Clients:</strong> Asynchronous, formal messaging (e.g., Outlook, Gmail).</li>
+                            <li><i class="fa-solid fa-check text-indigo-500 mr-2"></i><strong>Instant Messaging:</strong> Real-time, quick chats (e.g., Teams, Slack).</li>
+                            <li><i class="fa-solid fa-check text-indigo-500 mr-2"></i><strong>Management:</strong> Contact organization and scheduling integration.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('comm-details')" class="flex-1 bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 py-2.5 rounded-lg text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open text-indigo-600 mr-2"></i> Deep Dive</button>
+                            <button onclick="openBriefing('comm-usecase')" class="flex-1 bg-indigo-50 border border-indigo-200 hover:bg-indigo-100 text-indigo-800 py-2.5 rounded-lg text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-bolt text-yellow-500 mr-2"></i> Scenarios</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 2 -->
+                <div class="bg-white rounded-2xl shadow-lg border-t-8 border-teal-500 overflow-hidden flex flex-col hover-lift">
+                    <div class="p-6 flex-grow">
+                        <div class="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center mb-4">
+                            <i class="fa-solid fa-video text-2xl text-teal-600"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold mb-3 text-slate-800">Virtual Meetings & Support</h2>
+                        <ul class="space-y-3 text-slate-600 mb-4">
+                            <li><i class="fa-solid fa-check text-teal-500 mr-2"></i><strong>Conferencing:</strong> Video/audio meetings (e.g., Zoom, Meet).</li>
+                            <li><i class="fa-solid fa-check text-teal-500 mr-2"></i><strong>Remote Support:</strong> IT troubleshooting via remote access.</li>
+                            <li><i class="fa-solid fa-check text-teal-500 mr-2"></i><strong>Features:</strong> Screen sharing, session recording, and secure connections.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('meet-details')" class="flex-1 bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 py-2.5 rounded-lg text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open text-teal-600 mr-2"></i> Deep Dive</button>
+                            <button onclick="openBriefing('meet-usecase')" class="flex-1 bg-teal-50 border border-teal-200 hover:bg-teal-100 text-teal-800 py-2.5 rounded-lg text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-bolt text-yellow-500 mr-2"></i> Scenarios</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 3 -->
+                <div class="bg-white rounded-2xl shadow-lg border-t-8 border-rose-500 overflow-hidden flex flex-col hover-lift">
+                    <div class="p-6 flex-grow">
+                        <div class="w-12 h-12 bg-rose-100 rounded-lg flex items-center justify-center mb-4">
+                            <i class="fa-solid fa-file-signature text-2xl text-rose-600"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold mb-3 text-slate-800">Collaborative Creation</h2>
+                        <ul class="space-y-3 text-slate-600 mb-4">
+                            <li><i class="fa-solid fa-check text-rose-500 mr-2"></i><strong>Online Workspaces:</strong> Central hubs for projects and tasks.</li>
+                            <li><i class="fa-solid fa-check text-rose-500 mr-2"></i><strong>Document Sharing:</strong> Simultaneous real-time editing.</li>
+                            <li><i class="fa-solid fa-check text-rose-500 mr-2"></i><strong>Control:</strong> Version tracking, link sharing, and access permissions.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('collab-details')" class="flex-1 bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 py-2.5 rounded-lg text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open text-rose-600 mr-2"></i> Deep Dive</button>
+                            <button onclick="openBriefing('collab-usecase')" class="flex-1 bg-rose-50 border border-rose-200 hover:bg-rose-100 text-rose-800 py-2.5 rounded-lg text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-bolt text-yellow-500 mr-2"></i> Scenarios</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 4 -->
+                <div class="bg-white rounded-2xl shadow-lg border-t-8 border-amber-500 overflow-hidden flex flex-col hover-lift">
+                    <div class="p-6 flex-grow">
+                        <div class="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center mb-4">
+                            <i class="fa-solid fa-earth-americas text-2xl text-amber-600"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold mb-3 text-slate-800">Information Access</h2>
+                        <ul class="space-y-3 text-slate-600 mb-4">
+                            <li><i class="fa-solid fa-check text-amber-500 mr-2"></i><strong>Web Browsers:</strong> Applications to navigate the internet.</li>
+                            <li><i class="fa-solid fa-check text-amber-500 mr-2"></i><strong>Organization:</strong> Bookmarks, tabs, and history management.</li>
+                            <li><i class="fa-solid fa-check text-amber-500 mr-2"></i><strong>Enhancement:</strong> Extensions, search engines, and privacy controls.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('web-details')" class="flex-1 bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 py-2.5 rounded-lg text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open text-amber-600 mr-2"></i> Deep Dive</button>
+                            <button onclick="openBriefing('web-usecase')" class="flex-1 bg-amber-50 border border-amber-200 hover:bg-amber-100 text-amber-800 py-2.5 rounded-lg text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-bolt text-yellow-500 mr-2"></i> Scenarios</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-12 flex justify-center">
+                <button onclick="switchTab('activity')" class="bg-blue-600 text-white px-10 py-4 rounded-full font-bold text-lg hover:bg-blue-500 shadow-xl hover:shadow-2xl transition transform hover:-translate-y-1">Initialize Interactive Labs <i class="fa-solid fa-arrow-right ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- LAB ACTIVITY SECTION -->
+        <div id="activity-section" class="tab-content no-print">
+            <div class="text-center mb-10">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-3 tracking-tight">Collaboration Labs</h1>
+                <p class="text-lg text-slate-600 max-w-2xl mx-auto">Complete all 8 interactive scenarios to demonstrate proficiency in utilizing modern digital collaboration tools.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Concept 1: Communication -->
+                <!-- Lab 1: Email Constructor -->
+                <div class="bg-white p-6 rounded-2xl shadow-md border border-slate-200">
+                    <h2 class="text-xl font-bold mb-2 text-indigo-700"><i class="fa-solid fa-envelope mr-2"></i>Lab 1: Professional Email</h2>
+                    <p class="text-sm text-slate-600 mb-4">Construct a professional email by dragging the required elements into the composer in any order.</p>
+                    <div class="flex gap-2 mb-4 flex-wrap" id="email-items">
+                        <div class="drag-item px-3 py-1 bg-indigo-100 border border-indigo-300 rounded text-sm font-medium" draggable="true" data-part="subject">Subject Line</div>
+                        <div class="drag-item px-3 py-1 bg-indigo-100 border border-indigo-300 rounded text-sm font-medium" draggable="true" data-part="greeting">Greeting</div>
+                        <div class="drag-item px-3 py-1 bg-indigo-100 border border-indigo-300 rounded text-sm font-medium" draggable="true" data-part="body">Message Body</div>
+                        <div class="drag-item px-3 py-1 bg-indigo-100 border border-indigo-300 rounded text-sm font-medium" draggable="true" data-part="closing">Closing Sign-off</div>
+                        <div class="drag-item px-3 py-1 bg-indigo-100 border border-indigo-300 rounded text-sm font-medium" draggable="true" data-part="attachment">File Attachment</div>
+                    </div>
+                    <div class="drop-zone border-2 border-dashed border-slate-300 bg-slate-50 rounded-lg p-4 min-h-[120px] flex flex-wrap gap-2 content-start" id="email-composer">
+                        <!-- Items drop here -->
+                    </div>
+                    <div id="lab1-feedback" class="text-center font-bold mt-3 h-5 text-sm"></div>
+                </div>
+
+                <!-- Lab 2: IM Sorter -->
+                <div class="bg-white p-6 rounded-2xl shadow-md border border-slate-200">
+                    <h2 class="text-xl font-bold mb-2 text-indigo-700"><i class="fa-solid fa-comment-dots mr-2"></i>Lab 2: Communication Triage</h2>
+                    <p class="text-sm text-slate-600 mb-4">Read the scenario and decide if it should be sent via an <strong>Instant Message (IM)</strong> or an <strong>Email</strong>.</p>
+                    <div class="bg-slate-100 p-4 rounded-lg mb-4 text-center font-medium text-slate-800" id="lab2-scenario">
+                        "The meeting location in 5 minutes has changed to Room 102."
+                    </div>
+                    <div class="flex gap-4 justify-center">
+                        <button onclick="checkLab2('im')" class="bg-blue-100 hover:bg-blue-200 text-blue-800 border border-blue-300 px-6 py-2 rounded-lg font-bold transition">Send via IM</button>
+                        <button onclick="checkLab2('email')" class="bg-slate-200 hover:bg-slate-300 text-slate-800 border border-slate-400 px-6 py-2 rounded-lg font-bold transition">Send via Email</button>
+                    </div>
+                    <div id="lab2-feedback" class="text-center font-bold mt-4 h-5 text-sm"></div>
+                </div>
+
+                <!-- Concept 2: Virtual Meetings -->
+                <!-- Lab 3: Conference Dashboard -->
+                <div class="bg-white p-6 rounded-2xl shadow-md border border-slate-200">
+                    <h2 class="text-xl font-bold mb-2 text-teal-700"><i class="fa-solid fa-video mr-2"></i>Lab 3: Conference Controls</h2>
+                    <p class="text-sm text-slate-600 mb-4">You are about to present a slideshow to the class. Toggle the correct tools on the dashboard, then click Go Live.</p>
+                    <div class="flex justify-center gap-4 mb-4">
+                        <button class="w-16 h-16 rounded-full bg-slate-200 border-2 border-slate-300 flex items-center justify-center text-2xl text-slate-500 conf-btn" data-type="mic" onclick="toggleConfBtn(this)"><i class="fa-solid fa-microphone-slash"></i></button>
+                        <button class="w-16 h-16 rounded-full bg-slate-200 border-2 border-slate-300 flex items-center justify-center text-2xl text-slate-500 conf-btn" data-type="cam" onclick="toggleConfBtn(this)"><i class="fa-solid fa-video-slash"></i></button>
+                        <button class="w-16 h-16 rounded-full bg-slate-200 border-2 border-slate-300 flex items-center justify-center text-2xl text-slate-500 conf-btn" data-type="screen" onclick="toggleConfBtn(this)"><i class="fa-solid fa-desktop"></i></button>
+                    </div>
+                    <div class="text-center">
+                        <button onclick="checkLab3()" class="bg-teal-600 hover:bg-teal-700 text-white px-6 py-2 rounded-lg font-bold transition">Go Live</button>
+                    </div>
+                    <div id="lab3-feedback" class="text-center font-bold mt-4 h-5 text-sm"></div>
+                </div>
+
+                <!-- Lab 4: Remote Support -->
+                <div class="bg-white p-6 rounded-2xl shadow-md border border-slate-200">
+                    <h2 class="text-xl font-bold mb-2 text-teal-700"><i class="fa-solid fa-headset mr-2"></i>Lab 4: Remote Support Protocol</h2>
+                    <p class="text-sm text-slate-600 mb-4">Click the steps in the correct chronological order to securely receive remote IT assistance.</p>
+                    <div class="flex flex-col gap-2" id="remote-steps">
+                        <button class="step-btn bg-slate-100 hover:bg-slate-200 text-left px-4 py-2 rounded border border-slate-300 text-sm" onclick="selectStep(this, 3)">3. Disconnect session when repair is finished.</button>
+                        <button class="step-btn bg-slate-100 hover:bg-slate-200 text-left px-4 py-2 rounded border border-slate-300 text-sm" onclick="selectStep(this, 1)">1. Verify identity of IT Technician on phone.</button>
+                        <button class="step-btn bg-slate-100 hover:bg-slate-200 text-left px-4 py-2 rounded border border-slate-300 text-sm" onclick="selectStep(this, 2)">2. Provide temporary session connection PIN.</button>
+                    </div>
+                    <div id="lab4-feedback" class="text-center font-bold mt-4 h-5 text-sm"></div>
+                </div>
+
+                <!-- Concept 3: Workspaces -->
+                <!-- Lab 5: Permission Matrix -->
+                <div class="bg-white p-6 rounded-2xl shadow-md border border-slate-200">
+                    <h2 class="text-xl font-bold mb-2 text-rose-700"><i class="fa-solid fa-users mr-2"></i>Lab 5: Workspace Permissions</h2>
+                    <p class="text-sm text-slate-600 mb-4">Set the sharing link permission so your group members can contribute text to the shared document.</p>
+                    <div class="flex justify-center gap-3 mb-6">
+                        <button class="perm-btn px-4 py-2 border-2 border-slate-300 rounded font-bold text-slate-600" onclick="setPerm(this, 'view')">Viewer</button>
+                        <button class="perm-btn px-4 py-2 border-2 border-slate-300 rounded font-bold text-slate-600" onclick="setPerm(this, 'comment')">Commenter</button>
+                        <button class="perm-btn px-4 py-2 border-2 border-slate-300 rounded font-bold text-slate-600" onclick="setPerm(this, 'edit')">Editor</button>
+                    </div>
+                    <div class="text-center">
+                        <button class="bg-rose-600 text-white px-6 py-2 rounded font-bold hover:bg-rose-700" onclick="checkLab5()">Apply Link Settings</button>
+                    </div>
+                    <div id="lab5-feedback" class="text-center font-bold mt-4 h-5 text-sm"></div>
+                </div>
+
+                <!-- Lab 6: Sync Conflict -->
+                <div class="bg-white p-6 rounded-2xl shadow-md border border-slate-200">
+                    <h2 class="text-xl font-bold mb-2 text-rose-700"><i class="fa-solid fa-code-merge mr-2"></i>Lab 6: Version Control</h2>
+                    <p class="text-sm text-slate-600 mb-4">Two people edited the document offline. Now there is a sync conflict. Select the best action to preserve data.</p>
+                    <div class="border border-slate-300 rounded-lg overflow-hidden mb-4 text-sm">
+                        <div class="bg-red-100 p-2 border-b border-slate-300"><span class="font-bold">Local:</span> "Conclusion: IT is great."</div>
+                        <div class="bg-green-100 p-2"><span class="font-bold">Server:</span> "Conclusion: IT requires security."</div>
+                    </div>
+                    <select id="sync-action" class="w-full border border-slate-300 p-2 rounded mb-4">
+                        <option value="none">-- Select Action --</option>
+                        <option value="overwrite">Overwrite Server Version</option>
+                        <option value="discard">Discard Local Changes</option>
+                        <option value="review">Review and Manually Merge Changes</option>
+                    </select>
+                    <div class="text-center">
+                        <button class="bg-slate-800 text-white px-6 py-2 rounded font-bold hover:bg-slate-700" onclick="checkLab6()">Resolve Conflict</button>
+                    </div>
+                    <div id="lab6-feedback" class="text-center font-bold mt-2 h-5 text-sm"></div>
+                </div>
+
+                <!-- Concept 4: Web Browsing -->
+                <!-- Lab 7: Browser Tools -->
+                <div class="bg-white p-6 rounded-2xl shadow-md border border-slate-200">
+                    <h2 class="text-xl font-bold mb-2 text-amber-700"><i class="fa-regular fa-window-maximize mr-2"></i>Lab 7: Browser Interface</h2>
+                    <p class="text-sm text-slate-600 mb-4">Click the correct icon on the mock browser toolbar to <strong>save this page for later research</strong>.</p>
+                    <div class="bg-slate-200 p-2 rounded-t-lg flex items-center gap-4 border border-slate-300">
+                        <div class="flex gap-2">
+                            <button class="w-8 h-8 hover:bg-slate-300 rounded flex items-center justify-center" onclick="checkLab7('back')"><i class="fa-solid fa-arrow-left"></i></button>
+                            <button class="w-8 h-8 hover:bg-slate-300 rounded flex items-center justify-center" onclick="checkLab7('reload')"><i class="fa-solid fa-rotate-right"></i></button>
+                        </div>
+                        <div class="flex-grow bg-white rounded px-3 py-1 text-sm border border-slate-300 flex items-center justify-between">
+                            <span>https://library.edu/research</span>
+                            <button class="text-slate-400 hover:text-amber-500" onclick="checkLab7('bookmark')"><i class="fa-solid fa-star"></i></button>
+                        </div>
+                        <button class="w-8 h-8 hover:bg-slate-300 rounded flex items-center justify-center text-slate-600" onclick="checkLab7('ext')"><i class="fa-solid fa-puzzle-piece"></i></button>
+                    </div>
+                    <div class="border-x border-b border-slate-300 h-24 bg-white rounded-b-lg p-4">
+                        <h1 class="text-xl font-serif">Importance of Collaboration...</h1>
+                    </div>
+                    <div id="lab7-feedback" class="text-center font-bold mt-4 h-5 text-sm"></div>
+                </div>
+
+                <!-- Lab 8: Source Evaluator -->
+                <div class="bg-white p-6 rounded-2xl shadow-md border border-slate-200">
+                    <h2 class="text-xl font-bold mb-2 text-amber-700"><i class="fa-solid fa-shield-halved mr-2"></i>Lab 8: Connection Security</h2>
+                    <p class="text-sm text-slate-600 mb-4">You are about to enter a password for your online workspace. Based on the URL bar, is this connection secure? Click the indicator.</p>
+                    <div class="bg-slate-100 border border-slate-300 rounded-full flex items-center px-4 py-3 cursor-pointer hover:bg-slate-200 transition" onclick="checkLab8()">
+                        <div class="mr-3" id="url-lock"><i class="fa-solid fa-lock text-slate-600"></i></div>
+                        <div class="text-sm font-mono tracking-tight text-slate-800">https://workspace.portal.login.com</div>
+                    </div>
+                    <div id="lab8-feedback" class="text-center font-bold mt-4 h-5 text-sm"></div>
+                </div>
+            </div>
+
+            <div class="mt-12 text-center border-t border-slate-200 pt-8">
+                <p class="text-slate-600 mb-4">All labs complete? Proceed to the final assessment.</p>
+                <button onclick="switchTab('quiz')" class="bg-blue-600 text-white px-10 py-4 rounded-full font-bold text-lg hover:bg-blue-500 shadow-xl transition transform hover:-translate-y-1">Take the Mastery Quiz <i class="fa-solid fa-clipboard-check ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- QUIZ SECTION -->
+        <div id="quiz-section" class="tab-content no-print">
+            <div class="bg-white p-6 sm:p-10 rounded-3xl shadow-xl max-w-4xl mx-auto border border-slate-100">
+                <div class="text-center mb-10 pb-6 border-b border-slate-200">
+                    <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-3">Unit 05 Mastery Quiz</h1>
+                    <p class="text-lg text-slate-600">Score 90% or higher (18/20) to earn your Certificate of Mastery and unlock the Retro Game!</p>
+                </div>
+
+                <div id="quiz-container" class="space-y-6">
+                    <!-- Questions injected via JavaScript -->
+                </div>
+
+                <div class="mt-12 text-center border-t border-slate-200 pt-8 flex flex-col md:flex-row justify-center items-center gap-4">
+                    <button id="submit-quiz-btn" onclick="gradeQuiz()" class="bg-blue-600 text-white px-10 py-4 rounded-xl font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto transform hover:-translate-y-1">Submit Answers</button>
+                    <button id="proceed-game-btn" onclick="switchTab('game')" class="hidden bg-indigo-600 text-white px-10 py-4 rounded-xl font-bold text-lg hover:bg-indigo-700 shadow-lg transition w-full md:w-auto transform hover:-translate-y-1">Play Retro Game <i class="fa-solid fa-gamepad ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RETRO GAME SECTION -->
+        <div id="game-section" class="tab-content no-print">
+            <div class="bg-slate-800 p-6 sm:p-8 rounded-3xl shadow-2xl max-w-4xl mx-auto border-4 border-slate-700 flex flex-col items-center relative overflow-hidden">
+                <div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(#cbd5e1 1px, transparent 1px); background-size: 20px 20px;"></div>
+                
+                <div class="text-center mb-6 w-full relative z-10">
+                    <h1 class="text-3xl md:text-4xl font-extrabold text-blue-400 mb-2 pixel-font tracking-widest text-shadow-sm">DATA PUSHER</h1>
+                    <p class="text-slate-300 text-sm max-w-lg mx-auto">Collaborative workspaces need organization! Push the scattered Data Packets (Blue Squares) into the designated Server Nodes (Green Circles). Use arrow keys or the on-screen D-Pad.</p>
+                </div>
+                
+                <div class="flex justify-between items-center w-full max-w-[500px] mb-4 px-2 text-white font-mono text-lg z-10">
+                    <div>LEVEL: <span id="game-level" class="text-yellow-400 font-bold">1</span></div>
+                    <div>MOVES: <span id="game-moves" class="text-blue-300 font-bold">0</span></div>
+                    <button onclick="resetLevel()" class="bg-slate-600 hover:bg-slate-500 text-white text-xs px-3 py-1 rounded">RESET [R]</button>
+                </div>
+
+                <div id="game-container" class="z-10 relative">
+                    <canvas id="game-canvas" width="400" height="400"></canvas>
+                    <!-- Overlay Start -->
+                    <div id="game-overlay" class="absolute inset-0 flex items-center justify-center bg-slate-900 bg-opacity-90 rounded-lg z-20">
+                        <button id="start-game-btn" class="bg-blue-600 hover:bg-blue-500 text-white font-bold pixel-font py-4 px-6 rounded-lg text-lg border-b-4 border-blue-800 uppercase transform transition active:translate-y-1 active:border-b-0">Initialize System</button>
+                    </div>
+                    <div id="win-overlay" class="absolute inset-0 flex flex-col items-center justify-center bg-green-900 bg-opacity-90 rounded-lg z-20 hidden">
+                        <h2 class="pixel-font text-white text-2xl mb-4 text-center">NETWORK<br>SYNCED!</h2>
+                        <button id="next-level-btn" class="bg-yellow-500 hover:bg-yellow-400 text-slate-900 font-bold pixel-font py-3 px-6 rounded-lg text-sm border-b-4 border-yellow-700 uppercase transform transition active:translate-y-1 active:border-b-0">Next Sector</button>
+                    </div>
+                </div>
+
+                <!-- On-Screen D-Pad for Mobile -->
+                <div class="mt-8 grid grid-cols-3 gap-2 w-[180px] z-10 md:hidden">
+                    <div></div>
+                    <button class="dpad-btn h-12" id="btn-up"><i class="fa-solid fa-caret-up"></i></button>
+                    <div></div>
+                    <button class="dpad-btn h-12" id="btn-left"><i class="fa-solid fa-caret-left"></i></button>
+                    <button class="dpad-btn h-12" id="btn-down"><i class="fa-solid fa-caret-down"></i></button>
+                    <button class="dpad-btn h-12" id="btn-right"><i class="fa-solid fa-caret-right"></i></button>
+                </div>
+
+                <div class="mt-8 text-center w-full border-t border-slate-700 pt-6 z-10">
+                    <button onclick="switchTab('cert')" class="bg-slate-200 text-slate-800 px-8 py-3 rounded-xl font-bold text-lg hover:bg-white shadow-lg transition w-full md:w-auto">View Certificate <i class="fa-solid fa-award ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CERTIFICATE SECTION -->
+        <div id="cert-section" class="tab-content">
+            <div class="max-w-5xl mx-auto">
+                <div class="bg-white p-8 rounded-2xl shadow-lg mb-8 no-print text-center border border-slate-200">
+                    <h2 class="text-3xl font-extrabold text-blue-600 mb-3">🎉 Mastery Achieved! 🎉</h2>
+                    <p class="text-slate-600 mb-6 text-lg">You have successfully demonstrated expertise in utilizing Collaboration Software.</p>
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+                        <input type="text" id="student-name-input" value="Student" placeholder="Enter your first name" class="border-2 border-slate-300 rounded-lg px-4 py-3 w-full md:w-72 focus:border-blue-500 focus:outline-none transition">
+                        <button onclick="updateCertName()" class="bg-blue-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-blue-700 transition shadow">Update Name</button>
+                        <button id="download-btn" onclick="downloadCert()" class="bg-slate-800 text-white px-6 py-3 rounded-lg font-bold hover:bg-slate-900 transition flex items-center justify-center shadow">
+                            <i class="fa-solid fa-download mr-2"></i>Save as PNG
+                        </button>
+                    </div>
+                </div>
+
+                <div class="cert-preview-container print:p-0 print:bg-white">
+                    <div id="certificate">
+                        <div class="cert-seal">
+                            <span class="cert-seal-text">CERTIFIED<br>EXCELLENCE</span>
+                        </div>
+                        <div class="relative z-20 w-full h-full flex flex-col p-16">
+                            <div class="text-center mb-8">
+                                <h1 class="text-[#1e40af] text-6xl font-serif font-bold tracking-widest uppercase mb-2">Certificate of Mastery</h1>
+                                <div class="h-1 w-64 bg-blue-400 mx-auto rounded"></div>
+                            </div>
+                            
+                            <div class="text-center flex-grow flex flex-col justify-center">
+                                <p class="text-2xl font-body text-slate-700 mb-6 italic">This honors is proudly presented to</p>
+                                <div class="relative mb-10 w-3/4 mx-auto">
+                                    <h3 id="cert-student-name" class="text-6xl text-slate-900 font-script leading-none pb-2 relative z-10 text-center">Student Name</h3>
+                                    <div class="w-full border-b-2 border-slate-800 absolute bottom-0 left-0 z-0"></div>
+                                </div>
+                                <p class="text-xl font-body text-slate-700 leading-relaxed max-w-3xl mx-auto">
+                                    For demonstrating comprehensive understanding and practical application of 
+                                    <strong class="text-2xl text-[#1e40af] block mt-4 mb-4 font-serif">Unit 05 Section 3.3.2: Collaboration Software</strong>
+                                    Including proficiency in email clients, instant messaging, online workspaces, document sharing, virtual conferencing, web browsing, and remote support tools.
+                                </p>
+                            </div>
+                            
+                            <div class="flex justify-between items-end mt-auto px-12">
+                                <div class="w-64 text-center">
+                                    <div class="border-b border-slate-800 mb-2 h-16 flex items-end justify-center">
+                                        <span class="font-script text-5xl text-[#1e40af] transform -rotate-2">C.I.C. Admin</span>
+                                    </div>
+                                    <p class="font-serif text-lg text-slate-600 uppercase tracking-widest text-sm">Instructor</p>
+                                </div>
+                                <div class="w-64 text-center">
+                                    <div class="border-b border-slate-800 mb-2 h-16 flex items-end justify-center">
+                                        <p id="cert-date" class="font-body text-xl text-slate-800 pb-1">Date</p>
+                                    </div>
+                                    <p class="font-serif text-lg text-slate-600 uppercase tracking-widest text-sm">Date</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Custom Modal for Alerts -->
+    <div id="custom-modal" class="fixed inset-0 bg-slate-900 bg-opacity-50 z-[100] hidden flex justify-center items-center backdrop-blur-sm p-4">
+        <div class="bg-white p-8 rounded-3xl shadow-2xl max-w-md w-full transform transition-all border border-slate-100">
+            <div class="text-center">
+                <div id="modal-icon" class="text-6xl mb-4"></div>
+                <h3 id="modal-title" class="text-2xl font-bold mb-3 text-slate-900"></h3>
+                <p id="modal-msg" class="text-slate-600 mb-8 leading-relaxed"></p>
+                <button onclick="closeModal()" class="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-700 transition w-full shadow">Acknowledge</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Briefing Modal -->
+    <div id="briefing-modal" class="fixed inset-0 bg-slate-900 bg-opacity-75 z-[120] hidden flex justify-center items-center backdrop-blur-sm p-4 sm:p-6">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col transform transition-all overflow-hidden border-2 border-slate-200">
+            <div class="p-6 md:p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <div class="flex items-center gap-4">
+                    <div id="briefing-modal-icon" class="text-4xl"></div>
+                    <h3 id="briefing-modal-title" class="text-2xl md:text-3xl font-extrabold text-slate-800 tracking-tight"></h3>
+                </div>
+                <button onclick="closeBriefing()" class="text-slate-400 hover:text-rose-600 transition text-5xl leading-none w-12 h-12 flex items-center justify-center rounded-full hover:bg-slate-200">&times;</button>
+            </div>
+            <div id="briefing-modal-content" class="p-6 md:p-10 overflow-y-auto flex-grow text-slate-700 text-lg leading-relaxed bg-white">
+                <!-- Dynamic Content Injected Here -->
+            </div>
+            <div class="p-6 border-t border-slate-100 bg-slate-50 flex justify-end">
+                <button onclick="closeBriefing()" class="bg-slate-800 text-white px-8 py-3 rounded-xl font-bold hover:bg-slate-900 transition shadow">Close Document</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Extensive Briefing Content Data (Min 7 Paragraphs per detail, 2 Use Cases per scenario)
+        const briefingData = {
+            'comm-details': {
+                title: 'Communication Tools',
+                icon: '<i class="fa-regular fa-comments text-indigo-600"></i>',
+                html: `
+                    <p class="mb-5">In the modern digital landscape, the ability to communicate efficiently over long distances is the bedrock of collaboration. Before the advent of digital tools, communication relied on physical mail, which took days, or scheduled in-person meetings, which required massive logistical effort. Today, collaboration software provides instantaneous connectivity, allowing teams spread across the globe to operate as if they were in the same room. The two primary pillars of text-based digital communication are Email Clients and Instant Messaging (IM) software.</p>
+                    
+                    <p class="mb-5">An <strong>Email Client</strong> (such as Microsoft Outlook or Gmail) is an application that allows users to send, receive, organize, and manage electronic mail. Email operates on an asynchronous model, meaning the sender does not expect an immediate, real-time response. This makes it the ideal tool for long-form, formal communication, external correspondence, and sharing detailed reports where the recipient needs time to read and digest the information.</p>
+                    
+                    <p class="mb-5">Beyond just sending text, modern email clients are powerful management tools. They allow users to organize messages into specific folders, set up automated filtering rules, and categorize correspondence using flags or tags. This organization is crucial for managing the massive flow of information professionals receive daily. Furthermore, email clients excel at handling file attachments, allowing users to bundle documents, spreadsheets, and images directly with their explanatory text.</p>
+                    
+                    <p class="mb-5">A critical feature of robust email clients is <strong>Integration</strong>. Tools like Outlook seamlessly sync email with digital calendars and task managers. When a user receives an email about a project deadline, they can immediately convert that email into a calendar event or a to-do list item without ever leaving the application. This centralization turns the email client into a personal productivity dashboard.</p>
+                    
+                    <p class="mb-5">Conversely, <strong>Instant Messaging (IM) software</strong> (such as Slack, Google Chat, or Microsoft Teams) is designed for synchronous, real-time communication. IM is best utilized for rapid exchanges, quick clarifications, and casual updates. Unlike email, which can feel bulky, IM provides a continuous chat interface where conversations flow naturally and quickly, drastically reducing the time it takes to make minor decisions.</p>
+                    
+                    <p class="mb-5">IM software significantly enhances teamwork through the use of <strong>Group Chats or Channels</strong>. Instead of sending mass emails where replies get tangled in a confusing thread, a team can have a dedicated IM channel. Everyone in the channel sees updates instantly, and the history is preserved for new members to read. IM also utilizes status updates (like "Available," "In a Meeting," or "Do Not Disturb"), giving coworkers context about when it is appropriate to initiate a conversation.</p>
+                    
+                    <p>While both tools are vital, understanding <em>when</em> to use them is a key collaboration skill. Using IM for a complex legal contract discussion is a mistake, as the details will quickly get lost in the chat scroll. Similarly, sending a formal email just to ask "Are we still meeting at 2 PM?" is inefficient. By balancing the formal, organized nature of email with the rapid, agile nature of IM, teams can optimize their communication workflow.</p>
+                `
+            },
+            'comm-usecase': {
+                title: 'Communication: Use Cases',
+                icon: '<i class="fa-solid fa-bolt text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-indigo-800 mb-2 border-b-2 border-indigo-200 pb-1">Use Case 1: Submitting Formal Coursework</h4>
+                        <p class="mb-2 text-slate-700">When interacting with authorities, teachers, or external clients, formal and organized communication is required to ensure clarity and professionalism.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-600 space-y-2">
+                            <li><strong>Example 1 (Email Client):</strong> Ella needs to submit her final robotics project to her teacher. She uses her email client to draft a message with a clear subject line ("Ella Smith - Final Robotics Report"), attaches her PDF document and a spreadsheet of data, and includes a formal greeting and signature. The teacher receives a single, organized package.</li>
+                            <li><strong>Example 2 (Email Integration):</strong> The teacher receives Ella's email and uses the email client's calendar integration to set a reminder for Friday to grade the attached project, keeping their workflow organized.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-indigo-800 mb-2 border-b-2 border-indigo-200 pb-1">Use Case 2: Coordinating Real-Time Logistics</h4>
+                        <p class="mb-2 text-slate-700">When situations change rapidly, teams need a way to blast out information instantly to ensure everyone is on the same page immediately.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-600 space-y-2">
+                            <li><strong>Example 1 (Instant Messaging):</strong> Ten minutes before a school assembly, the location is abruptly changed from the Gym to the Auditorium. A teacher uses the faculty IM software to send a message to the "All Staff" channel. Teachers receive a push notification on their phones instantly and redirect their students.</li>
+                            <li><strong>Example 2 (IM Status):</strong> A student is studying for a major exam and sets their IM status to "Do Not Disturb." Their project group sees this status and knows not to expect an immediate reply to a question about their weekend plans, preventing frustration.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-2">Concept: Digital Communication</p>
+                            <img src="https://images.unsplash.com/photo-1596526131083-e8c638c9c6c7?auto=format&fit=crop&w=600&h=350" alt="Smartphone displaying chat messages" class="w-full h-48 object-cover rounded-xl shadow-md border border-slate-200">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-2">In Practice: Professional Email</p>
+                            <img src="https://images.unsplash.com/photo-1557200134-90327ee9fafa?auto=format&fit=crop&w=600&h=350" alt="Person typing an email on a laptop" class="w-full h-48 object-cover rounded-xl shadow-md border border-slate-200">
+                        </div>
+                    </div>
+                `
+            },
+            'meet-details': {
+                title: 'Virtual Meetings & Support',
+                icon: '<i class="fa-solid fa-video text-teal-600"></i>',
+                html: `
+                    <p class="mb-5">While email and instant messaging are excellent for transmitting text and files, they lack the nuance of human interaction. Tone of voice, facial expressions, and visual demonstrations are critical components of effective collaboration. To bridge this gap when physical proximity is impossible, teams rely on <strong>Conferencing Software</strong> and <strong>Remote Support Software</strong>. These tools simulate an in-person environment across digital networks.</p>
+                    
+                    <p class="mb-5"><strong>Conferencing Software</strong> (such as Zoom, Google Meet, or Microsoft Teams) is designed to conduct virtual meetings and discussions. It enables real-time interaction using video and audio feeds. By allowing participants to see each other via web cameras, conferencing software restores the personal touch to remote work, making brainstorming sessions and complex discussions vastly more effective than a lengthy email chain.</p>
+                    
+                    <p class="mb-5">One of the most powerful features of conferencing software is <strong>Screen Sharing</strong>. Instead of just talking about a document, a user can share their exact screen view with all other participants. This allows for real-time demonstrations of software, presentation of slide decks, and collaborative review of visual materials, ensuring everyone is literally looking at the same thing during the discussion.</p>
+                    
+                    <p class="mb-5">Furthermore, conferencing tools offer <strong>Recording Capabilities</strong>. A virtual meeting can be recorded and saved to the cloud. This is invaluable for team members who were absent, or for creating an archive of training sessions and important announcements that can be reviewed later, a benefit that traditional in-person meetings rarely offer.</p>
+                    
+                    <p class="mb-5">Closely related to conferencing is <strong>Remote Support Software</strong> (like AnyDesk or TeamViewer). While conferencing connects people to talk, remote support software connects an IT professional directly to another user's computer. It enables technical support teams to access, view, and control a remote device to troubleshoot software issues, install updates, or perform maintenance as if they were sitting right in front of the keyboard.</p>
+                    
+                    <p class="mb-5">Remote support software relies heavily on strict <strong>Security Measures</strong> and session management. Because it grants deep access to a machine, sessions typically require the user to explicitly grant permission by sharing a one-time session PIN and clicking an "Accept" button. All data transferred during these sessions is heavily encrypted to prevent bad actors from intercepting the connection.</p>
+                    
+                    <p>Both conferencing and remote support software prioritize the <strong>User Experience</strong>. Conferencing tools offer features like "Raise Hand" to manage large discussions without people talking over one another, while remote support tools often include built-in chat so the technician can explain what they are doing while they fix the computer. Together, these tools eliminate the barrier of physical distance in technical and collaborative environments.</p>
+                `
+            },
+            'meet-usecase': {
+                title: 'Virtual Meetings: Use Cases',
+                icon: '<i class="fa-solid fa-bolt text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-teal-800 mb-2 border-b-2 border-teal-200 pb-1">Use Case 1: Distance Learning & Collaboration</h4>
+                        <p class="mb-2 text-slate-700">When students or team members cannot meet physically, conferencing software provides a robust classroom or boardroom experience.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-600 space-y-2">
+                            <li><strong>Example 1 (Conferencing/Screen Share):</strong> Josh is part of a robotics team that meets online. During the virtual meeting, he uses the "Screen Share" feature to show his team the 3D CAD design sketches he made, allowing everyone to point out adjustments in real-time.</li>
+                            <li><strong>Example 2 (Conferencing/Etiquette):</strong> To maintain order during the large team meeting, Josh keeps his microphone muted when not speaking to eliminate background noise, and uses the digital "Raise Hand" button when he has a question for the team captain.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-teal-800 mb-2 border-b-2 border-teal-200 pb-1">Use Case 2: Resolving Technical Issues</h4>
+                        <p class="mb-2 text-slate-700">When software fails, explaining the issue over the phone can be frustrating. Remote access allows an expert to fix the problem directly.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-600 space-y-2">
+                            <li><strong>Example 1 (Remote Support):</strong> David's specialized coding software keeps crashing. He calls the school's IT helpdesk. The technician uses remote support software, and David provides a secure 6-digit PIN to grant the technician temporary control of his mouse and keyboard to fix the corrupted file.</li>
+                            <li><strong>Example 2 (Security Protocol):</strong> Throughout the remote session, David watches the screen to see exactly what the technician is changing. As soon as the software is fixed and tested, David clicks "End Session" to revoke access and maintain the privacy of his personal files.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-2">Concept: Virtual Conferencing</p>
+                            <img src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=600&h=350" alt="Grid of people in a video conference call" class="w-full h-48 object-cover rounded-xl shadow-md border border-slate-200">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-2">In Practice: Remote Support</p>
+                            <img src="https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=600&h=350" alt="IT professional providing technical support" class="w-full h-48 object-cover rounded-xl shadow-md border border-slate-200">
+                        </div>
+                    </div>
+                `
+            },
+            'collab-details': {
+                title: 'Collaborative Creation',
+                icon: '<i class="fa-solid fa-file-signature text-rose-600"></i>',
+                html: `
+                    <p class="mb-5">In the past, working on a group document meant one person typed a section, saved the file as "Project_V1.docx", emailed it to the next person, who added their part and saved it as "Project_V2.docx". This led to massive confusion, duplicated work, and lost files. Today, <strong>Online Workspaces</strong> and <strong>Document Sharing</strong> software have revolutionized how we create content together, moving from a disjointed serial process to a seamless parallel process.</p>
+                    
+                    <p class="mb-5">An <strong>Online Workspace</strong> (like Microsoft Teams, Google Workspace, or Notion) serves as a digital headquarters for a group. It is a centralized platform that combines communication, task management, and file storage into one cohesive environment. By creating specific channels or project boards, a team ensures that all conversations, deadlines, and resources related to a specific project are kept in one easily accessible location, rather than scattered across various email inboxes.</p>
+                    
+                    <p class="mb-5">Within these workspaces, <strong>Task Management</strong> is a critical feature. Team leaders can create to-do lists, assign specific tasks to individual members, set deadlines, and monitor the overall progress of the project. This enforces accountability, as everyone can clearly see who is responsible for what, preventing tasks from slipping through the cracks.</p>
+                    
+                    <p class="mb-5">The most transformative feature of these platforms is <strong>Document Sharing</strong> and real-time collaboration. By storing files in the cloud (like Google Drive or OneDrive), multiple users can open and edit the exact same document, spreadsheet, or presentation simultaneously. You can see your teammates' cursors moving and text appearing on your screen in real-time, completely eliminating the need to email different versions back and forth.</p>
+                    
+                    <p class="mb-5">Because multiple people are editing the same file, <strong>Version Control</strong> is essential. Document sharing software automatically saves changes continuously and tracks the history of the document. If a group member accidentally deletes a crucial paragraph, the team does not lose the work; they can simply open the version history and restore the document to exactly how it looked an hour, a day, or a week ago.</p>
+                    
+                    <p class="mb-5">Effective collaboration also requires robust <strong>Access Control</strong>. Not everyone needs the ability to edit a final report. Document sharing allows owners to set strict permissions via Link Sharing. You can designate specific users as "Viewers" (can only read), "Commenters" (can leave notes but not change text), or "Editors" (have full control). This protects the integrity of the data.</p>
+                    
+                    <p>Finally, the use of <strong>Comments and Suggestions</strong> within shared documents facilitates contextual feedback. Instead of sending an email saying "Change the third sentence in paragraph four," a user can highlight the exact sentence in the document and leave a comment right there. The author can then reply to the comment or click "Resolve" once the fix is made, keeping all discussion directly attached to the work itself.</p>
+                `
+            },
+            'collab-usecase': {
+                title: 'Collaborative Creation: Use Cases',
+                icon: '<i class="fa-solid fa-bolt text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-rose-800 mb-2 border-b-2 border-rose-200 pb-1">Use Case 1: Organizing Complex Group Projects</h4>
+                        <p class="mb-2 text-slate-700">When multiple people are working toward a common goal, centralization is required to prevent chaos and ensure everyone knows their responsibilities.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-600 space-y-2">
+                            <li><strong>Example 1 (Online Workspace):</strong> Leia and her three partners use an online workspace (like Microsoft Teams) to manage their Science Fair project. They create a dedicated channel just for the project, ensuring all their chat messages and shared research links are kept in one central location.</li>
+                            <li><strong>Example 2 (Task Management):</strong> Within that workspace, Leia creates a task list. She assigns the "Research" task to John, the "Experiment" task to herself, and the "Poster Board" task to Sarah, setting deadlines for each to keep the group accountable.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-rose-800 mb-2 border-b-2 border-rose-200 pb-1">Use Case 2: Co-Authoring Documents</h4>
+                        <p class="mb-2 text-slate-700">Creating written reports or presentations requires fluid teamwork and the ability to combine efforts without overwriting each other's work.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-600 space-y-2">
+                            <li><strong>Example 1 (Real-Time Editing):</strong> Omar is writing the introduction for a research paper in a shared Google Doc, while his partner simultaneously writes the conclusion at the bottom of the exact same document. They can see each other typing, which saves time and prevents duplicate files.</li>
+                            <li><strong>Example 2 (Contextual Feedback):</strong> The teacher reviews Omar's draft by using the "Comment" feature in the document. She highlights a confusing sentence and leaves a note, allowing Omar to fix the issue exactly where it occurs without altering the core text directly.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-2">Concept: Cloud Document Sharing</p>
+                            <img src="https://images.unsplash.com/photo-1611162616475-46b635cb6868?auto=format&fit=crop&w=600&h=350" alt="Tablet showing cloud sync icons" class="w-full h-48 object-cover rounded-xl shadow-md border border-slate-200">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-2">In Practice: Collaborative Work</p>
+                            <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&h=350" alt="Students collaborating on laptops at a table" class="w-full h-48 object-cover rounded-xl shadow-md border border-slate-200">
+                        </div>
+                    </div>
+                `
+            },
+            'web-details': {
+                title: 'Information Access',
+                icon: '<i class="fa-solid fa-earth-americas text-amber-600"></i>',
+                html: `
+                    <p class="mb-5">While the previous tools focus on creating and sharing data among specific teams, <strong>Web-Browsing Software</strong> is the gateway to the world's information. A web browser (such as Google Chrome, Mozilla Firefox, Microsoft Edge, or Apple Safari) is a software application used to access, retrieve, and display content on the World Wide Web. It translates the HTML code stored on remote servers into the visual web pages we interact with daily.</p>
+                    
+                    <p class="mb-5">The core function of a browser is <strong>Navigation</strong>. It provides essential tools like the Address Bar (where users input specific URLs), Back and Forward buttons (to move through history), and Tabs. The invention of tabbed browsing revolutionized productivity by allowing users to keep dozens of web pages open simultaneously in a single window, making complex research and multitasking vastly easier.</p>
+                    
+                    <p class="mb-5">Because the internet contains billions of pages, browsers heavily integrate with <strong>Search Engines</strong> (like Google, Bing, or DuckDuckGo). Users rarely type full URLs anymore; they type queries directly into the address bar, and the browser routes the request to the default search engine to return relevant results. Finding credible information quickly is a foundational digital skill.</p>
+                    
+                    <p class="mb-5">To manage the vast amount of useful information found online, browsers offer <strong>Bookmarks and Favorites</strong>. If a user finds a critical database for a school project, they can bookmark the page, creating a permanent shortcut. Advanced users organize these bookmarks into hierarchical folders (e.g., "History Project," "Math Resources"), creating a customized library of references that can be accessed with a single click.</p>
+                    
+                    <p class="mb-5">Modern browsers are not just static viewers; they are highly customizable platforms thanks to <strong>Extensions and Add-ons</strong>. Extensions are small software programs that install directly into the browser to add new functionality. Users can install grammar checkers to improve their writing, ad-blockers to remove distractions, or password managers to secure their accounts, tailoring the browser to their specific workflow needs.</p>
+                    
+                    <p class="mb-5"><strong>Privacy and Security</strong> are paramount when navigating the web. Browsers employ numerous safety features. They check digital certificates (indicated by the padlock icon next to the URL) to ensure a connection is encrypted (HTTPS). They allow users to manage or block "Cookies" (small files sites use to track user behavior) and offer Private or Incognito modes that allow browsing without saving local history or search queries.</p>
+                    
+                    <p>Finally, keeping web-browsing software <strong>Updated</strong> is critical. Because browsers are the primary interface with the external internet, they are constant targets for cyberattacks. Browser developers regularly release updates to patch security vulnerabilities. Enabling automatic updates ensures the user is always protected by the latest security protocols and performance enhancements while managing file downloads safely.</p>
+                `
+            },
+            'web-usecase': {
+                title: 'Information Access: Use Cases',
+                icon: '<i class="fa-solid fa-bolt text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-amber-800 mb-2 border-b-2 border-amber-200 pb-1">Use Case 1: Academic & Professional Research</h4>
+                        <p class="mb-2 text-slate-700">When seeking factual data, the browser provides the tools to find, evaluate, and save information efficiently.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-600 space-y-2">
+                            <li><strong>Example 1 (Navigation & Search):</strong> May is researching renewable energy. She uses her web browser to navigate to a university's online database. She checks the URL to ensure it is a credible ".edu" source before relying on the information for her project.</li>
+                            <li><strong>Example 2 (Bookmarks):</strong> After finding three highly detailed articles on solar technology, May clicks the "Star" icon in the address bar to bookmark them, saving them into a specific folder so she can instantly pull them up when she starts writing her paper tomorrow.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-amber-800 mb-2 border-b-2 border-amber-200 pb-1">Use Case 2: Secure Access to Cloud Tools</h4>
+                        <p class="mb-2 text-slate-700">The browser is not just for reading articles; it is the platform through which users access cloud-based collaboration software.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-600 space-y-2">
+                            <li><strong>Example 1 (Security Features):</strong> Before logging into her school's online workspace, May checks for the padlock icon in the browser's address bar to verify the connection is encrypted via HTTPS, protecting her password from being intercepted on public Wi-Fi.</li>
+                            <li><strong>Example 2 (Extensions):</strong> To assist in writing her paper within the browser-based Google Docs, May installs a grammar-checking browser extension. The extension runs in the background, providing real-time spelling corrections regardless of what website she is currently typing on.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-2">Concept: Web Browsing</p>
+                            <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=600&h=350" alt="Matrix style binary code on screen representing the internet" class="w-full h-48 object-cover rounded-xl shadow-md border border-slate-200">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-2">In Practice: Research and Bookmarks</p>
+                            <img src="https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?auto=format&fit=crop&w=600&h=350" alt="Person researching on a laptop" class="w-full h-48 object-cover rounded-xl shadow-md border border-slate-200">
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        // UI & Modal Functions
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId + '-section').classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-blue-900', 'shadow-inner'));
+            const activeBtn = document.getElementById('nav-' + tabId);
+            if(activeBtn && tabId !== 'cert') activeBtn.classList.add('bg-blue-900', 'shadow-inner');
+            
+            document.querySelectorAll('.nav-btn-mobile').forEach(btn => btn.classList.remove('bg-blue-800', 'shadow-inner'));
+            const activeMobileBtn = document.getElementById('nav-' + tabId + '-mobile');
+            if(activeMobileBtn && tabId !== 'cert') activeMobileBtn.classList.add('bg-blue-800', 'shadow-inner');
+
+            window.scrollTo(0,0);
+            
+            if(tabId === 'game' && !gameRunning) {
+                initGame();
+            }
+        }
+
+        function openBriefing(key) {
+            const modal = document.getElementById('briefing-modal');
+            const data = briefingData[key];
+            if(data) {
+                document.getElementById('briefing-modal-icon').innerHTML = data.icon;
+                document.getElementById('briefing-modal-title').innerText = data.title;
+                document.getElementById('briefing-modal-content').innerHTML = data.html;
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; 
+            }
+        }
+
+        function closeBriefing() {
+            document.getElementById('briefing-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto'; 
+        }
+
+        function showModal(title, message, type = 'info') {
+            const modal = document.getElementById('custom-modal');
+            const icon = document.getElementById('modal-icon');
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-msg').innerText = message;
+            
+            if(type === 'success') { icon.innerHTML = '<i class="fa-solid fa-circle-check text-green-500"></i>'; }
+            else if (type === 'error') { icon.innerHTML = '<i class="fa-solid fa-circle-xmark text-rose-500"></i>'; }
+            else if (type === 'warning') { icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-amber-500"></i>'; }
+            else { icon.innerHTML = '<i class="fa-solid fa-circle-info text-blue-500"></i>'; }
+            
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        
+        // Lab 1: Email Constructor
+        const emailItems = document.querySelectorAll('#email-items .drag-item');
+        const emailZone = document.getElementById('email-composer');
+        let draggedItem = null;
+        let lab1Count = 0;
+
+        emailItems.forEach(item => {
+            item.addEventListener('dragstart', function() {
+                draggedItem = this;
+                setTimeout(() => this.classList.add('opacity-50'), 0);
+            });
+            item.addEventListener('dragend', function() {
+                setTimeout(() => this.classList.remove('opacity-50'), 0);
+                draggedItem = null;
+            });
+        });
+
+        emailZone.addEventListener('dragover', e => e.preventDefault());
+        emailZone.addEventListener('dragenter', function(e) { e.preventDefault(); this.classList.add('drag-over'); });
+        emailZone.addEventListener('dragleave', function() { this.classList.remove('drag-over'); });
+        emailZone.addEventListener('drop', function() {
+            this.classList.remove('drag-over');
+            if(draggedItem) {
+                this.appendChild(draggedItem);
+                draggedItem.classList.remove('bg-indigo-100', 'border-indigo-300', 'cursor-grab');
+                draggedItem.classList.add('bg-white', 'border-slate-300', 'cursor-default', 'shadow-sm', 'w-full', 'py-2');
+                draggedItem.setAttribute('draggable', 'false');
+                lab1Count++;
+                
+                if(lab1Count === 5) {
+                    document.getElementById('lab1-feedback').innerText = "Email successfully composed!";
+                    document.getElementById('lab1-feedback').className = "text-center font-bold mt-3 h-5 text-sm text-green-600";
+                }
+            }
+        });
+
+        // Lab 2: IM Sorter
+        let lab2Complete = false;
+        function checkLab2(choice) {
+            if(lab2Complete) return;
+            const fb = document.getElementById('lab2-feedback');
+            if(choice === 'im') {
+                fb.innerText = "Correct! A location change in 5 minutes requires the real-time speed of Instant Messaging.";
+                fb.className = "text-center font-bold mt-4 h-5 text-sm text-green-600";
+                lab2Complete = true;
+            } else {
+                fb.innerText = "Incorrect. Email is asynchronous; participants might not check it in the next 5 minutes.";
+                fb.className = "text-center font-bold mt-4 h-5 text-sm text-rose-600";
+            }
+        }
+
+        // Lab 3: Conference
+        let confState = { mic: false, cam: false, screen: false };
+        function toggleConfBtn(btn) {
+            const type = btn.dataset.type;
+            confState[type] = !confState[type];
+            
+            if(confState[type]) {
+                btn.classList.replace('bg-slate-200', 'bg-teal-100');
+                btn.classList.replace('text-slate-500', 'text-teal-600');
+                btn.classList.replace('border-slate-300', 'border-teal-400');
+                if(type === 'mic') btn.innerHTML = '<i class="fa-solid fa-microphone"></i>';
+                if(type === 'cam') btn.innerHTML = '<i class="fa-solid fa-video"></i>';
+            } else {
+                btn.classList.replace('bg-teal-100', 'bg-slate-200');
+                btn.classList.replace('text-teal-600', 'text-slate-500');
+                btn.classList.replace('border-teal-400', 'border-slate-300');
+                if(type === 'mic') btn.innerHTML = '<i class="fa-solid fa-microphone-slash"></i>';
+                if(type === 'cam') btn.innerHTML = '<i class="fa-solid fa-video-slash"></i>';
+            }
+        }
+        function checkLab3() {
+            const fb = document.getElementById('lab3-feedback');
+            if(confState.mic && confState.screen) {
+                fb.innerText = "Excellent! You are unmuted and sharing the presentation.";
+                fb.className = "text-center font-bold mt-4 h-5 text-sm text-green-600";
+            } else {
+                fb.innerText = "Check your settings. To present, you must be heard (Mic ON) and they must see the slides (Screen Share ON).";
+                fb.className = "text-center font-bold mt-4 h-5 text-sm text-rose-600";
+            }
+        }
+
+        // Lab 4: Remote Support
+        let lab4Order = [];
+        let lab4Complete = false;
+        function selectStep(btn, stepNum) {
+            if(lab4Complete) return;
+            if(btn.classList.contains('bg-teal-100')) return;
+            
+            btn.classList.replace('bg-slate-100', 'bg-teal-100');
+            btn.classList.replace('hover:bg-slate-200', 'border-teal-400');
+            lab4Order.push(stepNum);
+            
+            btn.innerText = `Step ${lab4Order.length}: ${btn.innerText.substring(3)}`;
+
+            if(lab4Order.length === 3) {
+                const fb = document.getElementById('lab4-feedback');
+                if(lab4Order[0] === 1 && lab4Order[1] === 2 && lab4Order[2] === 3) {
+                    fb.innerText = "Protocol Correct: Verify -> Grant Access -> Terminate.";
+                    fb.className = "text-center font-bold mt-4 h-5 text-sm text-green-600";
+                    lab4Complete = true;
+                } else {
+                    fb.innerText = "Protocol Breach. You must verify identity before granting access.";
+                    fb.className = "text-center font-bold mt-4 h-5 text-sm text-rose-600";
+                    // Reset
+                    setTimeout(() => {
+                        document.querySelectorAll('.step-btn').forEach(b => {
+                            b.className = "step-btn bg-slate-100 hover:bg-slate-200 text-left px-4 py-2 rounded border border-slate-300 text-sm";
+                            // Restore text (hacky but works for this scope)
+                            if(b.innerText.includes('Verify')) b.innerText = "1. Verify identity of IT Technician on phone.";
+                            if(b.innerText.includes('Provide')) b.innerText = "2. Provide temporary session connection PIN.";
+                            if(b.innerText.includes('Disconnect')) b.innerText = "3. Disconnect session when repair is finished.";
+                        });
+                        lab4Order = [];
+                        fb.innerText = "";
+                    }, 2000);
+                }
+            }
+        }
+
+        // Lab 5: Workspace Perms
+        let currentPerm = '';
+        function setPerm(btn, type) {
+            document.querySelectorAll('.perm-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentPerm = type;
+        }
+        function checkLab5() {
+            const fb = document.getElementById('lab5-feedback');
+            if(currentPerm === 'edit') {
+                fb.innerText = "Correct. They need 'Editor' access to add text to the document.";
+                fb.className = "text-center font-bold mt-4 h-5 text-sm text-green-600";
+            } else if (currentPerm) {
+                fb.innerText = "Incorrect. 'Viewers' or 'Commenters' cannot type text into the main document.";
+                fb.className = "text-center font-bold mt-4 h-5 text-sm text-rose-600";
+            }
+        }
+
+        // Lab 6: Sync Conflict
+        function checkLab6() {
+            const action = document.getElementById('sync-action').value;
+            const fb = document.getElementById('lab6-feedback');
+            if(action === 'review') {
+                fb.innerText = "Correct! Always review and merge to ensure no one's work is accidentally destroyed.";
+                fb.className = "text-center font-bold mt-2 h-5 text-sm text-green-600";
+            } else if (action !== 'none') {
+                fb.innerText = "Data Loss Risk! Overwriting or discarding deletes someone's work.";
+                fb.className = "text-center font-bold mt-2 h-5 text-sm text-rose-600";
+            }
+        }
+
+        // Lab 7: Browser Tools
+        let lab7Complete = false;
+        function checkLab7(tool) {
+            if(lab7Complete) return;
+            const fb = document.getElementById('lab7-feedback');
+            if(tool === 'bookmark') {
+                fb.innerText = "Page Bookmarked! You can easily return to this research later.";
+                fb.className = "text-center font-bold mt-4 h-5 text-sm text-green-600";
+                lab7Complete = true;
+            } else {
+                fb.innerText = "That is not the Bookmark tool. Look for the Star icon.";
+                fb.className = "text-center font-bold mt-4 h-5 text-sm text-rose-600";
+            }
+        }
+
+        // Lab 8: Source Evaluator
+        let lab8Complete = false;
+        function checkLab8() {
+            if(lab8Complete) return;
+            const icon = document.getElementById('url-lock');
+            icon.innerHTML = '<i class="fa-solid fa-lock text-green-600"></i>';
+            const fb = document.getElementById('lab8-feedback');
+            fb.innerText = "Secure Connection Verified (HTTPS). Safe to enter password.";
+            fb.className = "text-center font-bold mt-4 h-5 text-sm text-green-600";
+            lab8Complete = true;
+        }
+
+        const quizData = [
+            // 10 Provided Questions
+            { q: "Which of the following is an example of collaboration software?", options: ["Email client", "Calculator", "Video game", "Media player"], a: 0 },
+            { q: "What is the main purpose of an email client?", options: ["To browse the internet", "To access and edit files with multiple people simultaneously", "To send, receive, and organize emails", "To have virtual meetings"], a: 2 },
+            { q: "Conferencing software is mainly used for:", options: ["Sending and receiving quick updates", "Hosting virtual meetings and discussions", "Storing files permanently", "Accessing and navigating the internet"], a: 1 },
+            { q: "Online workspaces allow students to:", options: ["Send emails back and forth", "Download files to their computer for quick access", "Compete in multiplayer games online", "Access and edit shared documents in real time"], a: 3 },
+            { q: "Document sharing software is useful because it:", options: ["Keeps one file updated for everyone", "Stores personal notes offline", "Prevents group editing", "Requires every group member to email their own copy"], a: 0 },
+            { q: "Instant messaging software is BEST used for:", options: ["Sending spam messages to strangers", "Quick communication between team members", "Downloading large video files", "Posting personal vacation photos"], a: 1 },
+            { q: "Web-browsing software is mainly used for:", options: ["Accessing and navigating the internet", "Playing offline games", "Sending and receiving emails", "Sending text messages"], a: 0 },
+            { q: "Remote support software allows:", options: ["Sharing photos with friends in a message", "Two people to watch a movie though screenshare", "Two students play games together online", "A technician to access another computer virtually"], a: 3 },
+            { q: "Without collaboration software, teamwork is often:", options: ["Faster and more efficient", "Easier to manage from different locations", "Slower and harder to organize", "Less secure"], a: 2 },
+            { q: "Why is collaboration software important for students?", options: ["It makes group projects easier by improving communication and file sharing", "It prevents students from needing to meet face-to-face ever again", "It prevents students from ever needing to pick up textbooks", "It is not useful to students, only to professionals and large companies"], a: 0 },
+            
+            // 10 New Questions based on briefings
+            { q: "Which of the following communication methods is considered 'asynchronous', meaning it does not expect an immediate response?", options: ["Instant Messaging", "Video Conferencing", "Email", "Screen Sharing"], a: 2 },
+            { q: "If you need to show your team exactly how a specific piece of software works on your computer during a virtual meeting, what feature should you use?", options: ["Group Chat", "Screen Sharing", "Task Assignment", "Email Attachments"], a: 1 },
+            { q: "What is a major benefit of 'Version Control' in document sharing software?", options: ["It prevents anyone from ever changing the document.", "It automatically deletes old files to save space.", "It tracks history so accidental deletions can be restored.", "It ensures only one person can view the document at a time."], a: 2 },
+            { q: "To protect the integrity of a shared final report, the owner should set the Link Sharing access control for guests to:", options: ["Editor", "Administrator", "Viewer", "Owner"], a: 2 },
+            { q: "What mechanism is used by remote support software to ensure that bad actors cannot intercept the connection while an IT technician fixes your computer?", options: ["Bookmarks", "Data Encryption", "Version Control", "Asynchronous transmission"], a: 1 },
+            { q: "When using a web browser, how can a user create a permanent shortcut to a frequently visited online database?", options: ["By clearing cookies", "By setting an email rule", "By creating a Bookmark (Favorite)", "By installing an ad-blocker extension"], a: 2 },
+            { q: "Which tool combines communication, task management, and file storage into one centralized digital headquarters for a project?", options: ["An Online Workspace", "An Email Client", "A Web Browser", "A Remote Support Session"], a: 0 },
+            { q: "If you need to quickly ask a coworker if they are available for a 5-minute call, which tool is the most efficient choice?", options: ["Drafting a formal email", "Sending an Instant Message (IM)", "Creating a shared document", "Initiating a remote support session"], a: 1 },
+            { q: "When entering a password on a website, what visual indicator in the web browser confirms the connection is secure (HTTPS)?", options: ["A star icon", "A puzzle piece icon", "A padlock icon", "A green checkmark"], a: 2 },
+            { q: "To add new functionality to a web browser, such as a grammar checker or password manager, a user would install:", options: ["An Extension (Add-on)", "A Cookie", "An Email Client", "A Virtual Conference"], a: 0 }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        
+        quizData.forEach((item, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = "bg-slate-50 p-6 rounded-2xl border border-slate-200 transition-all hover:border-blue-200";
+            
+            const qTitle = document.createElement('h3');
+            qTitle.className = "font-bold text-lg text-slate-800 mb-4";
+            qTitle.innerText = `${index + 1}. ${item.q}`;
+            qDiv.appendChild(qTitle);
+            
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = "space-y-3";
+            
+            item.options.forEach((opt, optIndex) => {
+                const label = document.createElement('label');
+                label.className = "flex items-center space-x-3 p-4 rounded-xl bg-white border border-slate-200 hover:bg-blue-50 hover:border-blue-300 cursor-pointer transition shadow-sm";
+                
+                const radio = document.createElement('input');
+                radio.type = "radio";
+                radio.name = `q${index}`;
+                radio.value = optIndex;
+                radio.className = "form-radio h-5 w-5 text-blue-600 border-slate-300 focus:ring-blue-500";
+                
+                const span = document.createElement('span');
+                span.className = "text-slate-700 font-medium";
+                span.innerText = opt;
+                
+                label.appendChild(radio);
+                label.appendChild(span);
+                optionsDiv.appendChild(label);
+            });
+            
+            qDiv.appendChild(optionsDiv);
+            quizContainer.appendChild(qDiv);
+        });
+
+        function gradeQuiz() {
+            let score = 0;
+            let allAnswered = true;
+
+            for(let i = 0; i < quizData.length; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if(selected) {
+                    if(parseInt(selected.value) === quizData[i].a) { score++; }
+                } else {
+                    allAnswered = false;
+                }
+            }
+            
+            if(!allAnswered) {
+                showModal('Incomplete Assessment', 'Please answer all 20 questions before submitting.', 'warning');
+                return;
+            }
+            
+            const percentage = (score / quizData.length) * 100;
+            
+            if(score >= 18) { 
+                const navGame = document.getElementById('nav-game');
+                const navGameMobile = document.getElementById('nav-game-mobile');
+                
+                navGame.classList.remove('text-gray-400', 'cursor-not-allowed');
+                navGame.classList.add('text-white', 'hover:bg-blue-600');
+                navGame.disabled = false;
+                navGame.innerHTML = '<i class="fa-solid fa-gamepad mr-2"></i>Game';
+                
+                navGameMobile.classList.remove('text-gray-400', 'cursor-not-allowed');
+                navGameMobile.classList.add('text-white', 'hover:bg-blue-600');
+                navGameMobile.disabled = false;
+                navGameMobile.innerHTML = '<i class="fa-solid fa-gamepad"></i> Game';
+
+                document.getElementById('nav-cert').classList.remove('hidden');
+                document.getElementById('nav-cert-mobile').classList.remove('hidden');
+                
+                document.getElementById('proceed-game-btn').classList.remove('hidden');
+                document.getElementById('submit-quiz-btn').classList.add('hidden');
+
+                showModal('Mastery Achieved!', `You scored ${score}/20 (${percentage}%). You have unlocked the Certificate of Mastery and the Retro Game!`, 'success');
+            } else {
+                // Reset answers to allow retry
+                quizData.forEach((_, i) => {
+                    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                    if(selected) selected.checked = false;
+                });
+                showModal('Keep Studying', `You scored ${score}/20 (${percentage}%). You need 90% (18/20) to pass. Your answers have been cleared. Please review the briefing tabs and try again.`, 'error');
+                document.getElementById('quiz-section').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        const tileSize = 40; // 10x10 grid on 400x400 canvas
+        const cols = 10;
+        const rows = 10;
+        
+        let gameRunning = false;
+        let currentLevel = 0;
+        let moves = 0;
+        
+        // Entity Types: 0=Empty, 1=Wall, 2=Goal(Server), 3=Box(Data), 4=Player
+        // Goal + Box = 5, Goal + Player = 6
+        const levels = [
+            // Level 1
+            [
+                [1,1,1,1,1,1,1,1,1,1],
+                [1,0,0,0,1,0,0,0,2,1],
+                [1,0,4,3,0,0,1,0,0,1],
+                [1,0,0,0,1,0,0,0,0,1],
+                [1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1]
+            ],
+            // Level 2
+            [
+                [1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,0,0,1,1,1,1,1],
+                [1,0,0,0,0,1,1,1,1,1],
+                [1,0,3,0,0,1,1,1,1,1],
+                [1,1,1,4,3,2,1,1,1,1],
+                [1,1,1,0,1,2,1,1,1,1],
+                [1,1,1,0,0,0,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1]
+            ],
+            // Level 3
+            [
+                [1,1,1,1,1,1,1,1,1,1],
+                [1,0,0,0,1,0,0,0,1,1],
+                [1,0,3,4,3,0,2,0,1,1],
+                [1,0,0,0,1,0,0,0,1,1],
+                [1,1,1,1,1,1,0,1,1,1],
+                [1,1,1,1,1,2,0,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1]
+            ]
+        ];
+
+        let map = [];
+        let playerPos = {x:0, y:0};
+
+        function loadLevel(levelIdx) {
+            if(levelIdx >= levels.length) {
+                // Game beat
+                ctx.fillStyle = '#0f172a'; ctx.fillRect(0,0,400,400);
+                ctx.fillStyle = '#4ade80'; ctx.font = '20px "Press Start 2P"'; ctx.textAlign = 'center';
+                ctx.fillText("SYSTEM OPTIMIZED!", 200, 180);
+                ctx.fillStyle = '#94a3b8'; ctx.font = '10px "Press Start 2P"';
+                ctx.fillText("All Data Packets Routed.", 200, 220);
+                gameRunning = false;
+                return;
+            }
+            
+            // Deep copy map
+            map = levels[levelIdx].map(row => [...row]);
+            moves = 0;
+            document.getElementById('game-level').innerText = levelIdx + 1;
+            document.getElementById('game-moves').innerText = moves;
+            
+            // Find player
+            for(let r=0; r<rows; r++) {
+                for(let c=0; c<cols; c++) {
+                    if(map[r][c] === 4 || map[r][c] === 6) {
+                        playerPos = {x: c, y: r};
+                    }
+                }
+            }
+            drawMap();
+        }
+
+        function drawMap() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            for(let r=0; r<rows; r++) {
+                for(let c=0; c<cols; c++) {
+                    let val = map[r][c];
+                    let x = c * tileSize;
+                    let y = r * tileSize;
+                    
+                    // Draw Floor
+                    ctx.fillStyle = '#1e293b'; 
+                    ctx.fillRect(x, y, tileSize, tileSize);
+                    ctx.strokeStyle = '#334155'; ctx.strokeRect(x,y,tileSize,tileSize);
+
+                    if (val === 1) { // Wall
+                        ctx.fillStyle = '#475569';
+                        ctx.fillRect(x, y, tileSize, tileSize);
+                        // Bevel
+                        ctx.fillStyle = '#64748b'; ctx.fillRect(x, y, tileSize, 4); ctx.fillRect(x, y, 4, tileSize);
+                    } 
+                    if (val === 2 || val === 5 || val === 6) { // Goal (Server Node)
+                        ctx.fillStyle = '#14532d'; // Dark green base
+                        ctx.fillRect(x+4, y+4, tileSize-8, tileSize-8);
+                        ctx.strokeStyle = '#22c55e'; // Bright green ring
+                        ctx.lineWidth = 2;
+                        ctx.beginPath(); ctx.arc(x+tileSize/2, y+tileSize/2, 10, 0, Math.PI*2); ctx.stroke();
+                    }
+                    if (val === 3 || val === 5) { // Box (Data Packet)
+                        ctx.fillStyle = val === 5 ? '#3b82f6' : '#60a5fa'; // Blue (brighter if on goal)
+                        ctx.fillRect(x+6, y+6, tileSize-12, tileSize-12);
+                        // Data lines
+                        ctx.fillStyle = '#bfdbfe';
+                        ctx.fillRect(x+10, y+10, tileSize-20, 2);
+                        ctx.fillRect(x+10, y+16, tileSize-20, 2);
+                        ctx.fillRect(x+10, y+22, tileSize-20, 2);
+                    }
+                    if (val === 4 || val === 6) { // Player
+                        ctx.fillStyle = '#f59e0b'; // Amber
+                        ctx.beginPath();
+                        ctx.arc(x+tileSize/2, y+tileSize/2, 12, 0, Math.PI*2);
+                        ctx.fill();
+                        ctx.fillStyle = '#1e293b'; // Eye slit
+                        ctx.fillRect(x+tileSize/2-8, y+tileSize/2-2, 16, 4);
+                    }
+                }
+            }
+        }
+
+        function move(dx, dy) {
+            if(!gameRunning) return;
+            
+            let nx = playerPos.x + dx;
+            let ny = playerPos.y + dy;
+            
+            // Check bounds
+            if(nx < 0 || nx >= cols || ny < 0 || ny >= rows) return;
+            
+            let targetVal = map[ny][nx];
+            
+            // Wall collision
+            if(targetVal === 1) return;
+            
+            // Box collision
+            if(targetVal === 3 || targetVal === 5) {
+                let pushX = nx + dx;
+                let pushY = ny + dy;
+                
+                // Can push box?
+                if(pushX >= 0 && pushX < cols && pushY >= 0 && pushY < rows) {
+                    let pushTarget = map[pushY][pushX];
+                    if(pushTarget === 0 || pushTarget === 2) {
+                        // Push box
+                        map[pushY][pushX] = pushTarget === 2 ? 5 : 3;
+                        map[ny][nx] = targetVal === 5 ? 2 : 0; // Temp empty/goal before player moves
+                    } else {
+                        return; // Cannot push (wall or another box)
+                    }
+                } else {
+                    return; // Cannot push out of bounds
+                }
+            }
+            
+            // Move player
+            // Clean old pos
+            map[playerPos.y][playerPos.x] = map[playerPos.y][playerPos.x] === 6 ? 2 : 0;
+            // Set new pos
+            map[ny][nx] = map[ny][nx] === 2 ? 6 : 4;
+            
+            playerPos = {x: nx, y: ny};
+            moves++;
+            document.getElementById('game-moves').innerText = moves;
+            drawMap();
+            checkWin();
+        }
+
+        function checkWin() {
+            let win = true;
+            for(let r=0; r<rows; r++) {
+                for(let c=0; c<cols; c++) {
+                    if(map[r][c] === 2 || map[r][c] === 6) {
+                        win = false; // Found an empty goal or goal with player
+                    }
+                }
+            }
+            if(win) {
+                gameRunning = false;
+                document.getElementById('win-overlay').classList.remove('hidden');
+            }
+        }
+
+        function resetLevel() {
+            if(document.getElementById('win-overlay').classList.contains('hidden')) {
+                loadLevel(currentLevel);
+            }
+        }
+
+        function initGame() {
+            document.getElementById('start-game-btn').addEventListener('click', () => {
+                document.getElementById('game-overlay').classList.add('hidden');
+                gameRunning = true;
+                currentLevel = 0;
+                loadLevel(currentLevel);
+            });
+            
+            document.getElementById('next-level-btn').addEventListener('click', () => {
+                document.getElementById('win-overlay').classList.add('hidden');
+                currentLevel++;
+                gameRunning = true;
+                loadLevel(currentLevel);
+            });
+            
+            // Draw title screen background
+            ctx.fillStyle = '#0f172a'; ctx.fillRect(0,0,400,400);
+            
+            // Keyboard Controls
+            window.addEventListener('keydown', (e) => {
+                if(!gameRunning) return;
+                switch(e.key) {
+                    case 'ArrowUp': case 'w': move(0, -1); e.preventDefault(); break;
+                    case 'ArrowDown': case 's': move(0, 1); e.preventDefault(); break;
+                    case 'ArrowLeft': case 'a': move(-1, 0); e.preventDefault(); break;
+                    case 'ArrowRight': case 'd': move(1, 0); e.preventDefault(); break;
+                    case 'r': resetLevel(); break;
+                }
+            });
+
+            // Touch / D-Pad Controls
+            document.getElementById('btn-up').addEventListener('click', () => move(0, -1));
+            document.getElementById('btn-down').addEventListener('click', () => move(0, 1));
+            document.getElementById('btn-left').addEventListener('click', () => move(-1, 0));
+            document.getElementById('btn-right').addEventListener('click', () => move(1, 0));
+        }
+
+        function updateCertName() {
+            let name = document.getElementById('student-name-input').value.trim();
+            if(name) {
+                document.getElementById('cert-student-name').innerText = name;
+            } else {
+                showModal('Attention', 'Please enter your name to update the certificate.', 'warning');
+            }
+        }
+
+        // Set date
+        const today = new Date();
+        document.getElementById('cert-date').innerText = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        function downloadCert() {
+            const certEl = document.getElementById('certificate');
+            const name = document.getElementById('cert-student-name').innerText;
+            let filename = 'Mastery_Certificate.png';
+            if (name && name !== 'Student Name') {
+                filename = `${name.replace(/\s+/g, '_')}_Collaboration_Certificate.png`;
+            }
+
+            // Temporarily remove transform for accurate rendering
+            const originalTransform = certEl.style.transform;
+            certEl.style.transform = 'none';
+
+            const btn = document.getElementById('download-btn');
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Rendering...';
+            btn.disabled = true;
+
+            html2canvas(certEl, { 
+                scale: 2, 
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            }).catch(err => {
+                console.error(err);
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                showModal('Export Error', 'Failed to generate image. Ensure you are using a modern browser.', 'error');
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 07 Section 6.1.7 Mastery - AAA Accounting</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Qwitcher+Grypen:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; 
+            color: #0f172a;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease-in-out; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Interactive Elements CSS */
+        .io-dropzone { min-height: 70px; min-width: 130px; border: 2px dashed #94a3b8; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: #f1f5f9; transition: all 0.2s; padding: 0.5rem;}
+        .io-dropzone.drag-over { background: #e2e8f0; border-color: #0284c7; box-shadow: inset 0 0 10px rgba(2, 132, 199, 0.2);}
+        
+        .io-item { cursor: grab; transition: transform 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .io-item:active { cursor: grabbing; transform: scale(0.95); }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #e2e8f0; }
+        ::-webkit-scrollbar-thumb { background: #0284c7; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #0369a1; }
+
+        /* Retro Game Canvas */
+        #game-canvas {
+            background-color: #020617;
+            border: 4px solid #334155;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(14, 165, 233, 0.3);
+            max-width: 100%;
+            height: auto;
+            touch-action: none;
+            image-rendering: pixelated;
+        }
+        
+        .mobile-btn {
+            user-select: none;
+            touch-action: manipulation;
+        }
+
+        /* --- CERTIFICATE STYLES --- */
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .font-body { font-family: 'Lora', serif; }
+        .font-script { font-family: 'Qwitcher Grypen', cursive; }
+        
+        .cert-preview-container {
+            width: 100%;
+            overflow: auto;
+            display: flex;
+            justify-content: center;
+            background: #e2e8f0;
+            padding: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        #certificate {
+            width: 1056px !important;
+            height: 816px !important;
+            flex-shrink: 0;
+            background-color: #ffffff;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1056" height="816"><polygon points="0,0 250,0 0,650" fill="%23cbd5e1"/><polygon points="0,0 350,0 0,900" fill="%2394a3b8" opacity="0.8"/><polygon points="0,0 120,0 0,300" fill="%23cbd5e1"/><polygon points="0,450 650,816 0,816" fill="%23cbd5e1"/><polygon points="0,550 450,816 0,816" fill="%2394a3b8" opacity="0.8"/><polygon points="800,0 1056,0 1056,256" fill="%23f8fafc"/><polygon points="1056,500 1056,816 750,816" fill="%23f8fafc"/></svg>');
+            background-size: cover;
+            border: 4px solid #cbd5e1;
+        }
+
+        .silver-seal {
+            position: absolute;
+            left: 110px;
+            top: 350px;
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #94a3b8, #f1f5f9, #64748b, #e2e8f0, #475569, #f8fafc);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3), inset 0 0 15px rgba(255,255,255,0.7), inset 0 0 25px rgba(71,85,105,0.9);
+            z-index: 10;
+        }
+        .silver-seal::before {
+            content: '';
+            position: absolute;
+            top: -4px; bottom: -4px; left: -4px; right: -4px;
+            border-radius: 50%;
+            border: 6px dashed #94a3b8;
+        }
+        .silver-seal-inner-1 {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 2px solid rgba(71, 85, 105, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #cbd5e1, #94a3b8);
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.2), 0 2px 5px rgba(255,255,255,0.7);
+            z-index: 1;
+        }
+        .silver-seal-inner-2 {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: radial-gradient(circle, #f1f5f9, #94a3b8);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            padding: 10px;
+        }
+        .embossed-text {
+            color: #334155;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2);
+            font-family: 'Playfair Display', serif;
+            font-weight: 800;
+            line-height: 1.1;
+            text-transform: uppercase;
+        }
+        .embossed-text-large { font-size: 14px; letter-spacing: 1px; }
+        .embossed-text-small { font-size: 11px; letter-spacing: 2px; margin: 2px 0; }
+        .embossed-star { font-size: 12px; color: #334155; text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2); margin: 2px 0; }
+
+        @media (max-width: 1100px) {
+            #certificate { transform: scale(0.7); transform-origin: top left; margin-bottom: -240px; margin-right: -310px; }
+        }
+        @media (max-width: 768px) {
+            #certificate { transform: scale(0.4); transform-origin: top left; margin-bottom: -490px; margin-right: -630px; }
+        }
+
+        /* Lab Specifics */
+        .log-row { transition: background-color 0.2s; cursor: pointer; }
+        .log-row:hover { background-color: #fee2e2; }
+        
+        .geofence-container {
+            position: relative;
+            width: 100%;
+            height: 250px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect width="100" height="100" fill="%23e2e8f0"/><path d="M0,50 L100,50 M50,0 L50,100" stroke="%23cbd5e1" stroke-width="2"/></svg>');
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: crosshair;
+        }
+        .geofence-circle {
+            position: absolute;
+            border: 2px dashed #0284c7;
+            background-color: rgba(2, 132, 199, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen flex flex-col">
+
+    <nav class="bg-slate-800 text-white shadow-lg sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-file-invoice text-2xl text-cyan-400"></i>
+                    <span class="font-bold text-xl tracking-wider hidden sm:inline-block">Tech+ Unit 07 Section 6.1.7</span>
+                    <span class="font-bold text-xl tracking-wider sm:hidden">6.1.7</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-2">
+                        <button onclick="switchTab('briefing')" class="nav-btn bg-slate-900 px-3 py-2 rounded-md text-sm font-medium hover:bg-slate-700 transition border border-transparent" id="nav-briefing"><i class="fa-solid fa-book-open mr-1"></i>Briefing</button>
+                        <button onclick="switchTab('activity')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-slate-700 transition border border-transparent" id="nav-activity"><i class="fa-solid fa-flask mr-1"></i>Lab Activity</button>
+                        <button onclick="switchTab('quiz')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-slate-700 transition border border-transparent" id="nav-quiz"><i class="fa-solid fa-clipboard-check mr-1"></i>Quiz</button>
+                        <button onclick="switchTab('game')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-slate-500 cursor-not-allowed transition border border-transparent" id="nav-game" disabled><i class="fa-solid fa-lock mr-1"></i>Game</button>
+                        <button onclick="switchTab('cert')" class="nav-btn hidden px-3 py-2 rounded-md text-sm font-medium text-amber-300 hover:bg-slate-700 transition border border-transparent" id="nav-cert"><i class="fa-solid fa-award mr-1"></i>Certificate</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Nav -->
+        <div class="md:hidden flex flex-wrap justify-center gap-2 py-2 px-2 bg-slate-700">
+            <button onclick="switchTab('briefing')" class="nav-btn-mobile px-3 py-1 text-sm rounded bg-slate-900 border border-slate-600" id="nav-briefing-mobile">Briefing</button>
+            <button onclick="switchTab('activity')" class="nav-btn-mobile px-3 py-1 text-sm rounded border border-transparent hover:border-slate-500" id="nav-activity-mobile">Lab</button>
+            <button onclick="switchTab('quiz')" class="nav-btn-mobile px-3 py-1 text-sm rounded border border-transparent hover:border-slate-500" id="nav-quiz-mobile">Quiz</button>
+            <button onclick="switchTab('game')" class="nav-btn-mobile px-3 py-1 text-sm rounded text-slate-400 cursor-not-allowed border border-transparent" id="nav-game-mobile" disabled><i class="fa-solid fa-lock"></i></button>
+            <button onclick="switchTab('cert')" id="nav-cert-mobile" class="hidden px-2 py-1 text-sm text-amber-300 rounded border border-transparent hover:border-slate-500"><i class="fa-solid fa-award"></i></button>
+        </div>
+    </nav>
+
+    <main class="flex-grow w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <div id="briefing-section" class="tab-content active no-print">
+            <div class="text-center mb-10">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4">AAA Accounting & Auditing</h1>
+                <p class="text-lg text-slate-600 max-w-3xl mx-auto">Discover how computers track user actions to ensure accountability, prevent denial of actions (non-repudiation), and secure systems using logs, location data, and browser history.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- Tile 1 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-cyan-500 overflow-hidden flex flex-col transition hover:shadow-lg">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-cyan-700"><i class="fa-solid fa-scale-balanced mr-2"></i>AAA Triad & Accounting</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>Accountability:</strong> Ensuring users are held responsible for their actions on a system.</li>
+                            <li><strong>Non-Repudiation:</strong> Guaranteeing that users cannot deny performing an action.</li>
+                            <li><strong>Auditing:</strong> The process of reviewing records to find inconsistencies or security breaches.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('concept1-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('concept1-usecase')" class="flex-1 bg-cyan-100 hover:bg-cyan-200 text-cyan-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-amber-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 2 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-emerald-500 overflow-hidden flex flex-col transition hover:shadow-lg">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-emerald-700"><i class="fa-solid fa-list-check mr-2"></i>System & Event Logs</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>Login/Auth Logs:</strong> Records of when users successfully or unsuccessfully attempt to sign in.</li>
+                            <li><strong>Access Logs:</strong> Detailed records of exactly what files, folders, or resources a user opened.</li>
+                            <li><strong>Network Logs:</strong> Documentation of traffic moving across the network infrastructure.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('concept2-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('concept2-usecase')" class="flex-1 bg-emerald-100 hover:bg-emerald-200 text-emerald-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-amber-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 3 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-indigo-500 overflow-hidden flex flex-col transition hover:shadow-lg">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-indigo-700"><i class="fa-solid fa-location-dot mr-2"></i>Location Tracking</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>IP Location:</strong> Identifying the geographical source of network traffic based on addressing.</li>
+                            <li><strong>Geofencing:</strong> Establishing virtual boundaries around real-world locations.</li>
+                            <li><strong>Impossible Travel:</strong> Detecting logins from physically distant locations in an impossibly short time.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('concept3-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('concept3-usecase')" class="flex-1 bg-indigo-100 hover:bg-indigo-200 text-indigo-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-amber-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 4 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-rose-500 overflow-hidden flex flex-col transition hover:shadow-lg">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-rose-700"><i class="fa-solid fa-clock-rotate-left mr-2"></i>Web Browser History</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>User Intent:</strong> Determining why a user took an action by reviewing their visited pages.</li>
+                            <li><strong>Session Management:</strong> Handling cookies and tracking tokens for prolonged access.</li>
+                            <li><strong>Privacy Controls:</strong> Managing how much data the browser is allowed to record or share.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('concept4-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('concept4-usecase')" class="flex-1 bg-rose-100 hover:bg-rose-200 text-rose-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-amber-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 flex justify-center">
+                <button onclick="switchTab('activity')" class="bg-slate-800 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-slate-700 shadow-lg transition transform hover:scale-105">Proceed to Lab Activity <i class="fa-solid fa-arrow-right ml-2"></i></button>
+            </div>
+        </div>
+
+        <div id="activity-section" class="tab-content no-print">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-extrabold text-slate-900 mb-2">Interactive Lab Activity</h1>
+                <p class="text-slate-600">Complete these 8 mini-labs representing the 4 core concepts of AAA Accounting to prove your mastery.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Concept 1 Labs (Accounting) -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-cyan-200 col-span-1">
+                    <h2 class="text-xl font-bold mb-2 text-cyan-700"><i class="fa-solid fa-scale-balanced mr-2"></i>Lab 1: AAA Triad Sorter</h2>
+                    <p class="text-sm text-slate-600 mb-4">Drag the definitions to the correct AAA concept to understand where Accounting fits.</p>
+                    
+                    <div class="flex flex-col gap-2 mb-4" id="aaa-items">
+                        <div class="io-item px-3 py-2 bg-blue-50 border border-blue-200 rounded text-sm" draggable="true" data-target="auth1">Verifying a user's identity (Passwords)</div>
+                        <div class="io-item px-3 py-2 bg-purple-50 border border-purple-200 rounded text-sm" draggable="true" data-target="auth2">Checking file permissions (Read/Write)</div>
+                        <div class="io-item px-3 py-2 bg-cyan-50 border border-cyan-200 rounded text-sm" draggable="true" data-target="acc">Recording actions for a digital trail</div>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-2">
+                        <div class="aaa-dropzone border-2 border-dashed border-slate-300 bg-slate-50 rounded p-2 text-center min-h-[80px]" data-accept="auth1"><span class="text-xs font-bold text-slate-500">Authentication</span></div>
+                        <div class="aaa-dropzone border-2 border-dashed border-slate-300 bg-slate-50 rounded p-2 text-center min-h-[80px]" data-accept="auth2"><span class="text-xs font-bold text-slate-500">Authorization</span></div>
+                        <div class="aaa-dropzone border-2 border-dashed border-slate-300 bg-slate-50 rounded p-2 text-center min-h-[80px]" data-accept="acc"><span class="text-xs font-bold text-slate-500">Accounting</span></div>
+                    </div>
+                    <div id="lab1-feedback" class="text-center font-bold mt-2 h-4 text-sm text-green-600"></div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-cyan-200 col-span-1">
+                    <h2 class="text-xl font-bold mb-2 text-cyan-700"><i class="fa-solid fa-gavel mr-2"></i>Lab 2: Security Benefits</h2>
+                    <p class="text-sm text-slate-600 mb-4">Read the scenario and click the core benefit of accounting it demonstrates.</p>
+                    
+                    <div class="space-y-4">
+                        <div class="p-3 bg-slate-50 border rounded text-sm">
+                            <p class="mb-2"><strong>Scenario:</strong> A user claims they didn't delete a file, but the logs prove their account issued the delete command from their exact office IP address.</p>
+                            <div class="flex gap-2">
+                                <button class="flex-1 bg-white border border-slate-300 rounded py-1 hover:bg-slate-100" onclick="checkLab2(this, false)">Troubleshooting</button>
+                                <button class="flex-1 bg-white border border-slate-300 rounded py-1 hover:bg-slate-100" onclick="checkLab2(this, true)">Non-Repudiation</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="lab2-feedback" class="text-center font-bold mt-4 h-4 text-sm text-green-600"></div>
+                </div>
+
+                <!-- Concept 2 Labs (Logs) -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-emerald-200 col-span-1 lg:col-span-2">
+                    <h2 class="text-xl font-bold mb-2 text-emerald-700"><i class="fa-solid fa-magnifying-glass-chart mr-2"></i>Lab 3: Tracking Trouble Log Inspector</h2>
+                    <p class="text-sm text-slate-600 mb-4">A teacher reported their "Math101.docx" file missing. Review the access logs below and click the suspicious row representing the unauthorized deletion.</p>
+                    
+                    <div class="overflow-x-auto border rounded border-slate-300">
+                        <table class="w-full text-sm text-left">
+                            <thead class="text-xs text-slate-700 uppercase bg-slate-100">
+                                <tr><th class="px-4 py-2">Time</th><th class="px-4 py-2">Username</th><th class="px-4 py-2">Action</th><th class="px-4 py-2">IP Address</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b log-row" onclick="checkLab3(false)"><td class="px-4 py-2">08:12 AM</td><td class="px-4 py-2">teacher01</td><td class="px-4 py-2">Open "Math101.docx"</td><td class="px-4 py-2">192.168.1.10</td></tr>
+                                <tr class="border-b log-row" onclick="checkLab3(false)"><td class="px-4 py-2">08:15 AM</td><td class="px-4 py-2">guest01</td><td class="px-4 py-2 text-red-500">Login Failed</td><td class="px-4 py-2">192.168.1.50</td></tr>
+                                <tr class="border-b log-row bg-red-50 font-semibold" onclick="checkLab3(true)"><td class="px-4 py-2">08:25 AM</td><td class="px-4 py-2">guest02</td><td class="px-4 py-2 text-red-600">Delete "Math101.docx"</td><td class="px-4 py-2">203.0.113.45</td></tr>
+                                <tr class="log-row" onclick="checkLab3(false)"><td class="px-4 py-2">08:30 AM</td><td class="px-4 py-2">teacher01</td><td class="px-4 py-2">Logout</td><td class="px-4 py-2">192.168.1.10</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="lab3-feedback" class="text-center font-bold mt-4 h-4 text-sm text-green-600"></div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-emerald-200 col-span-1 lg:col-span-2">
+                    <h2 class="text-xl font-bold mb-2 text-emerald-700"><i class="fa-solid fa-server mr-2"></i>Lab 4: Log Category Classifier</h2>
+                    <p class="text-sm text-slate-600 mb-4">Click an event to highlight it, then click the correct log category it belongs to.</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-2" id="log-events">
+                            <button class="w-full text-left px-3 py-2 border rounded hover:bg-slate-50 transition text-sm" onclick="selectLogEvent(this, 'auth')">1. User entered incorrect password.</button>
+                            <button class="w-full text-left px-3 py-2 border rounded hover:bg-slate-50 transition text-sm" onclick="selectLogEvent(this, 'access')">2. User opened shared HR folder.</button>
+                            <button class="w-full text-left px-3 py-2 border rounded hover:bg-slate-50 transition text-sm" onclick="selectLogEvent(this, 'system')">3. Server crashed due to overheating.</button>
+                            <button class="w-full text-left px-3 py-2 border rounded hover:bg-slate-50 transition text-sm" onclick="selectLogEvent(this, 'network')">4. Massive data upload blocked by firewall.</button>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button class="bg-emerald-50 border border-emerald-300 rounded font-bold text-emerald-800 hover:bg-emerald-100 transition" onclick="categorizeLog('auth')">Auth Log</button>
+                            <button class="bg-emerald-50 border border-emerald-300 rounded font-bold text-emerald-800 hover:bg-emerald-100 transition" onclick="categorizeLog('access')">Access Log</button>
+                            <button class="bg-emerald-50 border border-emerald-300 rounded font-bold text-emerald-800 hover:bg-emerald-100 transition" onclick="categorizeLog('system')">System Log</button>
+                            <button class="bg-emerald-50 border border-emerald-300 rounded font-bold text-emerald-800 hover:bg-emerald-100 transition" onclick="categorizeLog('network')">Network Log</button>
+                        </div>
+                    </div>
+                    <div id="lab4-feedback" class="text-center font-bold mt-4 h-4 text-sm text-green-600"></div>
+                </div>
+
+                <!-- Concept 3 Labs (Location) -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-indigo-200 col-span-1">
+                    <h2 class="text-xl font-bold mb-2 text-indigo-700"><i class="fa-solid fa-map-location-dot mr-2"></i>Lab 5: Geofence Builder</h2>
+                    <p class="text-sm text-slate-600 mb-2">Click and drag from the center building icon to draw a virtual boundary (radius > 50px) to allow local logins.</p>
+                    
+                    <div id="geofence-area" class="geofence-container flex items-center justify-center">
+                        <i class="fa-solid fa-school text-4xl text-slate-700 relative z-10 pointer-events-none"></i>
+                        <div id="geo-circle" class="geofence-circle" style="width: 0px; height: 0px;"></div>
+                    </div>
+                    <div id="lab5-feedback" class="text-center font-bold mt-2 h-4 text-sm text-green-600"></div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-indigo-200 col-span-1">
+                    <h2 class="text-xl font-bold mb-2 text-indigo-700"><i class="fa-solid fa-plane-slash mr-2"></i>Lab 6: Impossible Travel</h2>
+                    <p class="text-sm text-slate-600 mb-4">Review the location data below. Can a user physically travel this distance? Make a security decision.</p>
+                    
+                    <div class="bg-slate-50 border p-3 rounded mb-4 text-sm">
+                        <p><strong>08:10 AM:</strong> teacher01 Login - Location: <em>School Campus, Texas</em></p>
+                        <p><strong>08:18 AM:</strong> teacher01 Login - Location: <em>New York City, NY</em></p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button class="flex-1 bg-green-600 text-white rounded py-2 hover:bg-green-700 transition font-bold" onclick="checkLab6(false)">Mark as Safe</button>
+                        <button class="flex-1 bg-red-600 text-white rounded py-2 hover:bg-red-700 transition font-bold" onclick="checkLab6(true)">Flag as Suspicious</button>
+                    </div>
+                    <div id="lab6-feedback" class="text-center font-bold mt-4 h-4 text-sm text-green-600"></div>
+                </div>
+
+                <!-- Concept 4 Labs (Browser) -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-rose-200 col-span-1">
+                    <h2 class="text-xl font-bold mb-2 text-rose-700"><i class="fa-solid fa-history mr-2"></i>Lab 7: Browser Intent Audit</h2>
+                    <p class="text-sm text-slate-600 mb-4">Review guest02's browser history to determine their intent before deleting the file. Click the malicious site.</p>
+                    
+                    <ul class="border rounded divide-y divide-slate-200 text-sm">
+                        <li class="p-3 hover:bg-slate-50 cursor-pointer" onclick="checkLab7(false)"><i class="fa-solid fa-globe text-blue-500 mr-2"></i>khanacademy.org/math</li>
+                        <li class="p-3 hover:bg-slate-50 cursor-pointer" onclick="checkLab7(false)"><i class="fa-solid fa-globe text-blue-500 mr-2"></i>youtube.com/educational-video</li>
+                        <li class="p-3 hover:bg-slate-50 cursor-pointer bg-red-50 font-bold" onclick="checkLab7(true)"><i class="fa-solid fa-skull-crossbones text-red-500 mr-2"></i>forum-for-hackers.com/exploits</li>
+                    </ul>
+                    <div id="lab7-feedback" class="text-center font-bold mt-4 h-4 text-sm text-green-600"></div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-rose-200 col-span-1">
+                    <h2 class="text-xl font-bold mb-2 text-rose-700"><i class="fa-solid fa-cookie-bite mr-2"></i>Lab 8: Privacy & Permissions</h2>
+                    <p class="text-sm text-slate-600 mb-4">Browsers track extensive data. Toggle the settings to <strong>disable</strong> tracking and 3rd-party cookies for privacy, then Apply.</p>
+                    
+                    <div class="space-y-3 mb-4">
+                        <label class="flex items-center justify-between p-2 bg-slate-50 rounded border">
+                            <span class="text-sm font-bold">Essential Session Cookies</span>
+                            <input type="checkbox" id="cookie-essential" class="form-checkbox h-5 w-5 text-rose-600" checked disabled>
+                        </label>
+                        <label class="flex items-center justify-between p-2 bg-slate-50 rounded border cursor-pointer hover:bg-slate-100 transition">
+                            <span class="text-sm">Cross-Site Tracking Cookies</span>
+                            <input type="checkbox" id="cookie-track" class="form-checkbox h-5 w-5 text-rose-600" checked>
+                        </label>
+                        <label class="flex items-center justify-between p-2 bg-slate-50 rounded border cursor-pointer hover:bg-slate-100 transition">
+                            <span class="text-sm">3rd-Party Analytics</span>
+                            <input type="checkbox" id="cookie-3rd" class="form-checkbox h-5 w-5 text-rose-600" checked>
+                        </label>
+                    </div>
+                    <button class="w-full bg-slate-800 text-white rounded py-2 hover:bg-slate-700 font-bold" onclick="checkLab8()">Apply Settings</button>
+                    <div id="lab8-feedback" class="text-center font-bold mt-2 h-4 text-sm text-green-600"></div>
+                </div>
+            </div>
+
+            <div class="mt-8 text-center">
+                <button onclick="switchTab('quiz')" class="bg-slate-800 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-slate-700 shadow-lg transition transform hover:scale-105">Take the Mastery Quiz <i class="fa-solid fa-clipboard-check ml-2"></i></button>
+            </div>
+        </div>
+
+        <div id="quiz-section" class="tab-content no-print">
+            <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-md border border-slate-200 max-w-4xl mx-auto">
+                <div class="text-center mb-8 border-b pb-4">
+                    <h1 class="text-3xl font-extrabold text-slate-900 mb-2">Unit 07 Section 6.1.7 Mastery Quiz</h1>
+                    <p class="text-slate-600">Score 90% or higher (18/20) to earn your Certificate and unlock the Retro Game!</p>
+                </div>
+
+                <div id="quiz-container" class="space-y-8">
+                    <!-- Dynamic Questions -->
+                </div>
+
+                <div class="mt-10 text-center border-t pt-6 flex flex-col md:flex-row justify-center items-center gap-4">
+                    <button id="submit-quiz-btn" onclick="gradeQuiz()" class="bg-sky-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-sky-700 shadow-lg transition w-full md:w-auto">Submit Quiz</button>
+                    <button id="proceed-game-btn" onclick="switchTab('game')" class="hidden bg-emerald-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-emerald-700 shadow-lg transition w-full md:w-auto">Play Retro Game <i class="fa-solid fa-gamepad ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <div id="game-section" class="tab-content no-print">
+            <div class="bg-slate-900 p-6 sm:p-8 rounded-2xl shadow-xl max-w-4xl mx-auto border-4 border-slate-700 flex flex-col items-center">
+                <div class="text-center mb-4 w-full">
+                    <h1 class="text-3xl font-extrabold text-cyan-400 mb-2 tracking-widest uppercase" style="font-family: monospace;">Data Depth Charge</h1>
+                    <p class="text-slate-300 text-sm">You are the Network Auditor! Move left/right to track the malicious packets (submarines) swimming below. Drop log trackers (Spacebar or Fire button) to audit them before they escape. Don't let too many escape!</p>
+                </div>
+                
+                <div class="flex justify-between items-center w-full max-w-[600px] mb-2 px-4 text-white font-mono text-xl">
+                    <div>Logs Audited: <span id="game-score" class="text-green-400 font-bold">0</span></div>
+                    <div>System Health: <span id="game-lives" class="text-red-400 font-bold">5</span></div>
+                </div>
+
+                <div class="relative flex justify-center w-full">
+                    <canvas id="game-canvas" width="600" height="400" class="w-full max-w-[600px]"></canvas>
+                    <div id="game-overlay" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-70 rounded-lg max-w-[600px] mx-auto z-10">
+                        <button id="start-game-btn" class="bg-cyan-600 hover:bg-cyan-500 text-white font-bold font-mono py-3 px-6 rounded-lg text-xl border-4 border-cyan-800 uppercase transform transition hover:scale-105">Initialize Audit</button>
+                    </div>
+                </div>
+
+                <!-- Mobile Controls -->
+                <div class="flex justify-center gap-8 mt-6 md:hidden w-full max-w-[600px]">
+                    <button class="mobile-btn bg-slate-700 text-white p-4 rounded-full w-16 h-16 shadow-lg border-2 border-slate-500 active:bg-slate-600" id="btn-left"><i class="fa-solid fa-arrow-left text-2xl"></i></button>
+                    <button class="mobile-btn bg-red-600 text-white p-4 rounded-full w-20 h-20 shadow-lg border-2 border-red-800 active:bg-red-500 flex items-center justify-center font-bold font-mono" id="btn-fire">FIRE</button>
+                    <button class="mobile-btn bg-slate-700 text-white p-4 rounded-full w-16 h-16 shadow-lg border-2 border-slate-500 active:bg-slate-600" id="btn-right"><i class="fa-solid fa-arrow-right text-2xl"></i></button>
+                </div>
+
+                <div class="mt-8 text-center w-full border-t border-slate-700 pt-6">
+                    <button onclick="switchTab('cert')" class="bg-amber-500 text-slate-900 px-8 py-3 rounded-lg font-bold text-lg hover:bg-amber-400 shadow-lg transition w-full md:w-auto">View Certificate <i class="fa-solid fa-award ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <div id="cert-section" class="tab-content">
+            <div class="max-w-5xl mx-auto">
+                <div class="bg-white p-6 rounded shadow mb-6 no-print text-center border border-slate-200">
+                    <h2 class="text-2xl font-bold text-sky-600 mb-2">🎉 Congratulations! 🎉</h2>
+                    <p class="text-slate-700 mb-4">You have mastered AAA Accounting, Logging, and Tracking.</p>
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+                        <input type="text" id="student-name-input" value="Student" placeholder="Enter your first name" class="border-2 border-slate-300 rounded px-4 py-2 w-full md:w-64 focus:border-sky-500 focus:outline-none">
+                        <button onclick="updateCertName()" class="bg-sky-600 text-white px-4 py-2 rounded hover:bg-sky-700 transition">Update Name</button>
+                        <button id="download-btn" onclick="downloadCert()" class="bg-slate-800 text-white px-4 py-2 rounded hover:bg-slate-900 transition flex items-center justify-center">
+                            <i class="fa-solid fa-download mr-2"></i>Download PNG
+                        </button>
+                    </div>
+                </div>
+
+                <div class="cert-preview-container print:p-0 print:bg-white">
+                    <div id="certificate">
+                        <div class="silver-seal">
+                            <div class="silver-seal-inner-1">
+                                <div class="silver-seal-inner-2">
+                                     <span class="embossed-text embossed-text-large">Certificate</span>
+                                     <i class="fa-solid fa-shield-halved embossed-star"></i>
+                                     <span class="embossed-text embossed-text-small">Of</span>
+                                     <i class="fa-solid fa-shield-halved embossed-star"></i>
+                                     <span class="embossed-text embossed-text-large">Excellence</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="relative z-20 w-full h-full flex flex-col pt-[48px] pl-[380px] pr-[48px]">
+                            <h1 class="text-slate-800 text-[4.5rem] leading-none font-serif font-bold tracking-wide uppercase mb-2">CERTIFICATE</h1>
+                            <h2 class="text-slate-600 text-3xl font-serif tracking-widest uppercase mb-10">Of Achievement</h2>
+                            
+                            <p class="text-[1.4rem] font-body text-slate-700 mb-4">This is to certify that</p>
+                            
+                            <div class="relative mb-8 w-full">
+                                <h3 id="cert-student-name" class="text-[4rem] text-sky-700 font-serif italic leading-none pb-2 relative z-10 text-center w-full block">Student</h3>
+                                <div class="w-full border-b-[2px] border-sky-700 absolute bottom-[4px] left-0 z-0"></div>
+                                <div class="w-full border-b-[2px] border-dotted border-slate-300 absolute bottom-[0px] left-0 z-0"></div>
+                            </div>
+                            
+                            <p class="text-[1.3rem] font-body text-slate-700 leading-relaxed w-full pr-4">
+                                Has successfully completed the assessment for 
+                                <strong class="text-[1.8rem] text-slate-800 block mt-4 mb-2 font-serif">Cyber.org Tech+ Unit 07 Section 6.1.7</strong>
+                                <strong class="text-[1.5rem] text-black block mb-4 font-serif italic">AAA Accounting</strong>
+                                <span class="text-[1.1rem] text-slate-600 leading-snug block">Demonstrating proficiency in explaining auditing principles, analyzing digital logs for suspicious activity, understanding geofencing and location tracking, and utilizing browser history to establish user intent and non-repudiation.</span>
+                            </p>
+                            
+                            <div class="flex justify-end gap-16 items-end mt-auto mb-[60px] w-full pr-8">
+                                <div class="w-64">
+                                    <div class="border-b border-slate-600 mb-2 h-20 flex items-end justify-center relative">
+                                        <span class="font-script text-[5rem] text-sky-800 absolute bottom-[-10px] transform -rotate-3 opacity-90">Dr. M. S</span>
+                                    </div>
+                                    <p class="font-serif text-xl text-slate-800 text-center">Administration</p>
+                                </div>
+                                
+                                <div class="w-64">
+                                    <div class="border-b border-slate-600 mb-2 text-center h-20 flex items-end justify-center">
+                                        <p id="cert-date" class="font-body text-2xl text-slate-800 pb-1">Date Here</p>
+                                    </div>
+                                    <p class="font-serif text-xl text-slate-800 text-center">Date</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Custom General Modal -->
+    <div id="custom-modal" class="fixed inset-0 bg-black bg-opacity-50 z-[100] hidden flex justify-center items-center backdrop-blur-sm p-4">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full transform transition-all">
+            <div class="text-center">
+                <div id="modal-icon" class="text-5xl mb-4"></div>
+                <h3 id="modal-title" class="text-2xl font-bold mb-2 text-slate-900"></h3>
+                <p id="modal-msg" class="text-slate-600 mb-6"></p>
+                <button onclick="closeModal()" class="bg-sky-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-sky-700 transition w-full">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Briefing Content Modal -->
+    <div id="briefing-modal" class="fixed inset-0 bg-black bg-opacity-70 z-[120] hidden flex justify-center items-center backdrop-blur-sm p-4 sm:p-6">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col overflow-hidden border-4 border-slate-700">
+            <div class="p-6 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+                <div class="flex items-center gap-4">
+                    <div id="briefing-modal-icon" class="text-4xl"></div>
+                    <h3 id="briefing-modal-title" class="text-2xl md:text-3xl font-bold text-slate-900"></h3>
+                </div>
+                <button onclick="closeBriefing()" class="text-slate-400 hover:text-red-600 transition text-4xl leading-none">&times;</button>
+            </div>
+            <div id="briefing-modal-content" class="p-6 md:p-10 overflow-y-auto flex-grow text-slate-700 text-lg leading-relaxed bg-white">
+                <!-- Content dynamically injected here -->
+            </div>
+            <div class="p-6 border-t border-slate-200 bg-slate-50 flex justify-end">
+                <button onclick="closeBriefing()" class="bg-slate-800 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-slate-700 transition shadow-md">Acknowledge & Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Extensive Briefing Data (7 Paragraphs + Use Cases + Images)
+        const briefingData = {
+            'concept1-details': {
+                title: 'AAA Triad & Accounting',
+                icon: '<i class="fa-solid fa-scale-balanced text-cyan-600"></i>',
+                html: `
+                    <p class="mb-5">In the realm of cybersecurity, the framework that governs access to systems and data is known as the <strong>AAA Triad</strong>. This stands for Authentication, Authorization, and Accounting. While authentication proves who a user is (like showing an ID card) and authorization determines what they are allowed to do (like which doors the ID card unlocks), Accounting is the crucial third pillar that records every single action they take while inside the system.</p>
+                    <p class="mb-5"><strong>Accounting</strong>, which is frequently referred to as auditing in enterprise environments, is essentially the digital equivalent of security cameras and receipt books. It involves the systemic tracking and recording of user activity. It operates constantly in the background, answering the fundamental forensic questions: Who performed a specific action? What exactly did they do? When did the action occur? And from where did it originate?</p>
+                    <p class="mb-5">The most critical benefit of accounting is <strong>Accountability</strong>. In a shared network, such as a school or corporate office, multiple people have access to sensitive resources. Without accounting, if a critical file is deleted or a database is corrupted, it is impossible to determine who is at fault. Accounting ensures that every action is tied directly to a specific user account, holding them responsible for their digital behavior.</p>
+                    <p class="mb-5">Closely linked to accountability is the legal and security concept of <strong>Non-Repudiation</strong>. Repudiation is the act of denying that you did something. In cybersecurity, non-repudiation means that a system has gathered such strong, undeniable evidence of an action (via logs and tracking) that a user cannot successfully deny their involvement. If a user claims, "I didn't send that malicious email," accounting provides the undeniable proof that their exact account, from their specific computer, at a specific time, did in fact send it.</p>
+                    <p class="mb-5">Beyond catching malicious actors, accounting is vital for proactive <strong>Security Monitoring</strong>. Automated security systems rely on the data generated by accounting to detect patterns of suspicious behavior. For example, if accounting records show that an employee who normally downloads 5 files a day is suddenly downloading 5,000 files in an hour, the system can flag this as a potential data theft (exfiltration) in progress and stop it before the damage is done.</p>
+                    <p class="mb-5">Accounting is also an indispensable tool for <strong>Troubleshooting and Recovery</strong>. Not all system issues are caused by hackers. When a server crashes or an application fails, IT staff use the accounting trail to rewind time. They can review exactly what series of commands led up to the failure, identify the software bug or configuration error, and reverse the damage to restore the system to working order.</p>
+                    <p>Finally, accounting provides the official <strong>Evidence</strong> required for legal or disciplinary action. When rules are violated or cybercrimes are committed, courts and human resource departments cannot rely on hearsay. The digital trail created by robust accounting serves as the concrete, untampered evidence needed to justify firing a malicious employee, expelling a student who breached the network, or prosecuting a cybercriminal.</p>
+                `
+            },
+            'concept1-usecase': {
+                title: 'Accounting: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-amber-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-cyan-800 mb-2 border-b-2 border-cyan-200 pb-1">Case 1: Security Audits & Compliance</h4>
+                        <p class="mb-2">Organizations handling sensitive data (like hospitals or banks) must prove to government regulators that they are protecting client information.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Healthcare):</strong> A hospital uses accounting to log every time a doctor views a patient's medical record. During an audit, they can prove that only authorized doctors accessed the records, maintaining HIPAA compliance.</li>
+                            <li><strong>Example 2 (Finance):</strong> A bank's accounting system tracks every transaction made by a teller. If money goes missing, auditors use this trail to achieve non-repudiation and identify the exact teller responsible.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-cyan-800 mb-2 border-b-2 border-cyan-200 pb-1">Case 2: Incident Response</h4>
+                        <p class="mb-2">When a cyber attack happens, the incident response team relies on accounting to understand the scope of the breach.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Malware Tracking):</strong> After a ransomware attack, the IT team uses the accounting trail to find "patient zero"—the exact employee computer that first downloaded and executed the malicious file.</li>
+                            <li><strong>Example 2 (Insider Threat):</strong> An employee decides to steal company secrets before quitting. The accounting system flags the unusual mass-download of confidential files, allowing security to intercept the data before the employee leaves the building.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Auditing Data</p>
+                            <img src="https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=600&h=350" alt="Auditing financial documents" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Incident Investigation</p>
+                            <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=600&h=350" alt="Cybersecurity expert analyzing data on screens" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'concept2-details': {
+                title: 'System & Event Logs',
+                icon: '<i class="fa-solid fa-list-check text-emerald-600"></i>',
+                html: `
+                    <p class="mb-5">If Accounting is the overarching concept, <strong>Logs</strong> are the physical (digital) manifestations of that concept. Logs are digital records that computer systems, applications, and network devices automatically generate to document events. Think of a log file as a massive, continuously updating diary written by the computer, detailing every single action that occurs within its environment.</p>
+                    <p class="mb-5">The first major category is <strong>Login or Authentication Logs</strong>. These logs specifically track when users attempt to gain entry to the system. They record successful logins, documenting when an employee starts their shift. More importantly, they record failed login attempts. A single failed attempt might just be a typo. However, a log showing 500 failed login attempts in two seconds indicates a brute-force cyber attack attempting to crack a password.</p>
+                    <p class="mb-5">Once a user is inside the system, <strong>Access Logs</strong> take over. Access logs are highly detailed records tracking what a user does with their authorization. If a teacher opens a grading spreadsheet, edits a student's score, and saves the file, the access log records the exact timestamp, the user ID (e.g., teacher01), the file name, and the specific action taken (read, write, or delete). This is essential for resolving disputes over missing or altered files.</p>
+                    <p class="mb-5">Behind the scenes, the operating system generates <strong>System and Event Logs</strong>. These logs don't just track human users; they track the health and behavior of the software and hardware itself. If a hard drive starts failing, a software update is installed, or an application crashes unexpectedly, it is documented in the system log. IT professionals review these logs constantly to prevent catastrophic hardware failures before they happen.</p>
+                    <p class="mb-5">On a broader scale, <strong>Network Logs</strong> document the flow of traffic traveling across routers, switches, and firewalls. Every time a computer requests a webpage, downloads a file from the internet, or communicates with another device in the office, the network log records the source IP address, the destination IP address, the amount of data transferred, and the port used. This allows administrators to see exactly what is entering and leaving their network.</p>
+                    <p class="mb-5">Because modern networks consist of thousands of devices generating millions of log entries daily, organizations use specialized software called SIEM (Security Information and Event Management). SIEM systems gather all the logs from every computer and router into one central, secure database. They use artificial intelligence to scan this massive amount of data to find hidden threats that a human looking at a single log file would miss.</p>
+                    <p>Securing the logs themselves is also critical. If a hacker breaches a system, their first action is often attempting to delete or alter the log files to cover their tracks. Therefore, enterprise logs are typically "write-only" for standard administrators and are immediately forwarded to a secure, separate logging server, ensuring the forensic evidence remains pristine and untampered.</p>
+                `
+            },
+            'concept2-usecase': {
+                title: 'Logs: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-amber-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-emerald-800 mb-2 border-b-2 border-emerald-200 pb-1">Case 1: Investigating Suspicious File Activity</h4>
+                        <p class="mb-2">Logs are the primary tool used to figure out what happened to data on a shared network drive.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Tracing Trouble):</strong> A critical document goes missing. IT reviews the Access Logs and discovers that user "guest02" issued a Delete command on the file at 8:25 AM, directly identifying the culprit.</li>
+                            <li><strong>Example 2 (Detecting Ransomware):</strong> A System Log shows 10,000 files were rapidly modified (encrypted) in a span of 30 seconds. The SIEM system triggers an emergency alert to isolate the infected computer.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-emerald-800 mb-2 border-b-2 border-emerald-200 pb-1">Case 2: Network & Hardware Troubleshooting</h4>
+                        <p class="mb-2">IT administrators rely on logs to fix broken systems and maintain network health without needing to guess the problem.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Hardware Failure):</strong> A server keeps randomly rebooting. The admin checks the Event Logs and sees recurring "Thermal Threshold Exceeded" warnings, indicating the cooling fan is broken.</li>
+                            <li><strong>Example 2 (Traffic Analysis):</strong> The school internet is extremely slow. The admin checks the Network Logs and finds that one specific IP address is streaming 4K video all day, allowing them to block the device and restore bandwidth.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Server Logs</p>
+                            <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=600&h=350" alt="Server room with glowing lights" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Reviewing Code & Data</p>
+                            <img src="https://images.unsplash.com/photo-1542831371-29b0f74f9713?auto=format&fit=crop&w=600&h=350" alt="Computer screen showing code and log text" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'concept3-details': {
+                title: 'Location Tracking & Geofencing',
+                icon: '<i class="fa-solid fa-location-dot text-indigo-600"></i>',
+                html: `
+                    <p class="mb-5">In addition to tracking what an account is doing, robust accounting involves tracking <em>where</em> the account is operating from. <strong>Location Tracking</strong> monitors the physical or network location of users and their devices. This provides critical context to a log entry; a login at 2:00 AM is moderately suspicious, but a login at 2:00 AM originating from a foreign country when the user lives in Texas is highly indicative of a compromised account.</p>
+                    <p class="mb-5">Devices can be tracked logically or physically. Logical tracking relies on the <strong>IP Address</strong>. Every device on the internet is assigned an IP address, and blocks of these addresses are assigned to specific geographical regions. When a user connects to a server, the server logs their IP address and uses a database to estimate their city or country. Physical tracking utilizes the device's built-in GPS, cellular triangulation, or nearby Wi-Fi networks to pinpoint an exact physical location.</p>
+                    <p class="mb-5">A powerful security tool built on location tracking is <strong>Geofencing</strong>. A geofence is an invisible, virtual boundary drawn around a real-world geographic area on a map (like a 1-mile radius around a corporate headquarters). When a mobile device or laptop crosses this virtual boundary, the location tracking system detects it and can automatically trigger a security action or alert.</p>
+                    <p class="mb-5">Organizations use geofencing to tightly control access to sensitive data. For instance, a hospital might implement a policy where patient medical records can only be accessed on tablets while those tablets are physically located <em>inside</em> the hospital's geofence. If a doctor takes the tablet home, the tablet crosses the boundary, and the system automatically locks the medical record app, preventing data exposure in unsecured locations.</p>
+                    <p class="mb-5">Location tracking is also the mechanism used to detect <strong>Impossible Travel</strong>. This is a common security alert generated when a single user account logs in from two geographically distant locations in a time frame that is physically impossible. For example, if "teacher01" logs in from New York at 8:10 AM, and then logs in from London at 8:15 AM, the system knows a human cannot fly across the ocean in 5 minutes. It immediately flags the London login as a hacker using stolen credentials.</p>
+                    <p class="mb-5">While incredibly useful for security, location tracking raises significant <strong>Privacy Concerns</strong>. Employees and citizens do not always want their exact whereabouts recorded 24/7. Therefore, organizations must balance security needs with privacy rights, often strictly limiting location tracking to company-owned devices during working hours, and being transparent about what location data is collected and how long it is stored.</p>
+                    <p>Ultimately, location tracking serves as a powerful secondary factor in the AAA triad. It takes the simple authentication of a password and adds the accounting context of geography, ensuring that not only does the user have the right key, but they are also standing at the right door when they use it.</p>
+                `
+            },
+            'concept3-usecase': {
+                title: 'Location Tracking: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-amber-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-indigo-800 mb-2 border-b-2 border-indigo-200 pb-1">Case 1: Enforcing Physical Security Bounds</h4>
+                        <p class="mb-2">Companies use geofencing to ensure sensitive operations only happen in physically secured, trusted locations.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Schools):</strong> A school geofences its campus. When a student's managed Chromebook is on campus, it connects to the testing portal. If the Chromebook is taken off-campus, the geofence triggers a rule that blocks access to the exam.</li>
+                            <li><strong>Example 2 (Military):</strong> A defense contractor uses GPS geofencing on secure smartphones. If an employee brings the phone into a highly classified room, the phone automatically disables its camera and microphone.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-indigo-800 mb-2 border-b-2 border-indigo-200 pb-1">Case 2: Fraud & Account Takeover Detection</h4>
+                        <p class="mb-2">Location tracking via IP addresses is a primary defense against hackers attempting to log in with stolen passwords from overseas.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Impossible Travel):</strong> A bank detects that a customer's debit card was used at an ATM in Miami, Florida, and ten minutes later used for an online purchase originating from an IP address in Russia. The bank blocks the transaction.</li>
+                            <li><strong>Example 2 (Conditional Access):</strong> A company configures its accounting system to completely block all login attempts originating from countries where they have no employees, instantly stopping thousands of automated attacks.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: GPS Location</p>
+                            <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=600&h=350" alt="Map on a smartphone screen showing location" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Geofenced Device</p>
+                            <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=600&h=350" alt="Typing on a laptop securing network" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'concept4-details': {
+                title: 'Web Browser History',
+                icon: '<i class="fa-solid fa-clock-rotate-left text-rose-600"></i>',
+                html: `
+                    <p class="mb-5">In today's cloud-centric world, the majority of a user's digital activity takes place inside a web browser. Therefore, <strong>Web Browser History</strong> has become a vital component of IT accounting and auditing. Browser history is far more than just a list of URLs; it is a comprehensive database maintained by the browser that records visited pages, search queries, downloaded files, and cached media.</p>
+                    <p class="mb-5">From an investigation standpoint, browser history provides something standard logs often miss: <strong>User Intent</strong>. If an access log shows a user downloaded a confidential file, that could have been an accident. However, if their browser history shows they first spent two hours searching for "how to steal company data" and visiting hacker forums, the history provides the context needed to prove malicious intent.</p>
+                    <p class="mb-5">Web browsers also play a critical role in the Authentication process through <strong>Session Management</strong>. When you log into a website, the site gives your browser a small text file called a cookie. This cookie acts as a digital wristband, proving to the server that you are authenticated as you click from page to page. The browser's accounting mechanisms track these cookies to manage active sessions and ensure they expire securely.</p>
+                    <p class="mb-5">Furthermore, browsers interact heavily with Authorization. Modern websites constantly request permissions to access your device's hardware, such as the location data, camera, or microphone. The browser acts as the gatekeeper, authorizing these requests based on user preferences, and logging which sites have been granted which permissions.</p>
+                    <p class="mb-5">Because browser history contains an incredibly intimate portrait of a person's life (medical queries, financial institutions, personal interests), <strong>Privacy Controls</strong> are essential. Browsers offer settings to block third-party tracking cookies, automatically delete history upon closing, or use "Incognito/Private" modes. While private modes prevent the local browser from saving the history, it is crucial to understand that the network router or school firewall still logs the traffic.</p>
+                    <p class="mb-5">In corporate and educational environments, personal privacy takes a back seat to network security. Organizations install endpoint management software that actively syncs the browser history of company-owned laptops to a central server. This ensures that even if a student or employee hits "Clear History" locally on their machine, the IT department retains the permanent accounting record required for compliance and safety monitoring.</p>
+                    <p>Ultimately, analyzing browser history alongside login, access, and location logs gives cybersecurity professionals a complete 360-degree view of an incident. By tracing a user's web journey, investigators can reconstruct a timeline of events, discover how a phishing attack was initiated, or definitively prove non-repudiation in a policy violation.</p>
+                `
+            },
+            'concept4-usecase': {
+                title: 'Web Browser History: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-amber-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-rose-800 mb-2 border-b-2 border-rose-200 pb-1">Case 1: Investigating Intent & Policy Violations</h4>
+                        <p class="mb-2">Organizations use centrally managed browser history to ensure users are complying with acceptable use policies.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Tracking Trouble):</strong> A school investigates a deleted file. By checking "guest02's" browser history and seeing visits to "cheatsite.com" and "forum-for-hackers.com" immediately before the deletion, they establish malicious intent.</li>
+                            <li><strong>Example 2 (Phishing Response):</strong> An employee's account is compromised. IT checks their browser history and sees they clicked a link in a fake email and visited "www.paypa1-login-fake.com", allowing IT to understand exactly how the password was stolen.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-rose-800 mb-2 border-b-2 border-rose-200 pb-1">Case 2: Managing Privacy & Tracking</h4>
+                        <p class="mb-2">Users must manage browser settings to control how much accounting data is shared with advertisers and third parties.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Cookie Blocking):</strong> A user notices shoes they searched for keep following them across different websites. They open browser settings and disable "Third-Party Tracking Cookies" to prevent advertising networks from building an accounting profile of their habits.</li>
+                            <li><strong>Example 2 (Authorization Audit):</strong> A user reviews their browser privacy settings and realizes a flashlight app requested and was granted authorization to track their GPS location. They revoke the permission to protect their privacy.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Browser Security</p>
+                            <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=600&h=350" alt="Code displaying on a monitor" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Web Surfing</p>
+                            <img src="https://images.unsplash.com/photo-1484807352052-23338990c6c6?auto=format&fit=crop&w=600&h=350" alt="Person browsing the web on a laptop" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        function openBriefing(key) {
+            const modal = document.getElementById('briefing-modal');
+            const data = briefingData[key];
+            if(data) {
+                document.getElementById('briefing-modal-icon').innerHTML = data.icon;
+                document.getElementById('briefing-modal-title').innerText = data.title;
+                document.getElementById('briefing-modal-content').innerHTML = data.html;
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; 
+            }
+        }
+
+        function closeBriefing() {
+            document.getElementById('briefing-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto'; 
+        }
+
+        document.getElementById('briefing-modal').addEventListener('click', function(e) {
+            if(e.target === this) closeBriefing();
+        });
+        
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId + '-section').classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-slate-900', 'border-slate-500'));
+            const activeBtn = document.getElementById('nav-' + tabId);
+            if(activeBtn && tabId !== 'cert') activeBtn.classList.add('bg-slate-900');
+            
+            document.querySelectorAll('.nav-btn-mobile').forEach(btn => btn.classList.remove('bg-slate-900', 'border-slate-500'));
+            const activeMobileBtn = document.getElementById('nav-' + tabId + '-mobile');
+            if(activeMobileBtn && tabId !== 'cert') {
+                activeMobileBtn.classList.add('bg-slate-900', 'border-slate-500');
+            }
+
+            window.scrollTo(0,0);
+
+            if (tabId === 'game' && !gameRunning) {
+                resetGame();
+                drawGameInit();
+            }
+        }
+
+        function showModal(title, message, type = 'info') {
+            const modal = document.getElementById('custom-modal');
+            const icon = document.getElementById('modal-icon');
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-msg').innerText = message;
+            
+            if(type === 'success') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-check text-green-500"></i>';
+            } else if (type === 'error') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500"></i>';
+            } else if (type === 'warning') {
+                icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-amber-500"></i>';
+            } else {
+                icon.innerHTML = '<i class="fa-solid fa-circle-info text-sky-500"></i>';
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        // Lab 1: AAA Drag and Drop
+        let draggedAaaItem = null;
+        let lab1Count = 0;
+
+        document.querySelectorAll('#aaa-items .io-item').forEach(item => {
+            item.addEventListener('dragstart', function() {
+                draggedAaaItem = this;
+                setTimeout(() => this.classList.add('opacity-50'), 0);
+            });
+            item.addEventListener('dragend', function() {
+                setTimeout(() => this.classList.remove('opacity-50'), 0);
+                draggedAaaItem = null;
+            });
+        });
+
+        document.querySelectorAll('.aaa-dropzone').forEach(zone => {
+            zone.addEventListener('dragover', e => e.preventDefault());
+            zone.addEventListener('dragenter', function(e) { e.preventDefault(); this.classList.add('bg-slate-200'); });
+            zone.addEventListener('dragleave', function() { this.classList.remove('bg-slate-200'); });
+            zone.addEventListener('drop', function() {
+                this.classList.remove('bg-slate-200');
+                if(draggedAaaItem) {
+                    if(draggedAaaItem.dataset.target.includes(this.dataset.accept.substring(0,3))) { 
+                        this.appendChild(draggedAaaItem);
+                        draggedAaaItem.classList.replace('cursor-grab', 'cursor-default');
+                        draggedAaaItem.setAttribute('draggable', 'false');
+                        lab1Count++;
+                        document.getElementById('lab1-feedback').innerText = "Correct placement!";
+                        document.getElementById('lab1-feedback').className = "text-center font-bold mt-2 h-4 text-sm text-green-600";
+                        if(lab1Count === 3) setTimeout(() => showModal('Lab 1 Complete', 'Excellent! You sorted the AAA definitions perfectly.', 'success'), 300);
+                    } else {
+                        document.getElementById('lab1-feedback').innerText = "Incorrect category.";
+                        document.getElementById('lab1-feedback').className = "text-center font-bold mt-2 h-4 text-sm text-red-600";
+                    }
+                }
+            });
+        });
+
+        // Lab 2: Benefits
+        let lab2Solved = false;
+        function checkLab2(btn, isCorrect) {
+            if(lab2Solved) return;
+            if(isCorrect) {
+                lab2Solved = true;
+                btn.classList.replace('bg-white', 'bg-green-500');
+                btn.classList.add('text-white', 'font-bold');
+                document.getElementById('lab2-feedback').innerText = "Correct! That is Non-Repudiation.";
+                document.getElementById('lab2-feedback').className = "text-center font-bold mt-4 h-4 text-sm text-green-600";
+                setTimeout(() => showModal('Lab 2 Complete', 'Correct! Non-Repudiation means the logs provide undeniable proof.', 'success'), 300);
+            } else {
+                btn.classList.replace('bg-white', 'bg-red-200');
+                document.getElementById('lab2-feedback').innerText = "Incorrect. While it helps troubleshoot, this specifically proves they did it.";
+                document.getElementById('lab2-feedback').className = "text-center font-bold mt-4 h-4 text-sm text-red-600";
+            }
+        }
+
+        // Lab 3: Log Inspector
+        let lab3Solved = false;
+        function checkLab3(isCorrect) {
+            if(lab3Solved) return;
+            if(isCorrect) {
+                lab3Solved = true;
+                document.getElementById('lab3-feedback').innerText = "Suspicious Action Identified!";
+                document.getElementById('lab3-feedback').className = "text-center font-bold mt-4 h-4 text-sm text-green-600";
+                setTimeout(() => showModal('Lab 3 Complete', 'You successfully analyzed the Access Logs and found the exact moment guest02 deleted the file.', 'success'), 300);
+            } else {
+                document.getElementById('lab3-feedback').innerText = "That is a normal or unrelated log entry.";
+                document.getElementById('lab3-feedback').className = "text-center font-bold mt-4 h-4 text-sm text-red-600";
+            }
+        }
+
+        // Lab 4: Log Classifier
+        let selectedLogEvt = null;
+        let lab4Score = 0;
+        function selectLogEvent(btn, type) {
+            document.querySelectorAll('#log-events button').forEach(b => b.classList.remove('bg-emerald-100', 'border-emerald-500', 'font-bold'));
+            if(btn.disabled) return;
+            btn.classList.add('bg-emerald-100', 'border-emerald-500', 'font-bold');
+            selectedLogEvt = { element: btn, type: type };
+        }
+        function categorizeLog(cat) {
+            if(!selectedLogEvt) {
+                document.getElementById('lab4-feedback').innerText = "Select an event first.";
+                document.getElementById('lab4-feedback').className = "text-center font-bold mt-4 h-4 text-sm text-amber-600";
+                return;
+            }
+            if(selectedLogEvt.type === cat) {
+                selectedLogEvt.element.classList.replace('bg-emerald-100', 'bg-green-200');
+                selectedLogEvt.element.classList.add('text-green-800', 'line-through');
+                selectedLogEvt.element.disabled = true;
+                selectedLogEvt = null;
+                lab4Score++;
+                document.getElementById('lab4-feedback').innerText = "Correct Classification!";
+                document.getElementById('lab4-feedback').className = "text-center font-bold mt-4 h-4 text-sm text-green-600";
+                if(lab4Score === 4) setTimeout(() => showModal('Lab 4 Complete', 'All events correctly categorized.', 'success'), 300);
+            } else {
+                document.getElementById('lab4-feedback').innerText = "Incorrect Log Category.";
+                document.getElementById('lab4-feedback').className = "text-center font-bold mt-4 h-4 text-sm text-red-600";
+            }
+        }
+
+        // Lab 5: Geofence Builder
+        const geoArea = document.getElementById('geofence-area');
+        const geoCircle = document.getElementById('geo-circle');
+        let isDrawingGeo = false;
+        let geoCenter = {x:0, y:0};
+        let lab5Solved = false;
+
+        geoArea.addEventListener('mousedown', (e) => {
+            if(lab5Solved) return;
+            isDrawingGeo = true;
+            const rect = geoArea.getBoundingClientRect();
+            geoCenter.x = e.clientX - rect.left;
+            geoCenter.y = e.clientY - rect.top;
+            geoCircle.style.left = geoCenter.x + 'px';
+            geoCircle.style.top = geoCenter.y + 'px';
+            geoCircle.style.width = '0px';
+            geoCircle.style.height = '0px';
+        });
+        
+        window.addEventListener('mousemove', (e) => {
+            if(!isDrawingGeo) return;
+            const rect = geoArea.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+            const dx = mouseX - geoCenter.x;
+            const dy = mouseY - geoCenter.y;
+            const radius = Math.sqrt(dx*dx + dy*dy);
+            geoCircle.style.width = (radius * 2) + 'px';
+            geoCircle.style.height = (radius * 2) + 'px';
+        });
+
+        window.addEventListener('mouseup', () => {
+            if(isDrawingGeo && !lab5Solved) {
+                isDrawingGeo = false;
+                const radius = parseInt(geoCircle.style.width) / 2;
+                if(radius > 50) {
+                    lab5Solved = true;
+                    geoCircle.style.borderColor = '#16a34a';
+                    geoCircle.style.backgroundColor = 'rgba(22, 163, 74, 0.2)';
+                    document.getElementById('lab5-feedback').innerText = "Geofence Established successfully.";
+                    document.getElementById('lab5-feedback').className = "text-center font-bold mt-2 h-4 text-sm text-green-600";
+                    setTimeout(() => showModal('Lab 5 Complete', 'You successfully configured a geographical boundary for access control.', 'success'), 300);
+                } else if(radius > 0) {
+                    document.getElementById('lab5-feedback').innerText = "Radius too small to cover campus. Try again.";
+                    document.getElementById('lab5-feedback').className = "text-center font-bold mt-2 h-4 text-sm text-red-600";
+                }
+            }
+        });
+
+        // Lab 6: Impossible Travel
+        let lab6Solved = false;
+        function checkLab6(isSuspicious) {
+            if(lab6Solved) return;
+            if(isSuspicious) {
+                lab6Solved = true;
+                document.getElementById('lab6-feedback').innerText = "Threat Blocked: Impossible Travel Detected.";
+                document.getElementById('lab6-feedback').className = "text-center font-bold mt-4 h-4 text-sm text-green-600";
+                setTimeout(() => showModal('Lab 6 Complete', 'Correct! A user cannot travel from Texas to New York in 8 minutes. This implies stolen credentials.', 'success'), 300);
+            } else {
+                document.getElementById('lab6-feedback').innerText = "Incorrect. Look closely at the timestamps vs locations.";
+                document.getElementById('lab6-feedback').className = "text-center font-bold mt-4 h-4 text-sm text-red-600";
+            }
+        }
+
+        // Lab 7: Browser History Intent
+        let lab7Solved = false;
+        function checkLab7(isCorrect) {
+            if(lab7Solved) return;
+            if(isCorrect) {
+                lab7Solved = true;
+                document.getElementById('lab7-feedback').innerText = "Malicious Intent Found.";
+                document.getElementById('lab7-feedback').className = "text-center font-bold mt-4 h-4 text-sm text-green-600";
+                setTimeout(() => showModal('Lab 7 Complete', 'You used browser history to establish that guest02 had malicious intent before deleting the file.', 'success'), 300);
+            } else {
+                document.getElementById('lab7-feedback').innerText = "That site represents normal educational activity.";
+                document.getElementById('lab7-feedback').className = "text-center font-bold mt-4 h-4 text-sm text-red-600";
+            }
+        }
+
+        // Lab 8: Privacy Toggles
+        function checkLab8() {
+            const track = document.getElementById('cookie-track').checked;
+            const third = document.getElementById('cookie-3rd').checked;
+
+            if(!track && !third) {
+                document.getElementById('lab8-feedback').innerText = "Privacy Secured!";
+                document.getElementById('lab8-feedback').className = "text-center font-bold mt-2 h-4 text-sm text-green-600";
+                setTimeout(() => showModal('Lab 8 Complete', 'You successfully minimized the accounting footprint left by 3rd parties.', 'success'), 300);
+            } else {
+                document.getElementById('lab8-feedback').innerText = "Some tracking is still enabled. Review requirements.";
+                document.getElementById('lab8-feedback').className = "text-center font-bold mt-2 h-4 text-sm text-red-600";
+            }
+        }
+
+
+        const quizData = [
+            // From document 6.1.7 Quiz - ANSWERS.docx
+            { q: "What is the main purpose of accounting in cybersecurity?", options: ["To deny access to hackers", "To speed up login processes", "To provide a trail of evidence", "To create stronger passwords"], answer: 2 },
+            { q: "Which of the following is an example of accounting?", options: ["A log recording that a file was deleted", "A student entering a password", "A teacher being assigned 'read-only' rights", "A file being encrypted"], answer: 0 },
+            { q: "Why is accounting closely related to non-repudiation?", options: ["It allows users to stay anonymous", "It makes users responsible by keeping evidence of their actions", "It hides what actions are taken", "It blocks all unauthorized logins"], answer: 1 },
+            { q: "Which tools record login attempts and file changes?", options: ["Firewalls", "Antivirus software", "Logs", "Web browsers"], answer: 2 },
+            { q: "Which of the following is an example of location tracking?", options: ["Recording a failed password attempt", "Checking a file's encryption strength", "Viewing an email inbox", "Identifying a login from another city"], answer: 3 },
+            { q: "What is geofencing?", options: ["A virtual boundary that triggers an action when a device enters or leaves a location", "Tracking browser history", "Encrypting files with GPS data", "Blocking websites with malware"], answer: 0 },
+            { q: "Why might web browser history be important in accounting?", options: ["It prevents phishing attempts", "It shows what websites a user visited", "It changes a user's password", "It encrypts internet traffic"], answer: 1 },
+            { q: "Which scenario demonstrates the value of accounting?", options: ["A teacher resets their password every 90 days", "A student gets read-only permissions on a document", "A firewall blocks suspicious traffic", "An IT team identifies who accessed and deleted a shared file"], answer: 3 },
+            { q: "What is the main benefit of combining logs, location data, and browsing history?", options: ["Faster internet access", "Preventing password misuse", "A more complete picture of user activity", "Reducing file sizes"], answer: 2 },
+            { q: "What would happen if an organization had no accounting measures in place?", options: ["Security incidents might go undetected and be impossible to trace", "Users would have stronger passwords", "Systems would automatically block all threats", "Data would be permanently encrypted"], answer: 0 },
+            // 10 Custom generated questions based on briefing
+            { q: "Which phase of the AAA triad proves *who* a user is?", options: ["Accounting", "Authentication", "Authorization", "Auditing"], answer: 1 },
+            { q: "In the 'Tracking Trouble' lab, what provided evidence of user *intent*?", options: ["The Access Log", "The Subnet Mask", "Browser History", "GPS Data"], answer: 2 },
+            { q: "Which type of log records the exact files a user opened or deleted?", options: ["System Log", "Network Log", "Login Log", "Access Log"], answer: 3 },
+            { q: "A security alert for 'Impossible Travel' is generated primarily using data from:", options: ["System crashes", "Location Tracking (IP addresses)", "Browser Cookies", "Read/Write permissions"], answer: 1 },
+            { q: "If a server crashes due to overheating, which log provides the evidence to troubleshoot the hardware?", options: ["Network Log", "Access Log", "Event/System Log", "Authentication Log"], answer: 2 },
+            { q: "What does SIEM software do in relation to logs?", options: ["It encrypts passwords to prevent hacking.", "It gathers and centrally analyzes massive amounts of logs.", "It deletes old browser history.", "It acts as a physical boundary for the campus."], answer: 1 },
+            { q: "How do web browsers maintain accounting of an authenticated session as a user clicks through a website?", options: ["By using IP geolocation", "By managing Cookies", "By disabling the keyboard", "By altering the DNS"], answer: 1 },
+            { q: "Which of the following is an example of 'Logical' location tracking?", options: ["Using physical GPS coordinates", "Tracking the nearest cell tower", "Using an IP address to estimate a city", "Checking the building security cameras"], answer: 2 },
+            { q: "If a hospital requires tablets to be physically inside the building to open patient records, they are using:", options: ["Impossible Travel rules", "Third-Party Cookies", "Geofencing", "Authentication Logs"], answer: 2 },
+            { q: "Why do enterprise networks sync local browser history to a central server?", options: ["To make the internet run faster", "So users cannot hide malicious intent by simply clicking 'Clear History'", "To bypass passwords", "To automatically translate websites"], answer: 1 }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        quizData.forEach((item, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = "bg-slate-50 p-6 rounded-lg border border-slate-200";
+            
+            const qTitle = document.createElement('h3');
+            qTitle.className = "font-bold text-lg text-slate-800 mb-4";
+            qTitle.innerText = `${index + 1}. ${item.q}`;
+            qDiv.appendChild(qTitle);
+            
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = "space-y-3";
+            
+            item.options.forEach((opt, optIndex) => {
+                const label = document.createElement('label');
+                label.className = "flex items-center space-x-3 p-3 rounded bg-white border border-slate-300 hover:bg-sky-50 cursor-pointer transition";
+                
+                const radio = document.createElement('input');
+                radio.type = "radio";
+                radio.name = `q${index}`;
+                radio.value = optIndex;
+                radio.className = "form-radio h-5 w-5 text-sky-600";
+                
+                const span = document.createElement('span');
+                span.className = "text-slate-700";
+                span.innerText = opt;
+                
+                label.appendChild(radio);
+                label.appendChild(span);
+                optionsDiv.appendChild(label);
+            });
+            
+            qDiv.appendChild(optionsDiv);
+            quizContainer.appendChild(qDiv);
+        });
+
+        function gradeQuiz() {
+            let score = 0;
+            let allAnswered = true;
+
+            for(let i = 0; i < quizData.length; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if(selected) {
+                    if(parseInt(selected.value) === quizData[i].answer) score++;
+                } else {
+                    allAnswered = false;
+                }
+            }
+            
+            if(!allAnswered) {
+                showModal('Incomplete Quiz', 'Please answer all 20 questions before submitting.', 'warning');
+                return;
+            }
+            
+            const percentage = (score / quizData.length) * 100;
+            
+            if(score >= 18) { 
+                const navGame = document.getElementById('nav-game');
+                const navGameMobile = document.getElementById('nav-game-mobile');
+                
+                navGame.classList.remove('text-slate-500', 'cursor-not-allowed');
+                navGame.classList.add('text-white', 'hover:bg-slate-700');
+                navGame.disabled = false;
+                navGame.innerHTML = '<i class="fa-solid fa-gamepad mr-1"></i>Game';
+                
+                navGameMobile.classList.remove('text-slate-400', 'cursor-not-allowed');
+                navGameMobile.classList.add('text-white', 'hover:border-slate-500');
+                navGameMobile.disabled = false;
+                navGameMobile.innerHTML = '<i class="fa-solid fa-gamepad"></i>';
+
+                document.getElementById('nav-cert').classList.remove('hidden');
+                document.getElementById('nav-cert-mobile').classList.remove('hidden');
+                
+                document.getElementById('proceed-game-btn').classList.remove('hidden');
+                document.getElementById('submit-quiz-btn').classList.add('hidden');
+
+                showModal('Outstanding!', `You scored ${score}/20 (${percentage}%). You have unlocked your Certificate of Mastery AND the Retro Game!`, 'success');
+            } else {
+                quizData.forEach((_, i) => {
+                    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                    if(selected) selected.checked = false;
+                });
+                showModal('Keep Trying!', `You scored ${score}/20 (${percentage}%). You need 90% (18/20) to earn the certificate. Your answers have been reset so you can try again.`, 'error');
+                document.getElementById('quiz-section').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let score = 0;
+        let lives = 5;
+        let gameRunning = false;
+        let animationId;
+        let lastTime = 0;
+        
+        // Game Entities
+        let ship = { x: 300, y: 40, width: 60, height: 20, speed: 300, color: '#38bdf8' };
+        let depthCharges = [];
+        let submarines = [];
+        let subSpawnTimer = 0;
+        
+        let keys = { ArrowLeft: false, ArrowRight: false, Space: false };
+        let canFire = true;
+
+        // Inputs
+        window.addEventListener('keydown', e => {
+            if(e.code === 'ArrowLeft') keys.ArrowLeft = true;
+            if(e.code === 'ArrowRight') keys.ArrowRight = true;
+            if(e.code === 'Space' && canFire && gameRunning) {
+                fireDepthCharge();
+                canFire = false;
+                e.preventDefault();
+            }
+        });
+        window.addEventListener('keyup', e => {
+            if(e.code === 'ArrowLeft') keys.ArrowLeft = false;
+            if(e.code === 'ArrowRight') keys.ArrowRight = false;
+            if(e.code === 'Space') canFire = true;
+        });
+
+        // Mobile Controls
+        const btnLeft = document.getElementById('btn-left');
+        const btnRight = document.getElementById('btn-right');
+        const btnFire = document.getElementById('btn-fire');
+
+        const addTouch = (elem, key, action) => {
+            elem.addEventListener('touchstart', e => { e.preventDefault(); if(action === 'fire' && canFire && gameRunning){fireDepthCharge(); canFire=false;} else keys[key] = true; });
+            elem.addEventListener('touchend', e => { e.preventDefault(); if(action === 'fire') canFire=true; else keys[key] = false; });
+            elem.addEventListener('mousedown', e => { if(action === 'fire' && canFire && gameRunning){fireDepthCharge(); canFire=false;} else keys[key] = true; });
+            elem.addEventListener('mouseup', e => { if(action === 'fire') canFire=true; else keys[key] = false; });
+            elem.addEventListener('mouseleave', e => { if(action !== 'fire') keys[key] = false; });
+        };
+        addTouch(btnLeft, 'ArrowLeft', 'move');
+        addTouch(btnRight, 'ArrowRight', 'move');
+        addTouch(btnFire, 'Space', 'fire');
+
+        document.getElementById('start-game-btn').addEventListener('click', startGame);
+
+        class DepthCharge {
+            constructor(x, y) {
+                this.x = x; this.y = y; this.radius = 4; this.speed = 200;
+                this.active = true;
+            }
+            update(dt) { this.y += this.speed * (dt/1000); }
+            draw(ctx) {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2);
+                ctx.fillStyle = '#facc15';
+                ctx.fill();
+            }
+        }
+
+        class Submarine {
+            constructor() {
+                this.y = 100 + Math.random() * 250;
+                this.width = 40; this.height = 15;
+                this.speed = (50 + Math.random() * 100) * (Math.random() > 0.5 ? 1 : -1);
+                this.x = this.speed > 0 ? -this.width : canvas.width + this.width;
+                this.active = true;
+                this.escaped = false;
+                this.color = '#ef4444'; // Red malicious packet
+            }
+            update(dt) {
+                this.x += this.speed * (dt/1000);
+                if(this.speed > 0 && this.x > canvas.width + 50) { this.active = false; this.escaped = true; }
+                if(this.speed < 0 && this.x < -this.width - 50) { this.active = false; this.escaped = true; }
+            }
+            draw(ctx) {
+                ctx.fillStyle = this.color;
+                ctx.fillRect(this.x - this.width/2, this.y - this.height/2, this.width, this.height);
+                // Submarine periscope details
+                ctx.fillRect(this.x - 5, this.y - this.height, 10, this.height);
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '10px monospace';
+                ctx.fillText('MAL', this.x - 10, this.y + 3);
+            }
+        }
+
+        function fireDepthCharge() {
+            if(depthCharges.length < 5) {
+                depthCharges.push(new DepthCharge(ship.x, ship.y + ship.height/2));
+            }
+        }
+
+        function resetGame() {
+            score = 0; lives = 5;
+            document.getElementById('game-score').innerText = score;
+            document.getElementById('game-lives').innerText = lives;
+            ship.x = canvas.width / 2;
+            depthCharges = []; submarines = [];
+            lastTime = Date.now();
+        }
+
+        function startGame() {
+            document.getElementById('game-overlay').classList.add('hidden');
+            if(!gameRunning) {
+                resetGame();
+                gameRunning = true;
+                gameLoop();
+            }
+        }
+
+        function checkGameCollisions() {
+            for(let dc of depthCharges) {
+                if(!dc.active) continue;
+                for(let sub of submarines) {
+                    if(!sub.active) continue;
+                    // Simple AABB collision
+                    if(dc.x > sub.x - sub.width/2 && dc.x < sub.x + sub.width/2 &&
+                       dc.y > sub.y - sub.height/2 && dc.y < sub.y + sub.height/2) {
+                        dc.active = false;
+                        sub.active = false;
+                        score += 1;
+                        document.getElementById('game-score').innerText = score;
+                        // Particle effect could go here
+                    }
+                }
+            }
+        }
+
+        function gameLoop() {
+            if(!gameRunning) return;
+            let now = Date.now();
+            let dt = now - lastTime;
+            lastTime = now;
+
+            // Clear
+            ctx.fillStyle = '#020617';
+            ctx.fillRect(0,0, canvas.width, canvas.height);
+            
+            // Draw grid / water lines
+            ctx.strokeStyle = '#1e293b';
+            for(let i = 100; i < canvas.height; i+=50) {
+                ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(canvas.width, i); ctx.stroke();
+            }
+
+            // Update Ship
+            if(keys.ArrowLeft) ship.x -= ship.speed * (dt/1000);
+            if(keys.ArrowRight) ship.x += ship.speed * (dt/1000);
+            if(ship.x < ship.width/2) ship.x = ship.width/2;
+            if(ship.x > canvas.width - ship.width/2) ship.x = canvas.width - ship.width/2;
+
+            // Draw Ship (Network Node)
+            ctx.fillStyle = ship.color;
+            ctx.fillRect(ship.x - ship.width/2, ship.y - ship.height/2, ship.width, ship.height);
+            ctx.fillStyle = '#0ea5e9';
+            ctx.fillRect(ship.x - 15, ship.y - ship.height, 30, ship.height/2);
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '12px monospace';
+            ctx.fillText('AUDIT', ship.x - 18, ship.y + 4);
+
+            // Update & Draw Depth Charges
+            for(let i = depthCharges.length - 1; i >= 0; i--) {
+                let dc = depthCharges[i];
+                dc.update(dt);
+                dc.draw(ctx);
+                if(dc.y > canvas.height) dc.active = false;
+                if(!dc.active) depthCharges.splice(i, 1);
+            }
+
+            // Spawn Subs
+            subSpawnTimer += dt;
+            let spawnRate = Math.max(500, 2000 - (score * 50)); // Gets faster
+            if(subSpawnTimer > spawnRate) {
+                submarines.push(new Submarine());
+                subSpawnTimer = 0;
+            }
+
+            // Update & Draw Subs
+            for(let i = submarines.length - 1; i >= 0; i--) {
+                let sub = submarines[i];
+                sub.update(dt);
+                sub.draw(ctx);
+                
+                if(sub.escaped) {
+                    lives--;
+                    document.getElementById('game-lives').innerText = lives;
+                    ctx.fillStyle = 'rgba(255,0,0,0.3)';
+                    ctx.fillRect(0,0,canvas.width,canvas.height);
+                    sub.active = false; // clean up
+                }
+                
+                if(!sub.active) submarines.splice(i, 1);
+            }
+
+            checkGameCollisions();
+
+            if(lives <= 0) {
+                gameRunning = false;
+                document.getElementById('game-overlay').classList.remove('hidden');
+                document.getElementById('start-game-btn').innerText = "System Breached! Retry";
+                document.getElementById('start-game-btn').classList.replace('bg-cyan-600', 'bg-red-700');
+            } else {
+                animationId = requestAnimationFrame(gameLoop);
+            }
+        }
+
+        function drawGameInit() {
+            ctx.fillStyle = '#020617';
+            ctx.fillRect(0,0, canvas.width, canvas.height);
+            ctx.fillStyle = '#38bdf8';
+            ctx.font = '20px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('NETWORK LOG AUDITOR READY', canvas.width/2, canvas.height/2);
+        }
+
+        function updateCertName() {
+            let name = document.getElementById('student-name-input').value.trim();
+            if(name) {
+                if (name.includes(' ')) {
+                    name = name.split(' ')[0];
+                    document.getElementById('student-name-input').value = name;
+                    showModal('Notice', 'Only your first name has been applied to the certificate.', 'info');
+                }
+                document.getElementById('cert-student-name').innerText = name;
+            } else {
+                showModal('Wait!', 'Please enter your first name to update the certificate.', 'warning');
+            }
+        }
+
+        document.getElementById('cert-date').innerText = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        function downloadCert() {
+            const certEl = document.getElementById('certificate');
+            const name = document.getElementById('cert-student-name').innerText;
+            let filename = 'Certificate.png';
+            if (name && name !== 'Student') {
+                filename = `${name.replace(/\s+/g, '_')}_Certificate.png`;
+            }
+
+            const originalTransform = certEl.style.transform;
+            certEl.style.transform = 'none';
+
+            const btn = document.getElementById('download-btn');
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Generating...';
+            btn.disabled = true;
+
+            html2canvas(certEl, { 
+                scale: 2, 
+                useCORS: true,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            }).catch(err => {
+                console.error(err);
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                showModal('Error', 'Failed to generate image. Try a desktop browser.', 'error');
+            });
+        }
+    </script>
+</body>
+</html>

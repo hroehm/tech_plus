@@ -1,0 +1,1438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 07 Section 6.2.3 Mastery - Device Use Best Practices</title>
+    
+    <!-- Load Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load HTML2Canvas for Certificate Download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- Load Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Qwitcher+Grypen:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0fdf4; 
+            color: #1f2937;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        /* Interactive Elements CSS */
+        .io-dropzone { min-height: 70px; min-width: 130px; border: 2px dashed #9ca3af; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: #f9fafb; transition: all 0.2s; text-align: center; padding: 10px;}
+        .io-dropzone.drag-over { background: #e5e7eb; border-color: #16a34a; box-shadow: inset 0 0 10px rgba(22, 163, 74, 0.2);}
+        
+        .io-item { cursor: grab; transition: transform 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .io-item:active { cursor: grabbing; transform: scale(0.95); }
+        
+        .cat-dropzone { transition: background-color 0.2s ease; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #e5e7eb; }
+        ::-webkit-scrollbar-thumb { background: #10b981; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #059669; }
+
+        /* Retro Game Canvas */
+        #game-canvas {
+            background-color: #0f172a; /* Slate 900 */
+            border: 4px solid #334155;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
+            max-width: 100%;
+            height: auto;
+            touch-action: none;
+            outline: none;
+        }
+
+        /* --- CERTIFICATE STYLES --- */
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .font-body { font-family: 'Lora', serif; }
+        .font-script { font-family: 'Qwitcher Grypen', cursive; }
+        
+        .cert-preview-container {
+            width: 100%;
+            overflow: auto;
+            display: flex;
+            justify-content: center;
+            background: #e5e7eb;
+            padding: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        #certificate {
+            width: 1056px !important;
+            height: 816px !important;
+            flex-shrink: 0;
+            background-color: #ffffff;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1056" height="816"><polygon points="0,0 250,0 0,650" fill="%23fcd34d"/><polygon points="0,0 350,0 0,900" fill="%23d97706" opacity="0.8"/><polygon points="0,0 120,0 0,300" fill="%23fcd34d"/><polygon points="0,450 650,816 0,816" fill="%23fcd34d"/><polygon points="0,550 450,816 0,816" fill="%23d97706" opacity="0.8"/><polygon points="800,0 1056,0 1056,256" fill="%23f3f4f6"/><polygon points="1056,500 1056,816 750,816" fill="%23f3f4f6"/></svg>');
+            background-size: cover;
+            border: 4px solid #e5e7eb;
+        }
+
+        .gold-seal {
+            position: absolute;
+            left: 110px;
+            top: 350px;
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c, #fcf6ba);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3), inset 0 0 15px rgba(255,255,255,0.7), inset 0 0 25px rgba(139,105,20,0.9);
+            z-index: 10;
+        }
+        .gold-seal::before {
+            content: '';
+            position: absolute;
+            top: -4px; bottom: -4px; left: -4px; right: -4px;
+            border-radius: 50%;
+            border: 6px dashed #d4af37;
+        }
+        .gold-seal-inner-1 {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 2px solid rgba(139, 105, 20, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #e8c678, #dbab46);
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.2), 0 2px 5px rgba(255,255,255,0.7);
+            z-index: 1;
+        }
+        .gold-seal-inner-2 {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: radial-gradient(circle, #fcf6ba, #d4af37);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            padding: 10px;
+        }
+        .embossed-text {
+            color: #b38728;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2);
+            font-family: 'Playfair Display', serif;
+            font-weight: 800;
+            line-height: 1.1;
+            text-transform: uppercase;
+        }
+        .embossed-text-large { font-size: 14px; letter-spacing: 1px; }
+        .embossed-text-small { font-size: 11px; letter-spacing: 2px; margin: 2px 0; }
+        .embossed-star { font-size: 12px; color: #b38728; text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2); margin: 2px 0; }
+
+        @media (max-width: 1100px) {
+            #certificate { transform: scale(0.7); transform-origin: top left; margin-bottom: -240px; margin-right: -310px; }
+        }
+        @media (max-width: 768px) {
+            #certificate { transform: scale(0.4); transform-origin: top left; margin-bottom: -490px; margin-right: -630px; }
+        }
+        
+        /* Lab Specific Styles */
+        .process-row { transition: background-color 0.2s; }
+        .process-row:hover { background-color: #fca5a5; cursor: pointer;}
+        .lab-btn { transition: transform 0.1s, background-color 0.2s; }
+        .lab-btn:active { transform: scale(0.95); }
+        .toggle-switch { width: 40px; height: 20px; background: #d1d5db; border-radius: 10px; position: relative; cursor: pointer; transition: 0.3s; }
+        .toggle-switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; background: white; border-radius: 50%; transition: 0.3s; }
+        .toggle-switch.on { background: #10b981; }
+        .toggle-switch.on::after { left: 22px; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
+    <nav class="bg-green-700 text-white shadow-lg sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-shield-virus text-2xl"></i>
+                    <span class="font-bold text-xl tracking-wider hidden sm:inline-block">Tech+ Unit 07 Section 6.2.3</span>
+                    <span class="font-bold text-xl tracking-wider sm:hidden">6.2.3</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-2">
+                        <button onclick="switchTab('briefing')" class="nav-btn bg-green-900 px-3 py-2 rounded-md text-sm font-medium hover:bg-green-600 transition" id="nav-briefing"><i class="fa-solid fa-book-open mr-1"></i>Briefing</button>
+                        <button onclick="switchTab('activity')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-green-600 transition" id="nav-activity"><i class="fa-solid fa-flask mr-1"></i>Lab Activity</button>
+                        <button onclick="switchTab('quiz')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-green-600 transition" id="nav-quiz"><i class="fa-solid fa-clipboard-check mr-1"></i>Quiz</button>
+                        <button onclick="switchTab('game')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-gray-400 cursor-not-allowed transition" id="nav-game" disabled><i class="fa-solid fa-lock mr-1"></i>Game</button>
+                        <button onclick="switchTab('cert')" class="nav-btn hidden px-3 py-2 rounded-md text-sm font-medium text-yellow-300 hover:bg-green-600 transition" id="nav-cert"><i class="fa-solid fa-award mr-1"></i>Certificate</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Nav -->
+        <div class="md:hidden flex flex-wrap justify-center gap-2 py-2 px-2 bg-green-800">
+            <button onclick="switchTab('briefing')" class="nav-btn-mobile px-3 py-1 text-sm rounded bg-green-900" id="nav-briefing-mobile">Briefing</button>
+            <button onclick="switchTab('activity')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-activity-mobile">Lab</button>
+            <button onclick="switchTab('quiz')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-quiz-mobile">Quiz</button>
+            <button onclick="switchTab('game')" class="nav-btn-mobile px-3 py-1 text-sm rounded text-gray-400 cursor-not-allowed" id="nav-game-mobile" disabled><i class="fa-solid fa-lock"></i></button>
+            <button onclick="switchTab('cert')" id="nav-cert-mobile" class="hidden px-2 py-1 text-sm text-yellow-300 rounded"><i class="fa-solid fa-award"></i></button>
+        </div>
+    </nav>
+
+    <main class="flex-grow w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <!-- BRIEFING SECTION -->
+        <div id="briefing-section" class="tab-content active no-print">
+            <div class="text-center mb-10">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">Device Use Best Practices</h1>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">Securing devices requires more than just firewalls; it demands responsible software decisions. Learn how licensing, proper sourcing, systematic maintenance, and ethical use form the foundation of device security.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- Tile 1 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-blue-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-blue-700"><i class="fa-solid fa-file-signature mr-2"></i>Software Licensing Models</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Open Source vs Proprietary:</strong> Code that is freely modifiable vs. restricted and owned by a company.</li>
+                            <li><strong>Subscription vs Perpetual:</strong> Recurring payments for updates vs. one-time fees for indefinite use.</li>
+                            <li><strong>Authentication:</strong> Using Product Keys for software activation and Serial Numbers for hardware tracking.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('license-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('license-usecase')" class="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 2 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-green-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-green-700"><i class="fa-solid fa-download mr-2"></i>Sourcing Software Safely</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Original Equipment Manufacturers (OEM):</strong> The most secure, direct source for verified software.</li>
+                            <li><strong>Application Stores:</strong> Platforms like Google Play and the App Store that vet applications for security.</li>
+                            <li><strong>Third-Party Dangers:</strong> The high risk of acquiring bundled adware and malware from unofficial sites.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('source-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('source-usecase')" class="flex-1 bg-green-100 hover:bg-green-200 text-green-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 3 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-purple-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-purple-700"><i class="fa-solid fa-trash-can mr-2"></i>Removal & Maintenance</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Bloatware & Trialware:</strong> Unnecessary pre-installed apps that consume vital system resources.</li>
+                            <li><strong>Proper Uninstallation:</strong> Utilizing built-in system tools to fully remove residual files and registries.</li>
+                            <li><strong>Patching:</strong> Ensuring software is updated to close vulnerabilities and maintain critical security.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('removal-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('removal-usecase')" class="flex-1 bg-purple-100 hover:bg-purple-200 text-purple-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 4 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-red-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-red-700"><i class="fa-solid fa-triangle-exclamation mr-2"></i>Software Piracy & Ethics</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>The Piracy Threat:</strong> Unauthorized distribution of software heavily linked to severe malware infections.</li>
+                            <li><strong>Legal & Operational Risks:</strong> Massive fines for non-compliance and the inability to access official updates.</li>
+                            <li><strong>Ethical Impact:</strong> The deprivation of developer compensation leading to a decrease in technological innovation.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('piracy-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('piracy-usecase')" class="flex-1 bg-red-100 hover:bg-red-200 text-red-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 flex justify-center">
+                <button onclick="switchTab('activity')" class="bg-green-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-green-500 shadow-lg transition transform hover:scale-105">Proceed to Lab Activities <i class="fa-solid fa-arrow-right ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- LAB ACTIVITY SECTION -->
+        <div id="activity-section" class="tab-content no-print">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Interactive Lab Activities</h1>
+                <p class="text-gray-600">Complete all 8 distinct labs designed to reinforce best practices in device management, licensing, and security.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Concept 1: Licensing -->
+                <div class="bg-white p-5 rounded-xl shadow-md border border-blue-200 flex flex-col">
+                    <h2 class="text-lg font-bold mb-3 text-blue-700"><i class="fa-solid fa-file-signature mr-2"></i>Lab 1: Licensing Models</h2>
+                    <p class="text-sm text-gray-600 mb-4">Drag the software definition to its corresponding licensing model dropzone.</p>
+                    <div class="flex flex-wrap gap-2 mb-4 justify-center" id="lab1-items">
+                        <div class="io-item px-3 py-1 bg-blue-100 border border-blue-300 rounded text-xs font-bold" draggable="true" data-type="open">Source Code Modifiable</div>
+                        <div class="io-item px-3 py-1 bg-blue-100 border border-blue-300 rounded text-xs font-bold" draggable="true" data-type="prop">Source Code Private</div>
+                        <div class="io-item px-3 py-1 bg-blue-100 border border-blue-300 rounded text-xs font-bold" draggable="true" data-type="sub">Recurring Payments/Updates</div>
+                        <div class="io-item px-3 py-1 bg-blue-100 border border-blue-300 rounded text-xs font-bold" draggable="true" data-type="perp">Indefinite Use/One-Time Fee</div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 mt-auto">
+                        <div class="cat-dropzone border-2 border-dashed border-gray-300 bg-gray-50 rounded p-2 text-xs flex flex-col items-center min-h-[60px]" data-target="open"><strong>Open Source</strong></div>
+                        <div class="cat-dropzone border-2 border-dashed border-gray-300 bg-gray-50 rounded p-2 text-xs flex flex-col items-center min-h-[60px]" data-target="prop"><strong>Proprietary</strong></div>
+                        <div class="cat-dropzone border-2 border-dashed border-gray-300 bg-gray-50 rounded p-2 text-xs flex flex-col items-center min-h-[60px]" data-target="sub"><strong>Subscription</strong></div>
+                        <div class="cat-dropzone border-2 border-dashed border-gray-300 bg-gray-50 rounded p-2 text-xs flex flex-col items-center min-h-[60px]" data-target="perp"><strong>Perpetual</strong></div>
+                    </div>
+                    <div id="lab1-feedback" class="text-center text-xs font-bold mt-2 h-4 text-green-600"></div>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl shadow-md border border-blue-200 flex flex-col">
+                    <h2 class="text-lg font-bold mb-3 text-blue-700"><i class="fa-solid fa-tag mr-2"></i>Lab 2: Keys & Serial Numbers</h2>
+                    <p class="text-sm text-gray-600 mb-4">Click the digital software box to apply the Product Key, and click the physical server to apply the Serial Number.</p>
+                    <div class="flex justify-around items-center h-24 mb-4">
+                        <div id="btn-sw-box" class="cursor-pointer hover:bg-gray-100 p-4 rounded border-2 border-transparent hover:border-blue-300 transition text-center" onclick="tagLab2('key')">
+                            <i class="fa-solid fa-box-open text-4xl text-blue-500 block mb-2"></i>
+                            <span class="text-xs font-bold">Office Suite 2026</span>
+                            <div id="tag-key" class="hidden text-xs bg-green-200 text-green-800 px-2 rounded mt-1">Product Key Applied</div>
+                        </div>
+                        <div id="btn-hw-box" class="cursor-pointer hover:bg-gray-100 p-4 rounded border-2 border-transparent hover:border-blue-300 transition text-center" onclick="tagLab2('serial')">
+                            <i class="fa-solid fa-server text-4xl text-gray-600 block mb-2"></i>
+                            <span class="text-xs font-bold">Dell Server Rack</span>
+                            <div id="tag-serial" class="hidden text-xs bg-green-200 text-green-800 px-2 rounded mt-1">Serial Number Applied</div>
+                        </div>
+                    </div>
+                    <div id="lab2-feedback" class="text-center text-xs font-bold mt-auto h-4 text-green-600"></div>
+                </div>
+
+                <!-- Concept 2: Sourcing -->
+                <div class="bg-white p-5 rounded-xl shadow-md border border-green-200 flex flex-col">
+                    <h2 class="text-lg font-bold mb-3 text-green-700"><i class="fa-solid fa-magnifying-glass mr-2"></i>Lab 3: Source Validator</h2>
+                    <p class="text-sm text-gray-600 mb-4">You are searching for a PDF reader. Click the safest, most legitimate link to download from.</p>
+                    <div class="space-y-2 mb-4 mt-auto">
+                        <div class="p-2 border border-gray-200 rounded cursor-pointer hover:bg-red-50 transition" onclick="checkLab3(false)">
+                            <div class="text-xs text-gray-500 font-bold mb-1">Ad • freesoftware-hub.net</div>
+                            <div class="text-sm font-bold text-blue-600">Download PDF Reader FREE - 100% Safe</div>
+                        </div>
+                        <div class="p-2 border border-green-500 rounded cursor-pointer hover:bg-green-50 transition" onclick="checkLab3(true)">
+                            <div class="text-xs text-gray-500 font-bold mb-1">Official • adobe.com/acrobat</div>
+                            <div class="text-sm font-bold text-blue-600">Adobe Acrobat Reader - Official Download (OEM)</div>
+                        </div>
+                        <div class="p-2 border border-gray-200 rounded cursor-pointer hover:bg-red-50 transition" onclick="checkLab3(false)">
+                            <div class="text-xs text-gray-500 font-bold mb-1">Ad • cheap-keys.ru/pdf</div>
+                            <div class="text-sm font-bold text-blue-600">PDF Reader Pro - Cracked Full Version Free</div>
+                        </div>
+                    </div>
+                    <div id="lab3-feedback" class="text-center text-xs font-bold mt-2 h-4 text-green-600"></div>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl shadow-md border border-green-200 flex flex-col">
+                    <h2 class="text-lg font-bold mb-3 text-green-700"><i class="fa-brands fa-app-store mr-2"></i>Lab 4: App Store Permissions</h2>
+                    <p class="text-sm text-gray-600 mb-4">You are downloading a "Flashlight App" from the App Store. Toggle the permissions so you only allow what is absolutely necessary, then Install.</p>
+                    <div class="bg-gray-100 p-3 rounded mb-4 mt-auto">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm font-bold"><i class="fa-solid fa-camera mr-2"></i>Camera (For LED Flash)</span>
+                            <div class="toggle-switch" id="tgl-cam" onclick="this.classList.toggle('on')"></div>
+                        </div>
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm font-bold"><i class="fa-solid fa-location-dot mr-2"></i>Location Services</span>
+                            <div class="toggle-switch on" id="tgl-loc" onclick="this.classList.toggle('on')"></div>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm font-bold"><i class="fa-solid fa-address-book mr-2"></i>Read Contacts</span>
+                            <div class="toggle-switch on" id="tgl-con" onclick="this.classList.toggle('on')"></div>
+                        </div>
+                    </div>
+                    <button class="bg-blue-600 text-white w-full py-2 rounded text-sm font-bold lab-btn" onclick="checkLab4()">Install App</button>
+                    <div id="lab4-feedback" class="text-center text-xs font-bold mt-2 h-4 text-green-600"></div>
+                </div>
+
+                <!-- Concept 3: Removal & Maintenance -->
+                <div class="bg-white p-5 rounded-xl shadow-md border border-purple-200 flex flex-col">
+                    <h2 class="text-lg font-bold mb-3 text-purple-700"><i class="fa-solid fa-broom mr-2"></i>Lab 5: Bloatware Sweeper</h2>
+                    <p class="text-sm text-gray-600 mb-4">Select the two unwanted bloatware/trialware programs taking up resources, then click System Uninstall.</p>
+                    <div class="space-y-1 mb-4 text-sm mt-auto">
+                        <label class="flex items-center space-x-2 p-2 border rounded hover:bg-gray-50 cursor-pointer"><input type="checkbox" class="lab5-chk" value="sys"> <span>Windows OS Kernel Updater</span></label>
+                        <label class="flex items-center space-x-2 p-2 border rounded hover:bg-gray-50 cursor-pointer"><input type="checkbox" class="lab5-chk" value="bloat1"> <span>Super PC Cleaner Pro (Trial Expired)</span></label>
+                        <label class="flex items-center space-x-2 p-2 border rounded hover:bg-gray-50 cursor-pointer"><input type="checkbox" class="lab5-chk" value="driver"> <span>NVIDIA Display Drivers</span></label>
+                        <label class="flex items-center space-x-2 p-2 border rounded hover:bg-gray-50 cursor-pointer"><input type="checkbox" class="lab5-chk" value="bloat2"> <span>Candy Smash Promo App (Pre-installed)</span></label>
+                    </div>
+                    <button class="bg-purple-600 text-white w-full py-2 rounded text-sm font-bold lab-btn" onclick="checkLab5()">System Uninstall</button>
+                    <div id="lab5-feedback" class="text-center text-xs font-bold mt-2 h-4 text-green-600"></div>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl shadow-md border border-purple-200 flex flex-col relative overflow-hidden">
+                    <h2 class="text-lg font-bold mb-3 text-purple-700"><i class="fa-solid fa-hammer mr-2"></i>Lab 6: Patch Management</h2>
+                    <p class="text-sm text-gray-600 mb-4">A Zero-Day vulnerability has been announced! Click the "Deploy Patch" button on the vulnerable (Red) server before time runs out.</p>
+                    <div class="flex justify-around items-end h-24 mb-4 mt-auto">
+                        <div class="text-center"><i class="fa-solid fa-server text-4xl text-green-500 mb-2"></i><button class="bg-gray-200 text-xs px-2 py-1 rounded block" onclick="checkLab6(false)">Patch</button></div>
+                        <div class="text-center" id="vuln-server"><i class="fa-solid fa-server text-4xl text-red-500 mb-2 animate-pulse"></i><button class="bg-gray-200 hover:bg-yellow-300 text-xs px-2 py-1 rounded block transition font-bold" onclick="checkLab6(true)">Deploy Patch</button></div>
+                        <div class="text-center"><i class="fa-solid fa-server text-4xl text-green-500 mb-2"></i><button class="bg-gray-200 text-xs px-2 py-1 rounded block" onclick="checkLab6(false)">Patch</button></div>
+                    </div>
+                    <div id="lab6-timer-bar" class="absolute bottom-0 left-0 h-1 bg-red-500 w-full" style="transition: width 0.1s linear;"></div>
+                    <div id="lab6-feedback" class="text-center text-xs font-bold mt-2 h-4 text-green-600"></div>
+                </div>
+
+                <!-- Concept 4: Piracy -->
+                <div class="bg-white p-5 rounded-xl shadow-md border border-red-200 flex flex-col">
+                    <h2 class="text-lg font-bold mb-3 text-red-700"><i class="fa-solid fa-scale-balanced mr-2"></i>Lab 7: Piracy Risk Matrix</h2>
+                    <p class="text-sm text-gray-600 mb-4">Match the primary consequence of software piracy to the correct scenario using the dropdowns.</p>
+                    <div class="space-y-3 text-sm mb-4 mt-auto">
+                        <div class="flex justify-between items-center border-b pb-2">
+                            <span class="w-2/3">Company fined for unlicensed OS:</span>
+                            <select class="w-1/3 border rounded p-1" id="lab7-s1">
+                                <option value="">Select...</option><option value="legal">Legal Risk</option><option value="sec">Security Risk</option><option value="eth">Ethical Issue</option>
+                            </select>
+                        </div>
+                        <div class="flex justify-between items-center border-b pb-2">
+                            <span class="w-2/3">Ransomware hidden in a "Cracked" game:</span>
+                            <select class="w-1/3 border rounded p-1" id="lab7-s2">
+                                <option value="">Select...</option><option value="legal">Legal Risk</option><option value="sec">Security Risk</option><option value="eth">Ethical Issue</option>
+                            </select>
+                        </div>
+                        <div class="flex justify-between items-center border-b pb-2">
+                            <span class="w-2/3">Developers not paid for their hard work:</span>
+                            <select class="w-1/3 border rounded p-1" id="lab7-s3">
+                                <option value="">Select...</option><option value="legal">Legal Risk</option><option value="sec">Security Risk</option><option value="eth">Ethical Issue</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="bg-red-600 text-white w-full py-2 rounded text-sm font-bold lab-btn" onclick="checkLab7()">Submit Matrix</button>
+                    <div id="lab7-feedback" class="text-center text-xs font-bold mt-2 h-4 text-green-600"></div>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl shadow-md border border-red-200 flex flex-col relative">
+                    <h2 class="text-lg font-bold mb-3 text-red-700"><i class="fa-solid fa-bug mr-2"></i>Lab 8: Piracy Inspector</h2>
+                    <p class="text-sm text-gray-600 mb-4">A user downloaded a pirated software package. Click the "Scan" button to reveal the hidden threat inside the illegitimate files, then quarantine it.</p>
+                    <div class="bg-gray-100 border border-gray-300 rounded p-4 flex flex-col items-center justify-center h-28 mb-4 mt-auto relative">
+                        <div id="lab8-files" class="flex gap-6 text-center">
+                            <div><i class="fa-solid fa-file-pdf text-3xl text-red-400"></i><p class="text-xs mt-1">readme.txt</p></div>
+                            <div><i class="fa-solid fa-box-archive text-3xl text-yellow-500"></i><p class="text-xs mt-1">game_setup.zip</p></div>
+                            <div id="lab8-trojan" class="relative group cursor-pointer" onclick="checkLab8Quarantine()">
+                                <i class="fa-solid fa-file-code text-3xl text-gray-600 group-hover:text-red-600 transition"></i>
+                                <p class="text-xs mt-1">crack_keygen.exe</p>
+                                <div id="lab8-threat-icon" class="absolute -top-2 -right-2 text-red-600 hidden text-xl bg-white rounded-full"><i class="fa-solid fa-biohazard"></i></div>
+                            </div>
+                        </div>
+                        <div id="lab8-scanner" class="absolute top-0 left-0 h-full w-2 bg-green-400 opacity-50 shadow-[0_0_15px_rgba(74,222,128,1)] hidden"></div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button class="bg-gray-800 text-white w-full py-2 rounded text-sm font-bold lab-btn" onclick="runLab8Scan()">1. Run AV Scan</button>
+                    </div>
+                    <div id="lab8-feedback" class="text-center text-xs font-bold mt-2 h-4 text-green-600"></div>
+                </div>
+            </div>
+
+            <div class="text-center mt-10">
+                <button onclick="switchTab('quiz')" class="bg-green-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-green-500 shadow-lg transition transform hover:scale-105">Take the Mastery Quiz <i class="fa-solid fa-clipboard-check ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- QUIZ SECTION -->
+        <div id="quiz-section" class="tab-content no-print">
+            <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-xl max-w-4xl mx-auto border-t-8 border-green-600">
+                <div class="text-center mb-8 border-b pb-4">
+                    <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Section 6.2.3 Mastery Quiz</h1>
+                    <p class="text-gray-600">Score 90% or higher (18/20) to earn your Certificate of Mastery and unlock the Retro Game!</p>
+                </div>
+
+                <div id="quiz-container" class="space-y-8">
+                    <!-- Questions injected via JS -->
+                </div>
+
+                <div class="mt-10 text-center border-t pt-6 flex flex-col md:flex-row justify-center items-center gap-4">
+                    <button id="submit-quiz-btn" onclick="gradeQuiz()" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">Submit Quiz</button>
+                    <button id="proceed-game-btn" onclick="switchTab('game')" class="hidden bg-purple-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-purple-700 shadow-lg transition w-full md:w-auto">Play Retro Game <i class="fa-solid fa-gamepad ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RETRO GAME SECTION -->
+        <div id="game-section" class="tab-content no-print">
+            <div class="bg-slate-800 p-6 sm:p-8 rounded-2xl shadow-xl max-w-4xl mx-auto border-4 border-slate-600 flex flex-col items-center relative overflow-hidden">
+                <div class="text-center mb-4 w-full z-10">
+                    <h1 class="text-3xl font-extrabold text-cyan-400 mb-2 tracking-widest uppercase" style="font-family: monospace;">Malware Blaster</h1>
+                    <p class="text-slate-300 text-sm max-w-2xl mx-auto">Pilot your Antivirus Ship (Blue) using the <strong class="text-white">Up/Down Arrow Keys</strong>. Press <strong class="text-white">SPACEBAR</strong> to shoot Firewall Packets at the incoming Pirated Malware (Red). Do not let the malware crash into you or breach the left side of your network!</p>
+                </div>
+                
+                <div class="flex justify-between items-center w-full max-w-[800px] mb-2 px-4 text-white font-mono text-xl z-10">
+                    <div>Threats Neutralized: <span id="game-score" class="text-green-400 font-bold">0</span></div>
+                    <div>System Integrity: <span id="game-lives" class="text-red-400 font-bold">3</span></div>
+                </div>
+
+                <div class="relative flex justify-center w-full z-10">
+                    <!-- Game Canvas -->
+                    <canvas id="game-canvas" width="800" height="400" class="w-full max-w-[800px]" tabindex="0"></canvas>
+                    
+                    <!-- Overlay Start Button -->
+                    <div id="game-overlay" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-900 bg-opacity-80 rounded-lg max-w-[800px] mx-auto z-20">
+                        <h2 id="game-over-text" class="text-4xl font-bold text-red-500 mb-6 font-mono hidden tracking-widest">SYSTEM BREACHED</h2>
+                        <button id="start-game-btn" class="bg-cyan-600 hover:bg-cyan-500 text-white font-bold font-mono py-3 px-6 rounded-lg text-xl border-4 border-cyan-800 uppercase transform transition hover:scale-105">Initialize Antivirus (Start)</button>
+                    </div>
+                </div>
+
+                <div class="mt-8 text-center w-full border-t border-slate-600 pt-6 z-10">
+                    <button onclick="switchTab('cert')" class="bg-green-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-green-700 shadow-lg transition w-full md:w-auto">View Certificate <i class="fa-solid fa-award ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CERTIFICATE SECTION -->
+        <div id="cert-section" class="tab-content">
+            <div class="max-w-5xl mx-auto">
+                
+                <!-- Controls -->
+                <div class="bg-white p-6 rounded shadow mb-6 no-print text-center border border-gray-200">
+                    <h2 class="text-2xl font-bold text-green-600 mb-2">🎉 Congratulations! 🎉</h2>
+                    <p class="text-gray-700 mb-4">You have achieved mastery of Device Use Best Practices.</p>
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+                        <input type="text" id="student-name-input" value="Student" placeholder="Enter your first name" class="border-2 border-gray-300 rounded px-4 py-2 w-full md:w-64 focus:border-green-500 focus:outline-none">
+                        <button onclick="updateCertName()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition font-bold">Update Name</button>
+                        <button id="download-btn" onclick="downloadCert()" class="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900 transition flex items-center justify-center font-bold">
+                            <i class="fa-solid fa-download mr-2"></i>Download PNG
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Certificate Render Container -->
+                <div class="cert-preview-container print:p-0 print:bg-white">
+                    <div id="certificate">
+                        <div class="gold-seal">
+                            <div class="gold-seal-inner-1">
+                                <div class="gold-seal-inner-2">
+                                     <span class="embossed-text embossed-text-large">Certificate</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-small">Of</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-large">Excellence</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="relative z-20 w-full h-full flex flex-col pt-[48px] pl-[380px] pr-[48px]">
+                            <h1 class="text-[#1e3a8a] text-[4.5rem] leading-none font-serif font-bold tracking-wide uppercase mb-2">CERTIFICATE</h1>
+                            <h2 class="text-gray-800 text-3xl font-serif tracking-widest uppercase mb-10">Of Achievement</h2>
+                            
+                            <p class="text-[1.4rem] font-body text-gray-800 mb-4">This is to certify that</p>
+                            
+                            <div class="relative mb-8 w-full">
+                                <h3 id="cert-student-name" class="text-[4rem] text-[#1e3a8a] font-serif italic leading-none pb-2 relative z-10 text-center w-full block">Student</h3>
+                                <div class="w-full border-b-[2px] border-[#1e3a8a] absolute bottom-[4px] left-0 z-0"></div>
+                                <div class="w-full border-b-[2px] border-dotted border-red-500 absolute bottom-[0px] left-0 z-0"></div>
+                            </div>
+                            
+                            <p class="text-[1.3rem] font-body text-gray-800 leading-relaxed w-full pr-4">
+                                Has successfully completed the assessment for 
+                                <strong class="text-[1.8rem] text-[#1e3a8a] block mt-4 mb-2 font-serif">Cyber.org Tech+ Unit 07 Section 6.2.3</strong>
+                                <strong class="text-[1.5rem] text-black block mb-4 font-serif italic">Device Use Best Practices</strong>
+                                <span class="text-[1.1rem] text-gray-700 leading-snug block">Demonstrating comprehensive proficiency in evaluating software licensing models, identifying secure software sourcing methods, executing safe removal and patching procedures, and understanding the severe operational and ethical implications of software piracy.</span>
+                            </p>
+                            
+                            <div class="flex justify-end gap-16 items-end mt-auto mb-[60px] w-full pr-8">
+                                <div class="w-64">
+                                    <div class="border-b border-gray-600 mb-2 h-20 flex items-end justify-center relative">
+                                        <span class="font-script text-[5rem] text-[#1e3a8a] absolute bottom-[-10px] transform -rotate-3 opacity-90">Dr. M. S</span>
+                                    </div>
+                                    <p class="font-serif text-xl text-gray-800 text-center">Administration</p>
+                                </div>
+                                
+                                <div class="w-64">
+                                    <div class="border-b border-gray-600 mb-2 text-center h-20 flex items-end justify-center">
+                                        <p id="cert-date" class="font-body text-2xl text-gray-800 pb-1">Date Here</p>
+                                    </div>
+                                    <p class="font-serif text-xl text-gray-800 text-center">Date</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Custom Modal for Alerts -->
+    <div id="custom-modal" class="fixed inset-0 bg-black bg-opacity-60 z-[100] hidden flex justify-center items-center backdrop-blur-sm p-4">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all border-t-8 border-green-600">
+            <div class="text-center">
+                <div id="modal-icon" class="text-6xl mb-4"></div>
+                <h3 id="modal-title" class="text-2xl font-bold mb-2 text-gray-900"></h3>
+                <p id="modal-msg" class="text-gray-600 mb-6 text-lg"></p>
+                <button onclick="closeModal()" class="bg-green-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-green-700 transition shadow w-full">Acknowledge</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Briefing Modal -->
+    <div id="briefing-modal" class="fixed inset-0 bg-black bg-opacity-70 z-[120] hidden flex justify-center items-center backdrop-blur-sm p-4 sm:p-6">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col transform transition-all overflow-hidden border-4 border-green-700">
+            <div class="p-6 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+                <div class="flex items-center gap-4">
+                    <div id="briefing-modal-icon" class="text-4xl"></div>
+                    <h3 id="briefing-modal-title" class="text-2xl md:text-3xl font-bold text-gray-900"></h3>
+                </div>
+                <button onclick="closeBriefing()" class="text-gray-400 hover:text-red-600 transition text-4xl leading-none">&times;</button>
+            </div>
+            <div id="briefing-modal-content" class="p-6 md:p-10 overflow-y-auto flex-grow text-gray-700 text-lg leading-relaxed bg-white font-body">
+                <!-- Dynamic Content Injected Here -->
+            </div>
+            <div class="p-6 border-t border-gray-200 bg-gray-50 flex justify-end">
+                <button onclick="closeBriefing()" class="bg-gray-800 text-white px-8 py-3 rounded-lg font-bold hover:bg-gray-900 transition shadow-md">Close Briefing</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Briefing Content Data (Min 7 Paragraphs per detail, specific structure for Use Cases) ---
+        const briefingData = {
+            'license-details': {
+                title: 'Software Licensing Models',
+                icon: '<i class="fa-solid fa-file-signature text-blue-600"></i>',
+                html: `
+                    <p class="mb-5">Understanding software licensing is the absolute foundation of secure and legal device management. When you "buy" software, you are rarely purchasing the intellectual property itself; rather, you are purchasing a license—a legal agreement that dictates exactly how, where, and for how long you are permitted to use that specific code.</p>
+                    
+                    <p class="mb-5">The first major distinction in software licensing is between <strong>Open-Source</strong> and <strong>Proprietary</strong> models. Open-source software is characterized by its transparency. The original creator makes the source code publicly available, allowing anyone with the technical knowledge to inspect, modify, and distribute it. Popular examples include the Linux operating system and the VLC media player. Importantly, "open-source" does not automatically mean "free of charge," as some companies charge for enterprise tech support or premium features built on top of the open-source code.</p>
+                    
+                    <p class="mb-5">In stark contrast, <strong>Proprietary Software</strong> keeps its source code strictly private. The code is a closely guarded trade secret owned by an individual or a corporation. Users are granted permission to run the compiled application, but they cannot legally alter or reverse-engineer the underlying code. Both Microsoft Windows and Google Chrome (though free to download) are examples of proprietary software governed by strict End-User License Agreements (EULAs).</p>
+                    
+                    <p class="mb-5">Beyond the visibility of the code, software is categorized by its payment and access structure. A <strong>Subscription-based License</strong> requires users to make recurring payments—usually monthly or annually. This model, often tied to Software as a Service (SaaS) like Adobe Creative Cloud or Microsoft 365, provides the user with constant, seamless updates, cloud storage integration, and ongoing technical support as long as the subscription remains active.</p>
+                    
+                    <p class="mb-5">Alternatively, a <strong>One-Time Purchase License</strong> involves paying a single flat fee upfront. This grants the user the right to use that specific version of the software indefinitely. However, a major drawback is that one-time purchases generally receive very limited updates. If the manufacturer releases a completely new version with better features or critical security overhauls a year later, the user must typically pay the full purchase price again to upgrade.</p>
+                    
+                    <p class="mb-5">A <strong>Perpetual License</strong> is similar to a one-time purchase but is often geared toward enterprise environments. The user pays a larger upfront fee that grants indefinite use of the software, but it often includes a defined period of ongoing updates and technical support. It is highly useful for long-term corporate infrastructure where stability is preferred over constant, disruptive feature updates.</p>
+                    
+                    <p>Finally, to enforce these licenses, manufacturers use specific identifiers. A <strong>Product Key</strong> is a unique alphanumeric string used to mathematically activate and authenticate that a software license was legitimately purchased. Conversely, a <strong>Serial Number</strong> is physically tied to hardware. It is used to identify a specific laptop, server, or monitor for warranty registration, inventory tracking, and physical hardware verification.</p>
+                `
+            },
+            'license-usecase': {
+                title: 'Software Licensing: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 1: Small Business Budgeting</h4>
+                        <p class="mb-2">A startup marketing firm needs to outfit ten employees with graphic design and word processing capabilities while managing a tight initial budget.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Subscription vs Perpetual):</strong> Instead of paying $10,000 upfront for perpetual licenses of an older design suite, the firm opts for a monthly subscription. This provides immediate access to the latest tools, cloud collaboration, and lowers the initial barrier to entry, though it requires ongoing monthly budgeting.</li>
+                            <li><strong>Example 2 (Open-Source Option):</strong> To further cut costs on non-essential tools, the firm decides to use an open-source operating system (like Ubuntu Linux) and free open-source productivity software (like LibreOffice) on their secondary administrative computers, completely eliminating those licensing fees.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 2: IT Department Asset Tracking</h4>
+                        <p class="mb-2">A university IT department is receiving a shipment of 500 new lab computers and must ensure all hardware is tracked and all software is legally activated.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Serial Numbers):</strong> As the laptops are unboxed, technicians scan the physical Serial Number barcoded on the bottom of each chassis, entering them into an inventory database to track which student receives which machine and to register the 3-year hardware warranties.</li>
+                            <li><strong>Example 2 (Product Keys):</strong> During the software imaging process, the IT team utilizes a Volume License Product Key provided by Microsoft. This single, highly secure key authenticates the proprietary Windows operating system across all 500 devices simultaneously, ensuring legal compliance.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Software Licensing</p>
+                            <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=600&h=350" alt="Code on a screen representing software IP" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Hardware Serial Tracking</p>
+                            <img src="https://images.unsplash.com/photo-1580927752452-89d86da3fa0a?auto=format&fit=crop&w=600&h=350" alt="Scanning hardware barcodes" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'source-details': {
+                title: 'Sourcing Software Safely',
+                icon: '<i class="fa-solid fa-download text-green-600"></i>',
+                html: `
+                    <p class="mb-5">In the modern digital landscape, the origin of your software is just as critical as the software itself. The internet is flooded with malicious actors attempting to trick users into downloading compromised files. Learning how to properly source software is a fundamental defense mechanism against malware, ransomware, and system instability.</p>
+                    
+                    <p class="mb-5">The absolute safest and most reliable place to acquire software is directly from the <strong>Original Equipment Manufacturer (OEM)</strong> or the official developer's website. When you download a PDF reader directly from Adobe.com, you guarantee that the installation package has not been tampered with by a malicious middleman. The OEM provides the unadulterated code, guaranteeing compatibility and security.</p>
+                    
+                    <p class="mb-5">If purchasing directly from the OEM is not possible, users should rely on <strong>Authorized Retailers</strong>. These are vetted, legitimate businesses (like a verified electronics store or an approved digital vendor) that possess a legal agreement with the manufacturer to distribute their products safely. Authorized retailers can always be verified through the OEM's official website.</p>
+                    
+                    <p class="mb-5">Conversely, users must exercise extreme caution regarding unauthorized <strong>Third-Party Retailers and Download Hubs</strong>. Many websites offer "free downloads" of popular software. However, these third-party aggregators often repackage the legitimate software, bundling it with intrusive adware, browser hijackers, or spyware. While the core application might work, the hidden payloads compromise the security and performance of the device.</p>
+                    
+                    <p class="mb-5">To combat this risk, modern operating systems rely heavily on <strong>Application Stores</strong> (such as the Apple App Store, Google Play Store, or Microsoft Store). These walled-garden environments serve as centralized, highly regulated hubs for downloading software tailored to specific devices, offering a drastically safer alternative to open-web downloading.</p>
+                    
+                    <p class="mb-5">The primary security benefit of Application Stores is their rigorous <strong>Vetting Process</strong>. Before an app is published to a legitimate store, the platform provider scans the code for known malware signatures, checks for privacy violations, and ensures the software is actually compatible with the hardware. If an app acts maliciously after being published, the store can instantly revoke it from all user devices simultaneously.</p>
+                    
+                    <p>However, users must remain vigilant regarding <strong>Unofficial App Stores and "Jailbreaking."</strong> Bypassing a device's built-in security to install applications from unverified sources (known as sideloading) completely removes the protective vetting layer. Software downloaded from these gray markets frequently contains aggressive malware designed to steal banking credentials or personal data, leading to catastrophic security breaches.</p>
+                `
+            },
+            'source-usecase': {
+                title: 'Sourcing Software: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-green-800 mb-2 border-b-2 border-green-200 pb-1">Case 1: Equipping a New Workforce</h4>
+                        <p class="mb-2">A hospital administrator is setting up 20 new tablets for the nursing staff. They require a specialized medical charting application.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (App Store Vetting):</strong> The administrator instructs the staff to download the charting app strictly through the official Apple App Store. Because the app has passed Apple's strict privacy and security vetting, the hospital can be confident that patient data entered into the app will not be secretly siphoned to a malicious third-party server.</li>
+                            <li><strong>Example 2 (Permissions):</strong> Even when downloading from the official store, the app requests access to the tablet's microphone and location. The administrator trains the nurses to deny these unnecessary permissions, utilizing the OS controls to enforce the principle of least privilege.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-green-800 mb-2 border-b-2 border-green-200 pb-1">Case 2: Upgrading Office Software</h4>
+                        <p class="mb-2">An accountant needs a new tax preparation software but sees advertisements offering the $300 software for $15.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Third-Party Danger):</strong> The accountant clicks the ad and downloads a "free trial" from an unknown third-party blog. During installation, the package secretly installs a keystroke logger (spyware). The accountant's client financial data is compromised because they bypassed the OEM.</li>
+                            <li><strong>Example 2 (OEM Safety):</strong> Realizing the risk, the accountant deletes the sketchy file and navigates directly to the tax software's official website (the OEM). They purchase the software directly, guaranteeing a clean, uncompromised installation package that is fully supported.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Verified App Stores</p>
+                            <img src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=600&h=350" alt="Mobile phone with apps" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Avoiding Third-Party Ads</p>
+                            <img src="https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=600&h=350" alt="Warning sign on laptop representing danger" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'removal-details': {
+                title: 'Removal & Maintenance',
+                icon: '<i class="fa-solid fa-trash-can text-purple-600"></i>',
+                html: `
+                    <p class="mb-5">Properly managing a device's software lifecycle is crucial for maintaining optimal performance and robust security. Over time, devices accumulate programs that are no longer needed. If left unchecked, this digital clutter bogs down the central processing unit (CPU), consumes valuable random-access memory (RAM), and creates unnecessary vulnerabilities that hackers can exploit.</p>
+                    
+                    <p class="mb-5">One of the most common forms of unwanted software is <strong>Bloatware</strong>. When you purchase a new PC or smartphone, manufacturers often pre-install dozens of non-essential applications, games, and vendor-specific utility tools. While rarely malicious, bloatware uses up the device's storage and often runs hidden background processes that slow down boot times and drain battery life without providing any inherent benefit to the user.</p>
+                    
+                    <p class="mb-5">Similarly, devices frequently include <strong>Trialware</strong>—programs like 30-day antivirus trials or basic word processors. Once the trial expires, the software often begins generating intrusive pop-ups demanding payment. More importantly, because the user isn't paying for it, the software stops receiving security updates. An expired, unpatched trial program becomes a gaping security hole on the device.</p>
+                    
+                    <p class="mb-5">A far more severe category of software that demands immediate removal is <strong>Malware</strong>. This includes spyware (which secretly tracks user behavior), adware (which floods the screen with advertisements), and ransomware. Unlike bloatware, malware intentionally performs malicious actions without the user's consent and actively attempts to hide itself deep within the operating system to avoid detection.</p>
+                    
+                    <p class="mb-5">When it is time to clean a device, you cannot simply drag an application's desktop shortcut into the digital trash can. Doing so only deletes the visual link, leaving the actual massive program files intact. You must use the <strong>Native System Uninstaller</strong> (like Windows' "Add or Remove Programs" or macOS's "App Cleaner") to properly initiate the software's uninstallation routine.</p>
+                    
+                    <p class="mb-5">Proper uninstallation is critical because software embeds itself deeply into a machine. A program creates hidden AppData folders, modifies the System Registry (in Windows), and installs background services. System tools and dedicated security programs are designed to scan and hunt down these <strong>Residual Files</strong>, ensuring the software is eradicated completely and preventing orphaned files from causing future system conflicts.</p>
+                    
+                    <p>Finally, maintenance isn't just about removal; it is about updating what remains. When an OEM releases a <strong>Software Update or Patch</strong>, it is rarely just for cosmetic changes. Patches contain critical security fixes designed to close known vulnerabilities (Zero-Days) that hackers are actively exploiting. Ignoring a prompt to update legitimate software is one of the fastest ways to get a device compromised.</p>
+                `
+            },
+            'removal-usecase': {
+                title: 'Removal & Maintenance: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Case 1: Preparing Fleet Laptops</h4>
+                        <p class="mb-2">An IT technician is preparing a batch of brand-new laptops purchased from a major retailer to be handed out to company executives.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Bloatware Removal):</strong> The technician turns on the laptops and notices they are pre-loaded with free gaming apps, a 30-day trial of consumer antivirus, and OEM shopping hubs. Before giving them to the executives, the tech uses the OS system tools to completely uninstall this bloatware, freeing up 20GB of space and speeding up the boot time significantly.</li>
+                            <li><strong>Example 2 (Residual Cleaning):</strong> Knowing that the trial antivirus embeds itself deeply, the tech runs a specialized cleanup utility to sweep the system registry, ensuring no leftover security drivers conflict with the official corporate endpoint protection software they plan to install next.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Case 2: Responding to a Security Alert</h4>
+                        <p class="mb-2">A popular web browser company announces that a critical flaw has been discovered in their code that allows hackers to take over a computer if the user visits a specific website.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Critical Patching):</strong> A user sees the notification pop up: "Update required." Instead of clicking "Remind Me Later," they immediately close their work, allow the browser to download the patch, and restart the application, successfully closing the vulnerability.</li>
+                            <li><strong>Example 2 (Removing Unused Risk):</strong> Another user realizes they have a different, outdated browser installed that they haven't used in three years. Recognizing that outdated software is a liability, they navigate to the System Settings and properly uninstall the old browser, permanently removing the risk.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Software Maintenance</p>
+                            <img src="https://images.unsplash.com/photo-1629654297299-c8506221ca97?auto=format&fit=crop&w=600&h=350" alt="System update loading screen" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Removing Digital Clutter</p>
+                            <img src="https://images.unsplash.com/photo-1614064641913-6b43292bc690?auto=format&fit=crop&w=600&h=350" alt="Keyboard with delete key highlighted" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'piracy-details': {
+                title: 'Software Piracy & Ethics',
+                icon: '<i class="fa-solid fa-triangle-exclamation text-red-600"></i>',
+                html: `
+                    <p class="mb-5">Software piracy is the act of illegally copying, distributing, sharing, or selling software that is protected by copyright. Whether it involves downloading a "cracked" version of a high-end video editor from a torrent site, sharing a single-user product key with twenty friends, or purchasing counterfeit software from an unverified vendor, piracy poses immense risks to both the individual user and the broader digital ecosystem.</p>
+                    
+                    <p class="mb-5">The most immediate and devastating consequence of using pirated software is the <strong>Malicious Security Risk</strong>. Hackers do not provide "free" software out of the goodness of their hearts. The executable files used to bypass software licenses (often called "cracks" or "keygens") are notoriously infected with severe malware. By running these files, users willingly invite Trojans, keyloggers, and ransomware past their firewalls, often leading to total data loss or identity theft.</p>
+                    
+                    <p class="mb-5">Furthermore, pirated software suffers from massive <strong>Operational Deficiencies</strong>. Legitimate software connects to the manufacturer's official servers to download bug fixes, feature enhancements, and critical security patches. Pirated software is intentionally severed from these servers to avoid detection. Consequently, a pirated operating system or application will never receive security updates, leaving the device permanently vulnerable to known exploits.</p>
+                    
+                    <p class="mb-5">Beyond the technical dangers, there are severe <strong>Legal and Financial Consequences</strong>. Software piracy is a federal crime in many jurisdictions. If a business is caught using unlicensed software during an audit, they can face catastrophic fines, crippling lawsuits from organizations like the Business Software Alliance (BSA), and immense reputational damage. The cost of the fine drastically exceeds the cost of purchasing the legitimate license.</p>
+                    
+                    <p class="mb-5">The conversation around piracy must also address the <strong>Ethical Implications</strong>. Developing complex software requires thousands of hours of labor from programmers, designers, and testers. When users pirate software, they are actively stealing the product of that labor, depriving the creators of their rightful compensation and the funds needed to sustain their business.</p>
+                    
+                    <p class="mb-5">This theft creates a negative ripple effect across the entire tech industry. Rampant piracy leads to a loss of revenue, which directly results in reduced funding for research and development. This <strong>Stifles Innovation</strong>, meaning fewer revolutionary features, slower software improvements, and a stagnation of technological progress that ultimately harms all consumers.</p>
+                    
+                    <p>Finally, there is rarely a justification for piracy today due to the abundance of <strong>Legitimate Alternatives</strong>. If a user or business cannot afford a proprietary software license, the ethical and secure choice is to seek out an open-source equivalent. For almost every expensive proprietary program, there exists a highly capable, free, open-source alternative that carries zero legal or security risks.</p>
+                `
+            },
+            'piracy-usecase': {
+                title: 'Software Piracy: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-red-800 mb-2 border-b-2 border-red-200 pb-1">Case 1: The Freelance Designer</h4>
+                        <p class="mb-2">A freelance designer cannot afford a $1,000 professional 3D modeling software and considers downloading a pirated version from a torrent tracking website.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Security Risk):</strong> The designer downloads the "crack" file. Upon execution, the file silently installs ransomware, locking all of the designer's client portfolios and demanding a $5,000 crypto payment. Attempting to save money on a license resulted in total data destruction.</li>
+                            <li><strong>Example 2 (Ethical Alternative):</strong> Realizing the risk, the designer deletes the torrent and instead downloads "Blender"—a completely free, legally open-source 3D modeling suite. They complete their client work safely, legally, and ethically without spending a dime.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-red-800 mb-2 border-b-2 border-red-200 pb-1">Case 2: Corporate Non-Compliance</h4>
+                        <p class="mb-2">A mid-sized logistics company decides to cut corners by purchasing a single legitimate copy of an inventory management software and illegally installing it across 50 employee computers using a bypassed license key.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Operational Failure):</strong> Because the software is illegally activated, it cannot connect to the OEM servers. When a major bug causes the software to crash during peak holiday shipping, the company cannot download the patch to fix it, halting operations for two days.</li>
+                            <li><strong>Example 2 (Legal Ramifications):</strong> A disgruntled former employee reports the piracy to a software compliance agency. The company undergoes an audit, is found guilty of copyright infringement, and is forced to pay hundreds of thousands of dollars in retroactive licensing fees and legal penalties.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Software Piracy Risks</p>
+                            <img src="https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=600&h=350" alt="Money overlaid with digital code representing financial cyber risk" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Ransomware Infection</p>
+                            <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=600&h=350" alt="Hacker screen showing malicious activity" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        // Modal Control Functions
+        function openBriefing(key) {
+            const modal = document.getElementById('briefing-modal');
+            const data = briefingData[key];
+            if(data) {
+                document.getElementById('briefing-modal-icon').innerHTML = data.icon;
+                document.getElementById('briefing-modal-title').innerText = data.title;
+                document.getElementById('briefing-modal-content').innerHTML = data.html;
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; 
+            }
+        }
+
+        function closeBriefing() {
+            document.getElementById('briefing-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto'; 
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId + '-section').classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-green-900'));
+            const activeBtn = document.getElementById('nav-' + tabId);
+            if(activeBtn && tabId !== 'cert') activeBtn.classList.add('bg-green-900');
+            
+            document.querySelectorAll('.nav-btn-mobile').forEach(btn => btn.classList.remove('bg-green-900'));
+            const activeMobileBtn = document.getElementById('nav-' + tabId + '-mobile');
+            if(activeMobileBtn && tabId !== 'cert') activeMobileBtn.classList.add('bg-green-900');
+
+            window.scrollTo(0,0);
+            
+            if (tabId === 'game' && !gameRunning) {
+                drawStaticGame();
+            }
+        }
+
+        function showModal(title, message, type = 'info') {
+            const modal = document.getElementById('custom-modal');
+            const icon = document.getElementById('modal-icon');
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-msg').innerText = message;
+            
+            if(type === 'success') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-check text-green-500"></i>';
+            } else if (type === 'error') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500"></i>';
+            } else if (type === 'warning') {
+                icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-yellow-500"></i>';
+            } else {
+                icon.innerHTML = '<i class="fa-solid fa-circle-info text-blue-500"></i>';
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        // --- LAB LOGIC ---
+
+        // Lab 1: Licensing
+        let draggedItem = null;
+        let lab1Count = 0;
+        document.querySelectorAll('#lab1-items .io-item').forEach(item => {
+            item.addEventListener('dragstart', function() { draggedItem = this; this.classList.add('opacity-50'); });
+            item.addEventListener('dragend', function() { this.classList.remove('opacity-50'); draggedItem = null; });
+        });
+        document.querySelectorAll('.cat-dropzone').forEach(zone => {
+            zone.addEventListener('dragover', e => e.preventDefault());
+            zone.addEventListener('dragenter', function(e) { e.preventDefault(); this.classList.add('bg-green-100'); });
+            zone.addEventListener('dragleave', function() { this.classList.remove('bg-green-100'); });
+            zone.addEventListener('drop', function() {
+                this.classList.remove('bg-green-100');
+                if(draggedItem && draggedItem.dataset.type === this.dataset.target) {
+                    this.appendChild(draggedItem);
+                    draggedItem.classList.remove('bg-blue-100', 'cursor-grab');
+                    draggedItem.classList.add('bg-green-200', 'text-green-800', 'cursor-default', 'mt-1', 'w-[90%]');
+                    draggedItem.setAttribute('draggable', 'false');
+                    lab1Count++;
+                    document.getElementById('lab1-feedback').innerText = "Correct model mapped!";
+                    if(lab1Count === 4) {
+                        setTimeout(() => showModal('Lab 1 Complete', 'You correctly identified all software licensing models.', 'success'), 300);
+                    }
+                } else {
+                    document.getElementById('lab1-feedback').innerText = "Incorrect. Review the definitions of each license type.";
+                    document.getElementById('lab1-feedback').className = "text-center text-xs font-bold mt-2 h-4 text-red-600";
+                }
+            });
+        });
+
+        // Lab 2: Keys vs Serial
+        let lab2Key = false, lab2Serial = false;
+        function tagLab2(type) {
+            if(type === 'key') {
+                document.getElementById('btn-sw-box').classList.add('border-green-500', 'bg-green-50');
+                document.getElementById('tag-key').classList.remove('hidden');
+                lab2Key = true;
+            } else if (type === 'serial') {
+                document.getElementById('btn-hw-box').classList.add('border-green-500', 'bg-green-50');
+                document.getElementById('tag-serial').classList.remove('hidden');
+                lab2Serial = true;
+            }
+            if(lab2Key && lab2Serial) {
+                document.getElementById('lab2-feedback').innerText = "Authentication and tracking assigned.";
+                setTimeout(() => showModal('Lab 2 Complete', 'Product keys authenticate software. Serial numbers track physical hardware.', 'success'), 300);
+            }
+        }
+
+        // Lab 3: Source Validator
+        function checkLab3(isCorrect) {
+            if(isCorrect) {
+                document.getElementById('lab3-feedback').innerText = "OEM selected!";
+                document.getElementById('lab3-feedback').className = "text-center text-xs font-bold mt-2 h-4 text-green-600";
+                setTimeout(() => showModal('Lab 3 Complete', 'Correct! Always choose the Original Equipment Manufacturer (OEM) site over third-party ads to avoid malware.', 'success'), 300);
+            } else {
+                document.getElementById('lab3-feedback').innerText = "DANGER! Ad links often contain bundled adware or malware.";
+                document.getElementById('lab3-feedback').className = "text-center text-xs font-bold mt-2 h-4 text-red-600";
+            }
+        }
+
+        // Lab 4: Permissions
+        function checkLab4() {
+            let cam = document.getElementById('tgl-cam').classList.contains('on');
+            let loc = document.getElementById('tgl-loc').classList.contains('on');
+            let con = document.getElementById('tgl-con').classList.contains('on');
+            
+            if(cam && !loc && !con) {
+                document.getElementById('lab4-feedback').innerText = "Permissions secured.";
+                document.getElementById('lab4-feedback').className = "text-center text-xs font-bold mt-2 h-4 text-green-600";
+                setTimeout(() => showModal('Lab 4 Complete', 'You successfully applied the principle of least privilege, blocking unnecessary access to location and contacts.', 'success'), 300);
+            } else {
+                document.getElementById('lab4-feedback').innerText = "Review permissions! A flashlight does not need your location or contacts.";
+                document.getElementById('lab4-feedback').className = "text-center text-xs font-bold mt-2 h-4 text-red-600";
+            }
+        }
+
+        // Lab 5: Bloatware
+        function checkLab5() {
+            let boxes = document.querySelectorAll('.lab5-chk:checked');
+            let vals = Array.from(boxes).map(b => b.value);
+            
+            if(vals.length === 2 && vals.includes('bloat1') && vals.includes('bloat2')) {
+                document.getElementById('lab5-feedback').innerText = "Bloatware purged.";
+                document.getElementById('lab5-feedback').className = "text-center text-xs font-bold mt-2 h-4 text-green-600";
+                boxes.forEach(b => b.parentElement.classList.add('hidden'));
+                setTimeout(() => showModal('Lab 5 Complete', 'You successfully removed unnecessary trialware and promotional bloatware while leaving critical drivers and OS files intact.', 'success'), 300);
+            } else {
+                document.getElementById('lab5-feedback').innerText = "Incorrect. Only remove non-essential programs/trialware.";
+                document.getElementById('lab5-feedback').className = "text-center text-xs font-bold mt-2 h-4 text-red-600";
+            }
+        }
+
+        // Lab 6: Patch Management
+        let lab6Timer = 100;
+        let lab6Interval;
+        let lab6Active = false;
+        
+        // start timer on scroll into view roughly
+        function startLab6Timer() {
+            if(lab6Active) return;
+            lab6Active = true;
+            let bar = document.getElementById('lab6-timer-bar');
+            lab6Interval = setInterval(() => {
+                lab6Timer -= 1;
+                bar.style.width = lab6Timer + '%';
+                if(lab6Timer <= 0) {
+                    clearInterval(lab6Interval);
+                    document.getElementById('vuln-server').innerHTML = '<i class="fa-solid fa-skull text-4xl text-black mb-2"></i><span class="text-xs font-bold text-red-600 block">COMPROMISED</span>';
+                    document.getElementById('lab6-feedback').innerText = "Too slow! Vulnerability exploited. Refresh page to retry.";
+                    document.getElementById('lab6-feedback').className = "text-center text-xs font-bold mt-2 h-4 text-red-600";
+                }
+            }, 100);
+        }
+        
+        document.getElementById('activity-section').addEventListener('mouseenter', startLab6Timer, {once:true}); // Simple trigger
+
+        function checkLab6(isCorrect) {
+            if(!lab6Active || lab6Timer <= 0) return;
+            if(isCorrect) {
+                clearInterval(lab6Interval);
+                document.getElementById('vuln-server').innerHTML = '<i class="fa-solid fa-server text-4xl text-green-500 mb-2"></i><span class="text-xs font-bold text-green-600 block">SECURE</span>';
+                document.getElementById('lab6-feedback').innerText = "Patch Deployed Successfully.";
+                document.getElementById('lab6-feedback').className = "text-center text-xs font-bold mt-2 h-4 text-green-600";
+                setTimeout(() => showModal('Lab 6 Complete', 'You applied the critical update in time, closing the zero-day vulnerability.', 'success'), 300);
+            } else {
+                document.getElementById('lab6-feedback').innerText = "Wrong server! Find the vulnerable (Red) one.";
+                document.getElementById('lab6-feedback').className = "text-center text-xs font-bold mt-2 h-4 text-red-600";
+            }
+        }
+
+        // Lab 7: Piracy Matrix
+        function checkLab7() {
+            let s1 = document.getElementById('lab7-s1').value;
+            let s2 = document.getElementById('lab7-s2').value;
+            let s3 = document.getElementById('lab7-s3').value;
+            
+            if(s1 === 'legal' && s2 === 'sec' && s3 === 'eth') {
+                document.getElementById('lab7-feedback').innerText = "Matrix aligned accurately.";
+                document.getElementById('lab7-feedback').className = "text-center text-xs font-bold mt-2 h-4 text-green-600";
+                setTimeout(() => showModal('Lab 7 Complete', 'You correctly identified the distinct legal, security, and ethical consequences of software piracy.', 'success'), 300);
+            } else {
+                document.getElementById('lab7-feedback').innerText = "Incorrect matching. Review the scenarios carefully.";
+                document.getElementById('lab7-feedback').className = "text-center text-xs font-bold mt-2 h-4 text-red-600";
+            }
+        }
+
+        // Lab 8: Piracy Inspector
+        let scanComplete = false;
+        function runLab8Scan() {
+            let scanner = document.getElementById('lab8-scanner');
+            scanner.classList.remove('hidden');
+            scanner.style.transition = 'left 2s linear';
+            setTimeout(() => { scanner.style.left = '95%'; }, 50);
+            
+            setTimeout(() => {
+                scanner.classList.add('hidden');
+                document.getElementById('lab8-threat-icon').classList.remove('hidden');
+                document.getElementById('lab8-trojan').classList.add('animate-bounce');
+                document.getElementById('lab8-feedback').innerText = "Threat found in 'crack_keygen.exe'. Click it to Quarantine.";
+                document.getElementById('lab8-feedback').className = "text-center text-xs font-bold mt-2 h-4 text-red-600";
+                scanComplete = true;
+            }, 2050);
+        }
+        
+        function checkLab8Quarantine() {
+            if(!scanComplete) {
+                document.getElementById('lab8-feedback').innerText = "Run the AV Scan first!";
+                document.getElementById('lab8-feedback').className = "text-center text-xs font-bold mt-2 h-4 text-red-600";
+                return;
+            }
+            document.getElementById('lab8-trojan').innerHTML = '<i class="fa-solid fa-shield-virus text-3xl text-green-500"></i><p class="text-xs mt-1 text-green-600 font-bold">QUARANTINED</p>';
+            document.getElementById('lab8-trojan').classList.remove('animate-bounce');
+            document.getElementById('lab8-feedback').innerText = "System secured.";
+            document.getElementById('lab8-feedback').className = "text-center text-xs font-bold mt-2 h-4 text-green-600";
+            setTimeout(() => showModal('Lab 8 Complete', 'You isolated the malicious payload. Pirated "cracks" and "keygens" are prime vectors for ransomware and trojans.', 'success'), 300);
+        }
+
+
+        // --- QUIZ LOGIC (20 Questions) ---
+        const quizData = [
+            // 10 provided from Document
+            { q: "How does open-source software differ from proprietary software?", options: ["Only use software without making changes", "Avoid paying any fees under all circumstances", "Modify and share the source code", "Use the software without restrictions or licensing"], answer: 2 },
+            { q: "Proprietary software means:", options: ["Software that is always free", "The source code is private and controlled by a company", "The source code is publicly available", "The software can be used however you want"], answer: 1 },
+            { q: "Subscription-based software licensing usually includes:", options: ["Unlimited free access forever without updates", "A one-time payment and no updates", "Recurring payments and frequent updates", "Free hardware with software"], answer: 2 },
+            { q: "A one-time purchase license typically:", options: ["Charges you monthly", "Allows you to use software by paying upfront but without frequent updates", "Is always more secure than subscription models", "Includes lifetime updates for free"], answer: 1 },
+            { q: "What is a perpetual license?", options: ["A license that requires annual renewal", "A subscription plan for short-term software use", "A free license with no terms", "A license with indefinite use after a one-time payment"], answer: 3 },
+            { q: "Why are product keys important?", options: ["They prevent devices from crashing", "They activate and verify purchased software", "They are used to recover lost passwords", "They improve the speed of a device"], answer: 1 },
+            { q: "Serial numbers are usually associated with:", options: ["Identifying hardware or devices for warranty and tracking", "Providing free software downloads", "Activating downloaded apps", "Avoiding piracy issues"], answer: 0 },
+            { q: "What is one way to ensure a software download is legitimate?", options: ["Using a website that offers software for free", "Looking for an official manufacturer’s website or authorized reseller", "Ignoring warnings from security software", "Downloading from pop-up advertisements"], answer: 1 },
+            { q: "What risks come from downloading software from unknown third-party sites?", options: ["Guaranteed product support", "Improved security", "Malware or spyware infections and lack of updates", "Faster download speeds"], answer: 2 },
+            { q: "Which of the following is NOT a benefit of downloading apps from official application stores?", options: ["Apps are pre-checked for security and compatibility", "Apps can be instantly revoked if found malicious", "Apps require zero user permissions and protect privacy automatically", "Apps are verified by the platform provider"], answer: 2 },
+            
+            // 10 new questions based on briefing
+            { q: "What is an Original Equipment Manufacturer (OEM)?", options: ["A third-party site that aggregates free software.", "The initial creator of the product, providing the highest reliability.", "A marketplace for pirated software keys.", "A type of open-source license."], answer: 1 },
+            { q: "What effect does bloatware typically have on a device?", options: ["It increases the CPU speed permanently.", "It automatically blocks all malware.", "It consumes system resources without providing a significant benefit.", "It converts proprietary software to open-source."], answer: 2 },
+            { q: "Why must you use a system's native uninstaller instead of simply deleting an application's desktop icon?", options: ["Deleting the icon automatically cancels your subscription.", "Native uninstallers ensure residual files and registry keys are also removed.", "It is required by federal law.", "Deleting the icon deletes the entire hard drive."], answer: 1 },
+            { q: "What is a major, hidden security risk of downloading pirated software 'cracks' or 'keygens'?", options: ["They frequently contain hidden Trojans or ransomware.", "They force the user to pay a subscription fee.", "They make the computer run too fast and overheat.", "They automatically update to the newest version."], answer: 0 },
+            { q: "Which of the following best describes the ethical consequence of software piracy?", options: ["It forces open-source communities to close.", "It deprives developers of fair compensation for their labor.", "It makes the internet faster for everyone else.", "It decreases the cost of computer hardware."], answer: 1 },
+            { q: "If a company wants to purchase specialty software and use it indefinitely without monthly fees, which license should they seek?", options: ["Open Source", "Subscription License", "Perpetual License", "Trialware License"], answer: 2 },
+            { q: "Downloading applications from 'unofficial' app stores or gray markets is considered dangerous because:", options: ["The applications lack rigorous security and compatibility vetting.", "They cost too much money upfront.", "They require a physical CD-ROM to install.", "They only provide open-source tools."], answer: 0 },
+            { q: "When a company ignores an OEM's critical software update because 'the program works fine,' what severe risk are they taking?", options: ["Their serial numbers will be deleted.", "They are leaving their systems vulnerable to unpatched security exploits (Zero-Days).", "The software will automatically convert to open-source.", "Their keyboards will lock up."], answer: 1 },
+            { q: "What identifier would an IT department use to track physical warranty information for a fleet of 50 new laptops?", options: ["Product Key", "EULA Code", "Serial Number", "IP Address"], answer: 2 },
+            { q: "True or False: 'Open-source software' means the software is completely free of charge and cannot be sold.", options: ["True, open source prohibits any financial transactions.", "False, it refers to the public availability of the source code, not necessarily the cost.", "True, but only for Linux systems.", "False, open source means the source code is hidden."], answer: 1 }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        
+        quizData.forEach((item, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = "bg-gray-50 p-6 rounded-lg border border-gray-200 transition-all";
+            qDiv.id = `q-block-${index}`;
+            
+            const qTitle = document.createElement('h3');
+            qTitle.className = "font-bold text-lg text-gray-800 mb-4";
+            qTitle.innerText = `${index + 1}. ${item.q}`;
+            qDiv.appendChild(qTitle);
+            
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = "space-y-3";
+            
+            item.options.forEach((opt, optIndex) => {
+                const label = document.createElement('label');
+                label.className = "flex items-center space-x-3 p-3 rounded bg-white border border-gray-300 hover:bg-green-50 cursor-pointer transition";
+                
+                const radio = document.createElement('input');
+                radio.type = "radio";
+                radio.name = `q${index}`;
+                radio.value = optIndex;
+                radio.className = "form-radio h-5 w-5 text-green-600";
+                
+                const span = document.createElement('span');
+                span.className = "text-gray-700";
+                span.innerText = opt;
+                
+                label.appendChild(radio);
+                label.appendChild(span);
+                optionsDiv.appendChild(label);
+            });
+            
+            qDiv.appendChild(optionsDiv);
+            quizContainer.appendChild(qDiv);
+        });
+
+        function gradeQuiz() {
+            let score = 0;
+            let allAnswered = true;
+
+            for(let i = 0; i < quizData.length; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if(selected) {
+                    if(parseInt(selected.value) === quizData[i].answer) {
+                        score++;
+                    }
+                } else {
+                    allAnswered = false;
+                }
+            }
+            
+            if(!allAnswered) {
+                showModal('Incomplete Quiz', 'Please answer all 20 questions before submitting.', 'warning');
+                return;
+            }
+            
+            const percentage = (score / quizData.length) * 100;
+            
+            if(score >= 18) { 
+                const navGame = document.getElementById('nav-game');
+                const navGameMobile = document.getElementById('nav-game-mobile');
+                
+                navGame.classList.remove('text-gray-400', 'cursor-not-allowed');
+                navGame.classList.add('text-white', 'hover:bg-green-600');
+                navGame.disabled = false;
+                navGame.innerHTML = '<i class="fa-solid fa-gamepad mr-1"></i>Game';
+                
+                navGameMobile.classList.remove('text-gray-400', 'cursor-not-allowed');
+                navGameMobile.classList.add('text-white', 'hover:bg-green-600');
+                navGameMobile.disabled = false;
+                navGameMobile.innerHTML = '<i class="fa-solid fa-gamepad"></i> Game';
+
+                document.getElementById('nav-cert').classList.remove('hidden');
+                document.getElementById('nav-cert-mobile').classList.remove('hidden');
+                
+                document.getElementById('proceed-game-btn').classList.remove('hidden');
+                document.getElementById('submit-quiz-btn').classList.add('hidden');
+
+                showModal('Outstanding!', `You scored ${score}/20 (${percentage}%). You have unlocked your Certificate of Mastery AND the Retro Game!`, 'success');
+            } else {
+                quizData.forEach((_, i) => {
+                    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                    if(selected) selected.checked = false;
+                });
+                showModal('Keep Trying!', `You scored ${score}/20 (${percentage}%). You need 90% (18/20) to earn the certificate. Your answers have been reset so you can try again.`, 'error');
+                document.getElementById('quiz-section').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // --- RETRO GAME LOGIC: Malware Blaster (Side-scrolling space shooter) ---
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let gameScore = 0;
+        let gameLives = 3;
+        let gameRunning = false;
+        let animId;
+        
+        const player = { x: 50, y: 180, width: 40, height: 25, speed: 6, dy: 0, color: '#38bdf8' };
+        let bullets = [];
+        let enemies = [];
+        
+        let keys = { ArrowUp: false, ArrowDown: false, Space: false };
+        let lastFire = 0;
+        let spawnRate = 1200;
+        let lastSpawn = 0;
+
+        document.getElementById('start-game-btn').addEventListener('click', startGame);
+
+        window.addEventListener('keydown', e => {
+            if(!gameRunning && e.code === 'Space' && document.getElementById('game-section').classList.contains('active')) {
+                 e.preventDefault();
+            }
+            if(gameRunning) {
+                if(e.code === 'ArrowUp') { keys.ArrowUp = true; e.preventDefault(); }
+                if(e.code === 'ArrowDown') { keys.ArrowDown = true; e.preventDefault(); }
+                if(e.code === 'Space') { keys.Space = true; e.preventDefault(); }
+            }
+        });
+        window.addEventListener('keyup', e => {
+            if(gameRunning) {
+                if(e.code === 'ArrowUp') keys.ArrowUp = false;
+                if(e.code === 'ArrowDown') keys.ArrowDown = false;
+                if(e.code === 'Space') keys.Space = false;
+            }
+        });
+
+        function resetGameState() {
+            gameScore = 0;
+            gameLives = 3;
+            player.y = canvas.height/2 - player.height/2;
+            bullets = [];
+            enemies = [];
+            spawnRate = 1500;
+            document.getElementById('game-score').innerText = gameScore;
+            document.getElementById('game-lives').innerText = gameLives;
+            document.getElementById('game-over-text').classList.add('hidden');
+            lastSpawn = Date.now();
+        }
+
+        function startGame() {
+            document.getElementById('game-overlay').classList.add('hidden');
+            if(!gameRunning) {
+                resetGameState();
+                gameRunning = true;
+                canvas.focus();
+                gameLoop();
+            }
+        }
+
+        function drawStaticGame() {
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            // Draw grid
+            ctx.strokeStyle = '#1e293b';
+            ctx.lineWidth = 1;
+            for(let i=0; i<canvas.width; i+=40) { ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke(); }
+            for(let i=0; i<canvas.height; i+=40) { ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(canvas.width, i); ctx.stroke(); }
+            
+            // Draw dummy ship
+            ctx.fillStyle = player.color;
+            ctx.beginPath();
+            ctx.moveTo(player.x, player.y);
+            ctx.lineTo(player.x + player.width, player.y + player.height/2);
+            ctx.lineTo(player.x, player.y + player.height);
+            ctx.fill();
+        }
+
+        function spawnEnemy() {
+            let size = Math.random() * 15 + 20; // 20 to 35
+            let y = Math.random() * (canvas.height - size);
+            let speed = Math.random() * 2 + 2 + (gameScore * 0.05); // Speeds up as score increases
+            enemies.push({ x: canvas.width, y: y, size: size, speed: speed, color: '#ef4444' });
+        }
+
+        function checkCollision(rect1, rect2) {
+            return (rect1.x < rect2.x + rect2.width &&
+                    rect1.x + rect1.width > rect2.x &&
+                    rect1.y < rect2.y + rect2.height &&
+                    rect1.y + rect1.height > rect2.y);
+        }
+
+        function gameLoop() {
+            if(!gameRunning) return;
+            
+            let now = Date.now();
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            
+            // Background Grid (moving effect)
+            ctx.strokeStyle = '#1e293b';
+            ctx.lineWidth = 1;
+            let offset = (now / 20) % 40;
+            for(let i=0; i<canvas.width; i+=40) { ctx.beginPath(); ctx.moveTo(i - offset, 0); ctx.lineTo(i - offset, canvas.height); ctx.stroke(); }
+            for(let i=0; i<canvas.height; i+=40) { ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(canvas.width, i); ctx.stroke(); }
+
+            // Player Movement
+            if(keys.ArrowUp && player.y > 0) player.y -= player.speed;
+            if(keys.ArrowDown && player.y < canvas.height - player.height) player.y += player.speed;
+            
+            // Fire Bullets
+            if(keys.Space && now - lastFire > 250) {
+                bullets.push({ x: player.x + player.width, y: player.y + player.height/2 - 2, width: 15, height: 4, speed: 10, color: '#fde047' });
+                lastFire = now;
+            }
+
+            // Draw Player Ship (Triangle)
+            ctx.fillStyle = player.color;
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = player.color;
+            ctx.beginPath();
+            ctx.moveTo(player.x, player.y);
+            ctx.lineTo(player.x + player.width, player.y + player.height/2);
+            ctx.lineTo(player.x, player.y + player.height);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            // Spawner
+            if(now - lastSpawn > spawnRate) {
+                spawnEnemy();
+                lastSpawn = now;
+                if(spawnRate > 500) spawnRate -= 10; // increase difficulty
+            }
+
+            // Update & Draw Bullets
+            for(let i=bullets.length-1; i>=0; i--) {
+                let b = bullets[i];
+                b.x += b.speed;
+                ctx.fillStyle = b.color;
+                ctx.fillRect(b.x, b.y, b.width, b.height);
+                if(b.x > canvas.width) bullets.splice(i, 1); // off screen
+            }
+
+            // Update & Draw Enemies
+            for(let i=enemies.length-1; i>=0; i--) {
+                let e = enemies[i];
+                e.x -= e.speed;
+                
+                // Draw virus shape (Square with jagged edges)
+                ctx.fillStyle = e.color;
+                ctx.fillRect(e.x, e.y, e.size, e.size);
+                ctx.fillStyle = '#000';
+                ctx.fillRect(e.x+e.size/4, e.y+e.size/4, e.size/2, e.size/2); // hole
+                
+                // Collision with player
+                let pRect = {x: player.x, y: player.y, width: player.width, height: player.height};
+                let eRect = {x: e.x, y: e.y, width: e.size, height: e.size};
+                
+                if(checkCollision(pRect, eRect)) {
+                    enemies.splice(i, 1);
+                    loseGameLife();
+                    continue;
+                }
+                
+                // Reached left screen (breach)
+                if(e.x + e.size < 0) {
+                    enemies.splice(i, 1);
+                    loseGameLife();
+                    continue;
+                }
+
+                // Collision with bullets
+                for(let j=bullets.length-1; j>=0; j--) {
+                    let b = bullets[j];
+                    if(checkCollision(b, eRect)) {
+                        enemies.splice(i, 1);
+                        bullets.splice(j, 1);
+                        gameScore += 10;
+                        document.getElementById('game-score').innerText = gameScore;
+                        break; // exit bullet loop for this enemy
+                    }
+                }
+            }
+
+            animId = requestAnimationFrame(gameLoop);
+        }
+
+        function loseGameLife() {
+            gameLives--;
+            document.getElementById('game-lives').innerText = gameLives;
+            
+            // Screen flash red
+            ctx.fillStyle = "rgba(239,68,68,0.4)";
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            
+            if(gameLives <= 0) {
+                gameRunning = false;
+                cancelAnimationFrame(animId);
+                const overlay = document.getElementById('game-overlay');
+                overlay.classList.remove('hidden');
+                document.getElementById('game-over-text').classList.remove('hidden');
+                const btn = document.getElementById('start-game-btn');
+                btn.innerText = "Reboot System";
+                btn.classList.replace('bg-cyan-600', 'bg-red-600');
+                btn.classList.replace('border-cyan-800', 'border-red-800');
+            }
+        }
+
+
+        // --- CERTIFICATE LOGIC ---
+        function updateCertName() {
+            let name = document.getElementById('student-name-input').value.trim();
+            if(name) {
+                if (name.includes(' ')) {
+                    name = name.split(' ')[0];
+                    document.getElementById('student-name-input').value = name;
+                    showModal('Notice', 'Only your first name has been applied to the certificate.', 'info');
+                }
+                document.getElementById('cert-student-name').innerText = name;
+            } else {
+                showModal('Wait!', 'Please enter your first name to update the certificate.', 'warning');
+            }
+        }
+
+        const today = new Date();
+        document.getElementById('cert-date').innerText = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        function downloadCert() {
+            const certEl = document.getElementById('certificate');
+            const name = document.getElementById('cert-student-name').innerText;
+            let filename = 'Certificate.png';
+            if (name && name !== 'Student') {
+                filename = `${name.replace(/\s+/g, '_')}_Certificate.png`;
+            }
+
+            const originalTransform = certEl.style.transform;
+            certEl.style.transform = 'none';
+
+            const btn = document.getElementById('download-btn');
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Generating...';
+            btn.disabled = true;
+
+            html2canvas(certEl, { 
+                scale: 2, 
+                useCORS: true,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+            }).catch(err => {
+                console.error(err);
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                showModal('Error', 'Failed to generate image. Try using a desktop browser.', 'error');
+            });
+        }
+
+        window.onload = () => {
+            drawStaticGame();
+        }
+    </script>
+</body>
+</html>
+```eof

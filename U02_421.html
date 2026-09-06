@@ -1,0 +1,1503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 02 Section 4.2.1 Mastery - Fundamental Data Types</title>
+    
+    <!-- Load Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load HTML2Canvas for Certificate Download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- Load Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Qwitcher+Grypen:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0fdf4; 
+            color: #1f2937;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        /* Interactive Elements CSS */
+        .io-dropzone { min-height: 60px; min-width: 120px; border: 2px dashed #9ca3af; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: #f9fafb; transition: all 0.2s; text-align:center; font-weight:bold; font-size:14px; padding: 5px;}
+        .io-dropzone.drag-over { background: #e5e7eb; border-color: #16a34a; box-shadow: inset 0 0 10px rgba(22, 163, 74, 0.2);}
+        
+        .io-item { cursor: grab; transition: transform 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); user-select: none;}
+        .io-item:active { cursor: grabbing; transform: scale(0.95); }
+        
+        .cat-dropzone { transition: background-color 0.2s ease; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #e5e7eb; }
+        ::-webkit-scrollbar-thumb { background: #10b981; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #059669; }
+
+        /* Retro Game Canvas */
+        #game-canvas {
+            background-color: #0f172a;
+            border: 4px solid #334155;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
+            max-width: 100%;
+            height: auto;
+            touch-action: none;
+        }
+
+        /* --- CERTIFICATE STYLES --- */
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .font-body { font-family: 'Lora', serif; }
+        .font-script { font-family: 'Qwitcher Grypen', cursive; }
+        
+        .cert-preview-container {
+            width: 100%;
+            overflow: auto;
+            display: flex;
+            justify-content: center;
+            background: #e5e7eb;
+            padding: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        #certificate {
+            width: 1056px !important;
+            height: 816px !important;
+            flex-shrink: 0;
+            background-color: #ffffff;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1056" height="816"><polygon points="0,0 250,0 0,650" fill="%23a7f3d0"/><polygon points="0,0 350,0 0,900" fill="%2334d399" opacity="0.8"/><polygon points="0,0 120,0 0,300" fill="%23059669"/><polygon points="0,450 650,816 0,816" fill="%23a7f3d0"/><polygon points="0,550 450,816 0,816" fill="%2334d399" opacity="0.8"/><polygon points="800,0 1056,0 1056,256" fill="%23f3f4f6"/><polygon points="1056,500 1056,816 750,816" fill="%23f3f4f6"/></svg>');
+            background-size: cover;
+            border: 4px solid #e5e7eb;
+        }
+
+        .gold-seal {
+            position: absolute;
+            left: 110px;
+            top: 350px;
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c, #fcf6ba);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3), inset 0 0 15px rgba(255,255,255,0.7), inset 0 0 25px rgba(139,105,20,0.9);
+            z-index: 10;
+        }
+        .gold-seal::before {
+            content: '';
+            position: absolute;
+            top: -4px; bottom: -4px; left: -4px; right: -4px;
+            border-radius: 50%;
+            border: 6px dashed #d4af37;
+        }
+        .gold-seal-inner-1 {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 2px solid rgba(139, 105, 20, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #e8c678, #dbab46);
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.2), 0 2px 5px rgba(255,255,255,0.7);
+            z-index: 1;
+        }
+        .gold-seal-inner-2 {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: radial-gradient(circle, #fcf6ba, #d4af37);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            padding: 10px;
+        }
+        .embossed-text {
+            color: #b38728;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2);
+            font-family: 'Playfair Display', serif;
+            font-weight: 800;
+            line-height: 1.1;
+            text-transform: uppercase;
+        }
+        .embossed-text-large { font-size: 14px; letter-spacing: 1px; }
+        .embossed-text-small { font-size: 11px; letter-spacing: 2px; margin: 2px 0; }
+        .embossed-star { font-size: 12px; color: #b38728; text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2); margin: 2px 0; }
+
+        @media (max-width: 1100px) {
+            #certificate { transform: scale(0.7); transform-origin: top left; margin-bottom: -240px; margin-right: -310px; }
+        }
+        @media (max-width: 768px) {
+            #certificate { transform: scale(0.4); transform-origin: top left; margin-bottom: -490px; margin-right: -630px; }
+        }
+
+        /* Specific Lab Styles */
+        .char-box { width: 40px; height: 40px; border: 2px solid #cbd5e1; display: inline-flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; cursor: pointer; border-radius: 4px; transition: all 0.2s;}
+        .char-box:hover { background-color: #e0f2fe; border-color: #38bdf8;}
+        .char-box.selected { background-color: #38bdf8; color: white; border-color: #0284c7;}
+        
+        .boolean-toggle { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .bg-active { background-color: #10b981 !important; }
+        .translate-x-active { transform: translateX(100%); }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
+    <nav class="bg-emerald-700 text-white shadow-lg sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-database text-2xl"></i>
+                    <span class="font-bold text-xl tracking-wider hidden sm:inline-block">Tech+ Unit 02 Section 4.2.1</span>
+                    <span class="font-bold text-xl tracking-wider sm:hidden">4.2.1</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-2">
+                        <button onclick="switchTab('briefing')" class="nav-btn bg-emerald-900 px-3 py-2 rounded-md text-sm font-medium hover:bg-emerald-600 transition" id="nav-briefing"><i class="fa-solid fa-book-open mr-1"></i>Briefing</button>
+                        <button onclick="switchTab('activity')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-emerald-600 transition" id="nav-activity"><i class="fa-solid fa-flask mr-1"></i>Lab Activity</button>
+                        <button onclick="switchTab('quiz')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-emerald-600 transition" id="nav-quiz"><i class="fa-solid fa-clipboard-check mr-1"></i>Quiz</button>
+                        <button onclick="switchTab('game')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-gray-400 cursor-not-allowed transition" id="nav-game" disabled><i class="fa-solid fa-lock mr-1"></i>Game</button>
+                        <button onclick="switchTab('cert')" class="nav-btn hidden px-3 py-2 rounded-md text-sm font-medium text-yellow-300 hover:bg-emerald-600 transition" id="nav-cert"><i class="fa-solid fa-award mr-1"></i>Certificate</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Nav -->
+        <div class="md:hidden flex flex-wrap justify-center gap-2 py-2 px-2 bg-emerald-800">
+            <button onclick="switchTab('briefing')" class="nav-btn-mobile px-3 py-1 text-sm rounded bg-emerald-900" id="nav-briefing-mobile">Briefing</button>
+            <button onclick="switchTab('activity')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-activity-mobile">Lab</button>
+            <button onclick="switchTab('quiz')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-quiz-mobile">Quiz</button>
+            <button onclick="switchTab('game')" class="nav-btn-mobile px-3 py-1 text-sm rounded text-gray-400 cursor-not-allowed" id="nav-game-mobile" disabled><i class="fa-solid fa-lock"></i></button>
+            <button onclick="switchTab('cert')" id="nav-cert-mobile" class="hidden px-2 py-1 text-sm text-yellow-300 rounded"><i class="fa-solid fa-award"></i></button>
+        </div>
+    </nav>
+
+    <main class="flex-grow w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <!-- BRIEFING SECTION -->
+        <div id="briefing-section" class="tab-content active no-print">
+            <div class="text-center mb-10">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">Fundamental Data Types</h1>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">Understanding the built-in building blocks of programming languages and how to categorize, manipulate, and convert data effectively.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- Tile 1 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-blue-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-blue-700"><i class="fa-solid fa-font mr-2"></i>Characters & Strings</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Char:</strong> A single glyph, letter, digit, or symbol (e.g., 'A', '$', '7').</li>
+                            <li><strong>String:</strong> A sequence of characters containing letters, numbers, or symbols (e.g., "Bread", "123 Main St").</li>
+                            <li><strong>Indexing:</strong> Using numbers to locate a specific character's position within a string.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('char-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('char-usecase')" class="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 2 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-purple-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-purple-700"><i class="fa-solid fa-hashtag mr-2"></i>Numbers (Int, Float, Double)</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Integer (int):</strong> Whole numbers without decimal points (e.g., -3, 0, 42).</li>
+                            <li><strong>Float:</strong> Numbers including decimal points; fast but prone to rounding errors (e.g., 3.14).</li>
+                            <li><strong>Double & Fixed-Point:</strong> Highly precise decimals or strict decimal counts (e.g., $12.34).</li>
+                        </ul>
+                    </div>
+                     <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('num-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('num-usecase')" class="flex-1 bg-purple-100 hover:bg-purple-200 text-purple-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 3 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-green-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-green-700"><i class="fa-solid fa-toggle-on mr-2"></i>Booleans & Logic</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Boolean:</strong> A primitive value that is strictly <code>True</code> or <code>False</code> (1 or 0).</li>
+                            <li><strong>Logical Operators:</strong> Mathematical evaluations that return Boolean outcomes (e.g., 10 > 5 is True).</li>
+                            <li><strong>Control Flow:</strong> Booleans drive program decisions via conditionals (if/else) and loops.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('bool-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('bool-usecase')" class="flex-1 bg-green-100 hover:bg-green-200 text-green-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 4 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-orange-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-orange-700"><i class="fa-solid fa-shuffle mr-2"></i>Casting & Conversion</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Definition:</strong> The programmatic process of converting one data type into another.</li>
+                            <li><strong>Strings to Numbers:</strong> Using <code>int("45")</code> to perform math on user input.</li>
+                            <li><strong>Loss of Data:</strong> Converting <code>int(4.9)</code> forcefully truncates the decimal, resulting in 4.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('cast-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('cast-usecase')" class="flex-1 bg-orange-100 hover:bg-orange-200 text-orange-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 flex justify-center">
+                <button onclick="switchTab('activity')" class="bg-emerald-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-emerald-500 shadow-lg transition transform hover:scale-105">Proceed to Lab Activities <i class="fa-solid fa-arrow-right ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- LAB ACTIVITY SECTION -->
+        <div id="activity-section" class="tab-content no-print">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Interactive Lab Activities</h1>
+                <p class="text-gray-600">Complete all 8 distinct mini-labs to prove your mastery of Fundamental Data Types.</p>
+            </div>
+
+            <!-- CONCEPT 1 LABS: Chars & Strings -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <!-- Lab 1 -->
+                <div class="bg-white p-6 rounded-xl shadow-md border-t-4 border-blue-400">
+                    <h2 class="text-lg font-bold mb-2 text-blue-700"><i class="fa-solid fa-scissors mr-2"></i>Lab 1: String Slicing</h2>
+                    <p class="text-sm text-gray-600 mb-4">Click the character boxes below to generate the exact output of the command: <code>"PYTHON"[2:5]</code></p>
+                    <div class="flex justify-center space-x-2 mb-4" id="lab1-chars">
+                        <div class="char-box" onclick="toggleChar(this)">P</div>
+                        <div class="char-box" onclick="toggleChar(this)">Y</div>
+                        <div class="char-box" onclick="toggleChar(this)">T</div>
+                        <div class="char-box" onclick="toggleChar(this)">H</div>
+                        <div class="char-box" onclick="toggleChar(this)">O</div>
+                        <div class="char-box" onclick="toggleChar(this)">N</div>
+                    </div>
+                    <div class="text-center">
+                        <button onclick="checkLab1()" class="bg-blue-600 text-white px-4 py-2 rounded text-sm font-bold hover:bg-blue-700">Submit Slice</button>
+                    </div>
+                    <div id="lab1-feedback" class="text-center font-bold mt-3 h-5 text-sm text-green-600"></div>
+                </div>
+
+                <!-- Lab 2 -->
+                <div class="bg-white p-6 rounded-xl shadow-md border-t-4 border-blue-400">
+                    <h2 class="text-lg font-bold mb-2 text-blue-700"><i class="fa-solid fa-arrows-turn-to-dots mr-2"></i>Lab 2: String Methods</h2>
+                    <p class="text-sm text-gray-600 mb-4">Match the correct string manipulation method to its output when applied to <code>"Bread"</code>.</p>
+                    
+                    <div class="flex justify-between items-center bg-gray-100 p-2 rounded mb-2 text-sm font-mono">
+                        <span>"Bread".upper()</span>
+                        <select id="lab2-sel1" class="border rounded px-2 py-1 text-sm bg-white cursor-pointer border-gray-300">
+                            <option value="">Select...</option>
+                            <option value="br">Br</option>
+                            <option value="BREAD">BREAD</option>
+                            <option value="bread">bread</option>
+                        </select>
+                    </div>
+                    <div class="flex justify-between items-center bg-gray-100 p-2 rounded mb-2 text-sm font-mono">
+                        <span>"Bread"[:2]</span>
+                        <select id="lab2-sel2" class="border rounded px-2 py-1 text-sm bg-white cursor-pointer border-gray-300">
+                            <option value="">Select...</option>
+                            <option value="br">Br</option>
+                            <option value="Br">Br (Cap)</option>
+                            <option value="ead">ead</option>
+                        </select>
+                    </div>
+                    <div class="flex justify-between items-center bg-gray-100 p-2 rounded mb-4 text-sm font-mono">
+                        <span>"Bread".lower()</span>
+                        <select id="lab2-sel3" class="border rounded px-2 py-1 text-sm bg-white cursor-pointer border-gray-300">
+                            <option value="">Select...</option>
+                            <option value="BREAD">BREAD</option>
+                            <option value="bread">bread</option>
+                            <option value="ead">ead</option>
+                        </select>
+                    </div>
+
+                    <div class="text-center">
+                        <button onclick="checkLab2()" class="bg-blue-600 text-white px-4 py-2 rounded text-sm font-bold hover:bg-blue-700">Verify Methods</button>
+                    </div>
+                    <div id="lab2-feedback" class="text-center font-bold mt-3 h-5 text-sm text-green-600"></div>
+                </div>
+            </div>
+
+            <!-- CONCEPT 2 LABS: Numbers -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <!-- Lab 3 -->
+                <div class="bg-white p-6 rounded-xl shadow-md border-t-4 border-purple-400">
+                    <h2 class="text-lg font-bold mb-2 text-purple-700"><i class="fa-solid fa-cubes mr-2"></i>Lab 3: Number Types</h2>
+                    <p class="text-sm text-gray-600 mb-4">Drag the raw data value to its most appropriate data type container.</p>
+                    
+                    <div class="flex justify-center gap-2 mb-4" id="lab3-items">
+                        <div class="io-item px-2 py-1 bg-purple-100 border border-purple-300 rounded font-bold text-xs" draggable="true" data-val="float">3.14</div>
+                        <div class="io-item px-2 py-1 bg-purple-100 border border-purple-300 rounded font-bold text-xs" draggable="true" data-val="int">42</div>
+                        <div class="io-item px-2 py-1 bg-purple-100 border border-purple-300 rounded font-bold text-xs" draggable="true" data-val="fixed">$5.99</div>
+                    </div>
+
+                    <div class="flex gap-2">
+                        <div class="cat-dropzone flex-1 border-2 border-dashed border-gray-300 bg-gray-50 rounded p-1 min-h-[60px]" data-target="int">
+                            <div class="text-[10px] text-gray-500 text-center uppercase tracking-wider font-bold mb-1 border-b pb-1">Integer</div>
+                        </div>
+                        <div class="cat-dropzone flex-1 border-2 border-dashed border-gray-300 bg-gray-50 rounded p-1 min-h-[60px]" data-target="float">
+                            <div class="text-[10px] text-gray-500 text-center uppercase tracking-wider font-bold mb-1 border-b pb-1">Float</div>
+                        </div>
+                        <div class="cat-dropzone flex-1 border-2 border-dashed border-gray-300 bg-gray-50 rounded p-1 min-h-[60px]" data-target="fixed">
+                            <div class="text-[10px] text-gray-500 text-center uppercase tracking-wider font-bold mb-1 border-b pb-1">Fixed-Pt</div>
+                        </div>
+                    </div>
+                    <div id="lab3-feedback" class="text-center font-bold mt-3 h-5 text-sm text-green-600"></div>
+                </div>
+
+                <!-- Lab 4 -->
+                <div class="bg-white p-6 rounded-xl shadow-md border-t-4 border-purple-400">
+                    <h2 class="text-lg font-bold mb-2 text-purple-700"><i class="fa-solid fa-scale-balanced mr-2"></i>Lab 4: Precision vs Memory</h2>
+                    <p class="text-sm text-gray-600 mb-4">You are calculating planetary orbits. Select the data type that offers extreme precision to avoid crashing the satellite.</p>
+                    
+                    <div class="flex justify-around items-center mb-4">
+                        <button onclick="checkLab4('int')" class="lab4-btn border-2 border-gray-300 px-4 py-2 rounded font-bold text-gray-600 hover:bg-gray-100">Integer</button>
+                        <button onclick="checkLab4('float')" class="lab4-btn border-2 border-gray-300 px-4 py-2 rounded font-bold text-gray-600 hover:bg-gray-100">Float</button>
+                        <button onclick="checkLab4('double')" class="lab4-btn border-2 border-gray-300 px-4 py-2 rounded font-bold text-gray-600 hover:bg-gray-100">Double</button>
+                    </div>
+                    <div class="bg-gray-900 rounded p-3 text-center">
+                        <span class="font-mono text-green-400 text-sm" id="lab4-display">Calc: Pi * r^2</span>
+                    </div>
+                    
+                    <div id="lab4-feedback" class="text-center font-bold mt-3 h-5 text-sm text-green-600"></div>
+                </div>
+            </div>
+
+            <!-- CONCEPT 3 LABS: Booleans -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <!-- Lab 5 -->
+                <div class="bg-white p-6 rounded-xl shadow-md border-t-4 border-green-400">
+                    <h2 class="text-lg font-bold mb-2 text-green-700"><i class="fa-solid fa-code-branch mr-2"></i>Lab 5: Logical Operators</h2>
+                    <p class="text-sm text-gray-600 mb-4">Toggle the statements so that the <code>AND</code> condition equates to <strong>True</strong>.</p>
+                    
+                    <div class="bg-gray-100 p-4 rounded flex flex-col gap-3 font-mono text-sm">
+                        <div class="flex justify-between items-center">
+                            <span>Statement A: <span id="lab5-stA" class="font-bold text-red-600">False</span></span>
+                            <button onclick="toggleLab5('A')" class="bg-gray-300 px-3 py-1 rounded shadow text-xs uppercase hover:bg-gray-400">Toggle</button>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span>Statement B: <span id="lab5-stB" class="font-bold text-red-600">False</span></span>
+                            <button onclick="toggleLab5('B')" class="bg-gray-300 px-3 py-1 rounded shadow text-xs uppercase hover:bg-gray-400">Toggle</button>
+                        </div>
+                        <div class="border-t border-gray-300 pt-2 text-center font-bold mt-2">
+                            A <span class="text-green-600">AND</span> B = <span id="lab5-result" class="text-red-600">False</span>
+                        </div>
+                    </div>
+                    <div id="lab5-feedback" class="text-center font-bold mt-3 h-5 text-sm text-green-600"></div>
+                </div>
+
+                <!-- Lab 6 -->
+                <div class="bg-white p-6 rounded-xl shadow-md border-t-4 border-green-400">
+                    <h2 class="text-lg font-bold mb-2 text-green-700"><i class="fa-solid fa-scale-unbalanced mr-2"></i>Lab 6: Evaluation</h2>
+                    <p class="text-sm text-gray-600 mb-4">Evaluate the relational expression below. Click whether the statement resolves to True or False.</p>
+                    
+                    <div class="text-center font-mono text-2xl font-bold bg-gray-900 text-white p-4 rounded mb-4">
+                        4 == (7 - 3)
+                    </div>
+                    <div class="flex justify-center gap-4">
+                        <button onclick="checkLab6('True')" class="bg-green-600 hover:bg-green-500 text-white px-6 py-2 rounded font-bold shadow transition">True</button>
+                        <button onclick="checkLab6('False')" class="bg-red-600 hover:bg-red-500 text-white px-6 py-2 rounded font-bold shadow transition">False</button>
+                    </div>
+                    
+                    <div id="lab6-feedback" class="text-center font-bold mt-3 h-5 text-sm text-green-600"></div>
+                </div>
+            </div>
+
+            <!-- CONCEPT 4 LABS: Casting -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <!-- Lab 7 -->
+                <div class="bg-white p-6 rounded-xl shadow-md border-t-4 border-orange-400">
+                    <h2 class="text-lg font-bold mb-2 text-orange-700"><i class="fa-solid fa-wand-magic-sparkles mr-2"></i>Lab 7: Data Truncation</h2>
+                    <p class="text-sm text-gray-600 mb-4">What happens when you explicitly cast a float to an integer? Select the output of: <code>int(4.9)</code></p>
+                    
+                    <div class="flex justify-around gap-2 mb-4 font-mono">
+                        <button onclick="checkLab7('5')" class="lab7-btn flex-1 bg-gray-100 hover:bg-orange-100 border border-gray-300 py-2 rounded text-center cursor-pointer transition">5</button>
+                        <button onclick="checkLab7('4.9')" class="lab7-btn flex-1 bg-gray-100 hover:bg-orange-100 border border-gray-300 py-2 rounded text-center cursor-pointer transition">4.9</button>
+                        <button onclick="checkLab7('4')" class="lab7-btn flex-1 bg-gray-100 hover:bg-orange-100 border border-gray-300 py-2 rounded text-center cursor-pointer transition">4</button>
+                    </div>
+                    <p class="text-xs text-gray-500 text-center">Hint: Integers cannot round up; they drop the decimal entirely.</p>
+                    
+                    <div id="lab7-feedback" class="text-center font-bold mt-3 h-5 text-sm text-green-600"></div>
+                </div>
+
+                <!-- Lab 8 -->
+                <div class="bg-white p-6 rounded-xl shadow-md border-t-4 border-orange-400">
+                    <h2 class="text-lg font-bold mb-2 text-orange-700"><i class="fa-solid fa-plus-minus mr-2"></i>Lab 8: Math vs Concatenation</h2>
+                    <p class="text-sm text-gray-600 mb-4">Determine the difference in how the '+' operator acts depending on the data type. Solve both expressions.</p>
+                    
+                    <div class="flex justify-between items-center bg-gray-100 p-2 rounded mb-2 text-sm font-mono">
+                        <span>3 + 3 = </span>
+                        <select id="lab8-sel1" class="border rounded px-2 py-1 text-sm bg-white cursor-pointer border-gray-300 w-24">
+                            <option value="">...</option>
+                            <option value="6">6</option>
+                            <option value="33">33</option>
+                        </select>
+                    </div>
+                    <div class="flex justify-between items-center bg-gray-100 p-2 rounded mb-4 text-sm font-mono">
+                        <span>str(3) + "3" = </span>
+                        <select id="lab8-sel2" class="border rounded px-2 py-1 text-sm bg-white cursor-pointer border-gray-300 w-24">
+                            <option value="">...</option>
+                            <option value="6">6</option>
+                            <option value="33">33</option>
+                        </select>
+                    </div>
+
+                    <div class="text-center">
+                        <button onclick="checkLab8()" class="bg-orange-600 text-white px-4 py-2 rounded text-sm font-bold hover:bg-orange-700">Check Answers</button>
+                    </div>
+                    <div id="lab8-feedback" class="text-center font-bold mt-3 h-5 text-sm text-green-600"></div>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <button onclick="switchTab('quiz')" class="bg-emerald-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-emerald-500 shadow-lg transition transform hover:scale-105">Take the Mastery Quiz <i class="fa-solid fa-clipboard-check ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- QUIZ SECTION -->
+        <div id="quiz-section" class="tab-content no-print">
+            <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-xl max-w-4xl mx-auto border border-gray-200">
+                <div class="text-center mb-8 border-b pb-4">
+                    <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Unit 02 Section 4.2.1 Mastery Quiz</h1>
+                    <p class="text-gray-600">Score 90% or higher (18/20) to earn your Certificate of Mastery and unlock the Retro Game!</p>
+                </div>
+
+                <div id="quiz-container" class="space-y-8">
+                    <!-- Questions injected via JS -->
+                </div>
+
+                <div class="mt-10 text-center border-t pt-6 flex flex-col md:flex-row justify-center items-center gap-4">
+                    <button id="submit-quiz-btn" onclick="gradeQuiz()" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">Submit Quiz</button>
+                    <button id="proceed-game-btn" onclick="switchTab('game')" class="hidden bg-purple-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-purple-700 shadow-lg transition w-full md:w-auto">Play Retro Game <i class="fa-solid fa-gamepad ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RETRO GAME SECTION -->
+        <div id="game-section" class="tab-content no-print">
+            <div class="bg-gray-900 p-6 sm:p-8 rounded-2xl shadow-xl max-w-4xl mx-auto border-4 border-gray-700 flex flex-col items-center">
+                <div class="text-center mb-4 w-full">
+                    <h1 class="text-3xl font-extrabold text-sky-400 mb-2 tracking-widest uppercase" style="font-family: monospace;">Data Patrol</h1>
+                    <p class="text-gray-300 text-sm">You are the Data Buggy. Jump over the <strong class="text-red-400">Null Craters</strong> and <strong class="text-orange-400">Syntax Bugs</strong>. Press <strong class="text-white">SPACEBAR</strong> or tap the screen to jump!</p>
+                </div>
+                
+                <div class="flex justify-between items-center w-full max-w-[400px] sm:max-w-[600px] mb-2 px-4 text-white font-mono text-xl">
+                    <div>Score: <span id="game-score" class="text-green-400 font-bold">0</span></div>
+                    <div>Integrity: <span id="game-lives" class="text-sky-400 font-bold">3</span></div>
+                </div>
+
+                <div class="relative flex justify-center w-full">
+                    <!-- Game Canvas -->
+                    <canvas id="game-canvas" width="600" height="300" class="w-full max-w-[400px] sm:max-w-[600px] bg-slate-900 border-2 border-slate-700 rounded shadow-lg"></canvas>
+                    
+                    <!-- Overlay Start Button -->
+                    <div id="game-overlay" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-70 rounded-lg max-w-[400px] sm:max-w-[600px] mx-auto z-10">
+                        <button id="start-game-btn" class="bg-sky-600 hover:bg-sky-500 text-white font-bold font-mono py-3 px-6 rounded-lg text-xl border-4 border-sky-800 uppercase transform transition hover:scale-105">Initialize Patrol</button>
+                    </div>
+                </div>
+
+                <div class="mt-8 text-center w-full border-t border-gray-700 pt-6">
+                    <button onclick="switchTab('cert')" class="bg-emerald-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-emerald-700 shadow-lg transition w-full md:w-auto">Claim Certificate <i class="fa-solid fa-award ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CERTIFICATE SECTION -->
+        <div id="cert-section" class="tab-content">
+            <div class="max-w-5xl mx-auto">
+                
+                <!-- Controls -->
+                <div class="bg-white p-6 rounded shadow mb-6 no-print text-center border border-gray-200">
+                    <h2 class="text-2xl font-bold text-emerald-600 mb-2">🎉 Congratulations! 🎉</h2>
+                    <p class="text-gray-700 mb-4">You have mastered Fundamental Data Types.</p>
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+                        <input type="text" id="student-name-input" value="Student" placeholder="Enter your first name" class="border-2 border-gray-300 rounded px-4 py-2 w-full md:w-64 focus:border-emerald-500 focus:outline-none">
+                        <button onclick="updateCertName()" class="bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700 transition">Update Name</button>
+                        <button id="download-btn" onclick="downloadCert()" class="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900 transition flex items-center justify-center">
+                            <i class="fa-solid fa-download mr-2"></i>Download PNG
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Certificate Render Container -->
+                <div class="cert-preview-container print:p-0 print:bg-white">
+                    <div id="certificate">
+                        <div class="gold-seal">
+                            <div class="gold-seal-inner-1">
+                                <div class="gold-seal-inner-2">
+                                     <span class="embossed-text embossed-text-large">Certificate</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-small">Of</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-large">Mastery</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="relative z-20 w-full h-full flex flex-col pt-[48px] pl-[380px] pr-[48px]">
+                            <h1 class="text-[#064e3b] text-[4.2rem] leading-none font-serif font-bold tracking-wide uppercase mb-2">CERTIFICATE</h1>
+                            <h2 class="text-gray-800 text-3xl font-serif tracking-widest uppercase mb-10">Of Achievement</h2>
+                            
+                            <p class="text-[1.4rem] font-body text-gray-800 mb-4">This is to certify that</p>
+                            
+                            <div class="relative mb-8 w-full">
+                                <h3 id="cert-student-name" class="text-[4rem] text-[#064e3b] font-serif italic leading-none pb-2 relative z-10 text-center w-full block">Student</h3>
+                                <div class="w-full border-b-[2px] border-[#064e3b] absolute bottom-[4px] left-0 z-0"></div>
+                                <div class="w-full border-b-[2px] border-dotted border-yellow-500 absolute bottom-[0px] left-0 z-0"></div>
+                            </div>
+                            
+                            <p class="text-[1.3rem] font-body text-gray-800 leading-relaxed w-full pr-4">
+                                Has successfully completed the assessment for 
+                                <strong class="text-[1.8rem] text-[#064e3b] block mt-4 mb-2 font-serif">Unit 02 Section 4.2.1</strong>
+                                <strong class="text-[1.5rem] text-black block mb-4 font-serif italic">Fundamental Data Types</strong>
+                                <span class="text-[1.1rem] text-gray-700 leading-snug block">Demonstrating profound proficiency in categorizing variables, manipulating strings, differentiating numerical precision arrays (integers, floats, doubles), and properly executing data casting.</span>
+                            </p>
+                            
+                            <div class="flex justify-end gap-16 items-end mt-auto mb-[60px] w-full pr-8">
+                                <div class="w-64">
+                                    <div class="border-b border-gray-600 mb-2 h-20 flex items-end justify-center relative">
+                                        <span class="font-script text-[5rem] text-[#064e3b] absolute bottom-[-10px] transform -rotate-3 opacity-90">Dr. M. S</span>
+                                    </div>
+                                    <p class="font-serif text-xl text-gray-800 text-center">Administration</p>
+                                </div>
+                                
+                                <div class="w-64">
+                                    <div class="border-b border-gray-600 mb-2 text-center h-20 flex items-end justify-center">
+                                        <p id="cert-date" class="font-body text-2xl text-gray-800 pb-1">Date Here</p>
+                                    </div>
+                                    <p class="font-serif text-xl text-gray-800 text-center">Date</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Custom Modal for Alerts -->
+    <div id="custom-modal" class="fixed inset-0 bg-black bg-opacity-50 z-[100] hidden flex justify-center items-center backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all">
+            <div class="text-center">
+                <div id="modal-icon" class="text-5xl mb-4"></div>
+                <h3 id="modal-title" class="text-2xl font-bold mb-2 text-gray-900"></h3>
+                <p id="modal-msg" class="text-gray-600 mb-6"></p>
+                <button onclick="closeModal()" class="bg-emerald-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-emerald-700 transition w-full">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Briefing Modal -->
+    <div id="briefing-modal" class="fixed inset-0 bg-black bg-opacity-70 z-[120] hidden flex justify-center items-center backdrop-blur-sm p-4 sm:p-6">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col transform transition-all overflow-hidden border-4 border-emerald-700">
+            <div class="p-6 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+                <div class="flex items-center gap-4">
+                    <div id="briefing-modal-icon" class="text-4xl"></div>
+                    <h3 id="briefing-modal-title" class="text-2xl md:text-3xl font-bold text-gray-900"></h3>
+                </div>
+                <button onclick="closeBriefing()" class="text-gray-400 hover:text-red-600 transition text-4xl leading-none">&times;</button>
+            </div>
+            <div id="briefing-modal-content" class="p-6 md:p-10 overflow-y-auto flex-grow text-gray-700 text-lg leading-relaxed bg-white">
+                <!-- Dynamic Content Injected Here -->
+            </div>
+            <div class="p-6 border-t border-gray-200 bg-gray-50 flex justify-end">
+                <button onclick="closeBriefing()" class="bg-emerald-700 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-emerald-800 transition shadow-md">Acknowledge & Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Extensive Briefing Content Data ---
+        const briefingData = {
+            'char-details': {
+                title: 'Characters & Strings',
+                icon: '<i class="fa-solid fa-font text-blue-600"></i>',
+                html: `
+                    <p class="mb-5">At the foundation of all software development lies the concept of <strong>fundamental data types</strong>. These are the primitive, built-in building blocks that a programming language understands right out of the box, without requiring any external libraries or special configurations. The computer must know exactly what kind of data it is handling so it knows how much memory to allocate and what mathematical or structural operations are permitted.</p>
+                    
+                    <p class="mb-5">The smallest and most basic type of textual data is the <strong>Char</strong> (short for character). A char represents a single glyph. It can be a lowercase letter ('a'), an uppercase letter ('Z'), a single digit ('7'), or a special symbol ('$'). It is vital to understand that a char containing the digit '7' is treated purely as a piece of text, not a mathematical value you can multiply or subtract.</p>
+                    
+                    <p class="mb-5">Under the hood, computers only understand binary (1s and 0s). To display a char, the computer relies on encoding standards like <strong>ASCII</strong> and <strong>Unicode</strong>. Every specific character has a corresponding numeric code. For instance, in ASCII, the uppercase letter 'A' is stored as the number 65, while the lowercase 'a' is 97. This encoding allows the computer to process text efficiently at the hardware level.</p>
+                    
+                    <p class="mb-5">While a char is just one symbol, a <strong>String</strong> is a sequence of characters linked together. You can think of a string as a word, a sentence, or an entire paragraph. Strings can contain letters, numbers, symbols, and even spaces. They are almost universally denoted in code by wrapping the text in double or single quotes (e.g., <code>"Hello World"</code> or <code>"123 Main St!"</code>).</p>
+                    
+                    <p class="mb-5">To manipulate or access specific parts of a string, programmers use an <strong>index</strong>. An index is simply a number representing the position of a character within the sequence. Crucially, in most programming languages (like Python, Java, and C++), indexing starts at zero. In the string <code>"CAT"</code>, the 'C' is at index 0, the 'A' is at index 1, and the 'T' is at index 2.</p>
+                    
+                    <p class="mb-5">Because strings are so common, programming languages provide built-in <strong>string manipulation methods</strong>. You can programmatically alter text on the fly. Common operations include <code>.lower()</code> to force all characters to lowercase (<code>"Bread".lower()</code> becomes <code>"bread"</code>), and <code>.upper()</code> to force all caps. You can also "slice" a string using indices. For example, <code>"Bread"[2:]</code> tells the computer to slice the string starting at index 2 and grab everything after it, resulting in <code>"ead"</code>.</p>
+                    
+                    <p>In real-world applications, characters and strings are everywhere. If you look around a grocery store, a specific aisle identifier like "Aisle B" might store the 'B' as a char to save memory, while the names of the products on the shelves, the names of the employees, and the text on the receipt are all stored in massive databases as Strings.</p>
+                `
+            },
+            'char-usecase': {
+                title: 'Characters & Strings: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 1: Standardizing Data Entry</h4>
+                        <p class="mb-2">When thousands of users input their data into an application, they often use different casing (e.g., "John", "john", "JOHN"). String manipulation is required to standardize this data before it is saved to a database.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1:</strong> A website's backend uses the <code>.upper()</code> method on all state abbreviations entered by users so that "tx", "Tx", and "TX" are all uniformly stored as "TX".</li>
+                            <li><strong>Example 2:</strong> When a user types their email to log in, the program automatically applies the <code>.lower()</code> function. This ensures that if they accidentally typed "User@Email.com", it correctly matches the stored "user@email.com".</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 2: Data Extraction via Indexing</h4>
+                        <p class="mb-2">Large systems often combine data into single strings (like an ID number) to save space. Programmers must use indexing to slice these strings and extract the specific pieces of information they need.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1:</strong> A university student ID contains the graduation year in the first four characters (e.g., "20268841"). The program slices the string using <code>StudentID[:4]</code> to extract just "2026" and assign the student to the correct graduating class list.</li>
+                            <li><strong>Example 2:</strong> A grocery store barcode reads as a massive 12-digit string. The system is programmed to read just the final digit using the index <code>[-1]</code>, which acts as a mathematical "check digit" to verify the barcode scanned correctly.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: ASCII Under the Hood</p>
+                            <img src="https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=600&h=350" alt="Code representing characters and text data" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Form Standardization</p>
+                            <img src="https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=600&h=350" alt="Person typing into a web form" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'num-details': {
+                title: 'Numbers (Integers, Floats, Doubles)',
+                icon: '<i class="fa-solid fa-hashtag text-purple-600"></i>',
+                html: `
+                    <p class="mb-5">Unlike text strings, numeric data types are designed specifically so the computer's processor can execute mathematical calculations on them. However, not all numbers are treated equally. Programming languages split numbers into different fundamental categories based on whether they have decimal points and how much precision is required, balancing raw processing speed against memory usage.</p>
+                    
+                    <p class="mb-5">The most common numeric type is the <strong>Integer</strong> (frequently written as <code>int</code> in code). An integer is any whole number without a decimal point. It can be positive, negative, or zero (e.g., -45, 0, 1024). Because integers are mathematically simple and fit cleanly into standard binary registers, modern CPUs can add, subtract, and multiply integers with blinding speed.</p>
+                    
+                    <p class="mb-5">In everyday scenarios, integers are used for counting discrete items where a fraction is impossible or irrelevant. In a grocery store, you would use an integer to track the quantity of items in a cart (you cannot buy 1.5 cans of soup) or to represent the number of staff currently clocked in. They are also heavily used in programming logic to count loop iterations.</p>
+                    
+                    <p class="mb-5">When you need a number that includes a decimal point (e.g., 3.14159 or -0.01), you use a <strong>Float</strong> (short for floating-point number). Floats allow the decimal point to "float" to anywhere in the number, supporting very large or very small values. They are excellent for quick calculations in 3D graphics or game physics where extreme precision doesn't matter as much as processing speed.</p>
+                    
+                    <p class="mb-5">However, floats have a dark side: rounding errors. Because computers use binary (base-2) fractions to approximate decimal (base-10) fractions, some numbers cannot be represented perfectly. A calculation that should result in exactly 3.3 might actually be stored in memory as 3.2999999999999. Over millions of calculations, these tiny errors can accumulate into massive problems.</p>
+                    
+                    <p class="mb-5">To combat this, languages offer the <strong>Double</strong>. A double is essentially a "double-precision floating-point number." It utilizes twice as much physical RAM to store the decimal, making it incredibly precise (e.g., storing Pi out to 15 decimal places instead of 7). Doubles are slower to process but are strictly required for scientific calculations, rocket trajectories, and high-end engineering software where accuracy is life or death.</p>
+                    
+                    <p>Finally, for financial data, programmers avoid both floats and doubles in favor of a <strong>Fixed-point</strong> type. A fixed-point number has an unchangeable, rigid number of digits after the decimal. If you are coding a grocery store checkout system, you configure the price variables as fixed-point numbers locked to exactly two decimal places (e.g., $12.34). This guarantees that rounding errors will never accidentally steal a penny from a customer.</p>
+                `
+            },
+            'num-usecase': {
+                title: 'Numbers: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Case 1: Video Game Development</h4>
+                        <p class="mb-2">Game engines must process millions of mathematical equations every second to render graphics and calculate physics. Programmers must choose the right numerical type to maintain a steady 60 frames per second.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Integer):</strong> The player's overall score, the number of lives they have remaining, and the amount of ammo in their weapon are all stored as fast-processing <strong>Integers</strong>.</li>
+                            <li><strong>Example 2 (Float):</strong> The X, Y, and Z coordinates of the player's character in the 3D world, as well as the gravity calculations pulling them to the ground, are calculated using <strong>Floats</strong> to allow smooth, decimal-based movement between pixels.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Case 2: Banking and E-Commerce Systems</h4>
+                        <p class="mb-2">When dealing with people's money, extreme care must be taken. The floating-point rounding errors that are acceptable in a video game are illegal in the banking industry.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Fixed-Point):</strong> When a user buys a TV online, the price, the shipping cost, and the sales tax are all stored as <strong>Fixed-Point</strong> data types, ensuring the exact dollar and cent amounts are strictly preserved without rounding errors.</li>
+                            <li><strong>Example 2 (Double):</strong> When the bank's servers calculate complex, long-term compound interest rates across millions of accounts over 30 years, they utilize high-precision <strong>Doubles</strong> to ensure the tiny fractional percentages are calculated with absolute mathematical accuracy.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Floating Point Physics</p>
+                            <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=600&h=350" alt="Video game graphics representing float math" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Fixed-Point Financials</p>
+                            <img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=600&h=350" alt="Accounting documents and calculator" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'bool-details': {
+                title: 'Booleans & Logic',
+                icon: '<i class="fa-solid fa-toggle-on text-green-600"></i>',
+                html: `
+                    <p class="mb-5">While strings hold text and floats hold decimals, the <strong>Boolean</strong> data type is arguably the most critical for actual computer logic. Named after the 19th-century mathematician George Boole, a Boolean is a primitive data type that has only two possible values: <code>True</code> or <code>False</code>. Underneath the operating system, at the hardware circuit level, these values are directly represented by a binary 1 (electrical current flowing) or a 0 (no current).</p>
+                    
+                    <p class="mb-5">Booleans are rarely typed directly by the user. Instead, they are usually the output (the answer) generated when the computer evaluates an expression using <strong>relational operators</strong>. For example, if the code asks the question <code>4 == (7 - 3)</code>, the computer evaluates the math, determines the statement is mathematically accurate, and returns a Boolean value of <code>True</code>.</p>
+                    
+                    <p class="mb-5">This concept is taken a step further using <strong>Logical Operators</strong>, which allow programmers to combine multiple conditions. The three main logical operators are AND, OR, and NOT. For an <code>AND</code> statement to result in True, every single condition attached to it must be True. For an <code>OR</code> statement to result in True, only one of the conditions needs to be true. This allows for highly complex logical evaluations.</p>
+                    
+                    <p class="mb-5">Booleans are the sole mechanism that allows a program to make decisions and branch its logic, a process known as <strong>Conditionals</strong>. Programmers write <code>if</code> statements that rely entirely on Booleans. For example: <code>if (password_is_correct)</code>. If the Boolean variable is True, the program branches down Path A and logs the user in. If the Boolean is False, the program branches down Path B and locks the account.</p>
+                    
+                    <p class="mb-5">Furthermore, Booleans control <strong>Loops</strong>. A <code>while</code> loop will continuously repeat a massive block of code for as long as a specific condition evaluates to True. The moment that condition flips to False, the loop breaks, and the program moves on. This is how video games stay running; a core "game loop" runs continuously <code>while (game_is_active == True)</code>.</p>
+                    
+                    <p class="mb-5">In everyday business systems, Booleans are used to track binary states. In our grocery store example, you don't need a massive text string to store whether an item is on clearance. You simply assign a Boolean variable: <code>isOnSale = True</code>. This takes up vastly less memory than storing the word "Yes" as a string.</p>
+                    
+                    <p>Understanding Booleans is the bridge between simply storing data and actually making a program intelligent. It is the core difference between a calculator, which just outputs numbers, and a computer program, which evaluates those numbers and takes autonomous action based on the result.</p>
+                `
+            },
+            'bool-usecase': {
+                title: 'Booleans & Logic: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-green-800 mb-2 border-b-2 border-green-200 pb-1">Case 1: Access Control and Authentication</h4>
+                        <p class="mb-2">Security systems rely entirely on strict Boolean logic to determine if a user should be granted access to sensitive files or physical locations.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Relational):</strong> When a user types a password, the system evaluates <code>input_password == database_password</code>. If the strings match perfectly, it generates a <code>True</code> Boolean, which triggers the 'if' statement to load the user's dashboard.</li>
+                            <li><strong>Example 2 (Logical AND):</strong> A high-security military server requires Multi-Factor Authentication. The logic dictates: <code>if (password_correct AND retinal_scan_matched)</code>. The user is only granted access if BOTH booleans evaluate to True simultaneously.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-green-800 mb-2 border-b-2 border-green-200 pb-1">Case 2: Application State Management</h4>
+                        <p class="mb-2">Software uses "flags" (Boolean variables) constantly in the background to remember the current state of the application and control what the user experiences.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Conditionals):</strong> A streaming app checks the user's profile: <code>hasPremiumSubscription = False</code>. Because this Boolean is False, the app alters its state, injecting unskippable video ads into the stream.</li>
+                            <li><strong>Example 2 (Loops):</strong> A smart thermostat uses a loop: <code>while (room_temp < target_temp)</code>. As long as this expression evaluates to True, the heater remains on. The moment the room hits the target, the Boolean flips to False, and the loop breaks, shutting off the heater.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Binary Hardware</p>
+                            <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=600&h=350" alt="Binary code and motherboard lines" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Access Control</p>
+                            <img src="https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?auto=format&fit=crop&w=600&h=350" alt="Security login screen" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'cast-details': {
+                title: 'Casting & Data Conversion',
+                icon: '<i class="fa-solid fa-shuffle text-orange-600"></i>',
+                html: `
+                    <p class="mb-5">As a program runs, data flows between different systems, databases, and user interfaces. Often, data arrives in a format that isn't mathematically useful for the task at hand. <strong>Casting</strong> (also known as Type Conversion) is the programmatic process of forcing one fundamental data type to transform into an entirely different data type so the computer can process it correctly.</p>
+                    
+                    <p class="mb-5">Casting happens in two primary ways. <strong>Implicit Casting</strong> happens automatically behind the scenes. If you write code to add an integer (5) to a float (3.2), modern languages are usually smart enough to automatically "promote" the integer into a float (5.0) before doing the math, resulting in 8.2. The programmer doesn't have to write any extra code to force this conversion.</p>
+                    
+                    <p class="mb-5">Conversely, <strong>Explicit Casting</strong> is when the programmer writes a specific command to force a conversion because the computer won't do it automatically. For example, if you want to turn a decimal into a whole number, you explicitly wrap it in an integer command: <code>int(4.4)</code>. The computer forcefully alters the data type, dropping the decimal and returning a clean <code>4</code>.</p>
+                    
+                    <p class="mb-5">The most frequent and critical use of explicit casting occurs when gathering data from humans. When a user types a number into a website form or a terminal prompt (e.g., using the <code>input()</code> function in Python), the computer defaults to receiving it as a String. If the user types "45", the computer sees it as text. If you try to do math on the string "45", the program will crash. You must explicitly cast it using <code>int("45")</code> before you can calculate their age or process their payment.</p>
+                    
+                    <p class="mb-5">Casting is also required in reverse. If a program calculates a user's bank balance as a float (150.50), it cannot easily append that raw mathematical number directly into a welcome message. The program must first cast it to a string using <code>str(150.50)</code> so it can concatenate it with text to display: "Your balance is $150.50".</p>
+                    
+                    <p class="mb-5">Programmers must be highly cautious when explicitly casting, as it can lead to <strong>Data Loss (Truncation)</strong>. If you cast a float <code>int(3.99)</code>, you might expect it to round up to 4. It will not. Converting to an integer simply chops off the decimal portion entirely, resulting in 3. This truncation can cause massive logic errors if a programmer isn't paying attention.</p>
+                    
+                    <p>Finally, attempting to cast incompatible data will crash the application. Trying to force <code>int("Hello")</code> generates a fatal error because the computer cannot logically transform alphabetical text into a base-10 numerical value. Validating data *before* casting it is a cornerstone of defensive programming.</p>
+                `
+            },
+            'cast-usecase': {
+                title: 'Casting & Conversion: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-orange-800 mb-2 border-b-2 border-orange-200 pb-1">Case 1: User Interface and Form Processing</h4>
+                        <p class="mb-2">Every time a human interacts with a GUI or types on a keyboard, the raw input is almost always generated as a text string, requiring immediate casting by the backend code.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (String to Int):</strong> A user enters their birth year "1995" into a web form. The server receives a String, casts it via <code>int("1995")</code>, and subtracts it from the current year to verify they are over 18 before creating their account.</li>
+                            <li><strong>Example 2 (Int to String):</strong> A video game tracks the player's score as a high-speed integer. To render that score on the HUD (Heads Up Display), the engine casts it via <code>str(score)</code> so it can be drawn as graphical text pixels on the screen.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-orange-800 mb-2 border-b-2 border-orange-200 pb-1">Case 2: Data Cleaning and Analytics</h4>
+                        <p class="mb-2">Data Scientists often receive massive, messy spreadsheets from different departments where numbers are formatted inconsistently.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Data Truncation):</strong> A logistics script receives highly specific package weight data from a scale (e.g., 4.2 lbs, 4.8 lbs). Because the shipping company charges by the flat pound, the script explicitly casts these floats to integers <code>int(weight)</code>, dropping the decimals to standardize the billing tier.</li>
+                            <li><strong>Example 2 (Sanitization):</strong> An imported CSV file lists product prices with text symbols attached (e.g., "$50.99"). The analytics script must first slice the string to remove the '$', then cast the remaining "50.99" using <code>float("50.99")</code> so it can calculate the total inventory value.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Type Conversion Code</p>
+                            <img src="https://images.unsplash.com/photo-1542831371-29b0f74f9713?auto=format&fit=crop&w=600&h=350" alt="Code on a screen showing data processing" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Data Analytics</p>
+                            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&h=350" alt="Charts and graphs showing processed data" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        // Modal Control Functions
+        function openBriefing(key) {
+            const modal = document.getElementById('briefing-modal');
+            const data = briefingData[key];
+            if(data) {
+                document.getElementById('briefing-modal-icon').innerHTML = data.icon;
+                document.getElementById('briefing-modal-title').innerText = data.title;
+                document.getElementById('briefing-modal-content').innerHTML = data.html;
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; 
+            }
+        }
+
+        function closeBriefing() {
+            document.getElementById('briefing-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto'; 
+        }
+
+        document.getElementById('briefing-modal').addEventListener('click', function(e) {
+            if(e.target === this) closeBriefing();
+        });
+        
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId + '-section').classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-emerald-900'));
+            const activeBtn = document.getElementById('nav-' + tabId);
+            if(activeBtn && tabId !== 'cert') activeBtn.classList.add('bg-emerald-900');
+            
+            document.querySelectorAll('.nav-btn-mobile').forEach(btn => btn.classList.remove('bg-emerald-900'));
+            const activeMobileBtn = document.getElementById('nav-' + tabId + '-mobile');
+            if(activeMobileBtn && tabId !== 'cert') activeMobileBtn.classList.add('bg-emerald-900');
+
+            window.scrollTo(0,0);
+
+            if (tabId === 'game' && !gameRunning) {
+                resetGame();
+                drawGame(); // Show intro screen for game
+            }
+        }
+
+        function showModal(title, message, type = 'info') {
+            const modal = document.getElementById('custom-modal');
+            const icon = document.getElementById('modal-icon');
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-msg').innerText = message;
+            
+            if(type === 'success') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-check text-green-500"></i>';
+            } else if (type === 'error') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500"></i>';
+            } else if (type === 'warning') {
+                icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-yellow-500"></i>';
+            } else {
+                icon.innerHTML = '<i class="fa-solid fa-circle-info text-blue-500"></i>';
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        // --- LAB 1: String Slicing ---
+        function toggleChar(el) {
+            el.classList.toggle('selected');
+        }
+        function checkLab1() {
+            const chars = document.querySelectorAll('#lab1-chars .char-box');
+            let result = "";
+            chars.forEach((c, idx) => {
+                if(c.classList.contains('selected')) {
+                    result += idx.toString();
+                }
+            });
+            // "PYTHON"[2:5] is indices 2, 3, 4 -> T, H, O
+            if(result === "234") {
+                document.getElementById('lab1-feedback').innerText = "Correct! [2:5] grabs indices 2, 3, and 4.";
+            } else {
+                document.getElementById('lab1-feedback').innerText = "Incorrect. Remember indexing starts at 0, and slicing stops BEFORE the second number.";
+                document.getElementById('lab1-feedback').className = "text-center font-bold mt-3 h-5 text-sm text-red-600";
+            }
+        }
+
+        // --- LAB 2: String Methods ---
+        function checkLab2() {
+            const s1 = document.getElementById('lab2-sel1').value;
+            const s2 = document.getElementById('lab2-sel2').value;
+            const s3 = document.getElementById('lab2-sel3').value;
+            
+            if(s1 === "BREAD" && s2 === "Br" && s3 === "bread") {
+                document.getElementById('lab2-feedback').innerText = "Methods matched successfully!";
+                document.getElementById('lab2-feedback').className = "text-center font-bold mt-3 h-5 text-sm text-green-600";
+            } else {
+                document.getElementById('lab2-feedback').innerText = "Incorrect matches. Review the expected outputs.";
+                document.getElementById('lab2-feedback').className = "text-center font-bold mt-3 h-5 text-sm text-red-600";
+            }
+        }
+
+        // --- LAB 3: Drag & Drop Types ---
+        let draggedItem = null;
+        let lab3Score = 0;
+
+        document.querySelectorAll('#lab3-items .io-item').forEach(item => {
+            item.addEventListener('dragstart', function(e) {
+                draggedItem = this;
+                setTimeout(() => this.classList.add('opacity-50'), 0);
+            });
+            item.addEventListener('dragend', function() {
+                setTimeout(() => this.classList.remove('opacity-50'), 0);
+                draggedItem = null;
+            });
+        });
+
+        document.querySelectorAll('#activity-section .cat-dropzone').forEach(zone => {
+            zone.addEventListener('dragover', e => e.preventDefault());
+            zone.addEventListener('dragenter', function(e) { e.preventDefault(); this.classList.add('bg-gray-200'); });
+            zone.addEventListener('dragleave', function() { this.classList.remove('bg-gray-200'); });
+            zone.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.classList.remove('bg-gray-200');
+                if(draggedItem) {
+                    if(draggedItem.dataset.val === this.dataset.target) {
+                        this.appendChild(draggedItem);
+                        draggedItem.setAttribute('draggable', 'false');
+                        draggedItem.classList.replace('bg-purple-100', 'bg-green-100');
+                        draggedItem.classList.replace('border-purple-300', 'border-green-300');
+                        draggedItem.classList.add('cursor-default', 'w-[90%]', 'mx-auto', 'text-center', 'mt-1');
+                        
+                        lab3Score++;
+                        document.getElementById('lab3-feedback').innerText = "Correct Classification!";
+                        document.getElementById('lab3-feedback').className = "text-center font-bold mt-3 h-5 text-sm text-green-600";
+                    } else {
+                        document.getElementById('lab3-feedback').innerText = "Incorrect Type Container.";
+                        document.getElementById('lab3-feedback').className = "text-center font-bold mt-3 h-5 text-sm text-red-600";
+                    }
+                }
+            });
+        });
+
+        // --- LAB 4: Precision ---
+        function checkLab4(type) {
+            document.querySelectorAll('.lab4-btn').forEach(b => {
+                b.classList.remove('bg-purple-600', 'text-white', 'border-purple-700');
+                b.classList.add('text-gray-600', 'hover:bg-gray-100');
+            });
+            event.target.classList.remove('text-gray-600', 'hover:bg-gray-100');
+            event.target.classList.add('bg-purple-600', 'text-white', 'border-purple-700');
+
+            if(type === 'int') {
+                document.getElementById('lab4-display').innerText = "Result: 3";
+                document.getElementById('lab4-feedback').innerText = "Crash! Integer truncated Pi entirely.";
+                document.getElementById('lab4-feedback').className = "text-center font-bold mt-3 h-5 text-sm text-red-600";
+            } else if (type === 'float') {
+                document.getElementById('lab4-display').innerText = "Result: 3.141592";
+                document.getElementById('lab4-feedback').innerText = "Crash! Float rounding error caused off-course drift.";
+                document.getElementById('lab4-feedback').className = "text-center font-bold mt-3 h-5 text-sm text-red-600";
+            } else if (type === 'double') {
+                document.getElementById('lab4-display').innerText = "Result: 3.141592653589793";
+                document.getElementById('lab4-feedback').innerText = "Success! Double provides extreme precision.";
+                document.getElementById('lab4-feedback').className = "text-center font-bold mt-3 h-5 text-sm text-green-600";
+            }
+        }
+
+        // --- LAB 5: Logical Operators ---
+        let stA = false;
+        let stB = false;
+        function toggleLab5(st) {
+            if(st === 'A') {
+                stA = !stA;
+                document.getElementById('lab5-stA').innerText = stA ? "True" : "False";
+                document.getElementById('lab5-stA').className = stA ? "font-bold text-green-600" : "font-bold text-red-600";
+            } else {
+                stB = !stB;
+                document.getElementById('lab5-stB').innerText = stB ? "True" : "False";
+                document.getElementById('lab5-stB').className = stB ? "font-bold text-green-600" : "font-bold text-red-600";
+            }
+
+            let res = stA && stB;
+            document.getElementById('lab5-result').innerText = res ? "True" : "False";
+            document.getElementById('lab5-result').className = res ? "text-green-600" : "text-red-600";
+
+            if(res) {
+                document.getElementById('lab5-feedback').innerText = "AND requires ALL conditions to be True!";
+                document.getElementById('lab5-feedback').className = "text-center font-bold mt-3 h-5 text-sm text-green-600";
+            } else {
+                document.getElementById('lab5-feedback').innerText = "";
+            }
+        }
+
+        // --- LAB 6: Evaluation ---
+        function checkLab6(ans) {
+            if(ans === 'True') {
+                document.getElementById('lab6-feedback').innerText = "Correct! (7-3) is 4. 4 == 4 evaluates to True.";
+                document.getElementById('lab6-feedback').className = "text-center font-bold mt-3 h-5 text-sm text-green-600";
+            } else {
+                document.getElementById('lab6-feedback').innerText = "Incorrect. Evaluate the math first, then compare.";
+                document.getElementById('lab6-feedback').className = "text-center font-bold mt-3 h-5 text-sm text-red-600";
+            }
+        }
+
+        // --- LAB 7: Data Truncation ---
+        function checkLab7(ans) {
+            document.querySelectorAll('.lab7-btn').forEach(b => b.classList.remove('bg-orange-500', 'text-white'));
+            event.target.classList.add('bg-orange-500', 'text-white');
+
+            if(ans === '4') {
+                document.getElementById('lab7-feedback').innerText = "Correct! Explicitly casting to int causes truncation, dropping the decimal.";
+                document.getElementById('lab7-feedback').className = "text-center font-bold mt-3 h-5 text-sm text-green-600";
+            } else {
+                document.getElementById('lab7-feedback').innerText = "Incorrect. Integers do not automatically round up to the nearest whole number.";
+                document.getElementById('lab7-feedback').className = "text-center font-bold mt-3 h-5 text-sm text-red-600";
+            }
+        }
+
+        // --- LAB 8: Math vs Concat ---
+        function checkLab8() {
+            const a1 = document.getElementById('lab8-sel1').value;
+            const a2 = document.getElementById('lab8-sel2').value;
+
+            if(a1 === '6' && a2 === '33') {
+                document.getElementById('lab8-feedback').innerText = "Correct! The '+' adds numbers, but concatenates strings.";
+                document.getElementById('lab8-feedback').className = "text-center font-bold mt-3 h-5 text-sm text-green-600";
+            } else {
+                document.getElementById('lab8-feedback').innerText = "Incorrect. Review how operators behave differently based on data type.";
+                document.getElementById('lab8-feedback').className = "text-center font-bold mt-3 h-5 text-sm text-red-600";
+            }
+        }
+
+        // --- QUIZ LOGIC (20 Questions) ---
+        const quizData = [
+            // Original 10 Provided
+            { q: "Which of the following is NOT a fundamental data type in most programming languages?", options: ["float", "Boolean", "array", "string"], answer: 2 },
+            { q: "Which of the following could be a char?", options: ["Answer", "B", "4.3", "$3"], answer: 1 },
+            { q: "Which of the following can a String contain?", options: ["letters", "digits", "symbols", "All of the above"], answer: 3 },
+            { q: "An index represents a __ in a string.", options: ["specific position", "any character", "random item", "repeated word"], answer: 0 },
+            { q: "In most programming languages, what is the difference between a char and a string?", options: ["char can only store numbers, string can store text", "char stores whole numbers, string stores decimal numbers", "char stores a single character, string stores a sequence of characters", "They are the same thing."], answer: 2 },
+            { q: "Which of the following is a valid integer value?", options: ["4", "“4”", "“four”", "4.0"], answer: 0 },
+            { q: "Which of the following is a valid float value?", options: ["“3.14”", "“$3.14”", "“3”", "3.14"], answer: 3 },
+            { q: "Why might we choose to store a number as a float instead of a double?", options: ["We need precise calculations.", "We need to save memory and don’t need extreme precision.", "We need exactly two decimal places.", "We need a whole number."], answer: 1 },
+            { q: "Which of these correctly matches the value to its data type?", options: ["False → Boolean", "3.14159 → int", "“Z” → string", "\"42\" → int"], answer: 0 },
+            { q: "What is the expected result of int(“72”)?", options: ["A String with a value of 72", "A fixed-point with a value of 72", "An integer with a value of 72", "An error"], answer: 2 },
+            
+            // 10 Additional Deep Comprehension Questions
+            { q: "What underlying system does the computer use to represent single text characters (like 'A' being stored as 65)?", options: ["Boolean Logic", "ASCII and Unicode encoding", "Double-Precision", "Fixed-Point alignment"], answer: 1 },
+            { q: "In most programming languages, at what number does string indexing typically begin?", options: ["-1", "0", "1", "2"], answer: 1 },
+            { q: "What is the expected output of slicing the string `\"CYBER\"[1:]`?", options: ["YBER", "CYB", "C", "ER"], answer: 0 },
+            { q: "When designing a banking application handling millions of customer accounts, which numeric data type is strictly preferred to avoid compounding rounding errors on currency?", options: ["Float", "Integer", "Fixed-point", "Double"], answer: 2 },
+            { q: "The mathematician George Boole is the namesake for which fundamental data type?", options: ["Strings", "Booleans", "Doubles", "Characters"], answer: 1 },
+            { q: "Which logical operator requires that ONLY ONE of its multiple conditions must evaluate to True in order for the entire statement to be True?", options: ["AND", "NOT", "OR", "XOR"], answer: 2 },
+            { q: "Which of the following describes the programming construct that repeatedly executes code as long as a Boolean condition remains True?", options: ["If Statement", "Switch Case", "While Loop", "Explicit Cast"], answer: 2 },
+            { q: "When code automatically promotes an Integer into a Float to perform addition (e.g., 5 + 3.2), this behind-the-scenes conversion is known as:", options: ["Explicit Casting", "Data Truncation", "Implicit Casting", "Boolean Logic"], answer: 2 },
+            { q: "If you execute the explicit cast `int(12.8)`, what is the result and why?", options: ["13, because integers automatically round to the nearest whole number.", "12, because casting to an integer truncates and drops the decimal entirely.", "12.8, because casting does not alter the core mathematical value.", "Error, because floats cannot be converted to integers."], answer: 1 },
+            { q: "Why is a `Double` slower for a computer to process compared to a standard `Float`?", options: ["It requires network validation before executing.", "It forces the computer to convert numbers into text strings.", "It uses twice as much physical RAM to calculate extreme decimal precision.", "It contains letters and symbols instead of just numbers."], answer: 2 }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        
+        quizData.forEach((item, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = "bg-gray-50 p-6 rounded-lg border border-gray-200 transition-all";
+            qDiv.id = `q-block-${index}`;
+            
+            const qTitle = document.createElement('h3');
+            qTitle.className = "font-bold text-lg text-gray-800 mb-4";
+            qTitle.innerText = `${index + 1}. ${item.q}`;
+            qDiv.appendChild(qTitle);
+            
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = "space-y-3";
+            
+            item.options.forEach((opt, optIndex) => {
+                const label = document.createElement('label');
+                label.className = "flex items-center space-x-3 p-3 rounded bg-white border border-gray-300 hover:bg-emerald-50 cursor-pointer transition";
+                
+                const radio = document.createElement('input');
+                radio.type = "radio";
+                radio.name = `q${index}`;
+                radio.value = optIndex;
+                radio.className = "form-radio h-5 w-5 text-emerald-600";
+                
+                const span = document.createElement('span');
+                span.className = "text-gray-700";
+                span.innerText = opt;
+                
+                label.appendChild(radio);
+                label.appendChild(span);
+                optionsDiv.appendChild(label);
+            });
+            
+            qDiv.appendChild(optionsDiv);
+            quizContainer.appendChild(qDiv);
+        });
+
+        function gradeQuiz() {
+            let score = 0;
+            let allAnswered = true;
+
+            for(let i = 0; i < quizData.length; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if(selected) {
+                    if(parseInt(selected.value) === quizData[i].answer) {
+                        score++;
+                    }
+                } else {
+                    allAnswered = false;
+                }
+            }
+            
+            if(!allAnswered) {
+                showModal('Incomplete Quiz', 'Please answer all 20 questions before submitting.', 'warning');
+                return;
+            }
+            
+            const percentage = (score / quizData.length) * 100;
+            
+            if(score >= 18) { 
+                const navGame = document.getElementById('nav-game');
+                const navGameMobile = document.getElementById('nav-game-mobile');
+                
+                navGame.classList.remove('text-gray-400', 'cursor-not-allowed');
+                navGame.classList.add('text-white', 'hover:bg-emerald-600');
+                navGame.disabled = false;
+                navGame.innerHTML = '<i class="fa-solid fa-gamepad mr-1"></i>Game';
+                
+                navGameMobile.classList.remove('text-gray-400', 'cursor-not-allowed');
+                navGameMobile.classList.add('text-white', 'hover:bg-emerald-600');
+                navGameMobile.disabled = false;
+                navGameMobile.innerHTML = '<i class="fa-solid fa-gamepad"></i> Game';
+
+                document.getElementById('nav-cert').classList.remove('hidden');
+                document.getElementById('nav-cert-mobile').classList.remove('hidden');
+                
+                document.getElementById('proceed-game-btn').classList.remove('hidden');
+                document.getElementById('submit-quiz-btn').classList.add('hidden');
+
+                showModal('Outstanding!', `You scored ${score}/20 (${percentage}%). You have unlocked your Certificate of Mastery AND the Retro Game!`, 'success');
+            } else {
+                quizData.forEach((_, i) => {
+                    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                    if(selected) selected.checked = false;
+                });
+                showModal('Keep Trying!', `You scored ${score}/20 (${percentage}%). You need 90% (18/20) to earn the certificate. Your answers have been reset so you can try again.`, 'error');
+                document.getElementById('quiz-section').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // --- RETRO GAME LOGIC: Data Patrol (Moon Patrol clone) ---
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let gScore = 0;
+        let gLives = 3;
+        let gameRunning = false;
+        let animId;
+        
+        let buggy = { x: 50, y: 220, w: 40, h: 25, vy: 0, gravity: 0.6, jumpForce: -10, isGrounded: true };
+        let obstacles = [];
+        let particles = [];
+        let groundLevel = 245;
+        let speedMultiplier = 1;
+        let distance = 0;
+        
+        const gOverlay = document.getElementById('game-overlay');
+        const btnStartGame = document.getElementById('start-game-btn');
+        btnStartGame.addEventListener('click', startGame);
+
+        // Input
+        function handleJump(e) {
+            if(!gameRunning) return;
+            if(e.type === 'keydown' && e.code !== 'Space') return;
+            e.preventDefault();
+            if(buggy.isGrounded) {
+                buggy.vy = buggy.jumpForce;
+                buggy.isGrounded = false;
+            }
+        }
+
+        window.addEventListener('keydown', handleJump);
+        canvas.addEventListener('touchstart', handleJump, {passive: false});
+        canvas.addEventListener('mousedown', handleJump);
+
+        class Obstacle {
+            constructor() {
+                this.x = canvas.width + 50;
+                // 50/50 rock vs crater
+                this.type = Math.random() > 0.5 ? 'rock' : 'crater'; 
+                this.w = this.type === 'rock' ? 25 : 60;
+                this.h = this.type === 'rock' ? 25 : 10;
+                this.y = this.type === 'rock' ? groundLevel - this.h : groundLevel;
+                this.passed = false;
+            }
+            
+            update(speed) {
+                this.x -= speed;
+            }
+            
+            draw(ctx) {
+                if (this.type === 'rock') {
+                    ctx.fillStyle = '#f97316'; // orange bug
+                    ctx.fillRect(this.x, this.y, this.w, this.h);
+                    // Bug eyes
+                    ctx.fillStyle = '#fff';
+                    ctx.fillRect(this.x+2, this.y+5, 6, 6);
+                    ctx.fillRect(this.x+12, this.y+5, 6, 6);
+                } else {
+                    ctx.fillStyle = '#0f172a'; // void crater
+                    ctx.fillRect(this.x, this.y, this.w, 40);
+                    ctx.strokeStyle = '#ef4444'; // red outline
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(this.x, this.y);
+                    ctx.lineTo(this.x+this.w, this.y);
+                    ctx.stroke();
+                }
+            }
+        }
+
+        function createExplosion(x, y) {
+            for(let i=0; i<15; i++) {
+                particles.push({
+                    x: x, y: y,
+                    vx: (Math.random()-0.5)*10,
+                    vy: (Math.random()-0.5)*10,
+                    life: 1.0,
+                    color: Math.random() > 0.5 ? '#38bdf8' : '#e2e8f0'
+                });
+            }
+        }
+
+        function takeDamage() {
+            gLives--;
+            document.getElementById('game-lives').innerText = gLives;
+            createExplosion(buggy.x + buggy.w/2, buggy.y + buggy.h/2);
+            
+            // Screen Flash
+            ctx.fillStyle = "rgba(239,68,68,0.4)";
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+
+            // Clear close obstacles to prevent double hitting
+            obstacles = obstacles.filter(obs => obs.x > buggy.x + 150);
+            
+            if(gLives <= 0) {
+                endGame();
+            }
+        }
+
+        function resetGame() {
+            gScore = 0;
+            gLives = 3;
+            speedMultiplier = 1;
+            distance = 0;
+            obstacles = [];
+            particles = [];
+            buggy.y = groundLevel - buggy.h;
+            buggy.vy = 0;
+            buggy.isGrounded = true;
+            document.getElementById('game-score').innerText = gScore;
+            document.getElementById('game-lives').innerText = gLives;
+        }
+
+        function startGame() {
+            gOverlay.classList.add('hidden');
+            if(!gameRunning) {
+                resetGame();
+                gameRunning = true;
+                drawGame();
+            }
+        }
+
+        function drawGame() {
+            if(!gameRunning) return;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw Parallax Mountains (Data lines)
+            ctx.strokeStyle = '#1e293b';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            for(let i = 0; i < canvas.width; i+=40) {
+                let yOffset = Math.sin((i + distance*0.2) * 0.05) * 40;
+                if(i===0) ctx.moveTo(i, 180 + yOffset);
+                else ctx.lineTo(i, 180 + yOffset);
+            }
+            ctx.stroke();
+
+            // Draw Ground
+            ctx.fillStyle = '#334155';
+            ctx.fillRect(0, groundLevel, canvas.width, canvas.height - groundLevel);
+            // Ground grid lines moving
+            ctx.strokeStyle = '#475569';
+            ctx.lineWidth = 1;
+            let offset = distance % 40;
+            for(let i = -offset; i < canvas.width; i+=40) {
+                ctx.beginPath();
+                ctx.moveTo(i, groundLevel);
+                ctx.lineTo(i-20, canvas.height);
+                ctx.stroke();
+            }
+
+            // Buggy Physics
+            if(!buggy.isGrounded) {
+                buggy.vy += buggy.gravity;
+                buggy.y += buggy.vy;
+                if(buggy.y >= groundLevel - buggy.h) {
+                    buggy.y = groundLevel - buggy.h;
+                    buggy.isGrounded = true;
+                    buggy.vy = 0;
+                }
+            }
+
+            // Obstacle Logic
+            distance += 4 * speedMultiplier;
+            if(distance % 300 < 5 && Math.random() > 0.2) {
+                obstacles.push(new Obstacle());
+            }
+
+            for(let i = obstacles.length - 1; i >= 0; i--) {
+                let obs = obstacles[i];
+                obs.update(4 * speedMultiplier);
+                obs.draw(ctx);
+                
+                // Collision
+                let hit = false;
+                if(obs.type === 'rock') {
+                    if(buggy.x < obs.x + obs.w && buggy.x + buggy.w > obs.x &&
+                       buggy.y < obs.y + obs.h && buggy.y + buggy.h > obs.y) {
+                        hit = true;
+                    }
+                } else if (obs.type === 'crater') {
+                    // Fall in hole
+                    if(buggy.isGrounded && buggy.x + buggy.w/2 > obs.x && buggy.x + buggy.w/2 < obs.x + obs.w) {
+                        hit = true;
+                    }
+                }
+
+                if(hit) {
+                    takeDamage();
+                }
+
+                // Score point
+                if(!obs.passed && obs.x + obs.w < buggy.x) {
+                    obs.passed = true;
+                    gScore += 10;
+                    document.getElementById('game-score').innerText = gScore;
+                    if(gScore % 50 === 0) speedMultiplier += 0.1; // Speed up
+                }
+
+                if(obs.x < -100) obstacles.splice(i, 1);
+            }
+
+            // Draw Buggy (Data Rover)
+            ctx.fillStyle = '#0ea5e9'; // sky blue body
+            ctx.fillRect(buggy.x, buggy.y, buggy.w, buggy.h);
+            ctx.fillStyle = '#e2e8f0'; // cockpit
+            ctx.fillRect(buggy.x + 25, buggy.y + 4, 10, 8);
+            
+            // Wheels
+            let wRot = distance * 0.1;
+            ctx.fillStyle = '#94a3b8';
+            // Wheel 1
+            ctx.beginPath(); ctx.arc(buggy.x + 8, buggy.y + buggy.h, 6, 0, Math.PI*2); ctx.fill();
+            // Wheel 2
+            ctx.beginPath(); ctx.arc(buggy.x + buggy.w - 8, buggy.y + buggy.h, 6, 0, Math.PI*2); ctx.fill();
+
+            // Particles
+            for(let i = particles.length - 1; i >= 0; i--) {
+                let p = particles[i];
+                p.x += p.vx; p.y += p.vy;
+                p.alpha = p.life;
+                ctx.fillStyle = p.color;
+                ctx.globalAlpha = p.alpha;
+                ctx.fillRect(p.x, p.y, 4, 4);
+                ctx.globalAlpha = 1.0;
+                p.life -= 0.05;
+                if(p.life <= 0) particles.splice(i, 1);
+            }
+
+            animId = requestAnimationFrame(drawGame);
+        }
+
+        function endGame() {
+            gameRunning = false;
+            cancelAnimationFrame(animId);
+            gOverlay.classList.remove('hidden');
+            btnStartGame.innerText = "Fatal Error - Reboot";
+            btnStartGame.classList.replace('bg-sky-600', 'bg-slate-700');
+            btnStartGame.classList.replace('border-sky-800', 'border-slate-900');
+        }
+
+        // --- CERTIFICATE LOGIC ---
+        function updateCertName() {
+            let name = document.getElementById('student-name-input').value.trim();
+            if(name) {
+                if (name.includes(' ')) {
+                    name = name.split(' ')[0];
+                    document.getElementById('student-name-input').value = name;
+                    showModal('Notice', 'Only your first name has been applied to the certificate.', 'info');
+                }
+                document.getElementById('cert-student-name').innerText = name;
+            } else {
+                showModal('Wait!', 'Please enter your first name to update the certificate.', 'warning');
+            }
+        }
+
+        const today = new Date();
+        document.getElementById('cert-date').innerText = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        function downloadCert() {
+            const certEl = document.getElementById('certificate');
+            const name = document.getElementById('cert-student-name').innerText;
+            let filename = 'DataTypes_Certificate.png';
+            if (name && name !== 'Student') {
+                filename = `${name.replace(/\s+/g, '_')}_DataTypes_Certificate.png`;
+            }
+
+            const originalTransform = certEl.style.transform;
+            certEl.style.transform = 'none';
+
+            const btn = document.getElementById('download-btn');
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Generating...';
+            btn.disabled = true;
+
+            html2canvas(certEl, { 
+                scale: 2, 
+                useCORS: true,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+            }).catch(err => {
+                console.error(err);
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                showModal('Error', 'Failed to generate image. Try using a desktop browser.', 'error');
+            });
+        }
+
+        window.onload = () => {
+            // Draw static background for game preview
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle = '#334155';
+            ctx.fillRect(0, 245, canvas.width, 55);
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = '20px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('SYSTEM READY', canvas.width/2, canvas.height/2);
+        }
+    </script>
+</body>
+</html>
+```eof

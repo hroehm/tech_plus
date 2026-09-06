@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unit 03 Section 2.2.1 Mastery - Internal Computing Components</title>
+    <title>Unit 03 Section 2.2.1 Mastery - Installing Internal Computing Components</title>
     
     <!-- Load Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -39,14 +39,16 @@
         ::-webkit-scrollbar-thumb { background: #10b981; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #059669; }
 
-        /* Retro Game Canvas */
+        /* Kaboom Retro Game Canvas ("Component Catcher") */
         #game-canvas {
-            background-color: #111827;
-            border: 4px solid #374151;
+            background-color: #0f172a;
+            border: 4px solid #334155;
             border-radius: 8px;
-            box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
             max-width: 100%;
             height: auto;
+            touch-action: none;
+            cursor: ew-resize;
         }
         .game-btn { touch-action: manipulation; user-select: none; }
 
@@ -143,11 +145,17 @@
         @media (max-width: 768px) {
             #certificate { transform: scale(0.4); transform-origin: top left; margin-bottom: -490px; margin-right: -630px; }
         }
+        
+        .lab-row { transition: background-color 0.2s; }
+        .lab-row:hover { background-color: #fee2e2; cursor: pointer; }
+        .disk-block { transition: all 0.2s; }
+        .disk-block.allocated { background-color: #3b82f6; border-color: #1e3a8a; }
+        .acl-btn { transition: all 0.2s; }
+        .acl-btn.active { background-color: #10b981; color: white; border-color: #047857; }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col">
 
-    <!-- Navigation -->
     <nav class="bg-green-700 text-white shadow-lg sticky top-0 z-50 no-print">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
@@ -182,79 +190,164 @@
         <!-- BRIEFING SECTION -->
         <div id="briefing-section" class="tab-content active no-print">
             <div class="text-center mb-10">
-                <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">Internal Computing Components</h1>
-                <p class="text-lg text-gray-600 max-w-3xl mx-auto">Explore the essential hardware inside a computer, their core purposes, and how they interact like organs in the human body.</p>
+                <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">Installing Internal Computing Components</h1>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">Explore the fundamental internal architecture of computer systems, their specific hardware roles, and how they compare to biological systems.</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 
-                <!-- Tile 1 -->
+                <!-- Tile 1: Motherboard -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-emerald-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-xl font-bold mb-3 text-emerald-700"><i class="fa-solid fa-network-wired mr-2"></i>Motherboard</h2>
+                        <ul class="space-y-2 text-gray-700 text-sm mb-4">
+                            <li><strong>Central Hub:</strong> Connects all internal components.</li>
+                            <li><strong>Form Factors:</strong> Proprietary & Standardized layouts.</li>
+                            <li><strong>Chipsets:</strong> Northbridge (fast) & Southbridge (slow).</li>
+                            <li><strong>Expansion Slots:</strong> PCIe, M.2, and DIMMs.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-2">
+                            <button onclick="openBriefing('motherboard-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded text-xs font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-1"></i> Details</button>
+                            <button onclick="openBriefing('motherboard-usecase')" class="flex-1 bg-emerald-100 hover:bg-emerald-200 text-emerald-900 py-2 rounded text-xs font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-1"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 2: BIOS / UEFI -->
                 <div class="bg-white rounded-xl shadow-md border-t-4 border-blue-500 overflow-hidden flex flex-col">
                     <div class="p-6 flex-grow">
-                        <h2 class="text-2xl font-bold mb-3 text-blue-700"><i class="fa-solid fa-microchip mr-2"></i>Motherboard & BIOS</h2>
-                        <ul class="space-y-3 text-gray-700 mb-4">
-                            <li><strong>Motherboard:</strong> The central hub (Nervous System) connecting all components. Contains chipsets (Northbridge/Southbridge) and expansion slots.</li>
-                            <li><strong>BIOS/UEFI:</strong> Firmware stored on a ROM chip (Reflexes). Initiates the Power-On Self-Test (POST) and loads the OS.</li>
-                        </ul>
-                    </div>
-                    <div class="bg-gray-50 border-t border-gray-100 p-4">
-                        <div class="flex gap-4">
-                            <button onclick="openBriefing('mobo-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
-                            <button onclick="openBriefing('mobo-usecase')" class="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Tile 2 -->
-                <div class="bg-white rounded-xl shadow-md border-t-4 border-green-500 overflow-hidden flex flex-col">
-                    <div class="p-6 flex-grow">
-                        <h2 class="text-2xl font-bold mb-3 text-green-700"><i class="fa-solid fa-brain mr-2"></i>Processing & Memory</h2>
-                        <ul class="space-y-3 text-gray-700 mb-4">
-                            <li><strong>CPU:</strong> The Brain. Executes instructions via the Arithmetic Logic Unit (ALU) and Control Unit (CU) using the Instruction Cycle.</li>
-                            <li><strong>RAM:</strong> Short-Term Memory. Volatile storage providing fast access for active programs. Uses DIMM/SODIMM modules.</li>
+                        <h2 class="text-xl font-bold mb-3 text-blue-700"><i class="fa-solid fa-microchip mr-2"></i>BIOS / UEFI</h2>
+                        <ul class="space-y-2 text-gray-700 text-sm mb-4">
+                            <li><strong>Firmware:</strong> Embedded startup instructions.</li>
+                            <li><strong>POST Routine:</strong> Power-On Self-Test checking hardware.</li>
+                            <li><strong>Hardware Init:</strong> Prepares system for OS handoff.</li>
+                            <li><strong>UEFI Upgrade:</strong> Modern GUI firmware replacement.</li>
                         </ul>
                     </div>
                      <div class="bg-gray-50 border-t border-gray-100 p-4">
-                        <div class="flex gap-4">
-                            <button onclick="openBriefing('cpu-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
-                            <button onclick="openBriefing('cpu-usecase')" class="flex-1 bg-green-100 hover:bg-green-200 text-green-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        <div class="flex gap-2">
+                            <button onclick="openBriefing('bios-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded text-xs font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-1"></i> Details</button>
+                            <button onclick="openBriefing('bios-usecase')" class="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-900 py-2 rounded text-xs font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-1"></i> Use Cases</button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Tile 3 -->
+                <!-- Tile 3: CPU -->
                 <div class="bg-white rounded-xl shadow-md border-t-4 border-purple-500 overflow-hidden flex flex-col">
                     <div class="p-6 flex-grow">
-                        <h2 class="text-2xl font-bold mb-3 text-purple-700"><i class="fa-solid fa-eye mr-2"></i>Graphics & Storage</h2>
-                        <ul class="space-y-3 text-gray-700 mb-4">
-                            <li><strong>GPU:</strong> The Eyes. Handles parallel processing for rendering images. Can be integrated or dedicated with its own VRAM.</li>
-                            <li><strong>Storage:</strong> Long-Term Memory. Non-volatile hardware (HDD, SSD) that retains software, OS, and files when powered off.</li>
+                        <h2 class="text-xl font-bold mb-3 text-purple-700"><i class="fa-solid fa-brain mr-2"></i>CPU</h2>
+                        <ul class="space-y-2 text-gray-700 text-sm mb-4">
+                            <li><strong>The Brain:</strong> Executes instructions and logic.</li>
+                            <li><strong>ALU & CU:</strong> Arithmetic and Control units.</li>
+                            <li><strong>Instruction Cycle:</strong> Fetch, decode, execute, store.</li>
+                            <li><strong>Sockets:</strong> LGA (pads) & PGA (pins).</li>
                         </ul>
                     </div>
                      <div class="bg-gray-50 border-t border-gray-100 p-4">
-                        <div class="flex gap-4">
-                            <button onclick="openBriefing('gpu-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
-                            <button onclick="openBriefing('gpu-usecase')" class="flex-1 bg-purple-100 hover:bg-purple-200 text-purple-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        <div class="flex gap-2">
+                            <button onclick="openBriefing('cpu-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded text-xs font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-1"></i> Details</button>
+                            <button onclick="openBriefing('cpu-usecase')" class="flex-1 bg-purple-100 hover:bg-purple-200 text-purple-900 py-2 rounded text-xs font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-1"></i> Use Cases</button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Tile 4 -->
-                <div class="bg-white rounded-xl shadow-md border-t-4 border-orange-500 overflow-hidden flex flex-col">
+                <!-- Tile 4: GPU -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-amber-500 overflow-hidden flex flex-col">
                     <div class="p-6 flex-grow">
-                        <h2 class="text-2xl font-bold mb-3 text-orange-700"><i class="fa-solid fa-network-wired mr-2"></i>Network & Cooling</h2>
-                        <ul class="space-y-3 text-gray-700 mb-4">
-                            <li><strong>NIC:</strong> Mouth & Ears. Enables network connections (Wired RJ-45 or Wireless 802.11). Can be onboard or expansion.</li>
-                            <li><strong>Cooling Systems:</strong> Temperature Control. Includes Air (fans), Liquid, and Heat Sinks to prevent thermal damage.</li>
+                        <h2 class="text-xl font-bold mb-3 text-amber-700"><i class="fa-solid fa-eye mr-2"></i>GPU</h2>
+                        <ul class="space-y-2 text-gray-700 text-sm mb-4">
+                            <li><strong>Visual Processor:</strong> Renders UI and 3D graphics.</li>
+                            <li><strong>Parallel Processing:</strong> Thousands of specialized cores.</li>
+                            <li><strong>Pipeline:</strong> Vertex, rasterization, shading, output.</li>
+                            <li><strong>VRAM:</strong> Dedicated high-speed frame buffer.</li>
                         </ul>
                     </div>
                     <div class="bg-gray-50 border-t border-gray-100 p-4">
-                        <div class="flex gap-4">
-                            <button onclick="openBriefing('nic-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
-                            <button onclick="openBriefing('nic-usecase')" class="flex-1 bg-orange-100 hover:bg-orange-200 text-orange-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        <div class="flex gap-2">
+                            <button onclick="openBriefing('gpu-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded text-xs font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-1"></i> Details</button>
+                            <button onclick="openBriefing('gpu-usecase')" class="flex-1 bg-amber-100 hover:bg-amber-200 text-amber-900 py-2 rounded text-xs font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-1"></i> Use Cases</button>
                         </div>
                     </div>
                 </div>
+
+                <!-- Tile 5: RAM -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-indigo-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-xl font-bold mb-3 text-indigo-700"><i class="fa-solid fa-memory mr-2"></i>RAM</h2>
+                        <ul class="space-y-2 text-gray-700 text-sm mb-4">
+                            <li><strong>Short-Term Memory:</strong> Fast workspace for CPU.</li>
+                            <li><strong>Volatile:</strong> Clears data when power shuts off.</li>
+                            <li><strong>DIMMs/SODIMM:</strong> Desktop and laptop modules.</li>
+                            <li><strong>DRAM & DDR:</strong> Double data rate memory standards.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-2">
+                            <button onclick="openBriefing('ram-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded text-xs font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-1"></i> Details</button>
+                            <button onclick="openBriefing('ram-usecase')" class="flex-1 bg-indigo-100 hover:bg-indigo-200 text-indigo-900 py-2 rounded text-xs font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-1"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 6: Storage -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-red-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-xl font-bold mb-3 text-red-700"><i class="fa-solid fa-hard-drive mr-2"></i>Storage</h2>
+                        <ul class="space-y-2 text-gray-700 text-sm mb-4">
+                            <li><strong>Long-Term Memory:</strong> Retains data permanently.</li>
+                            <li><strong>Non-Volatile:</strong> Preserves state without power.</li>
+                            <li><strong>Tiers:</strong> Secondary (SSD/HDD) & Tertiary (Tape).</li>
+                            <li><strong>Metrics:</strong> Capacity, performance, reliability.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-2">
+                            <button onclick="openBriefing('storage-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded text-xs font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-1"></i> Details</button>
+                            <button onclick="openBriefing('storage-usecase')" class="flex-1 bg-red-100 hover:bg-red-200 text-red-900 py-2 rounded text-xs font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-1"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 7: NIC -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-cyan-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-xl font-bold mb-3 text-cyan-700"><i class="fa-solid fa-globe mr-2"></i>NIC</h2>
+                        <ul class="space-y-2 text-gray-700 text-sm mb-4">
+                            <li><strong>Network Gateway:</strong> Mouth and ears of the PC.</li>
+                            <li><strong>Wired vs Wireless:</strong> Ethernet cables vs radio waves.</li>
+                            <li><strong>Onboard vs Expansion:</strong> Integrated vs PCIe cards.</li>
+                            <li><strong>Failover:</strong> Redundancy for uptime reliability.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-2">
+                            <button onclick="openBriefing('nic-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded text-xs font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-1"></i> Details</button>
+                            <button onclick="openBriefing('nic-usecase')" class="flex-1 bg-cyan-100 hover:bg-cyan-200 text-cyan-900 py-2 rounded text-xs font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-1"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 8: Cooling Systems -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-teal-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-xl font-bold mb-3 text-teal-700"><i class="fa-solid fa-snowflake mr-2"></i>Cooling Systems</h2>
+                        <ul class="space-y-2 text-gray-700 text-sm mb-4">
+                            <li><strong>Thermal Control:</strong> Prevents heat throttling.</li>
+                            <li><strong>Air Cooling:</strong> Fans and heat pipes.</li>
+                            <li><strong>Liquid Cooling:</strong> Pumps and water blocks.</li>
+                            <li><strong>Heat Sinks:</strong> Metal dissipation fins.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-2">
+                            <button onclick="openBriefing('cooling-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded text-xs font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-1"></i> Details</button>
+                            <button onclick="openBriefing('cooling-usecase')" class="flex-1 bg-teal-100 hover:bg-teal-200 text-teal-900 py-2 rounded text-xs font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-1"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
             </div>
             
             <div class="mt-8 flex justify-center">
@@ -266,77 +359,157 @@
         <div id="activity-section" class="tab-content no-print">
             <div class="text-center mb-8">
                 <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Interactive Lab Activity</h1>
-                <p class="text-gray-600">Apply your knowledge of component purposes and system investigation tools.</p>
+                <p class="text-gray-600">Complete the simulations for each component to reinforce internal hardware mastery.</p>
             </div>
 
-            <!-- Lab 1: Anatomy of a Computer -->
-            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
-                <h2 class="text-xl font-bold mb-4 text-blue-700"><i class="fa-solid fa-user-doctor mr-2"></i>Lab 1: Anatomy of a Computer</h2>
-                <p class="text-sm text-gray-600 mb-4">Drag and drop the internal computer component to its "Human Body" equivalent based on its core purpose.</p>
-                
-                <div class="flex flex-wrap gap-3 mb-6" id="cat-items">
-                    <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold" draggable="true" data-type="brain">CPU</div>
-                    <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold" draggable="true" data-type="nerves">Motherboard</div>
-                    <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold" draggable="true" data-type="reflexes">BIOS/Firmware</div>
-                    <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold" draggable="true" data-type="eyes">GPU</div>
-                    <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold" draggable="true" data-type="shortmem">RAM</div>
-                    <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold" draggable="true" data-type="longmem">Storage (HDD/SSD)</div>
-                    <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold" draggable="true" data-type="mouth">NIC</div>
-                    <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold" draggable="true" data-type="sweat">Cooling System</div>
+            <!-- Lab 1 & 2: Motherboard & BIOS -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                    <h2 class="text-xl font-bold mb-3 text-emerald-700"><i class="fa-solid fa-network-wired mr-2"></i>Lab 1: Motherboard Hub Sorter</h2>
+                    <p class="text-sm text-gray-600 mb-4">Drag motherboard components to their correct functional descriptions.</p>
+                    <div class="flex flex-wrap gap-2 mb-4" id="lab1-items">
+                        <div class="io-item px-3 py-1.5 bg-emerald-100 border border-emerald-300 rounded font-bold text-xs" draggable="true" data-match="northbridge">Northbridge</div>
+                        <div class="io-item px-3 py-1.5 bg-emerald-100 border border-emerald-300 rounded font-bold text-xs" draggable="true" data-match="southbridge">Southbridge</div>
+                        <div class="io-item px-3 py-1.5 bg-emerald-100 border border-emerald-300 rounded font-bold text-xs" draggable="true" data-match="pcie">PCIe Slot</div>
+                    </div>
+                    <div class="space-y-3 text-sm">
+                        <div class="p-2 border border-dashed border-gray-400 rounded bg-gray-50 flex justify-between items-center" data-drop="northbridge">
+                            <span>Manages high-speed CPU & RAM traffic</span>
+                            <div class="io-dropzone w-28 h-8 text-xs">Drop Here</div>
+                        </div>
+                        <div class="p-2 border border-dashed border-gray-400 rounded bg-gray-50 flex justify-between items-center" data-drop="southbridge">
+                            <span>Manages slower I/O peripherals & USB</span>
+                            <div class="io-dropzone w-28 h-8 text-xs">Drop Here</div>
+                        </div>
+                        <div class="p-2 border border-dashed border-gray-400 rounded bg-gray-50 flex justify-between items-center" data-drop="pcie">
+                            <span>Expansion slot for GPUs and fast NICs</span>
+                            <div class="io-dropzone w-28 h-8 text-xs">Drop Here</div>
+                        </div>
+                    </div>
+                    <div id="lab1-feedback" class="text-center font-bold mt-3 text-sm text-emerald-600 h-5"></div>
                 </div>
 
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div class="cat-dropzone border-2 border-dashed border-gray-400 bg-gray-50 rounded-lg p-3 min-h-[100px] flex flex-col items-center" data-target="brain">
-                        <h3 class="font-bold text-gray-700 mb-1 border-b border-gray-200 w-full text-center pb-1">The Brain</h3>
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                    <h2 class="text-xl font-bold mb-3 text-blue-700"><i class="fa-solid fa-microchip mr-2"></i>Lab 2: BIOS Boot Sequence</h2>
+                    <p class="text-sm text-gray-600 mb-4">Order the 4 key stages of the BIOS/UEFI boot process correctly (click to sequence).</p>
+                    <div class="space-y-2" id="bios-steps-container">
+                        <div class="p-3 bg-blue-50 border border-blue-200 rounded cursor-pointer font-semibold text-sm flex justify-between items-center bios-step" data-step="2"><span>2. Hardware Initialization & Configuration</span><i class="fa-solid fa-arrows-up-down text-gray-400"></i></div>
+                        <div class="p-3 bg-blue-50 border border-blue-200 rounded cursor-pointer font-semibold text-sm flex justify-between items-center bios-step" data-step="1"><span>1. Power-On Self-Test (POST)</span><i class="fa-solid fa-arrows-up-down text-gray-400"></i></div>
+                        <div class="p-3 bg-blue-50 border border-blue-200 rounded cursor-pointer font-semibold text-sm flex justify-between items-center bios-step" data-step="4"><span>4. OS Handoff & Kernel Boot</span><i class="fa-solid fa-arrows-up-down text-gray-400"></i></div>
+                        <div class="p-3 bg-blue-50 border border-blue-200 rounded cursor-pointer font-semibold text-sm flex justify-between items-center bios-step" data-step="3"><span>3. Locate Bootloader Storage Device</span><i class="fa-solid fa-arrows-up-down text-gray-400"></i></div>
                     </div>
-                    <div class="cat-dropzone border-2 border-dashed border-gray-400 bg-gray-50 rounded-lg p-3 min-h-[100px] flex flex-col items-center" data-target="nerves">
-                        <h3 class="font-bold text-gray-700 mb-1 border-b border-gray-200 w-full text-center pb-1">Nervous System</h3>
+                    <div class="mt-4 text-center">
+                        <button onclick="checkBiosOrder()" class="bg-blue-600 text-white px-4 py-2 rounded text-sm font-bold hover:bg-blue-700">Verify Boot Order</button>
                     </div>
-                    <div class="cat-dropzone border-2 border-dashed border-gray-400 bg-gray-50 rounded-lg p-3 min-h-[100px] flex flex-col items-center" data-target="reflexes">
-                        <h3 class="font-bold text-gray-700 mb-1 border-b border-gray-200 w-full text-center pb-1">Internal Reflexes</h3>
-                    </div>
-                    <div class="cat-dropzone border-2 border-dashed border-gray-400 bg-gray-50 rounded-lg p-3 min-h-[100px] flex flex-col items-center" data-target="eyes">
-                        <h3 class="font-bold text-gray-700 mb-1 border-b border-gray-200 w-full text-center pb-1">The Eyes</h3>
-                    </div>
-                    <div class="cat-dropzone border-2 border-dashed border-gray-400 bg-gray-50 rounded-lg p-3 min-h-[100px] flex flex-col items-center" data-target="shortmem">
-                        <h3 class="font-bold text-gray-700 mb-1 border-b border-gray-200 w-full text-center pb-1">Short-Term Memory</h3>
-                    </div>
-                    <div class="cat-dropzone border-2 border-dashed border-gray-400 bg-gray-50 rounded-lg p-3 min-h-[100px] flex flex-col items-center" data-target="longmem">
-                        <h3 class="font-bold text-gray-700 mb-1 border-b border-gray-200 w-full text-center pb-1">Long-Term Memory</h3>
-                    </div>
-                    <div class="cat-dropzone border-2 border-dashed border-gray-400 bg-gray-50 rounded-lg p-3 min-h-[100px] flex flex-col items-center" data-target="mouth">
-                        <h3 class="font-bold text-gray-700 mb-1 border-b border-gray-200 w-full text-center pb-1">Mouth and Ears</h3>
-                    </div>
-                    <div class="cat-dropzone border-2 border-dashed border-gray-400 bg-gray-50 rounded-lg p-3 min-h-[100px] flex flex-col items-center" data-target="sweat">
-                        <h3 class="font-bold text-gray-700 mb-1 border-b border-gray-200 w-full text-center pb-1">Temperature Control</h3>
-                    </div>
+                    <div id="lab2-feedback" class="text-center font-bold mt-2 text-sm h-5"></div>
                 </div>
-                <div id="lab1-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
             </div>
 
-            <!-- Lab 2: System Investigation -->
-            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
-                <h2 class="text-xl font-bold mb-4 text-red-700"><i class="fa-solid fa-magnifying-glass mr-2"></i>Lab 2: CSI System Investigation Tools</h2>
-                <p class="text-sm text-gray-600 mb-4">Match the correct OS command or utility to the action it performs when identifying internal components.</p>
-                
-                <div class="flex flex-col md:flex-row justify-around items-stretch gap-6">
-                    <div class="flex flex-col gap-3 flex-1">
-                        <button class="scenario-btn px-4 py-3 bg-gray-100 border-2 border-gray-300 rounded text-left hover:bg-red-50 text-sm font-semibold transition" data-match="msinfo32">"I need to quickly view the BIOS Version/Date and BaseBoard Manufacturer in a Windows Server."</button>
-                        <button class="scenario-btn px-4 py-3 bg-gray-100 border-2 border-gray-300 rounded text-left hover:bg-red-50 text-sm font-semibold transition" data-match="freeh">"I am in an Ubuntu Linux terminal and need to display the available and used short-term memory (RAM)."</button>
-                        <button class="scenario-btn px-4 py-3 bg-gray-100 border-2 border-gray-300 rounded text-left hover:bg-red-50 text-sm font-semibold transition" data-match="lscpu">"I am in an Ubuntu Linux terminal and need to pull details specifically regarding the processor (brand, model, architecture)."</button>
-                        <button class="scenario-btn px-4 py-3 bg-gray-100 border-2 border-gray-300 rounded text-left hover:bg-red-50 text-sm font-semibold transition" data-match="taskmgr">"I am in Windows and need a GUI to monitor real-time CPU speed and Ethernet send/receive utilization."</button>
-                        <button class="scenario-btn px-4 py-3 bg-gray-100 border-2 border-gray-300 rounded text-left hover:bg-red-50 text-sm font-semibold transition" data-match="devmgr">"I am in Windows and need to expand a list to see the exact names of the Display Adapters and Network Adapters."</button>
+            <!-- Lab 3 & 4: CPU & GPU -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                    <h2 class="text-xl font-bold mb-3 text-purple-700"><i class="fa-solid fa-brain mr-2"></i>Lab 3: CPU Instruction Cycle</h2>
+                    <p class="text-sm text-gray-600 mb-4">Select the correct sequence of instruction processing execution.</p>
+                    <div class="space-y-2 text-sm">
+                        <label class="block p-3 border rounded cursor-pointer hover:bg-purple-50"><input type="radio" name="cpu-cycle" value="wrong" class="mr-2"> Execute -> Decode -> Fetch -> Store</label>
+                        <label class="block p-3 border rounded cursor-pointer hover:bg-purple-50"><input type="radio" name="cpu-cycle" value="correct" class="mr-2"> Fetch -> Decode -> Execute -> Store</label>
+                        <label class="block p-3 border rounded cursor-pointer hover:bg-purple-50"><input type="radio" name="cpu-cycle" value="wrong" class="mr-2"> Decode -> Fetch -> Store -> Execute</label>
                     </div>
-                    
-                    <div class="flex flex-col gap-3 flex-1 justify-center">
-                        <button class="tool-btn px-4 py-3 bg-white border-2 border-gray-300 rounded text-center hover:bg-gray-100 font-bold text-gray-700 shadow-sm transition" data-match="devmgr"><i class="fa-solid fa-list text-gray-600 mr-2"></i>Device Manager (Windows)</button>
-                        <button class="tool-btn px-4 py-3 bg-white border-2 border-gray-300 rounded text-center hover:bg-gray-100 font-bold text-gray-700 shadow-sm transition" data-match="freeh"><i class="fa-solid fa-terminal text-black mr-2"></i>free -h (Linux)</button>
-                        <button class="tool-btn px-4 py-3 bg-white border-2 border-gray-300 rounded text-center hover:bg-gray-100 font-bold text-gray-700 shadow-sm transition" data-match="msinfo32"><i class="fa-brands fa-windows text-blue-500 mr-2"></i>Run > msinfo32 (Windows)</button>
-                        <button class="tool-btn px-4 py-3 bg-white border-2 border-gray-300 rounded text-center hover:bg-gray-100 font-bold text-gray-700 shadow-sm transition" data-match="taskmgr"><i class="fa-solid fa-chart-line text-green-500 mr-2"></i>Task Manager (Windows)</button>
-                        <button class="tool-btn px-4 py-3 bg-white border-2 border-gray-300 rounded text-center hover:bg-gray-100 font-bold text-gray-700 shadow-sm transition" data-match="lscpu"><i class="fa-solid fa-terminal text-black mr-2"></i>lscpu (Linux)</button>
+                    <div class="mt-4 text-center">
+                        <button onclick="checkCpuCycle()" class="bg-purple-600 text-white px-4 py-2 rounded text-sm font-bold hover:bg-purple-700">Submit Cycle</button>
                     </div>
+                    <div id="lab3-feedback" class="text-center font-bold mt-2 text-sm h-5"></div>
                 </div>
-                <div id="lab2-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
+
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                    <h2 class="text-xl font-bold mb-3 text-amber-700"><i class="fa-solid fa-eye mr-2"></i>Lab 4: GPU Rendering Pipeline</h2>
+                    <p class="text-sm text-gray-600 mb-4">Click the stage responsible for converting 3D vector wireframe shapes into 2D screen pixels.</p>
+                    <div class="grid grid-cols-2 gap-3 text-sm font-semibold">
+                        <button onclick="checkGpuStage(false)" class="p-3 bg-amber-50 border border-amber-200 rounded hover:bg-amber-100 text-amber-900">Vertex Processing</button>
+                        <button onclick="checkGpuStage(true)" class="p-3 bg-amber-50 border border-amber-200 rounded hover:bg-amber-100 text-amber-900">Rasterization</button>
+                        <button onclick="checkGpuStage(false)" class="p-3 bg-amber-50 border border-amber-200 rounded hover:bg-amber-100 text-amber-900">Fragment Shading</button>
+                        <button onclick="checkGpuStage(false)" class="p-3 bg-amber-50 border border-amber-200 rounded hover:bg-amber-100 text-amber-900">Output Display</button>
+                    </div>
+                    <div id="lab4-feedback" class="text-center font-bold mt-4 text-sm h-5"></div>
+                </div>
+            </div>
+
+            <!-- Lab 5 & 6: RAM & Storage -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                    <h2 class="text-xl font-bold mb-3 text-indigo-700"><i class="fa-solid fa-memory mr-2"></i>Lab 5: RAM Volatility Sorter</h2>
+                    <p class="text-sm text-gray-600 mb-4">Classify memory and storage traits accurately.</p>
+                    <div class="space-y-3 text-sm">
+                        <div class="flex justify-between items-center p-2 bg-gray-50 border rounded">
+                            <span>RAM (Volatile / Short-Term)</span>
+                            <select id="ram-trait" class="border p-1 rounded">
+                                <option value="">Select...</option>
+                                <option value="volatile">Loses data on power loss</option>
+                                <option value="nonvolatile">Retains data permanently</option>
+                            </select>
+                        </div>
+                        <div class="flex justify-between items-center p-2 bg-gray-50 border rounded">
+                            <span>Storage (Non-Volatile / Long-Term)</span>
+                            <select id="storage-trait" class="border p-1 rounded">
+                                <option value="">Select...</option>
+                                <option value="volatile">Loses data on power loss</option>
+                                <option value="nonvolatile">Retains data permanently</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-4 text-center">
+                        <button onclick="checkRamStorage()" class="bg-indigo-600 text-white px-4 py-2 rounded text-sm font-bold hover:bg-indigo-700">Check Classification</button>
+                    </div>
+                    <div id="lab5-feedback" class="text-center font-bold mt-2 text-sm h-5"></div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                    <h2 class="text-xl font-bold mb-3 text-red-700"><i class="fa-solid fa-hard-drive mr-2"></i>Lab 6: Storage Drive Allocator</h2>
+                    <p class="text-sm text-gray-600 mb-4">Select exactly 3 blocks (150GB total) to format a high-performance primary storage volume.</p>
+                    <div class="flex flex-wrap gap-2 justify-center mb-3" id="disk-grid"></div>
+                    <div id="lab6-feedback" class="text-center font-bold text-sm h-5 text-red-600"></div>
+                </div>
+            </div>
+
+            <!-- Lab 7 & 8: NIC & Cooling -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                    <h2 class="text-xl font-bold mb-3 text-cyan-700"><i class="fa-solid fa-globe mr-2"></i>Lab 7: NIC Connection Matcher</h2>
+                    <p class="text-sm text-gray-600 mb-4">Match the network interface medium to its core characteristic.</p>
+                    <div class="space-y-3 text-sm">
+                        <div class="flex justify-between items-center">
+                            <span>Wired Ethernet NIC</span>
+                            <select id="nic-wired" class="border p-1 rounded text-xs">
+                                <option value="">Choose...</option>
+                                <option value="stable">Lower interference, highly stable connection</option>
+                                <option value="waves">Connects via radio waves and access points</option>
+                            </select>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span>Wireless Wi-Fi NIC</span>
+                            <select id="nic-wireless" class="border p-1 rounded text-xs">
+                                <option value="">Choose...</option>
+                                <option value="stable">Lower interference, highly stable connection</option>
+                                <option value="waves">Connects via radio waves and access points</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-4 text-center">
+                        <button onclick="checkNicLab()" class="bg-cyan-600 text-white px-4 py-2 rounded text-sm font-bold hover:bg-cyan-700">Verify NICs</button>
+                    </div>
+                    <div id="lab7-feedback" class="text-center font-bold mt-2 text-sm h-5"></div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                    <h2 class="text-xl font-bold mb-3 text-teal-700"><i class="fa-solid fa-snowflake mr-2"></i>Lab 8: Thermal Dissipation Matcher</h2>
+                    <p class="text-sm text-gray-600 mb-4">Identify the cooling mechanism that uses pumped fluid to move heat away from processors.</p>
+                    <div class="flex justify-center gap-3">
+                        <button onclick="checkCooling(false)" class="px-4 py-2 bg-teal-50 border rounded font-semibold text-teal-800">Air Cooling (Fans)</button>
+                        <button onclick="checkCooling(true)" class="px-4 py-2 bg-teal-50 border rounded font-semibold text-teal-800">Liquid Cooling</button>
+                        <button onclick="checkCooling(false)" class="px-4 py-2 bg-teal-50 border rounded font-semibold text-teal-800">Heat Sinks</button>
+                    </div>
+                    <div id="lab8-feedback" class="text-center font-bold mt-4 text-sm h-5"></div>
+                </div>
             </div>
 
             <div class="text-center">
@@ -349,50 +522,42 @@
             <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-xl max-w-4xl mx-auto">
                 <div class="text-center mb-8 border-b pb-4">
                     <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Unit 03 Section 2.2.1 Mastery Quiz</h1>
-                    <p class="text-gray-600">Score 90% or higher (18/20) to earn your Certificate of Mastery and unlock the Retro Game!</p>
+                    <p class="text-gray-600">Score 90% or higher (18/20) to unlock the <strong>Component Catcher</strong> retro arcade game and certificate!</p>
                 </div>
 
                 <div id="quiz-container" class="space-y-8">
-                    <!-- Questions injected via JS -->
+                    <!-- Quiz injected dynamically -->
                 </div>
 
                 <div class="mt-10 text-center border-t pt-6 flex flex-col md:flex-row justify-center items-center gap-4">
                     <button id="submit-quiz-btn" onclick="gradeQuiz()" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">Submit Quiz</button>
-                    <button id="proceed-game-btn" onclick="switchTab('game')" class="hidden bg-purple-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-purple-700 shadow-lg transition w-full md:w-auto">Play Retro Game <i class="fa-solid fa-gamepad ml-2"></i></button>
+                    <button id="proceed-game-btn" onclick="switchTab('game')" class="hidden bg-purple-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-purple-700 shadow-lg transition w-full md:w-auto">Play Component Catcher <i class="fa-solid fa-gamepad ml-2"></i></button>
                 </div>
             </div>
         </div>
 
-        <!-- RETRO GAME SECTION -->
+        <!-- RETRO GAME SECTION ("Component Catcher" - Kaboom Style) -->
         <div id="game-section" class="tab-content no-print">
             <div class="bg-gray-900 p-6 sm:p-8 rounded-2xl shadow-xl max-w-4xl mx-auto border-4 border-gray-700 flex flex-col items-center">
                 <div class="text-center mb-4 w-full">
-                    <h1 class="text-3xl font-extrabold text-blue-400 mb-2 tracking-widest uppercase" style="font-family: monospace;">Component Catcher</h1>
-                    <p class="text-gray-300 text-sm">Control the Motherboard using <kbd class="bg-gray-700 px-1 rounded text-white">&larr;</kbd> and <kbd class="bg-gray-700 px-1 rounded text-white">&rarr;</kbd>. Catch CPUs, RAM, and GPUs. Miss a component and you lose a life!</p>
+                    <h1 class="text-3xl font-extrabold text-yellow-400 mb-2 tracking-widest uppercase" style="font-family: monospace;">Component Catcher</h1>
+                    <p class="text-gray-300 text-sm">Arcade Retro Style (Kaboom!): Move your bucket (paddle) left and right with mouse or arrow keys to catch falling hardware components (RAM, CPU, GPU, SSD). Do <strong class="text-red-400">NOT</strong> let them drop or you lose buckets!</p>
                 </div>
                 
-                <div class="flex justify-between items-center w-full max-w-[400px] sm:max-w-[500px] mb-2 px-4 text-white font-mono text-xl">
-                    <div>Score: <span id="game-score" class="text-green-400 font-bold">0</span></div>
-                    <div>Lives: <span id="game-lives" class="text-red-400 font-bold">3</span></div>
+                <div class="flex justify-between items-center w-full max-w-[500px] sm:max-w-[600px] mb-2 px-4 text-white font-mono text-xl">
+                    <div>Score: <span id="game-score" class="text-yellow-400 font-bold">0</span></div>
+                    <div>Buckets (Lives): <span id="game-lives" class="text-red-400 font-bold">3</span></div>
                 </div>
 
                 <div class="relative flex justify-center w-full">
-                    <!-- Game Canvas -->
-                    <canvas id="game-canvas" width="400" height="400" class="w-full max-w-[400px] sm:max-w-[500px]"></canvas>
+                    <canvas id="game-canvas" width="600" height="450" class="w-full max-w-[500px] sm:max-w-[600px] bg-slate-950 border-2 border-slate-700 rounded shadow-lg"></canvas>
                     
-                    <!-- Overlay Start Button -->
-                    <div id="game-overlay" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-70 rounded-lg max-w-[400px] sm:max-w-[500px] mx-auto z-10">
-                        <button id="start-game-btn" class="bg-blue-500 hover:bg-blue-400 text-white font-bold font-mono py-3 px-6 rounded-lg text-xl border-4 border-blue-700 uppercase transform transition hover:scale-105">Insert Coin (Start)</button>
+                    <div id="game-overlay" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-75 rounded-lg max-w-[500px] sm:max-w-[600px] mx-auto z-10">
+                        <button id="start-game-btn" class="bg-yellow-500 hover:bg-yellow-400 text-slate-950 font-bold font-mono py-3 px-6 rounded-lg text-xl border-4 border-yellow-700 uppercase transform transition hover:scale-105">Start Arcade Game</button>
                     </div>
                 </div>
 
-                <!-- Mobile Controls -->
-                <div class="flex justify-center gap-4 w-full max-w-[400px] mt-6 sm:hidden">
-                    <button id="btn-left" class="game-btn bg-gray-700 text-white rounded p-6 active:bg-gray-500 flex-1 max-w-[120px]"><i class="fa-solid fa-arrow-left text-2xl"></i></button>
-                    <button id="btn-right" class="game-btn bg-gray-700 text-white rounded p-6 active:bg-gray-500 flex-1 max-w-[120px]"><i class="fa-solid fa-arrow-right text-2xl"></i></button>
-                </div>
-
-                <div class="mt-8 text-center w-full border-t border-gray-700 pt-6">
+                <div class="mt-6 text-center w-full border-t border-gray-800 pt-4">
                     <button onclick="switchTab('cert')" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">View Certificate <i class="fa-solid fa-award ml-2"></i></button>
                 </div>
             </div>
@@ -401,11 +566,9 @@
         <!-- CERTIFICATE SECTION -->
         <div id="cert-section" class="tab-content">
             <div class="max-w-5xl mx-auto">
-                
-                <!-- Controls -->
                 <div class="bg-white p-6 rounded shadow mb-6 no-print text-center border border-gray-200">
                     <h2 class="text-2xl font-bold text-green-600 mb-2">🎉 Congratulations! 🎉</h2>
-                    <p class="text-gray-700 mb-4">You have achieved mastery of Internal Computing Components.</p>
+                    <p class="text-gray-700 mb-4">You have mastered Unit 03 Section 2.2.1: Installing Internal Computing Components.</p>
                     <div class="flex flex-col md:flex-row justify-center items-center gap-4">
                         <input type="text" id="student-name-input" value="Student" placeholder="Enter your first name" class="border-2 border-gray-300 rounded px-4 py-2 w-full md:w-64 focus:border-green-500 focus:outline-none">
                         <button onclick="updateCertName()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">Update Name</button>
@@ -415,7 +578,6 @@
                     </div>
                 </div>
 
-                <!-- Certificate Render Container -->
                 <div class="cert-preview-container print:p-0 print:bg-white">
                     <div id="certificate">
                         <div class="gold-seal">
@@ -445,8 +607,8 @@
                             <p class="text-[1.3rem] font-body text-gray-800 leading-relaxed w-full pr-4">
                                 Has successfully completed the assessment for 
                                 <strong class="text-[1.8rem] text-[#1e3a8a] block mt-4 mb-2 font-serif">Cyber.org Tech+ Unit 03 Section 2.2.1</strong>
-                                <strong class="text-[1.5rem] text-black block mb-4 font-serif italic">Internal Computing Components</strong>
-                                <span class="text-[1.1rem] text-gray-700 leading-snug block">Demonstrating proficiency in identifying the core internal hardware of a computer system, explaining their operational purposes, understanding system investigation tools, and comparing their functions to human biology.</span>
+                                <strong class="text-[1.5rem] text-black block mb-4 font-serif italic">Installing Internal Computing Components</strong>
+                                <span class="text-[1.1rem] text-gray-700 leading-snug block">Demonstrating expert proficiency in identifying internal hardware components, motherboard layouts, BIOS/UEFI firmware, CPU processing cycles, GPU rendering pipelines, RAM, storage tiers, NIC connectivity, and cooling systems.</span>
                             </p>
                             
                             <div class="flex justify-end gap-16 items-end mt-auto mb-[60px] w-full pr-8">
@@ -471,7 +633,7 @@
         </div>
     </main>
 
-    <!-- Custom Modal for Alerts -->
+    <!-- Custom Modal -->
     <div id="custom-modal" class="fixed inset-0 bg-black bg-opacity-50 z-[100] hidden flex justify-center items-center backdrop-blur-sm">
         <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all">
             <div class="text-center">
@@ -483,9 +645,9 @@
         </div>
     </div>
 
-    <!-- Content Briefing Modal -->
+    <!-- Briefing Modal -->
     <div id="briefing-modal" class="fixed inset-0 bg-black bg-opacity-70 z-[120] hidden flex justify-center items-center backdrop-blur-sm p-4 sm:p-6">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col transform transition-all overflow-hidden border-4 border-green-700">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col transform transition-all overflow-hidden border-4 border-emerald-700">
             <div class="p-6 border-b border-gray-200 flex justify-between items-center bg-gray-50">
                 <div class="flex items-center gap-4">
                     <div id="briefing-modal-icon" class="text-4xl"></div>
@@ -494,186 +656,480 @@
                 <button onclick="closeBriefing()" class="text-gray-400 hover:text-red-600 transition text-4xl leading-none">&times;</button>
             </div>
             <div id="briefing-modal-content" class="p-6 md:p-10 overflow-y-auto flex-grow text-gray-700 text-lg leading-relaxed bg-white">
-                <!-- Dynamic Content Injected Here -->
+                <!-- Injected via JS -->
             </div>
             <div class="p-6 border-t border-gray-200 bg-gray-50 flex justify-end">
-                <button onclick="closeBriefing()" class="bg-green-700 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-green-800 transition shadow-md">Acknowledge & Close</button>
+                <button onclick="closeBriefing()" class="bg-emerald-700 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-emerald-800 transition shadow-md">Acknowledge & Close</button>
             </div>
         </div>
     </div>
 
     <script>
-        // --- Expanded Briefing Content Data (Min 5 Paragraphs per detail) ---
+        // --- BRIEFING CONTENT DATA (7+ Paragraphs per detail, 2+ use cases with 2+ examples, and images) ---
         const briefingData = {
-            'mobo-details': {
-                title: 'Motherboard & BIOS: Detailed Breakdown',
-                icon: '<i class="fa-solid fa-microchip text-blue-600"></i>',
+            'motherboard-details': {
+                title: 'Motherboard Architecture',
+                icon: '<i class="fa-solid fa-network-wired text-emerald-600"></i>',
                 html: `
-                    <p class="mb-5">The <strong>Motherboard</strong> is the foundational circuit board of any computing device. Functioning much like the human nervous system, it acts as the central hub that connects all other internal and external components, allowing them to communicate with one another. Without a motherboard, a computer is simply a disconnected pile of plastic and silicon. The physical size and shape of a motherboard is known as its <em>Form Factor</em>, which dictates what type of computer case it will fit inside. Common standardized form factors include ATX, Micro-ATX, and Mini-ITX, while proprietary form factors are often custom-built for specific laptops or smartphones.</p>
+                    <p class="mb-5">The motherboard is the foundational printed circuit board (PCB) that serves as the absolute backbone of any modern computer system. Without it, individual hardware components would exist as isolated electronic units with no way to share data or electrical power. Often compared to the biological human nervous system, the motherboard establishes the vital physical interconnects that allow every piece of hardware—from the high-speed processor down to the external mouse—to communicate seamlessly under a unified operating architecture.</p>
                     
-                    <p class="mb-5">Embedded within the motherboard is a complex network of electrical pathways called buses. These pathways facilitate the high-speed transfer of data and electrical power between critical components like the processor, memory, and storage drives. To manage this massive flow of traffic, motherboards rely on <em>Chipsets</em>. Traditionally divided into two parts, the Northbridge handles ultra-high-speed connections (like CPU and RAM communication), while the Southbridge manages slower connections like USB ports and standard hard drives.</p>
+                    <p class="mb-5">At the core of motherboard design is the concept of <strong>Form Factors</strong>. Form factors define the physical dimensions, arrangement of mounting holes, power supply connection specifications, and general layout of the board. Form factors are divided into two primary classifications: proprietary and standardized. Proprietary motherboards are custom-engineered for specific pre-built desktop models, laptops, or mobile devices, restricting future hardware upgrades. Standardized form factors (such as ATX, Micro-ATX, and Mini-ITX) adhere to universal industry specifications, allowing consumers to swap components across different manufacturer brands.</p>
                     
-                    <p class="mb-5">To ensure a computer can grow with a user's needs, motherboards feature Expansion Slots. These slots allow users to plug in additional hardware cards to add or upgrade functionality. The most common standard today is PCIe (Peripheral Component Interconnect Express), which is heavily used for adding dedicated Graphics Processing Units (GPUs) or high-end Network Interface Cards (NICs). Another vital slot is the M.2 slot, designed specifically for ultra-fast solid-state storage drives.</p>
+                    <p class="mb-5">Embedded across the multi-layered fiberglass board are intricate microscopic <strong>Electrical Pathways</strong>, commonly referred to as bus lines or traces. These metallic copper pathways facilitate the ultra-high-speed transfer of data packets and electrical power between different chips and slots. Trace routing requires extreme precision by engineers to prevent electromagnetic interference (EMI) and signal degradation, ensuring that delicate instructions traveling between the processor and system memory arrive without corruption.</p>
                     
-                    <p class="mb-5">Working hand-in-hand with the motherboard is the <strong>BIOS</strong> (Basic Input/Output System), or its modern successor, UEFI (Unified Extensible Firmware Interface). BIOS is permanent firmware software embedded directly onto a Read-Only Memory (ROM) chip on the motherboard. It acts as the computer's internal reflexes. The instant a user presses the power button, the BIOS wakes up before any operating system loads. Its primary job is to execute the POST (Power-On Self-Test), a diagnostic scan ensuring all critical hardware—like RAM and the keyboard—are connected and functioning properly.</p>
+                    <p class="mb-5">To coordinate the massive volume of data flowing across these pathways, motherboards rely on specialized silicon microchips known as the <strong>Chipset</strong>. Traditionally partitioned into two distinct chips—the Northbridge and the Southbridge—the chipset acts as the traffic controller for the entire machine. The Northbridge directly governs high-speed communication between the CPU and volatile system RAM, while the Southbridge handles lower-speed input/output peripherals, storage controllers, USB ports, and expansion cards.</p>
                     
-                    <p class="mb-5">Once the POST is successfully completed, the BIOS locates the primary storage device containing the Operating System (like Windows or Linux) and passes control over to it in a process called "booting." While legacy BIOS systems used a basic, keyboard-only interface, modern UEFI systems offer graphical interfaces, mouse support, advanced security features (like Secure Boot), and support for massive modern storage drives. Because BIOS/UEFI settings are crucial, motherboards include a small battery (CMOS battery) to keep this configuration memory alive even when the computer is completely unplugged.</p>
+                    <p class="mb-5">Motherboards are equipped with numerous <strong>Expansion Slots</strong> that allow users to upgrade hardware capabilities long after the initial purchase. The most prominent expansion interface is PCIe (Peripheral Component Interconnect Express), which provides high-bandwidth lanes dedicated to graphics cards, high-speed NVMe storage drives, and specialized network cards. Additionally, M.2 slots offer direct-to-motherboard mounting for ultra-compact solid-state drives, while DIMM slots accommodate dual inline memory modules for system RAM upgrades.</p>
+                    
+                    <p class="mb-5">Furthermore, the motherboard acts as the primary distributor of electrical energy throughout the system. Through specialized power delivery networks (VRMs - Voltage Regulator Modules), the motherboard takes high-voltage current supplied by the external Power Supply Unit (PSU) and precisely steps it down to the exact low voltages required by sensitive microprocessors, memory sticks, and onboard audio chips.</p>
+                    
+                    <p>Finally, the motherboard features an extensive array of integrated <strong>Input/Output (I/O) Ports</strong> located on its rear panel. These ports provide physical connectivity for external displays, USB peripherals, audio equipment, and wired networking. By consolidating power distribution, data routing, firmware booting, and hardware expansion into one unified circuit board, the motherboard makes personal computing practical and modular.</p>
                 `
             },
-            'mobo-usecase': {
-                title: 'Motherboard & BIOS: Practical Use Cases',
+            'motherboard-usecase': {
+                title: 'Motherboard Architecture: Use Cases',
                 icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
                 html: `
                     <div class="mb-8">
-                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Use Case 1: Custom PC Building (Form Factors)</h4>
-                        <p>An IT professional is tasked with building a fleet of compact computers that can mount behind monitors in a small office. They must understand motherboard Form Factors. Instead of buying standard, large ATX motherboards, they specifically select <strong>Mini-ITX</strong> motherboards. This ensures the central hub has the correct physical dimensions to fit inside the tiny, space-saving computer cases required for the project.</p>
+                        <h4 class="text-xl font-bold text-emerald-800 mb-2 border-b-2 border-emerald-200 pb-1">Case 1: Upgrading a Gaming Workstation</h4>
+                        <p class="mb-2">A gamer wishes to upgrade their computer's graphics performance and storage capacity to handle new 4K gaming titles without buying an entirely new computer.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (PCIe Expansion):</strong> The user installs a high-end dedicated graphics card directly into the motherboard's PCIe x16 expansion slot, immediately expanding graphical rendering power.</li>
+                            <li><strong>Example 2 (M.2 Storage):</strong> They snap a new 2TB NVMe SSD directly into the motherboard's dedicated M.2 socket, utilizing the high-speed chipset connection to achieve blazing-fast game load times.</li>
+                        </ul>
                     </div>
                     <div class="mb-8">
-                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Use Case 2: Flashing Firmware for CPU Support</h4>
-                        <p>A user purchases a brand new, next-generation CPU to upgrade their current computer. Upon installing the new CPU into the motherboard and pressing the power button, the screen remains black because the older motherboard does not recognize the new technology. To fix this, the user reinstalls the old CPU, downloads a <strong>BIOS/UEFI Firmware Update</strong> onto a flash drive, and "flashes" the ROM chip. The updated BIOS now contains the instructions necessary to recognize and communicate with the new CPU.</p>
+                        <h4 class="text-xl font-bold text-emerald-800 mb-2 border-b-2 border-emerald-200 pb-1">Case 2: Enterprise Server Maintenance</h4>
+                        <p class="mb-2">An IT system administrator is configuring a rackmount enterprise server to ensure maximum uptime and data throughput for company databases.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Chipset Traffic Management):</strong> The administrator relies on the motherboard's robust chipset (Northbridge/Southbridge architecture) to handle massive simultaneous network and database read requests without bottlenecking the CPU.</li>
+                            <li><strong>Example 2 (Form Factor Replacement):</strong> When a motherboard component fails in a standardized rack server, the admin swaps the faulty board with a matching ATX form factor replacement without altering the server chassis.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Motherboard Circuitry</p>
+                            <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&h=350" alt="Motherboard circuit board" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Hardware Assembly</p>
+                            <img src="https://images.unsplash.com/photo-1587202372775-e229f172b9d7?auto=format&fit=crop&w=600&h=350" alt="Building computer hardware" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'bios-details': {
+                title: 'BIOS / UEFI Firmware',
+                icon: '<i class="fa-solid fa-microchip text-blue-600"></i>',
+                html: `
+                    <p class="mb-5">When you press the power button on a computer, the screen remains blank for a few brief moments while the machine awakens. During this silent window, the computer executes its most critical preliminary software: the <strong>BIOS (Basic Input/Output System)</strong> or its modern successor, <strong>UEFI (Unified Extensible Firmware Interface)</strong>. Stored on a non-volatile ROM or flash memory chip directly embedded on the motherboard, firmware acts as the foundational low-level instruction set that bridges raw hardware initialization with the operating system.</p>
+                    
+                    <p class="mb-5">The very first operational phase governed by BIOS is the <strong>Power-On Self-Test (POST)</strong>. The moment electrical current flows into the motherboard, the BIOS executes a rigorous diagnostic routine. It tests system RAM integrity, verifies that the keyboard and display controller are responsive, and checks for vital hardware errors. If a fatal hardware failure is detected—such as missing RAM sticks—the BIOS halts the boot sequence and emits specific diagnostic beep codes or error messages on screen.</p>
+                    
+                    <p class="mb-5">Following a successful POST, the firmware initiates hardware configuration and <strong>Hardware Abstraction</strong>. It identifies processor clock speeds, configures memory timings, and loads basic hardware drivers. These built-in drivers allow the user to see text on screen and accept keyboard input even before any operating system has been loaded from the hard drive.</p>
+                    
+                    <p class="mb-5">Once hardware is configured, the BIOS acts as a <strong>Bootloader</strong>. It searches connected storage drives for a valid Master Boot Record (MBR) or GUID Partition Table (GPT), locates the operating system kernel files, loads them into volatile system RAM, and successfully hands control over to Windows, Linux, or macOS. Once the OS kernel takes over, the standard boot sequence is complete.</p>
+                    
+                    <p class="mb-5">Users can interact directly with the firmware by pressing a designated key (such as F2, Del, or F12) during startup to enter the <strong>BIOS/UEFI Setup Utility</strong>. This configuration interface allows administrators to adjust hardware clock frequencies (overclocking), modify boot drive priority sequences, enable virtualization extensions, and configure hardware security features like Secure Boot.</p>
+                    
+                    <p class="mb-5">In modern computing, <strong>UEFI has largely superseded legacy BIOS</strong>. While traditional BIOS was limited by 16-bit real mode architecture and could only recognize boot drives up to 2.2 terabytes using MBR, UEFI operates in modern 32-bit or 64-bit mode, supports GPT drives exceeding petabytes in size, provides graphical mouse-driven interfaces, and incorporates advanced pre-boot network security protocols.</p>
+                    
+                    <p>In biological analogies, BIOS/UEFI is frequently compared to human <strong>reflexes and autonomic survival functions</strong>. Just as a human newborn automatically knows how to breathe and react to stimuli without conscious thought, a computer relies entirely on its embedded firmware to initiate basic startup and low-level hardware coordination automatically.</p>
+                `
+            },
+            'bios-usecase': {
+                title: 'BIOS / UEFI Firmware: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 1: Troubleshooting Hardware Failures</h4>
+                        <p class="mb-2">A technician is diagnosing a newly assembled workstation that refuses to display any image on the monitor upon powering on.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (POST Diagnostics):</strong> Upon power-on, the motherboard's BIOS executes the POST routine, detects that the RAM is improperly seated, and halts the boot while emitting three rhythmic beep codes to alert the technician.</li>
+                            <li><strong>Example 2 (BIOS Configuration):</strong> The technician accesses the UEFI configuration utility to verify that the primary boot drive priority is correctly set to the new NVMe SSD rather than a disabled network boot option.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 2: Enterprise Security Hardening</h4>
+                        <p class="mb-2">An enterprise IT security team is configuring a fleet of company laptops to prevent unauthorized operating system tampering and malware rootkits.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Secure Boot):</strong> The IT team enables UEFI Secure Boot in the firmware settings, ensuring that the laptop refuses to boot any operating system whose digital signature is unverified or modified by malware.</li>
+                            <li><strong>Example 2 (Firmware Flashing):</strong> Administrators apply a critical UEFI firmware update (flashing the ROM chip) across all company machines to patch a newly discovered motherboard security vulnerability.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Firmware Interface</p>
+                            <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=600&h=350" alt="Code and firmware interface" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: System Startup</p>
+                            <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=600&h=350" alt="Computer booting up" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
                     </div>
                 `
             },
             'cpu-details': {
-                title: 'Processing & Memory: Detailed Breakdown',
-                icon: '<i class="fa-solid fa-brain text-green-600"></i>',
+                title: 'Central Processing Unit (CPU)',
+                icon: '<i class="fa-solid fa-brain text-purple-600"></i>',
                 html: `
-                    <p class="mb-5">The <strong>Central Processing Unit (CPU)</strong> is universally referred to as the "brain" of the computer. It is responsible for executing instructions, processing data, and coordinating the activities of all other hardware components. A CPU contains two critical internal sub-components: the Arithmetic Logic Unit (ALU), which performs the actual mathematical calculations and logic operations (AND, OR, NOT), and the Control Unit (CU), which directs the flow of data across the processor and fetches instructions from memory.</p>
+                    <p class="mb-5">Often referred to as the absolute "brain" of the computer, the <strong>Central Processing Unit (CPU)</strong> is the most powerful and complex microchip on the motherboard. Its primary purpose is to fetch instructions from system memory, decode them, execute mathematical or logical operations, and coordinate the activities of all other hardware components. Without a CPU, software programs cannot execute, data cannot be processed, and the computer remains inert.</p>
                     
-                    <p class="mb-5">To process data, the CPU continually executes a sequence known as the <em>Instruction Cycle</em> (Fetch, Decode, Execute, Store). The speed at which a CPU can complete this cycle is regulated by its Clock Speed, typically measured in Gigahertz (GHz). A CPU running at 3.0 GHz completes three billion cycles every second. To handle massive workloads efficiently, modern CPUs feature multiple "cores." A multi-core processor essentially places multiple independent brains onto a single physical chip, allowing the computer to process numerous tasks in parallel, vastly improving multitasking performance.</p>
+                    <p class="mb-5">CPUs mount directly into specialized motherboard sockets using two primary physical connection designs: <strong>LGA (Land Grid Array) and PGA (Pin Grid Array)</strong>. In an LGA design, the delicate gold spring pins are built into the motherboard socket, while the underside of the CPU features flat conductive contact pads. In a PGA design, the fragile gold pins protrude directly from the underside of the CPU chip and plug into holes on the motherboard socket. Both designs require careful installation to prevent bent pins or pad contamination.</p>
                     
-                    <p class="mb-5">While the CPU is incredibly fast, it cannot store the vast amounts of data it needs to process. This is where <strong>Random-Access Memory (RAM)</strong> comes in. RAM acts as the computer's "Short-Term Memory." It provides a temporary, high-speed workspace where the Operating System loads active programs, open files, and data that the CPU needs to access instantaneously. RAM is significantly faster than standard storage drives, ensuring the CPU never has to wait long for the data it requests.</p>
+                    <p class="mb-5">Internally, the CPU is divided into two primary processing units: the <strong>Arithmetic Logic Unit (ALU) and the Control Unit (CU)</strong>. The ALU is responsible for all actual computations, executing mathematical calculations (addition, subtraction, multiplication) and logical evaluations (AND, OR, NOT). The Control Unit directs the flow of data, fetching instructions from RAM and orchestrating how the ALU and registers process them.</p>
                     
-                    <p class="mb-5">A critical characteristic of standard RAM (specifically Dynamic RAM, or DRAM) is that it is <em>volatile</em>. This means it requires a constant flow of electricity to retain its data. The moment a computer is powered off or loses power, everything currently stored in RAM is immediately erased. This is why unsaved documents are lost during a sudden blackout. Physically, RAM is installed onto the motherboard using modules known as DIMMs (Dual Inline Memory Modules) for desktops, or the smaller SODIMMs for laptops.</p>
+                    <p class="mb-5">To execute instructions, every CPU continuously performs the <strong>Instruction Cycle</strong>: 
+                    1. <em>Fetch:</em> Retrieve the instruction from RAM or cache. 
+                    2. <em>Decode:</em> Translate the binary instruction into actionable operations. 
+                    3. <em>Execute:</em> Perform the required calculation or logic. 
+                    4. <em>Store:</em> Write the resulting output back to CPU registers or system RAM.</p>
                     
-                    <p class="mb-5">To bridge the slight speed gap between the ultra-fast CPU and the slightly slower RAM, CPUs contain <em>Cache Memory</em>. Cache is a tiny amount of incredibly fast Static RAM (SRAM) built directly into the processor chip itself. The CPU uses this cache to hold the most frequently accessed data and instructions. When a CPU needs data, it checks its internal cache first; if the data is there, processing happens almost instantaneously, dramatically speeding up overall system performance.</p>
+                    <p class="mb-5">CPU performance is heavily dictated by <strong>Clock Speed and Multi-Core Architecture</strong>. Clock speed, measured in Gigahertz (GHz), regulates the timing of operations; higher clock speeds mean more cycles per second. Modern CPUs also feature multiple independent processing cores within a single silicon die, allowing for true parallel processing and seamless multitasking across demanding applications.</p>
+                    
+                    <p class="mb-5">Because main system RAM is relatively slow compared to processor speeds, CPUs incorporate ultra-fast <strong>Cache Memory (L1, L2, L3)</strong> directly on the chip die. Cache stores frequently accessed data and instructions so the CPU never stalls waiting for main memory.</p>
+                    
+                    <p>CPUs are categorized by their application domain: <strong>Desktop CPUs</strong> prioritize raw clock speed and high core counts; <strong>Mobile CPUs</strong> optimize energy efficiency for battery-powered laptops and tablets; <strong>Server CPUs</strong> emphasize massive core scalability and error-correcting memory support; and <strong>Embedded CPUs</strong> control dedicated machinery in appliances and automotive systems.</p>
                 `
             },
             'cpu-usecase': {
-                title: 'Processing & Memory: Practical Use Cases',
+                title: 'Central Processing Unit (CPU): Use Cases',
                 icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
                 html: `
                     <div class="mb-8">
-                        <h4 class="text-xl font-bold text-green-800 mb-2 border-b-2 border-green-200 pb-1">Use Case 1: Heavy Multitasking workflow</h4>
-                        <p>A data analyst frequently works with massive Excel spreadsheets while simultaneously running an advanced database program and keeping 40 browser tabs open for research. When they attempt this on an older laptop, the system slows to a crawl and constantly freezes. This occurs because the system lacks sufficient <strong>RAM (Short-Term Memory)</strong>. The CPU is forced to temporarily swap active data to the slow hard drive. Upgrading the laptop from 8GB to 32GB of RAM provides the CPU enough high-speed workspace to keep all those tasks active simultaneously without freezing.</p>
+                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Case 1: Scientific Data Modeling</h4>
+                        <p class="mb-2">A research institution is running complex climate simulations that require billions of floating-point mathematical calculations per second.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Multi-Core Processing):</strong> The researchers utilize a multi-socket server CPU equipped with 64 physical cores to divide the climate dataset across parallel threads, drastically reducing calculation time.</li>
+                            <li><strong>Example 2 (Cache Utilization):</strong> The CPU's massive L3 cache stores frequently accessed algorithm variables locally on the die, preventing latency bottlenecks with main RAM.</li>
+                        </ul>
                     </div>
                     <div class="mb-8">
-                        <h4 class="text-xl font-bold text-green-800 mb-2 border-b-2 border-green-200 pb-1">Use Case 2: Enterprise Server Virtualization</h4>
-                        <p>A company needs to consolidate 10 older physical servers into a single, powerful new machine using virtualization. To handle the massive computational load of running 10 separate operating systems simultaneously, the IT architect selects a specialized <strong>Server CPU</strong> with 64 physical Cores. This massive multi-core architecture allows the "brain" of the computer to distribute the intense processing demands of the 10 virtual machines across parallel processing pathways, ensuring no single server experiences lag.</p>
+                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Case 2: Mobile Productivity Workstations</h4>
+                        <p class="mb-2">A traveling business professional needs a laptop that balances responsive application performance with long battery life during international flights.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Mobile CPU Efficiency):</strong> The laptop utilizes a specialized mobile CPU featuring asymmetric performance and efficiency cores, ramping down power consumption during simple document editing.</li>
+                            <li><strong>Example 2 (Instruction Cycle Execution):</strong> When compiling spreadsheet macros, the CPU's Control Unit rapidly cycles through fetch-decode-execute loops to render calculations instantaneously.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Processor Die</p>
+                            <img src="https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?auto=format&fit=crop&w=600&h=350" alt="CPU processor chip" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: High-Performance Computing</p>
+                            <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=600&h=350" alt="Advanced data processing" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
                     </div>
                 `
             },
             'gpu-details': {
-                title: 'Graphics & Storage: Detailed Breakdown',
-                icon: '<i class="fa-solid fa-eye text-purple-600"></i>',
+                title: 'Graphics Processing Unit (GPU)',
+                icon: '<i class="fa-solid fa-eye text-amber-600"></i>',
                 html: `
-                    <p class="mb-5">The <strong>Graphics Processing Unit (GPU)</strong> acts as the "eyes" of the computer, though more accurately, it is the artist. While a CPU is a general-purpose processor designed to handle a few complex tasks sequentially, a GPU is a highly specialized processor featuring thousands of smaller, simpler cores. This architecture is designed specifically for <em>parallel processing</em>—handling massive amounts of mathematical data simultaneously. This is essential for rendering the millions of individual pixels required to display high-resolution images, user interfaces, and complex 3D video games on a screen.</p>
+                    <p class="mb-5">Often likened to the human <strong>eyes and visual cortex</strong>, the <strong>Graphics Processing Unit (GPU)</strong> is a specialized processor engineered explicitly to render high-resolution images, video animations, and complex 3D graphical environments. While a CPU excels at sequential general-purpose processing across a few powerful cores, a GPU is architected for massive parallel processing, containing hundreds or thousands of smaller arithmetic cores designed to calculate pixel colors and textures simultaneously.</p>
                     
-                    <p class="mb-5">GPUs come in two primary configurations. An <em>Integrated GPU</em> is built directly into the same chip as the CPU or onto the motherboard itself. It shares the system's standard RAM and is highly power-efficient, making it ideal for basic tasks like web browsing and office work on standard laptops. Conversely, a <em>Dedicated GPU</em> is a massive, separate expansion card plugged into the motherboard's PCIe slot. Dedicated GPUs have their own high-speed memory, called VRAM (Video RAM), and their own cooling fans, providing the immense horsepower required for 4K video editing, 3D animation, and modern gaming.</p>
+                    <p class="mb-5">GPUs exist in several form factors tailored to specific computing demands: <strong>Integrated GPUs</strong> are embedded directly onto the CPU die or motherboard chipset and share system RAM, perfect for basic web browsing and office applications; <strong>Dedicated GPUs</strong> are standalone expansion cards equipped with their own massive processing power and dedicated memory, essential for gaming and CAD modeling; and <strong>Workstation/Compute GPUs</strong> power enterprise data centers, AI training models, and scientific simulations.</p>
                     
-                    <p class="mb-5">Beyond drawing pictures, the incredible parallel processing power of modern GPUs is increasingly utilized for non-graphical tasks, a concept known as GPGPU (General-Purpose computing on Graphics Processing Units). Because a GPU can perform thousands of simple math equations at the exact same time, they are currently the foundational hardware driving the artificial intelligence industry, machine learning, deep data analysis, and scientific simulations.</p>
+                    <p class="mb-5">The core operation of a GPU follows a rigorous <strong>4-Stage Rendering Pipeline</strong>: 
+                    1. <em>Vertex Processing:</em> Takes 3D vector wireframe coordinates and calculates their 3D spatial placement on screen. 
+                    2. <em>Rasterization:</em> Converts vector 3D shapes into 2D grid pixels. 
+                    3. <em>Fragment Shading:</em> Calculates the exact color, lighting, shadows, and textures for every individual pixel. 
+                    4. <em>Output Display:</em> Combines all shaded pixels into the final image frame sent to the monitor.</p>
                     
-                    <p class="mb-5">While RAM handles short-term memory, a computer relies on <strong>Storage Drives</strong> to act as its "Long-Term Memory." Storage devices hold the operating system, installed software, and user files permanently. Unlike RAM, storage is <em>non-volatile</em>. When you save a file and turn off the computer, the storage drive physically or electrically retains that data indefinitely, ensuring it is waiting for you the next time you boot up the machine.</p>
+                    <p class="mb-5">To support this heavy graphical workload, dedicated graphics cards utilize <strong>Video RAM (VRAM)</strong>. VRAM is ultra-high-speed memory placed directly on the GPU card, dedicated solely to storing 3D textures, frame buffers, and geometry data without congesting main system RAM.</p>
                     
-                    <p class="mb-5">Storage technology is evaluated on capacity (how much data it holds) and performance (how fast it reads/writes). Older Hard Disk Drives (HDDs) use spinning magnetic platters and mechanical arms to read data, offering massive capacity for very little cost, but are relatively slow and fragile. Modern Solid-State Drives (SSDs) use flash memory chips with no moving parts. SSDs are incredibly fast, durable, and energy-efficient, fundamentally improving how quickly a computer boots up and loads heavy applications.</p>
+                    <p class="mb-5">Modern GPUs also rely heavily on <strong>Shaders</strong>—small software programs executed directly on the GPU hardware that manipulate lighting, reflections, and surface textures in real-time, giving modern video games cinematic realism.</p>
+                    
+                    <p class="mb-5">Graphics performance is measured through <strong>Resolution and Frame Rate</strong>. Resolution defines the total pixel count (e.g., 1920x1080 for 1080p, or 3840x2160 for 4K), while frame rate (measured in Hertz or FPS) dictates how smoothly motion updates on screen, ranging from standard 60Hz up to competitive 240Hz displays.</p>
+                    
+                    <p>Beyond gaming, modern <strong>General-Purpose GPUs (GPGPU)</strong> leverage thousands of parallel cores to accelerate artificial intelligence, machine learning neural networks, and cryptography mining far faster than traditional CPUs.</p>
                 `
             },
             'gpu-usecase': {
-                title: 'Graphics & Storage: Practical Use Cases',
+                title: 'Graphics Processing Unit (GPU): Use Cases',
                 icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
                 html: `
                     <div class="mb-8">
-                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Use Case 1: Artificial Intelligence Training</h4>
-                        <p>A university research team is developing a complex machine learning model to analyze millions of medical x-rays to detect anomalies. Processing this data sequentially on a standard CPU would take months. Instead, they utilize a server rack filled with specialized Compute <strong>GPUs</strong>. By leveraging the thousands of parallel cores in the GPUs (General-Purpose GPU computing), they process massive datasets simultaneously, cutting the AI training time down from months to mere days.</p>
+                        <h4 class="text-xl font-bold text-amber-800 mb-2 border-b-2 border-amber-200 pb-1">Case 1: 4K Video Editing and Rendering</h4>
+                        <p class="mb-2">A professional videographer is exporting a multi-track 4K video project complete with complex color grading and visual effects overlays.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Parallel Processing):</strong> The editing software offloads fragment shading and rasterization tasks to the dedicated GPU's thousands of parallel cores, rendering the timeline in real-time.</li>
+                            <li><strong>Example 2 (VRAM Utilization):</strong> The GPU's dedicated 24GB of VRAM caches high-resolution video frame buffers locally, preventing memory overflow errors during export.</li>
+                        </ul>
                     </div>
                     <div class="mb-8">
-                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Use Case 2: Upgrading an Aging Laptop</h4>
-                        <p>A student has a 5-year-old laptop that takes a full four minutes to boot up Windows and struggles to open large applications. An IT technician identifies that the laptop is relying on an older, mechanical Hard Disk Drive (HDD). The technician replaces the HDD with a modern <strong>Solid-State Drive (SSD)</strong>, which acts as a faster, non-volatile long-term memory. Because the SSD has no moving parts and uses high-speed flash memory, the laptop now boots in 15 seconds and opens apps instantly, drastically extending the life of the machine.</p>
+                        <h4 class="text-xl font-bold text-amber-800 mb-2 border-b-2 border-amber-200 pb-1">Case 2: Artificial Intelligence Model Training</h4>
+                        <p class="mb-2">A data science team is training a large language model (LLM) on millions of textual parameters in an enterprise server cluster.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (GPGPU Acceleration):</strong> Compute GPUs execute simultaneous matrix multiplication algorithms across parallel tensor cores, completing neural network training in hours rather than weeks.</li>
+                            <li><strong>Example 2 (Pipeline Execution):</strong> The compute GPUs process massive batches of training data through customized shader and tensor pipelines without CPU bottlenecks.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Graphics Card</p>
+                            <img src="https://images.unsplash.com/photo-1587202372775-e229f172b9d7?auto=format&fit=crop&w=600&h=350" alt="GPU graphics card hardware" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: 3D Rendering & Gaming</p>
+                            <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=600&h=350" alt="Gaming and high-performance graphics" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'ram-details': {
+                title: 'Random-Access Memory (RAM)',
+                icon: '<i class="fa-solid fa-memory text-indigo-600"></i>',
+                html: `
+                    <p class="mb-5">Acting as the computer's vital <strong>short-term memory</strong>, <strong>Random-Access Memory (RAM)</strong> provides the high-speed temporary workspace that the CPU requires to execute active programs and manipulate data instantly. Whenever you launch an application, open a browser tab, or edit a document, the operating system loads the necessary code from slow permanent storage into fast RAM so the processor can access instructions without experiencing severe latency bottlenecks.</p>
+                    
+                    <p class="mb-5">RAM operates as <strong>Volatile Memory</strong>, meaning that unlike permanent storage drives, RAM requires continuous electrical power to retain its data. The exact moment the computer is shut down or loses power, every single byte stored in RAM is instantly wiped clean. This volatility makes RAM unsuitable for long-term file saving, but its lightning-fast read and write speeds make it indispensable for active processing.</p>
+                    
+                    <p class="mb-5">The term "Random-Access" signifies that the CPU can access any specific memory byte directly and instantly by its memory address, without needing to read through preceding data sequentially like old magnetic tape storage. This random-access capability ensures uniform high-speed performance regardless of where data is physically located on the memory module.</p>
+                    
+                    <p class="mb-5">RAM physically manifests on <strong>DIMMs (Dual Inline Memory Modules) for desktop computers and servers, and SODIMMs (Small Outline DIMMs) for laptops and compact devices</strong>. These circuit boards feature multiple integrated DRAM (Dynamic RAM) chips that store bits as electrical charges inside microscopic capacitors. Because these capacitors naturally leak electrical charge, DRAM must be refreshed thousands of times per second to retain its data integrity.</p>
+                    
+                    <p class="mb-5">Modern computers exclusively utilize <strong>DDR (Double Data Rate) RAM</strong> standards—such as DDR4 and DDR5. DDR technology transfers data twice per clock cycle (once on the rising edge and once on the falling edge of the clock signal), effectively doubling the data transfer bandwidth without increasing clock frequency.</p>
+                    
+                    <p class="mb-5">The capacity and speed of RAM directly dictate a system's <strong>multitasking capability</strong>. Having more RAM allows the computer to keep multiple heavy applications loaded simultaneously in memory without resorting to "virtual memory" (paging data to slow storage drives), which causes severe system slowdowns.</p>
+                    
+                    <p>In human anatomical comparisons, RAM is directly analogous to <strong>short-term working memory</strong>. It allows you to hold multiple facts in your head for immediate problem-solving, but once you sleep (power down), temporary thoughts are cleared unless committed to long-term storage.</p>
+                `
+            },
+            'ram-usecase': {
+                title: 'Random-Access Memory (RAM): Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-indigo-800 mb-2 border-b-2 border-indigo-200 pb-1">Case 1: Heavy Software Development and Virtualization</h4>
+                        <p class="mb-2">A software engineer is running multiple virtual machines and heavy integrated development environments (IDEs) simultaneously on their workstation.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Working Memory Allocation):</strong> The system allocates 32GB of DDR5 RAM to simultaneously host three Linux guest virtual machines and a compiling IDE without triggering sluggish storage paging.</li>
+                            <li><strong>Example 2 (Random Access Speed):</strong> The CPU accesses active programming variables stored across memory DIMMs instantly, ensuring real-time code debugging with zero latency.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-indigo-800 mb-2 border-b-2 border-indigo-200 pb-1">Case 2: Mobile Computing and Low Power Use</h4>
+                        <p class="mb-2">A student is using a lightweight laptop to write research papers and browse academic databases throughout a full school day.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (SODIMM Form Factor):</strong> The laptop utilizes compact SODIMM memory modules that fit inside the ultra-thin chassis while consuming minimal electrical power.</li>
+                            <li><strong>Example 2 (Volatility Management):</strong> When the student shuts down the laptop at night, the volatile RAM clears completely, ensuring zero battery drain while safeguarding privacy.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: RAM DIMM Modules</p>
+                            <img src="https://images.unsplash.com/photo-1562976540-1e02c410e14d?auto=format&fit=crop&w=600&h=350" alt="RAM memory sticks" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Motherboard Installation</p>
+                            <img src="https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?auto=format&fit=crop&w=600&h=350" alt="Installing hardware components" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'storage-details': {
+                title: 'Storage Devices (Long-Term Memory)',
+                icon: '<i class="fa-solid fa-hard-drive text-red-600"></i>',
+                html: `
+                    <p class="mb-5">If RAM represents the transient thoughts of a computer, <strong>Storage</strong> represents its permanent <strong>long-term memory</strong>. Storage devices are responsible for retaining operating system files, software applications, user documents, and media libraries indefinitely, even when the computer is completely powered down. Without storage devices, a computer would have no way to remember anything between reboots or execute installed programs.</p>
+                    
+                    <p class="mb-5">The defining characteristic of storage devices is that they are <strong>Non-Volatile</strong>. Unlike volatile RAM, which wipes clean upon power loss, non-volatile storage maintains its magnetic, optical, or solid-state electrical states without requiring continuous power. This guarantees that your saved files remain safe for years or decades.</p>
+                    
+                    <p class="mb-5">Storage is classified into distinct functional tiers: <strong>Secondary Storage</strong> includes internal and external drives (HDDs, SSDs) that hold active operating systems and user software; <strong>Tertiary Storage</strong> involves archival media (optical discs, magnetic tape drives) used for long-term data backup; and <strong>Network Storage (NAS/SAN)</strong> keeps data accessible across local area networks.</p>
+                    
+                    <p class="mb-5">Storage devices are evaluated across four key metrics: 
+                    1. <em>Capacity:</em> The total volume of data the drive can hold (measured in gigabytes or terabytes). 
+                    2. <em>Performance:</em> How quickly data can be read from or written to the media. 
+                    3. <em>Reliability:</em> The expected lifespan and MTBF (Mean Time Between Failures) of the hardware. 
+                    4. <em>Form Factor:</em> Physical dimensions, ranging from traditional 3.5-inch mechanical drives down to tiny thumbnail-sized M.2 NVMe sticks.</p>
+                    
+                    <p class="mb-5">Technology has evolved from mechanical <strong>Hard Disk Drives (HDDs)</strong>—which use spinning magnetic platters and moving read/write heads—to modern <strong>Solid State Drives (SSDs)</strong>. SSDs utilize flash memory chips with zero moving parts, offering near-instantaneous file access speeds, lower power consumption, and high shock resistance.</p>
+                    
+                    <p class="mb-5">Storage devices interface with the motherboard via high-speed controllers, utilizing protocols such as SATA, SAS, or PCIe NVMe lanes to ensure data pipelines keep pace with modern processor speeds.</p>
+                    
+                    <p>Comparing storage to human anatomy, storage is identical to <strong>long-term memory and personal journals</strong>. It holds all learned knowledge, autobiographical history, and tools necessary for daily functioning, ready to be recalled into active working memory whenever needed.</p>
+                `
+            },
+            'storage-usecase': {
+                title: 'Storage Devices: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-red-800 mb-2 border-b-2 border-red-200 pb-1">Case 1: Enterprise Data Backup and Archiving</h4>
+                        <p class="mb-2">A financial institution must securely archive ten years of customer transaction records to comply with federal legal regulations.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Tertiary Storage Tape):</strong> The bank utilizes automated magnetic tape libraries (tertiary storage) to store petabytes of cold data securely offline with zero electrical power consumption.</li>
+                            <li><strong>Example 2 (Reliability Metrics):</strong> IT administrators evaluate drive reliability and MTBF ratings to ensure archived data remains pristine and recoverable over decades.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-red-800 mb-2 border-b-2 border-red-200 pb-1">Case 2: High-Speed Gaming Workstations</h4>
+                        <p class="mb-2">A gamer requires instant game asset loading and rapid operating system boot times without stuttering.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (NVMe SSD Performance):</strong> The user installs a PCIe NVMe M.2 solid-state drive achieving read speeds exceeding 7,000 MB/s, loading massive game levels in seconds.</li>
+                            <li><strong>Example 2 (Non-Volatile Retention):</strong> When the computer is powered off overnight, the 2TB SSD non-volatiles retain every installed game file securely without data loss.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Storage Drive Internals</p>
+                            <img src="https://images.unsplash.com/photo-1597852074816-d933c7d2b988?auto=format&fit=crop&w=600&h=350" alt="Hard drive internals" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Solid State Storage</p>
+                            <img src="https://images.unsplash.com/photo-1531492755695-944510005d52?auto=format&fit=crop&w=600&h=350" alt="Modern computer hardware storage" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
                     </div>
                 `
             },
             'nic-details': {
-                title: 'Network & Cooling: Detailed Breakdown',
-                icon: '<i class="fa-solid fa-network-wired text-orange-600"></i>',
+                title: 'Network Interface Card (NIC)',
+                icon: '<i class="fa-solid fa-globe text-cyan-600"></i>',
                 html: `
-                    <p class="mb-5">To communicate with the outside world, a computer requires a <strong>Network Interface Card (NIC)</strong>. Acting as the "mouth and ears" of the device, the NIC translates internal computer data into signals that can be transmitted across a network, and vice versa. Without a functional NIC, a computer is completely isolated—unable to access the internet, send emails, or print to a network printer.</p>
+                    <p class="mb-5">If internal components represent the brain, memory, and organs of a computer, the <strong>Network Interface Card (NIC)</strong> represents its <strong>mouth and ears</strong>. A NIC is a specialized hardware component that enables a computer to connect to a local area network (LAN) or wide area network (WAN), allowing it to communicate with other devices, share resources, and access the global internet.</p>
                     
-                    <p class="mb-5">NICs facilitate two primary types of connections. <em>Wired NICs</em> utilize physical cables, almost universally Ethernet (RJ-45) cables, to connect to a network switch or router. Wired connections provide the most stable, secure, and highest-speed data transfer (often Gigabit or 10-Gigabit speeds), making them essential for desktop workstations and enterprise servers. <em>Wireless NICs</em> use radio waves, typically Wi-Fi (IEEE 802.11 standards), to connect without cables. While incredibly convenient for laptops and mobile devices, wireless signals are more susceptible to interference and security risks.</p>
+                    <p class="mb-5">NICs are categorized by their connection medium into <strong>Wired and Wireless NICs</strong>. Wired NICs connect to network switches or routers via physical Ethernet cables (using RJ-45 connectors), offering superior data transfer speeds, absolute stability, and immunity to radio frequency interference. Wireless NICs connect via radio waves across IEEE 802.11 standards (Wi-Fi), providing mobility and easy installation without physical cable runs.</p>
                     
-                    <p class="mb-5">Physically, a NIC can be integrated directly into the motherboard at the factory, which is known as an <em>Onboard NIC</em>. This saves space and cost and is standard on almost all modern devices. Alternatively, users can install an <em>Expansion NIC</em> into a motherboard's PCIe slot. IT professionals use Expansion NICs to upgrade older computers to faster network speeds, add specialized fiber-optic connections, or provide a backup network port (redundancy) for critical servers in case the primary onboard port fails.</p>
+                    <p class="mb-5">Furthermore, NICs are distinguished by their installation form factor as <strong>Onboard (Integrated) or Expansion NICs</strong>. Most modern motherboards include an onboard wired or wireless NIC built directly into the silicon, eliminating extra component costs. However, administrators can install dedicated PCIe expansion NICs to add specialized multi-gigabit speeds or fiber-optic ports.</p>
                     
-                    <p class="mb-5">As internal components (especially CPUs and GPUs) process data, they consume electricity and generate massive amounts of heat. If this heat is not managed, components will suffer from thermal throttling—intentionally slowing themselves down to prevent melting—or suffer catastrophic physical damage. Therefore, comprehensive <strong>Cooling Systems</strong> act as the computer's temperature control mechanism, pulling heat away from sensitive silicon chips and expelling it from the computer case.</p>
+                    <p class="mb-5">In enterprise environments, expansion NICs provide crucial <strong>Redundancy and Failover options</strong>. By installing multiple network cards in a server, the operating system can automatically switch network traffic to a backup NIC if the primary network connection fails, ensuring zero downtime for critical business operations.</p>
                     
-                    <p class="mb-5">The most common method is <em>Air Cooling</em>, which utilizes a combination of metal Heat Sinks (blocks of metal with high surface area that sit directly on the processor to absorb heat) and active Fans that blow cool air across the fins. For extreme performance environments, such as high-end gaming rigs or dense server racks, <em>Liquid Cooling</em> systems are deployed. These systems pump a conductive liquid through tubes across specialized cooling blocks on the CPU/GPU. The heated liquid travels to a large radiator where fans cool it down before cycling it back, providing a much more efficient and quieter heat dissipation method than air alone.</p>
+                    <p class="mb-5">Every physical NIC is manufactured with a globally unique 48-bit hardware identifier known as a <strong>MAC (Media Access Control) Address</strong>, ensuring that data packets transmitted across the network reach their exact destination hardware.</p>
+                    
+                    <p class="mb-5">When choosing a NIC, IT professionals must carefully balance <strong>performance requirements, physical space limitations, and budget constraints</strong> to ensure optimal network throughput.</p>
+                    
+                    <p>In anatomical terms, the NIC is the <strong>mouth and ears</strong> because it listens for incoming network signals and speaks (transmits data packets) out to the digital world.</p>
                 `
             },
             'nic-usecase': {
-                title: 'Network & Cooling: Practical Use Cases',
+                title: 'Network Interface Card (NIC): Use Cases',
                 icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
                 html: `
                     <div class="mb-8">
-                        <h4 class="text-xl font-bold text-orange-800 mb-2 border-b-2 border-orange-200 pb-1">Use Case 1: Server Redundancy (Expansion NIC)</h4>
-                        <p>A bank relies on a central database server that must maintain 100% uptime. Relying solely on the motherboard's single Onboard NIC is too risky; if that port fails, the entire bank goes offline. The IT administrator installs a secondary <strong>Expansion NIC</strong> into a PCIe slot. They configure the server so that if the primary network connection drops, the traffic instantly fails over to the expansion card, ensuring seamless, uninterrupted communication.</p>
+                        <h4 class="text-xl font-bold text-cyan-800 mb-2 border-b-2 border-cyan-200 pb-1">Case 1: Enterprise Server Redundancy</h4>
+                        <p class="mb-2">A corporate database server requires 99.999% network uptime to ensure employees can access financial records without interruption.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Expansion Failover NIC):</strong> IT installs a dual-port PCIe expansion NIC configured for link aggregation and failover, ensuring that if primary Ethernet cable 1 is severed, traffic instantly routes through port 2.</li>
+                            <li><strong>Example 2 (High-Speed Wired Performance):</strong> The server utilizes a 10Gbps wired Ethernet NIC to handle heavy concurrent employee database queries without network throttling.</li>
+                        </ul>
                     </div>
                     <div class="mb-8">
-                        <h4 class="text-xl font-bold text-orange-800 mb-2 border-b-2 border-orange-200 pb-1">Use Case 2: Preventing Thermal Throttling</h4>
-                        <p>A 3D animator notices that when rendering complex scenes, their computer starts off very fast but slows down drastically after five minutes, accompanied by the smell of hot plastic. The IT tech discovers that the basic CPU fan is failing, causing the processor to hit critical temperatures and "thermal throttle" (slow down to save itself). The tech upgrades the cooling system to an advanced <strong>Liquid Cooling</strong> loop. The liquid effectively pulls the intense heat away from the CPU to a large radiator, allowing the processor to run at maximum speed continuously without ever overheating.</p>
+                        <h4 class="text-xl font-bold text-cyan-800 mb-2 border-b-2 border-cyan-200 pb-1">Case 2: Mobile Office Connectivity</h4>
+                        <p class="mb-2">A mobile sales representative frequently moves between conference rooms, client offices, and airports while maintaining constant cloud access.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Wireless Wi-Fi NIC):</strong> The laptop's built-in wireless NIC connects seamlessly to secure corporate Wi-Fi radio frequencies without requiring physical cables.</li>
+                            <li><strong>Example 2 (Easy Installation):</strong> The wireless adapter operates transparently via onboard motherboard integration, allowing instant connection to changing local wireless networks.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Expansion NIC Card</p>
+                            <img src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=600&h=350" alt="Network interface card" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Networking & Infrastructure</p>
+                            <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=600&h=350" alt="Server rack networking" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'cooling-details': {
+                title: 'Computer Cooling Systems',
+                icon: '<i class="fa-solid fa-snowflake text-teal-600"></i>',
+                html: `
+                    <p class="mb-5">As computer processors execute billions of electrical switching cycles per second, electrical resistance generates a tremendous amount of thermal energy. If this heat is not continuously dissipated, internal components will quickly overheat, leading to thermal throttling (severe performance slowdowns), system crashes, or permanent silicon destruction. <strong>Cooling Systems</strong> are the critical thermal management mechanisms that keep internal computing components within safe operating temperatures.</p>
+                    
+                    <p class="mb-5">There are three primary categories of computer cooling systems: <strong>Air Cooling, Liquid Cooling, and Heat Sinks</strong>. Air cooling is the most common and cost-effective method, utilizing fans to exhaust hot air out of the chassis while drawing cool ambient air across components. Liquid cooling utilizes water blocks, pumps, and radiator tubing to absorb heat directly from the CPU and transfer it away to external fan-cooled radiators.</p>
+                    
+                    <p class="mb-5"><strong>Heat Sinks</strong> are passive thermal dissipation blocks constructed from highly conductive metals like copper or aluminum. Featuring numerous thin metal fins that dramatically increase surface area, heat sinks attach directly to hot components like the CPU or voltage regulators, drawing heat away into the surrounding airflow.</p>
+                    
+                    <p class="mb-5">To ensure efficient thermal transfer between the microchip surface and the heat sink base, technicians apply <strong>Thermal Paste</strong>—a specialized compound that fills microscopic air gaps and imperfections between the two metal surfaces.</p>
+                    
+                    <p class="mb-5">Advanced server and gaming rigs incorporate automated PWM (Pulse Width Modulation) fan curves that dynamically ramp up fan speeds only when processor workloads spike, balancing cooling efficiency with acoustic noise reduction.</p>
+                    
+                    <p class="mb-5">Proper cooling maintenance prevents dust buildup from insulating components and blocking airflow channels within the computer chassis.</p>
+                    
+                    <p>In human biological analogies, the cooling system is identical to <strong>temperature control and perspiration (sweating)</strong>, helping the body stay cool under stress to keep everything safe and working properly.</p>
+                `
+            },
+            'cooling-usecase': {
+                title: 'Computer Cooling Systems: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-teal-800 mb-2 border-b-2 border-teal-200 pb-1">Case 1: Overclocked Gaming Rigs</h4>
+                        <p class="mb-2">An enthusiast gamer is pushing their CPU clock speed beyond factory specifications to achieve maximum frame rates.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Liquid Cooling Loop):</strong> The user installs an all-in-one (AIO) liquid cooling pump and radiator unit to rapidly pull extreme heat away from the overclocked CPU die.</li>
+                            <li><strong>Example 2 (Thermal Paste Application):</strong> Careful application of silver-infused thermal paste ensures zero air gaps between the CPU lid and water block copper plate.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-teal-800 mb-2 border-b-2 border-teal-200 pb-1">Case 2: Standard Enterprise Workstations</h4>
+                        <p class="mb-2">An office environment requires quiet, reliable desktop computers that run eight hours a day without thermal maintenance issues.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Air Cooling & Heat Sinks):</strong> The workstations utilize aluminum fin heat sinks paired with quiet PWM chassis fans to maintain stable operating temperatures under standard office workloads.</li>
+                            <li><strong>Example 2 (Thermal Throttling Prevention):</strong> BIOS thermal sensors monitor component temperatures, automatically throttling processor speeds if dust buildup restricts internal airflow.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: CPU Heat Sink & Fan</p>
+                            <img src="https://images.unsplash.com/photo-1587202372775-e229f172b9d7?auto=format&fit=crop&w=600&h=350" alt="Computer cooling fan and heat sink" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Custom PC Cooling</p>
+                            <img src="https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?auto=format&fit=crop&w=600&h=350" alt="Liquid cooling setup in PC" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
                     </div>
                 `
             }
         };
 
-        // Modal Control Functions
         function openBriefing(key) {
             const modal = document.getElementById('briefing-modal');
             const data = briefingData[key];
-            
             if(data) {
                 document.getElementById('briefing-modal-icon').innerHTML = data.icon;
                 document.getElementById('briefing-modal-title').innerText = data.title;
                 document.getElementById('briefing-modal-content').innerHTML = data.html;
                 modal.classList.remove('hidden');
-                document.body.style.overflow = 'hidden'; 
+                document.body.style.overflow = 'hidden';
             }
         }
 
         function closeBriefing() {
             document.getElementById('briefing-modal').classList.add('hidden');
-            document.body.style.overflow = 'auto'; 
+            document.body.style.overflow = 'auto';
         }
 
-        // Close on outside click
         document.getElementById('briefing-modal').addEventListener('click', function(e) {
-            if(e.target === this) {
-                closeBriefing();
-            }
+            if(e.target === this) closeBriefing();
         });
-        
-        // --- Navigation Logic ---
+
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.getElementById(tabId + '-section').classList.add('active');
             
-            // Desktop Nav
             document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-green-900'));
             const activeBtn = document.getElementById('nav-' + tabId);
             if(activeBtn && tabId !== 'cert') activeBtn.classList.add('bg-green-900');
             
-            // Mobile Nav
             document.querySelectorAll('.nav-btn-mobile').forEach(btn => btn.classList.remove('bg-green-900'));
             const activeMobileBtn = document.getElementById('nav-' + tabId + '-mobile');
             if(activeMobileBtn && tabId !== 'cert') activeMobileBtn.classList.add('bg-green-900');
 
             window.scrollTo(0,0);
 
-            // Start game logic if tab is clicked
             if (tabId === 'game' && !gameRunning) {
                 resetGame();
                 drawGame();
             }
         }
 
-        // --- Custom Modal Logic ---
         function showModal(title, message, type = 'info') {
             const modal = document.getElementById('custom-modal');
             const icon = document.getElementById('modal-icon');
@@ -689,7 +1145,6 @@
             } else {
                 icon.innerHTML = '<i class="fa-solid fa-circle-info text-blue-500"></i>';
             }
-            
             modal.classList.remove('hidden');
         }
 
@@ -697,102 +1152,156 @@
             document.getElementById('custom-modal').classList.add('hidden');
         }
 
-        // --- Lab 1: Categorization Logic (Drag and Drop) ---
-        let draggedCatItem = null;
-
-        document.querySelectorAll('.io-item').forEach(item => {
-            item.addEventListener('dragstart', function() {
-                draggedCatItem = this;
-                setTimeout(() => this.classList.add('opacity-50'), 0);
-            });
-            item.addEventListener('dragend', function() {
-                setTimeout(() => this.classList.remove('opacity-50'), 0);
-                draggedCatItem = null;
-            });
+        // --- LAB 1: Drag & Drop Motherboard ---
+        let draggedItem = null;
+        document.querySelectorAll('#lab1-items .io-item').forEach(item => {
+            item.addEventListener('dragstart', function() { draggedItem = this; });
         });
-
-        document.querySelectorAll('.cat-dropzone').forEach(zone => {
-            zone.addEventListener('dragover', e => e.preventDefault());
-            zone.addEventListener('dragenter', function(e) { e.preventDefault(); this.classList.add('brightness-95', 'border-blue-400'); });
-            zone.addEventListener('dragleave', function() { this.classList.remove('brightness-95', 'border-blue-400'); });
-            zone.addEventListener('drop', function() {
-                this.classList.remove('brightness-95', 'border-blue-400');
-                if(draggedCatItem) {
-                    if(draggedCatItem.dataset.type === this.dataset.target) {
-                        this.appendChild(draggedCatItem);
-                        draggedCatItem.classList.remove('bg-indigo-100', 'cursor-grab');
-                        draggedCatItem.classList.add('bg-green-100', 'text-green-800', 'cursor-default', 'mt-2', 'w-full', 'text-center');
-                        draggedCatItem.setAttribute('draggable', 'false');
-                        
-                        document.getElementById('lab1-feedback').innerText = "Correct Connection!";
-                        document.getElementById('lab1-feedback').className = "text-center font-bold mt-4 h-6 text-green-600";
-                        
-                        // Check if complete
-                        if(document.getElementById('cat-items').children.length === 0) {
-                            setTimeout(() => showModal('Excellent!', 'You successfully mapped all hardware components to their human anatomy equivalent!', 'success'), 500);
+        document.querySelectorAll('[data-drop]').forEach(dropzone => {
+            dropzone.addEventListener('dragover', e => e.preventDefault());
+            dropzone.addEventListener('drop', function() {
+                const targetMatch = this.getAttribute('data-drop');
+                const dropArea = this.querySelector('.io-dropzone');
+                if(draggedItem && draggedItem.getAttribute('data-match') === targetMatch) {
+                    dropArea.innerHTML = draggedItem.innerText;
+                    dropArea.className = "w-28 h-8 text-xs bg-emerald-100 text-emerald-800 font-bold flex items-center justify-center rounded";
+                    draggedItem.remove();
+                    document.getElementById('lab1-feedback').innerText = "Correct Motherboard Component!";
+                    setTimeout(() => {
+                        if(document.querySelectorAll('#lab1-items .io-item').length === 0) {
+                            showModal('Lab 1 Complete!', 'Motherboard hub components correctly placed.', 'success');
                         }
-                    } else {
-                        document.getElementById('lab1-feedback').innerText = "Incorrect match. Think about the core function.";
-                        document.getElementById('lab1-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
-                    }
-                }
-            });
-        });
-
-        // --- Lab 2: Tool Scenario Matcher Logic ---
-        let selectedScenario = null;
-        let selectedTool = null;
-        let lab2Matches = 0;
-
-        document.querySelectorAll('.scenario-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                if(this.classList.contains('matched')) return;
-                document.querySelectorAll('.scenario-btn').forEach(b => b.classList.remove('ring-4', 'ring-red-300', 'bg-red-50'));
-                this.classList.add('ring-4', 'ring-red-300', 'bg-red-50');
-                selectedScenario = this;
-                checkMatch2();
-            });
-        });
-
-        document.querySelectorAll('.tool-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                if(this.classList.contains('matched')) return;
-                document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('ring-4', 'ring-red-300', 'bg-gray-100'));
-                this.classList.add('ring-4', 'ring-red-300', 'bg-gray-100');
-                selectedTool = this;
-                checkMatch2();
-            });
-        });
-
-        function checkMatch2() {
-            if(selectedScenario && selectedTool) {
-                if(selectedScenario.dataset.match === selectedTool.dataset.match) {
-                    selectedScenario.classList.add('matched', 'bg-green-100', 'text-green-800', 'border-green-500');
-                    selectedScenario.classList.remove('ring-4', 'ring-red-300');
-                    selectedTool.classList.add('matched', 'bg-green-100', 'text-green-800', 'border-green-500');
-                    selectedTool.classList.remove('ring-4', 'ring-red-300');
-                    
-                    document.getElementById('lab2-feedback').innerText = "Correct Match!";
-                    document.getElementById('lab2-feedback').className = "text-center font-bold mt-4 h-6 text-green-600";
-                    lab2Matches++;
-                    
-                    if(lab2Matches === 5) {
-                        setTimeout(() => showModal('Great Job!', 'You properly identified the correct OS tools to investigate internal system components.', 'success'), 500);
-                    }
+                    }, 300);
                 } else {
-                    document.getElementById('lab2-feedback').innerText = "Incorrect tool for that specific task. Try again.";
-                    document.getElementById('lab2-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
-                    selectedScenario.classList.remove('ring-4', 'ring-red-300', 'bg-red-50');
-                    selectedTool.classList.remove('ring-4', 'ring-red-300', 'bg-gray-100');
+                    document.getElementById('lab1-feedback').innerText = "Incorrect match. Try again.";
                 }
-                selectedScenario = null;
-                selectedTool = null;
+            });
+        });
+
+        // --- LAB 2: BIOS Boot Order ---
+        const biosContainer = document.getElementById('bios-steps-container');
+        biosContainer.addEventListener('click', function(e) {
+            const step = e.target.closest('.bios-step');
+            if(step) {
+                biosContainer.appendChild(step); // rotate
+            }
+        });
+        function checkBiosOrder() {
+            const steps = Array.from(biosContainer.querySelectorAll('.bios-step')).map(s => s.getAttribute('data-step'));
+            if(steps.join('') === '1234') {
+                document.getElementById('lab2-feedback').innerText = "Boot Order Correct!";
+                document.getElementById('lab2-feedback').className = "text-center font-bold mt-2 text-sm text-green-600";
+                showModal('Lab 2 Complete!', 'BIOS boot sequence verified.', 'success');
+            } else {
+                document.getElementById('lab2-feedback').innerText = "Incorrect order. Click steps to reorder.";
+                document.getElementById('lab2-feedback').className = "text-center font-bold mt-2 text-sm text-red-600";
             }
         }
 
-        // --- Quiz Logic (20 Questions) ---
+        // --- LAB 3: CPU Cycle ---
+        function checkCpuCycle() {
+            const selected = document.querySelector('input[name="cpu-cycle"]:checked');
+            if(selected && selected.value === 'correct') {
+                document.getElementById('lab3-feedback').innerText = "Correct Instruction Cycle!";
+                document.getElementById('lab3-feedback').className = "text-center font-bold mt-2 text-sm text-green-600";
+                showModal('Lab 3 Complete!', 'CPU instruction cycle confirmed.', 'success');
+            } else {
+                document.getElementById('lab3-feedback').innerText = "Incorrect cycle sequence.";
+                document.getElementById('lab3-feedback').className = "text-center font-bold mt-2 text-sm text-red-600";
+            }
+        }
+
+        // --- LAB 4: GPU Stage ---
+        function checkGpuStage(isCorrect) {
+            const fb = document.getElementById('lab4-feedback');
+            if(isCorrect) {
+                fb.innerText = "Correct! Rasterization converts 3D to 2D pixels.";
+                fb.className = "text-center font-bold mt-4 text-sm text-green-600";
+                showModal('Lab 4 Complete!', 'GPU pipeline stage identified.', 'success');
+            } else {
+                fb.innerText = "Incorrect stage. Try again.";
+                fb.className = "text-center font-bold mt-4 text-sm text-red-600";
+            }
+        }
+
+        // --- LAB 5: RAM & Storage ---
+        function checkRamStorage() {
+            const ram = document.getElementById('ram-trait').value;
+            const storage = document.getElementById('storage-trait').value;
+            const fb = document.getElementById('lab5-feedback');
+            if(ram === 'volatile' && storage === 'nonvolatile') {
+                fb.innerText = "Classification Correct!";
+                fb.className = "text-center font-bold mt-2 text-sm text-green-600";
+                showModal('Lab 5 Complete!', 'Memory volatility correctly classified.', 'success');
+            } else {
+                fb.innerText = "Review volatility traits and try again.";
+                fb.className = "text-center font-bold mt-2 text-sm text-red-600";
+            }
+        }
+
+        // --- LAB 6: Disk Partition Allocator ---
+        const diskGrid = document.getElementById('disk-grid');
+        let selectedBlocks = 0;
+        for(let i=0; i<10; i++) {
+            let block = document.createElement('div');
+            block.className = "disk-block w-10 h-14 bg-gray-200 border-2 border-gray-300 rounded cursor-pointer flex items-center justify-center text-xs font-bold text-gray-600";
+            block.innerText = "50G";
+            block.onclick = function() {
+                if(this.classList.contains('allocated')) {
+                    this.classList.remove('allocated', 'text-white');
+                    selectedBlocks--;
+                } else {
+                    if(selectedBlocks < 3) {
+                        this.classList.add('allocated', 'text-white');
+                        selectedBlocks++;
+                    } else {
+                        document.getElementById('lab6-feedback').innerText = "Limit 150GB (3 blocks). Deselect first.";
+                        return;
+                    }
+                }
+                if(selectedBlocks === 3) {
+                    document.getElementById('lab6-feedback').innerText = "150GB Partition Formatted Successfully!";
+                    document.getElementById('lab6-feedback').className = "text-center font-bold text-sm h-5 text-green-600";
+                    showModal('Lab 6 Complete!', 'Storage volume successfully partitioned.', 'success');
+                } else {
+                    document.getElementById('lab6-feedback').innerText = `Selected: ${selectedBlocks * 50}GB / 150GB`;
+                    document.getElementById('lab6-feedback').className = "text-center font-bold text-sm h-5 text-blue-600";
+                }
+            };
+            diskGrid.appendChild(block);
+        }
+
+        // --- LAB 7: NIC Matcher ---
+        function checkNicLab() {
+            const wired = document.getElementById('nic-wired').value;
+            const wireless = document.getElementById('nic-wireless').value;
+            const fb = document.getElementById('lab7-feedback');
+            if(wired === 'stable' && wireless === 'waves') {
+                fb.innerText = "NIC Match Verified!";
+                fb.className = "text-center font-bold mt-2 text-sm text-green-600";
+                showModal('Lab 7 Complete!', 'Wired and wireless NIC traits matched.', 'success');
+            } else {
+                fb.innerText = "Incorrect matching. Review NIC types.";
+                fb.className = "text-center font-bold mt-2 text-sm text-red-600";
+            }
+        }
+
+        // --- LAB 8: Cooling ---
+        function checkCooling(isCorrect) {
+            const fb = document.getElementById('lab8-feedback');
+            if(isCorrect) {
+                fb.innerText = "Correct! Liquid cooling uses pumped fluid.";
+                fb.className = "text-center font-bold mt-4 text-sm text-green-600";
+                showModal('Lab 8 Complete!', 'Cooling mechanism identified.', 'success');
+            } else {
+                fb.innerText = "Incorrect cooling type.";
+                fb.className = "text-center font-bold mt-4 text-sm text-red-600";
+            }
+        }
+
+        // --- QUIZ DATA (20 Questions: 10 provided + 10 extended) ---
         const quizData = [
-            // Original 10 Questions from Document
+            // 10 provided questions
             { q: "Which internal component acts as the central hub of the computer?", options: ["CPU", "Storage", "Motherboard", "BIOS"], answer: 2 },
             { q: "If you were buying a computer for gaming, which component would be the most important?", options: ["GPU", "CPU", "BIOS", "Storage"], answer: 0 },
             { q: "Which internal computing component is responsible for initiating the boot process?", options: ["Motherboard", "BIOS", "RAM", "CPU"], answer: 1 },
@@ -803,26 +1312,23 @@
             { q: "What type of GPU is designed to balance performance and power efficiency?", options: ["Mobile GPUs", "Integrated GPUs", "Compute GPUs", "Dedicated GPUs"], answer: 0 },
             { q: "What internal component temporarily holds data for the CPU to access and manipulate data quickly?", options: ["NIC", "Motherboard", "RAM", "GPU"], answer: 2 },
             { q: "Which storage type is optional and added by the user?", options: ["Network Storage", "Tertiary Storage", "Secondary Storage", "RAM Storage"], answer: 1 },
-            
-            // 10 Additional Rigorous Questions
-            { q: "What does POST stand for in the context of the BIOS/UEFI boot process?", options: ["Primary Operational System Test", "Power-On Self-Test", "Peripheral Output Standard Test", "Processing Over-System Transfer"], answer: 1 },
-            { q: "Which specific part of the CPU is responsible for performing actual mathematical calculations and logical comparisons?", options: ["Registers", "Control Unit (CU)", "Arithmetic Logic Unit (ALU)", "Cache Memory"], answer: 2 },
-            { q: "What is the key difference between RAM and a standard Hard Disk Drive (HDD)?", options: ["RAM is non-volatile; HDD is volatile.", "RAM is volatile and loses data when powered off; HDD retains data.", "RAM is used for networking; HDD is used for processing.", "RAM connects via RJ-45; HDD connects via PCIe."], answer: 1 },
-            { q: "In an Ubuntu Linux terminal, which command is used to display the amount of available and used short-term memory (RAM)?", options: ["lscpu", "msinfo32", "free -h", "fdisk -l"], answer: 2 },
-            { q: "What is the purpose of CPU Cache memory?", options: ["To permanently store the operating system.", "To speed up access to frequently used data by sitting between the CPU and RAM.", "To cool down the motherboard.", "To provide a graphical user interface."], answer: 1 },
-            { q: "Which of the following describes an Integrated GPU?", options: ["A massive card installed into a PCIe slot with its own fans.", "A processor built directly into the same chip as the CPU or motherboard.", "A temporary storage drive for network data.", "An external monitor connection."], answer: 1 },
-            { q: "What Windows tool provides detailed, searchable information on hardware components, system model, and the BIOS version?", options: ["Device Manager", "msinfo32", "Task Manager", "Command Prompt"], answer: 1 },
-            { q: "Why would a system builder choose a liquid cooling system over a standard air cooler?", options: ["It is much cheaper.", "It is required for wireless networks.", "It is more efficient at moving intense heat away from high-performance components.", "It prevents software viruses."], answer: 2 },
-            { q: "What term describes the physical design, dimensions, and layout of a motherboard (e.g., ATX or Mini-ITX)?", options: ["Form Factor", "Architecture", "Topology", "Socket Type"], answer: 0 },
-            { q: "What Linux command would you use to list the physical storage devices and disk partitions installed on the machine?", options: ["free -h", "lspci", "sudo fdisk -l", "dmidecode"], answer: 2 }
+            // 10 extended questions from briefing details
+            { q: "Which motherboard chipset bridge directly manages high-speed traffic between the CPU and RAM?", options: ["Southbridge", "Northbridge", "PCIe Bridge", "BIOS Bridge"], answer: 1 },
+            { q: "What diagnostic routine does BIOS execute immediately upon powering on the computer?", options: ["POST (Power-On Self-Test)", "Kernel Injection", "VRAM Shading", "Memory Paging"], answer: 0 },
+            { q: "What is the correct sequence of the CPU instruction cycle?", options: ["Execute, Decode, Fetch, Store", "Fetch, Decode, Execute, Store", "Decode, Fetch, Store, Execute", "Store, Execute, Decode, Fetch"], answer: 1 },
+            { q: "In the GPU rendering pipeline, which stage converts 3D vector shapes into 2D pixels?", options: ["Vertex Processing", "Fragment Shading", "Rasterization", "Output Display"], answer: 2 },
+            { q: "What type of memory loses all stored data when the power is turned off?", options: ["Non-volatile memory", "Secondary storage", "Volatile memory (RAM)", "Tertiary tape"], answer: 2 },
+            { q: "Which CPU socket design features gold spring pins built directly into the motherboard socket?", options: ["PGA (Pin Grid Array)", "LGA (Land Grid Array)", "DIMM Module", "M.2 Slot"], answer: 1 },
+            { q: "What is the primary benefit of UEFI over legacy BIOS?", options: ["It requires 16-bit real mode", "It supports drives over 2.2TB with graphical interfaces", "It only supports MBR partition tables", "It runs slower for security"], answer: 1 },
+            { q: "What specialized compound is applied between a CPU and heat sink to eliminate microscopic air gaps?", options: ["Thermal paste", "Silicon solder", "Epoxy resin", "Dielectric oil"], answer: 0 },
+            { q: "What globally unique 48-bit hardware identifier is assigned to every physical Network Interface Card?", options: ["IP Address", "MAC Address", "BIOS Version", "Form Factor ID"], answer: 1 },
+            { q: "Which cooling mechanism utilizes pumped fluid and radiators to dissipate extreme processor heat?", options: ["Air cooling", "Heat sinks", "Liquid cooling", "Passive convection"], answer: 2 }
         ];
 
         const quizContainer = document.getElementById('quiz-container');
-        
         quizData.forEach((item, index) => {
             const qDiv = document.createElement('div');
             qDiv.className = "bg-gray-50 p-6 rounded-lg border border-gray-200 transition-all";
-            qDiv.id = `q-block-${index}`;
             
             const qTitle = document.createElement('h3');
             qTitle.className = "font-bold text-lg text-gray-800 mb-4";
@@ -833,24 +1339,20 @@
             optionsDiv.className = "space-y-3";
             
             item.options.forEach((opt, optIndex) => {
-                const label = document.createElement('label');
+                let label = document.createElement('label');
                 label.className = "flex items-center space-x-3 p-3 rounded bg-white border border-gray-300 hover:bg-green-50 cursor-pointer transition";
-                
-                const radio = document.createElement('input');
+                let radio = document.createElement('input');
                 radio.type = "radio";
                 radio.name = `q${index}`;
                 radio.value = optIndex;
                 radio.className = "form-radio h-5 w-5 text-green-600";
-                
-                const span = document.createElement('span');
+                let span = document.createElement('span');
                 span.className = "text-gray-700";
                 span.innerText = opt;
-                
                 label.appendChild(radio);
                 label.appendChild(span);
                 optionsDiv.appendChild(label);
             });
-            
             qDiv.appendChild(optionsDiv);
             quizContainer.appendChild(qDiv);
         });
@@ -858,260 +1360,217 @@
         function gradeQuiz() {
             let score = 0;
             let allAnswered = true;
-
-            for(let i = 0; i < quizData.length; i++) {
+            for(let i=0; i<quizData.length; i++) {
                 const selected = document.querySelector(`input[name="q${i}"]:checked`);
                 if(selected) {
-                    if(parseInt(selected.value) === quizData[i].answer) {
-                        score++;
-                    }
+                    if(parseInt(selected.value) === quizData[i].answer) score++;
                 } else {
                     allAnswered = false;
                 }
             }
-            
             if(!allAnswered) {
-                showModal('Incomplete Quiz', 'Please answer all 20 questions before submitting.', 'warning');
+                showModal('Incomplete', 'Please answer all 20 questions before submitting.', 'warning');
                 return;
             }
-            
             const percentage = (score / quizData.length) * 100;
-            
-            // Requires 18/20 (90%)
-            if(score >= 18) { 
-                const navGame = document.getElementById('nav-game');
-                const navGameMobile = document.getElementById('nav-game-mobile');
+            if(score >= 18) {
+                document.getElementById('nav-game').classList.remove('text-gray-400', 'cursor-not-allowed');
+                document.getElementById('nav-game').classList.add('text-white', 'hover:bg-green-600');
+                document.getElementById('nav-game').disabled = false;
+                document.getElementById('nav-game').innerHTML = '<i class="fa-solid fa-gamepad mr-1"></i>Game';
                 
-                navGame.classList.remove('text-gray-400', 'cursor-not-allowed');
-                navGame.classList.add('text-white', 'hover:bg-green-600');
-                navGame.disabled = false;
-                navGame.innerHTML = '<i class="fa-solid fa-gamepad mr-1"></i>Game';
-                
-                navGameMobile.classList.remove('text-gray-400', 'cursor-not-allowed');
-                navGameMobile.classList.add('text-white', 'hover:bg-green-600');
-                navGameMobile.disabled = false;
-                navGameMobile.innerHTML = '<i class="fa-solid fa-gamepad"></i> Game';
+                document.getElementById('nav-game-mobile').classList.remove('text-gray-400', 'cursor-not-allowed');
+                document.getElementById('nav-game-mobile').classList.add('text-white', 'hover:bg-green-600');
+                document.getElementById('nav-game-mobile').disabled = false;
+                document.getElementById('nav-game-mobile').innerHTML = '<i class="fa-solid fa-gamepad"></i> Game';
 
                 document.getElementById('nav-cert').classList.remove('hidden');
                 document.getElementById('nav-cert-mobile').classList.remove('hidden');
-                
                 document.getElementById('proceed-game-btn').classList.remove('hidden');
                 document.getElementById('submit-quiz-btn').classList.add('hidden');
 
-                showModal('Outstanding!', `You scored ${score}/20 (${percentage}%). You have unlocked your Certificate of Mastery AND the Retro Game!`, 'success');
+                showModal('Mastery Achieved!', `You scored ${score}/20 (${percentage}%). Component Catcher game and Certificate unlocked!`, 'success');
             } else {
                 quizData.forEach((_, i) => {
-                    const selected = document.querySelector(`input[name="q${i}"]:checked`);
-                    if(selected) selected.checked = false;
+                    const sel = document.querySelector(`input[name="q${i}"]:checked`);
+                    if(sel) sel.checked = false;
                 });
-                showModal('Keep Trying!', `You scored ${score}/20 (${percentage}%). You need 90% (18/20) to earn the certificate. Your answers have been reset so you can try again.`, 'error');
+                showModal('Keep Practicing', `You scored ${score}/20 (${percentage}%). 90% (18/20) is required. Quiz reset for another attempt.`, 'error');
                 document.getElementById('quiz-section').scrollIntoView({ behavior: 'smooth' });
             }
         }
 
-        // --- Retro Game Logic (Component Catcher) ---
-        const canvas = document.getElementById('game-canvas');
-        const ctx = canvas.getContext('2d');
+        // --- RETRO ARCADE GAME: "Component Catcher" (Kaboom! Clone) ---
+        const gCanvas = document.getElementById('game-canvas');
+        const gCtx = gCanvas.getContext('2d');
         
-        let score = 0;
-        let lives = 3;
+        let gScore = 0;
+        let gLives = 3;
         let gameRunning = false;
-        let animationId;
-        
-        // Player (Motherboard Basket)
-        const player = {
-            width: 80,
-            height: 20,
-            x: canvas.width / 2 - 40,
-            y: canvas.height - 30,
-            speed: 6
-        };
-        
-        // Falling items
-        let items = [];
-        let fallSpeed = 3;
-        let spawnRate = 60; // frames between spawn
-        let frameCount = 0;
-
-        let rightPressed = false;
-        let leftPressed = false;
-
+        let gAnimId;
+        let paddleX = gCanvas.width / 2 - 40;
+        const paddleWidth = 80;
+        const paddleHeight = 16;
+        let fallingItems = [];
+        let gLastTime = 0;
+        let gSpawnTimer = 0;
         const overlay = document.getElementById('game-overlay');
         const startBtn = document.getElementById('start-game-btn');
+        startBtn.addEventListener('click', startArcadeGame);
 
-        startBtn.addEventListener('click', startGame);
-
-        document.addEventListener("keydown", keyDownHandler, false);
-        document.addEventListener("keyup", keyUpHandler, false);
-
-        // Touch Controls
-        const btnLeft = document.getElementById('btn-left');
-        const btnRight = document.getElementById('btn-right');
-
-        btnLeft.addEventListener("touchstart", (e) => { e.preventDefault(); leftPressed = true; }, {passive: false});
-        btnLeft.addEventListener("touchend", (e) => { e.preventDefault(); leftPressed = false; }, {passive: false});
-        btnLeft.addEventListener("mousedown", () => leftPressed = true);
-        btnLeft.addEventListener("mouseup", () => leftPressed = false);
-
-        btnRight.addEventListener("touchstart", (e) => { e.preventDefault(); rightPressed = true; }, {passive: false});
-        btnRight.addEventListener("touchend", (e) => { e.preventDefault(); rightPressed = false; }, {passive: false});
-        btnRight.addEventListener("mousedown", () => rightPressed = true);
-        btnRight.addEventListener("mouseup", () => rightPressed = false);
-
-
-        function keyDownHandler(e) {
-            if(e.key == "Right" || e.key == "ArrowRight") rightPressed = true;
-            else if(e.key == "Left" || e.key == "ArrowLeft") leftPressed = true;
+        // Paddle control via mouse/touch
+        function updatePaddlePos(clientX) {
+            const rect = gCanvas.getBoundingClientRect();
+            const scaleX = gCanvas.width / rect.width;
+            let x = (clientX - rect.left) * scaleX - paddleWidth / 2;
+            paddleX = Math.max(0, Math.min(gCanvas.width - paddleWidth, x));
         }
 
-        function keyUpHandler(e) {
-            if(e.key == "Right" || e.key == "ArrowRight") rightPressed = false;
-            else if(e.key == "Left" || e.key == "ArrowLeft") leftPressed = false;
-        }
+        gCanvas.addEventListener('mousemove', e => { if(gameRunning) updatePaddlePos(e.clientX); });
+        gCanvas.addEventListener('touchmove', e => {
+            if(gameRunning && e.touches.length > 0) {
+                e.preventDefault();
+                updatePaddlePos(e.touches[0].clientX);
+            }
+        }, {passive: false});
 
-        function spawnItem() {
-            const types = [
-                { color: '#3b82f6', label: 'CPU' },
-                { color: '#10b981', label: 'RAM' },
-                { color: '#8b5cf6', label: 'GPU' }
-            ];
-            const type = types[Math.floor(Math.random() * types.length)];
-            const width = 30;
-            const height = 30;
-            const x = Math.random() * (canvas.width - width);
-            
-            items.push({ x, y: -height, width, height, color: type.color, label: type.label });
+        // Keyboard controls
+        window.addEventListener('keydown', e => {
+            if(!gameRunning) return;
+            if(e.key === 'ArrowLeft') paddleX = Math.max(0, paddleX - 25);
+            if(e.key === 'ArrowRight') paddleX = Math.min(gCanvas.width - paddleWidth, paddleX + 25);
+        });
+
+        class HardwareItem {
+            constructor() {
+                this.radius = 16;
+                this.x = Math.random() * (gCanvas.width - this.radius * 2) + this.radius;
+                this.y = -20;
+                this.speed = Math.random() * 2 + 2.5;
+                const types = [
+                    { name: 'RAM', color: '#6366f1' },
+                    { name: 'CPU', color: '#a855f7' },
+                    { name: 'GPU', color: '#f59e0b' },
+                    { name: 'SSD', color: '#ef4444' }
+                ];
+                let t = types[Math.floor(Math.random() * types.length)];
+                this.name = t.name;
+                this.color = t.color;
+            }
+            update() {
+                this.y += this.speed;
+            }
+            draw(ctx) {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '10px monospace';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(this.name, this.x, this.y);
+            }
         }
 
         function resetGame() {
-            player.x = canvas.width / 2 - player.width / 2;
-            items = [];
-            score = 0;
-            lives = 3;
-            fallSpeed = 3;
-            spawnRate = 60;
-            document.getElementById('game-score').innerText = score;
-            document.getElementById('game-lives').innerText = lives;
+            fallingItems = [];
+            gScore = 0;
+            gLives = 3;
+            paddleX = gCanvas.width / 2 - paddleWidth / 2;
+            document.getElementById('game-score').innerText = gScore;
+            document.getElementById('game-lives').innerText = gLives;
+            gLastTime = Date.now();
         }
 
-        function startGame() {
+        function startArcadeGame() {
             overlay.classList.add('hidden');
             if(!gameRunning) {
                 resetGame();
                 gameRunning = true;
-                drawGame();
+                drawArcadeGame();
             }
         }
 
-        function drawPlayer() {
-            ctx.fillStyle = "#16a34a"; // Green motherboard color
-            ctx.fillRect(player.x, player.y, player.width, player.height);
-            // Draw some "slots" on the board
-            ctx.fillStyle = "#111827";
-            ctx.fillRect(player.x + 10, player.y + 5, 20, 10);
-            ctx.fillRect(player.x + 50, player.y + 5, 20, 10);
-        }
+        function drawArcadeGame() {
+            if(!gameRunning) return;
+            let now = Date.now();
+            let dt = now - gLastTime;
+            gLastTime = now;
 
-        function drawItems() {
-            for (let i = 0; i < items.length; i++) {
-                let item = items[i];
-                ctx.fillStyle = item.color;
-                ctx.fillRect(item.x, item.y, item.width, item.height);
-                
-                // Draw text
-                ctx.fillStyle = "#ffffff";
-                ctx.font = "10px monospace";
-                ctx.fillText(item.label, item.x + 4, item.y + 18);
+            gCtx.clearRect(0, 0, gCanvas.width, gCanvas.height);
+
+            // Draw grid background
+            gCtx.strokeStyle = '#1e293b';
+            gCtx.lineWidth = 1;
+            for(let i=0; i<gCanvas.width; i+=40) {
+                gCtx.beginPath(); gCtx.moveTo(i, 0); gCtx.lineTo(i, gCanvas.height); gCtx.stroke();
             }
-        }
 
-        function updateItems() {
-            for (let i = 0; i < items.length; i++) {
-                items[i].y += fallSpeed;
+            // Spawn items
+            gSpawnTimer += dt;
+            if(gSpawnTimer > 900) {
+                fallingItems.push(new HardwareItem());
+                gSpawnTimer = 0;
+            }
 
-                // Collision with player
-                if (items[i].y + items[i].height >= player.y &&
-                    items[i].y <= player.y + player.height &&
-                    items[i].x + items[i].width >= player.x &&
-                    items[i].x <= player.x + player.width) {
-                    
-                    score += 10;
-                    document.getElementById('game-score').innerText = score;
-                    items.splice(i, 1);
-                    i--;
-                    
-                    // Increase difficulty
-                    if (score % 50 === 0) {
-                        fallSpeed += 0.5;
-                        spawnRate = Math.max(20, spawnRate - 5);
-                    }
-                    continue;
-                }
+            // Update & Draw items
+            for(let i = fallingItems.length - 1; i >= 0; i--) {
+                let item = fallingItems[i];
+                item.update();
+                item.draw(gCtx);
 
-                // Missed the item
-                if (items[i].y > canvas.height) {
-                    lives--;
-                    document.getElementById('game-lives').innerText = lives;
-                    items.splice(i, 1);
-                    i--;
-                    
-                    if (lives <= 0) {
+                // Check paddle catch (Kaboom style bucket at bottom)
+                if(item.y + item.radius >= gCanvas.height - paddleHeight - 10 &&
+                   item.y - item.radius <= gCanvas.height - 10 &&
+                   item.x >= paddleX && item.x <= paddleX + paddleWidth) {
+                    gScore += 10;
+                    document.getElementById('game-score').innerText = gScore;
+                    fallingItems.splice(i, 1);
+                } else if(item.y > gCanvas.height + 20) {
+                    // Missed item -> lose bucket/life
+                    gLives--;
+                    document.getElementById('game-lives').innerText = gLives;
+                    fallingItems.splice(i, 1);
+                    if(gLives <= 0) {
                         gameOver();
                     }
                 }
             }
-        }
 
-        function drawGame() {
-            if(!gameRunning) return;
-            
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // Move Player
-            if(rightPressed && player.x < canvas.width - player.width) {
-                player.x += player.speed;
-            }
-            else if(leftPressed && player.x > 0) {
-                player.x -= player.speed;
-            }
+            // Draw Paddle (Bucket)
+            gCtx.fillStyle = '#38bdf8';
+            gCtx.fillRect(paddleX, gCanvas.height - paddleHeight - 10, paddleWidth, paddleHeight);
+            gCtx.strokeStyle = '#bae6fd';
+            gCtx.lineWidth = 2;
+            gCtx.strokeRect(paddleX, gCanvas.height - paddleHeight - 10, paddleWidth, paddleHeight);
 
-            // Spawn items
-            frameCount++;
-            if (frameCount >= spawnRate) {
-                spawnItem();
-                frameCount = 0;
-            }
-
-            updateItems();
-            drawItems();
-            drawPlayer();
-
-            if (gameRunning) {
-                animationId = requestAnimationFrame(drawGame);
-            }
+            gAnimId = requestAnimationFrame(drawArcadeGame);
         }
 
         function gameOver() {
             gameRunning = false;
-            cancelAnimationFrame(animationId);
+            cancelAnimationFrame(gAnimId);
             overlay.classList.remove('hidden');
-            startBtn.innerText = "System Crash! Try Again";
-            startBtn.classList.replace('bg-blue-500', 'bg-red-600');
-            startBtn.classList.replace('border-blue-700', 'border-red-800');
+            startBtn.innerText = "Game Over! Play Again";
+            startBtn.classList.replace('bg-yellow-500', 'bg-red-600');
         }
 
-        // --- Certificate Logic ---
+        // --- CERTIFICATE LOGIC ---
         function updateCertName() {
             let name = document.getElementById('student-name-input').value.trim();
             if(name) {
                 if (name.includes(' ')) {
                     name = name.split(' ')[0];
                     document.getElementById('student-name-input').value = name;
-                    showModal('Notice', 'Only your first name has been applied to the certificate.', 'info');
                 }
                 document.getElementById('cert-student-name').innerText = name;
             } else {
-                showModal('Wait!', 'Please enter your first name to update the certificate.', 'warning');
+                showModal('Notice', 'Please enter your first name.', 'warning');
             }
         }
 
@@ -1121,49 +1580,38 @@
         function downloadCert() {
             const certEl = document.getElementById('certificate');
             const name = document.getElementById('cert-student-name').innerText;
-            let filename = 'Certificate.png';
-            if (name && name !== 'Student') {
-                filename = `${name.replace(/\s+/g, '_')}_Certificate.png`;
-            }
-
+            let filename = `${name.replace(/\s+/g, '_')}_Certificate.png`;
             const originalTransform = certEl.style.transform;
             certEl.style.transform = 'none';
 
             const btn = document.getElementById('download-btn');
-            const originalBtnText = btn.innerHTML;
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Generating...';
             btn.disabled = true;
 
-            html2canvas(certEl, { 
-                scale: 2, 
-                useCORS: true,
-                backgroundColor: '#ffffff'
-            }).then(canvas => {
+            html2canvas(certEl, { scale: 2, useCORS: true, backgroundColor: '#ffffff' }).then(canvas => {
                 certEl.style.transform = originalTransform;
-                btn.innerHTML = originalBtnText;
+                btn.innerHTML = '<i class="fa-solid fa-download mr-2"></i>Download PNG';
                 btn.disabled = false;
-                
                 const link = document.createElement('a');
                 link.download = filename;
                 link.href = canvas.toDataURL('image/png');
                 link.click();
-                
-            }).catch(err => {
-                console.error(err);
+            }).catch(() => {
                 certEl.style.transform = originalTransform;
-                btn.innerHTML = originalBtnText;
+                btn.innerHTML = '<i class="fa-solid fa-download mr-2"></i>Download PNG';
                 btn.disabled = false;
-                showModal('Error', 'Failed to generate image. Try using a desktop browser.', 'error');
+                showModal('Error', 'Failed to generate certificate image.', 'error');
             });
         }
 
-        // Initial setup for canvas background
         window.onload = () => {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            player.x = canvas.width / 2 - player.width / 2;
-            drawPlayer();
+            gCtx.fillStyle = '#0f172a';
+            gCtx.fillRect(0,0,gCanvas.width,gCanvas.height);
+            gCtx.fillStyle = '#38bdf8';
+            gCtx.font = '18px monospace';
+            gCtx.textAlign = 'center';
+            gCtx.fillText('COMPONENT CATCHER READY', gCanvas.width/2, gCanvas.height/2);
         }
     </script>
 </body>
 </html>
-```eof

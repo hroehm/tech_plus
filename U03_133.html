@@ -1,0 +1,1406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 03 Section 1.3.3 Mastery - Processing Speed</title>
+    
+    <!-- Load Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load HTML2Canvas for Certificate Download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- Load Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Qwitcher+Grypen:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0fdf4; 
+            color: #1f2937;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #e5e7eb; }
+        ::-webkit-scrollbar-thumb { background: #10b981; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #059669; }
+
+        /* Retro Game Canvas - Clock Speed Dash */
+        #game-canvas {
+            background-color: #111827;
+            border: 4px solid #374151;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+            max-width: 100%;
+            height: auto;
+            touch-action: none;
+        }
+        .game-btn { touch-action: manipulation; user-select: none; }
+
+        /* --- CERTIFICATE STYLES --- */
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .font-body { font-family: 'Lora', serif; }
+        .font-script { font-family: 'Qwitcher Grypen', cursive; }
+        
+        .cert-preview-container {
+            width: 100%;
+            overflow: auto;
+            display: flex;
+            justify-content: center;
+            background: #e5e7eb;
+            padding: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        #certificate {
+            width: 1056px !important;
+            height: 816px !important;
+            flex-shrink: 0;
+            background-color: #ffffff;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1056" height="816"><polygon points="0,0 250,0 0,650" fill="%23fcd34d"/><polygon points="0,0 350,0 0,900" fill="%23d97706" opacity="0.8"/><polygon points="0,0 120,0 0,300" fill="%23fcd34d"/><polygon points="0,450 650,816 0,816" fill="%23fcd34d"/><polygon points="0,550 450,816 0,816" fill="%23d97706" opacity="0.8"/><polygon points="800,0 1056,0 1056,256" fill="%23f3f4f6"/><polygon points="1056,500 1056,816 750,816" fill="%23f3f4f6"/></svg>');
+            background-size: cover;
+            border: 4px solid #e5e7eb;
+        }
+
+        .gold-seal {
+            position: absolute;
+            left: 110px;
+            top: 350px;
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c, #fcf6ba);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3), inset 0 0 15px rgba(255,255,255,0.7), inset 0 0 25px rgba(139,105,20,0.9);
+            z-index: 10;
+        }
+        .gold-seal::before {
+            content: '';
+            position: absolute;
+            top: -4px; bottom: -4px; left: -4px; right: -4px;
+            border-radius: 50%;
+            border: 6px dashed #d4af37;
+        }
+        .gold-seal-inner-1 {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 2px solid rgba(139, 105, 20, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #e8c678, #dbab46);
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.2), 0 2px 5px rgba(255,255,255,0.7);
+            z-index: 1;
+        }
+        .gold-seal-inner-2 {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: radial-gradient(circle, #fcf6ba, #d4af37);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            padding: 10px;
+        }
+        .embossed-text {
+            color: #b38728;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2);
+            font-family: 'Playfair Display', serif;
+            font-weight: 800;
+            line-height: 1.1;
+            text-transform: uppercase;
+        }
+        .embossed-text-large { font-size: 14px; letter-spacing: 1px; }
+        .embossed-text-small { font-size: 11px; letter-spacing: 2px; margin: 2px 0; }
+        .embossed-star { font-size: 12px; color: #b38728; text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2); margin: 2px 0; }
+
+        @media (max-width: 1100px) {
+            #certificate { transform: scale(0.7); transform-origin: top left; margin-bottom: -240px; margin-right: -310px; }
+        }
+        @media (max-width: 768px) {
+            #certificate { transform: scale(0.4); transform-origin: top left; margin-bottom: -490px; margin-right: -630px; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
+    <nav class="bg-emerald-700 text-white shadow-lg sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-microchip text-2xl"></i>
+                    <span class="font-bold text-xl tracking-wider hidden sm:inline-block">Tech+ Unit 03 Section 1.3.3</span>
+                    <span class="font-bold text-xl tracking-wider sm:hidden">1.3.3</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-2">
+                        <button onclick="switchTab('briefing')" class="nav-btn bg-emerald-900 px-3 py-2 rounded-md text-sm font-medium hover:bg-emerald-600 transition" id="nav-briefing"><i class="fa-solid fa-book-open mr-1"></i>Briefing</button>
+                        <button onclick="switchTab('activity')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-emerald-600 transition" id="nav-activity"><i class="fa-solid fa-flask mr-1"></i>Lab Activity</button>
+                        <button onclick="switchTab('quiz')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-emerald-600 transition" id="nav-quiz"><i class="fa-solid fa-clipboard-check mr-1"></i>Quiz</button>
+                        <button onclick="switchTab('game')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-gray-300 cursor-not-allowed transition" id="nav-game" disabled><i class="fa-solid fa-lock mr-1"></i>Game</button>
+                        <button onclick="switchTab('cert')" class="nav-btn hidden px-3 py-2 rounded-md text-sm font-medium text-yellow-300 hover:bg-emerald-600 transition" id="nav-cert"><i class="fa-solid fa-award mr-1"></i>Certificate</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Nav -->
+        <div class="md:hidden flex flex-wrap justify-center gap-2 py-2 px-2 bg-emerald-800">
+            <button onclick="switchTab('briefing')" class="nav-btn-mobile px-3 py-1 text-sm rounded bg-emerald-900" id="nav-briefing-mobile">Briefing</button>
+            <button onclick="switchTab('activity')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-activity-mobile">Lab</button>
+            <button onclick="switchTab('quiz')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-quiz-mobile">Quiz</button>
+            <button onclick="switchTab('game')" class="nav-btn-mobile px-3 py-1 text-sm rounded text-gray-300 cursor-not-allowed" id="nav-game-mobile" disabled><i class="fa-solid fa-lock"></i></button>
+            <button onclick="switchTab('cert')" id="nav-cert-mobile" class="hidden px-2 py-1 text-sm text-yellow-300 rounded"><i class="fa-solid fa-award"></i></button>
+        </div>
+    </nav>
+
+    <main class="flex-grow w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <!-- BRIEFING SECTION -->
+        <div id="briefing-section" class="tab-content active no-print">
+            <div class="text-center mb-10">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">Processing Speed & CPU Performance</h1>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">Explore how a computer's central processing unit executes instructions per second, how hertz measurements dictate performance, and how multi-core architectures unlock modern computing.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- Tile 1: Processing Speed Fundamentals -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-blue-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-blue-700"><i class="fa-solid fa-gauge-high mr-2"></i>Processing Speed Basics</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Instruction Execution:</strong> Measures how fast the CPU carries out foundational tasks.</li>
+                            <li><strong>Hertz Measurement:</strong> One Hertz ($1\text{ Hz}$) equals one execution cycle per second.</li>
+                            <li><strong>Performance Impact:</strong> Enables programs to open faster, execute calculations instantly, and ensure smooth multitasking.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('speed-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('speed-usecase')" class="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 2: Clock Speed & Square Waves -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-emerald-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-emerald-700"><i class="fa-solid fa-wave-square mr-2"></i>Clock Speed & Square Waves</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Clock Synchronization:</strong> Every tick signals the CPU to advance to the next instruction step.</li>
+                            <li><strong>Square Wave Signals:</strong> Alternates between high and low voltage representing binary 1s and 0s.</li>
+                            <li><strong>Sharp Transitions:</strong> Sharp edges allow circuits to detect timing beats instantly.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('clock-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('clock-usecase')" class="flex-1 bg-emerald-100 hover:bg-emerald-200 text-emerald-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 3: Megahertz vs Gigahertz -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-purple-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-purple-700"><i class="fa-solid fa-calculator mr-2"></i>MHz & GHz Units & Conversions</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Megahertz (MHz):</strong> One million ($1,000,000$) cycles per second.</li>
+                            <li><strong>Gigahertz (GHz):</strong> One billion ($1,000,000,000$) cycles per second.</li>
+                            <li><strong>Conversion Math:</strong> Divide MHz by 1,000 for GHz; multiply GHz by 1,000 for MHz.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('units-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('units-usecase')" class="flex-1 bg-purple-100 hover:bg-purple-200 text-purple-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 4: CPU Cores & Concurrency -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-amber-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-amber-700"><i class="fa-solid fa-microchip mr-2"></i>CPU Cores & Multitasking</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Independent Processing Units:</strong> Cores act as individual brains within a single CPU chip.</li>
+                            <li><strong>Parallel Execution:</strong> Multi-core processors handle multiple distinct tasks simultaneously.</li>
+                            <li><strong>Workload Scaling:</strong> Ideal for gaming, video rendering, and heavy simulations.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('cores-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('cores-usecase')" class="flex-1 bg-amber-100 hover:bg-amber-200 text-amber-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 flex justify-center">
+                <button onclick="switchTab('activity')" class="bg-emerald-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-emerald-500 shadow-lg transition transform hover:scale-105">Proceed to Lab Activity <i class="fa-solid fa-arrow-right ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- LAB ACTIVITY SECTION -->
+        <div id="activity-section" class="tab-content no-print">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Interactive Lab Activity</h1>
+                <p class="text-gray-600">Complete all 8 interactive labs (2 distinct labs per concept) to master CPU processing specifications.</p>
+            </div>
+
+            <!-- Lab 1: Processing Speed Simulator -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-blue-700"><i class="fa-solid fa-gauge-high mr-2"></i>Lab 1: CPU Instruction Throughput</h2>
+                <p class="text-sm text-gray-600 mb-4">Adjust the clock frequency slider to test how instruction execution rates scale with Hertz cycles per second.</p>
+                <div class="flex flex-col md:flex-row items-center gap-6 bg-blue-50 p-6 rounded-lg border border-blue-200">
+                    <div class="w-full md:w-1/2">
+                        <label class="block font-bold text-gray-700 mb-2">Clock Frequency: <span id="lab1-speed-val" class="text-blue-600">2.0</span> GHz</label>
+                        <input type="range" min="0.5" max="5.0" step="0.1" value="2.0" class="w-full h-2 bg-blue-200 rounded-lg cursor-pointer" id="lab1-slider" oninput="updateLab1(this.value)">
+                    </div>
+                    <div class="w-full md:w-1/2 text-center bg-white p-4 rounded-lg shadow-sm border border-blue-100">
+                        <div class="text-xs text-gray-500 uppercase font-bold tracking-wider">Instructions Executed / Sec</div>
+                        <div id="lab1-output" class="text-2xl font-extrabold text-blue-800 mt-1">2,000,000,000</div>
+                        <div id="lab1-msg" class="text-xs text-emerald-600 mt-2 font-semibold">Optimal for standard office applications and web browsing.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lab 2: Thermal Throttling Lab -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-blue-700"><i class="fa-solid fa-temperature-arrow-down mr-2"></i>Lab 2: Thermal Throttling & Power Management</h2>
+                <p class="text-sm text-gray-600 mb-4">CPUs generate heat at high processing speeds. Click 'Push to Max' to spike performance, then monitor thermal safety thresholds and automatic speed scaling.</p>
+                <div class="bg-gray-50 p-6 rounded-lg border border-gray-200">
+                    <div class="flex justify-between mb-2 font-bold text-sm">
+                        <span>CPU Temperature: <span id="thermal-temp" class="text-green-600">45°C</span></span>
+                        <span>Current Speed: <span id="thermal-speed" class="text-blue-600">3.0 GHz</span></span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-4 mb-4 overflow-hidden">
+                        <div id="thermal-bar" class="bg-green-500 h-4 rounded-full transition-all duration-300" style="width: 45%;"></div>
+                    </div>
+                    <div class="flex gap-4">
+                        <button onclick="boostThermal(1.0)" class="bg-blue-600 text-white px-4 py-2 rounded font-bold hover:bg-blue-700 transition">Spike Workload (+1.0 GHz)</button>
+                        <button onclick="boostThermal(-1.0)" class="bg-emerald-600 text-white px-4 py-2 rounded font-bold hover:bg-emerald-700 transition">Apply Cooling Fan</button>
+                    </div>
+                    <div id="thermal-status" class="mt-3 text-sm font-semibold text-gray-700">System operating at nominal temperature. No throttling required.</div>
+                </div>
+            </div>
+
+            <!-- Lab 3: Square Wave Frequency Matcher -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-emerald-700"><i class="fa-solid fa-wave-square mr-2"></i>Lab 3: Square Wave Timing Matcher</h2>
+                <p class="text-sm text-gray-600 mb-4">Adjust the square wave frequency to synchronize with the CPU pipeline clock cycle target (Target: 4 Hz).</p>
+                <div class="bg-emerald-50 p-6 rounded-lg border border-emerald-200 text-center">
+                    <div class="mb-4">
+                        <canvas id="wave-canvas" width="500" height="100" class="mx-auto bg-white border border-emerald-300 rounded shadow-sm"></canvas>
+                    </div>
+                    <div class="flex justify-center items-center gap-4 mb-4">
+                        <button onclick="adjustWaveFreq(-1)" class="bg-emerald-700 text-white px-4 py-2 rounded font-bold">-</button>
+                        <span class="text-lg font-bold text-emerald-900">Frequency: <span id="wave-freq">2</span> Hz (Target: 4 Hz)</span>
+                        <button onclick="adjustWaveFreq(1)" class="bg-emerald-700 text-white px-4 py-2 rounded font-bold">+</button>
+                    </div>
+                    <div id="wave-feedback" class="font-bold text-amber-700">Out of sync! Adjust frequency to match pipeline ticks.</div>
+                </div>
+            </div>
+
+            <!-- Lab 4: Clock Tick Simulator -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-emerald-700"><i class="fa-solid fa-clock mr-2"></i>Lab 4: Clock Tick Pipeline Step</h2>
+                <p class="text-sm text-gray-600 mb-4">Observe how each 'tick' of the clock square wave advances the CPU through Fetch, Decode, and Execute stages.</p>
+                <div class="bg-gray-900 text-emerald-400 p-6 rounded-lg font-mono text-center">
+                    <div class="text-sm text-gray-400 mb-2">CURRENT PIPELINE STAGE</div>
+                    <div id="pipeline-stage" class="text-3xl font-bold mb-4 tracking-wider text-yellow-400">FETCH INSTRUCTION</div>
+                    <div class="flex justify-center gap-4">
+                        <button onclick="stepPipeline()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-2 rounded font-bold uppercase tracking-wider">Trigger Clock Tick</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lab 5: Hertz Unit Converter -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-purple-700"><i class="fa-solid fa-calculator mr-2"></i>Lab 5: MHz & GHz Unit Converter</h2>
+                <p class="text-sm text-gray-600 mb-4">Practice converting between Megahertz and Gigahertz using standard multipliers ($1\text{ GHz} = 1,000\text{ MHz}$).</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-purple-50 p-6 rounded-lg border border-purple-200">
+                    <div>
+                        <label class="block font-bold text-gray-700 mb-1">Enter Megahertz (MHz):</label>
+                        <input type="number" id="input-mhz" placeholder="e.g., 3200" class="w-full border-2 border-purple-300 rounded p-2 mb-2 focus:outline-none focus:border-purple-600" oninput="convertMHzToGHz()">
+                        <div id="res-ghz" class="text-sm font-bold text-purple-900">= 3.2 GHz</div>
+                    </div>
+                    <div>
+                        <label class="block font-bold text-gray-700 mb-1">Enter Gigahertz (GHz):</label>
+                        <input type="number" id="input-ghz" placeholder="e.g., 2.4" step="0.1" class="w-full border-2 border-purple-300 rounded p-2 mb-2 focus:outline-none focus:border-purple-600" oninput="convertGHzToMHz()">
+                        <div id="res-mhz" class="text-sm font-bold text-purple-900">= 2400 MHz</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lab 6: Historical Processor Comparison -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-purple-700"><i class="fa-solid fa-clock-rotate-left mr-2"></i>Lab 6: Historical CPU Speed Comparator</h2>
+                <p class="text-sm text-gray-600 mb-4">Compare legacy MHz processors with modern GHz processors by sorting them from slowest to fastest speed.</p>
+                <div class="bg-gray-50 p-6 rounded-lg border border-gray-200">
+                    <div id="sorting-list" class="space-y-2 mb-4">
+                        <div class="bg-white p-3 rounded border border-gray-300 flex justify-between items-center cursor-move" draggable="true" data-speed="100"><span>Intel 486 DX (1989)</span><span class="font-bold text-purple-700">100 MHz</span></div>
+                        <div class="bg-white p-3 rounded border border-gray-300 flex justify-between items-center cursor-move" draggable="true" data-speed="3200"><span>Modern Core i7 (2026)</span><span class="font-bold text-purple-700">3.2 GHz (3200 MHz)</span></div>
+                        <div class="bg-white p-3 rounded border border-gray-300 flex justify-between items-center cursor-move" draggable="true" data-speed="500"><span>Pentium III (1999)</span><span class="font-bold text-purple-700">500 MHz</span></div>
+                    </div>
+                    <button onclick="checkSortingLab()" class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded font-bold">Verify Chronological Speeds</button>
+                    <div id="sorting-feedback" class="mt-2 font-bold text-sm"></div>
+                </div>
+            </div>
+
+            <!-- Lab 7: Multi-Core Task Distributor -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-amber-700"><i class="fa-solid fa-microchip mr-2"></i>Lab 7: Multi-Core Task Distributor</h2>
+                <p class="text-sm text-gray-600 mb-4">Distribute 4 incoming software threads across available CPU cores to maximize parallel computing efficiency.</p>
+                <div class="bg-amber-50 p-6 rounded-lg border border-amber-200">
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                        <div class="bg-white p-4 rounded border-2 border-amber-300 text-center">
+                            <div class="font-bold text-amber-800 mb-2">Core 1</div>
+                            <div id="core-1-load" class="text-sm text-gray-600 mb-2">Idle</div>
+                            <button onclick="assignTask(1)" class="bg-amber-600 text-white px-3 py-1 rounded text-xs font-bold hover:bg-amber-700">Assign Thread</button>
+                        </div>
+                        <div class="bg-white p-4 rounded border-2 border-amber-300 text-center">
+                            <div class="font-bold text-amber-800 mb-2">Core 2</div>
+                            <div id="core-2-load" class="text-sm text-gray-600 mb-2">Idle</div>
+                            <button onclick="assignTask(2)" class="bg-amber-600 text-white px-3 py-1 rounded text-xs font-bold hover:bg-amber-700">Assign Thread</button>
+                        </div>
+                        <div class="bg-white p-4 rounded border-2 border-amber-300 text-center">
+                            <div class="font-bold text-amber-800 mb-2">Core 3</div>
+                            <div id="core-3-load" class="text-sm text-gray-600 mb-2">Idle</div>
+                            <button onclick="assignTask(3)" class="bg-amber-600 text-white px-3 py-1 rounded text-xs font-bold hover:bg-amber-700">Assign Thread</button>
+                        </div>
+                        <div class="bg-white p-4 rounded border-2 border-amber-300 text-center">
+                            <div class="font-bold text-amber-800 mb-2">Core 4</div>
+                            <div id="core-4-load" class="text-sm text-gray-600 mb-2">Idle</div>
+                            <button onclick="assignTask(4)" class="bg-amber-600 text-white px-3 py-1 rounded text-xs font-bold hover:bg-amber-700">Assign Thread</button>
+                        </div>
+                    </div>
+                    <div id="core-feedback" class="text-center font-bold text-amber-800">Assigned Threads: 0 / 4</div>
+                </div>
+            </div>
+
+            <!-- Lab 8: Tech Specs Benchmark Analyzer -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-amber-700"><i class="fa-solid fa-list-check mr-2"></i>Lab 8: Tech Specs Benchmark Calculator</h2>
+                <p class="text-sm text-gray-600 mb-4">Calculate potential computing power ($\text{Clock Speed} \times \text{Cores}$) for devices from the curriculum tech spec sheet and identify the top performer.</p>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse mb-4">
+                        <thead>
+                            <tr class="bg-gray-100 border-b border-gray-300 text-xs uppercase tracking-wider text-gray-700">
+                                <th class="p-3">Device Name</th>
+                                <th class="p-3">Clock Speed</th>
+                                <th class="p-3">Cores</th>
+                                <th class="p-3">Calculated Power</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm">
+                            <tr class="border-b border-gray-200">
+                                <td class="p-3 font-bold">Laptop A</td>
+                                <td class="p-3">2.4 GHz</td>
+                                <td class="p-3">4</td>
+                                <td class="p-3 font-semibold text-blue-600">9.6 GHz</td>
+                            </tr>
+                            <tr class="border-b border-gray-200">
+                                <td class="p-3 font-bold">Laptop B</td>
+                                <td class="p-3">2400 MHz (2.4 GHz)</td>
+                                <td class="p-3">6</td>
+                                <td class="p-3 font-semibold text-blue-600">14.4 GHz</td>
+                            </tr>
+                            <tr class="border-b border-gray-200 bg-emerald-50">
+                                <td class="p-3 font-bold">Smartphone C</td>
+                                <td class="p-3">3.2 GHz</td>
+                                <td class="p-3">8</td>
+                                <td class="p-3 font-semibold text-emerald-700">25.6 GHz (Highest)</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-bold">Model D (Raspberry Pi)</td>
+                                <td class="p-3">1500 MHz (1.5 GHz)</td>
+                                <td class="p-3">4</td>
+                                <td class="p-3 font-semibold text-blue-600">6.0 GHz</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="bg-gray-50 p-4 rounded border border-gray-200 text-sm text-gray-700">
+                    <strong>Lab Conclusion:</strong> Smartphone C delivers the highest aggregate computing potential ($25.6\text{ GHz}$) due to its high clock speed combined with 8 independent cores.
+                </div>
+            </div>
+
+            <div class="text-center">
+                <button onclick="switchTab('quiz')" class="bg-emerald-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-emerald-500 shadow-lg transition transform hover:scale-105">Take the Mastery Quiz <i class="fa-solid fa-clipboard-check ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- QUIZ SECTION -->
+        <div id="quiz-section" class="tab-content no-print">
+            <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-xl max-w-4xl mx-auto">
+                <div class="text-center mb-8 border-b pb-4">
+                    <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Unit 03 Section 1.3.3 Mastery Quiz</h1>
+                    <p class="text-gray-600">Score 90% or higher (18/20) to earn your Certificate of Mastery and unlock "Clock Speed Dash"!</p>
+                </div>
+
+                <div id="quiz-container" class="space-y-8">
+                    <!-- Questions injected via JS -->
+                </div>
+
+                <div class="mt-10 text-center border-t pt-6 flex flex-col md:flex-row justify-center items-center gap-4">
+                    <button id="submit-quiz-btn" onclick="gradeQuiz()" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">Submit Quiz</button>
+                    <button id="proceed-game-btn" onclick="switchTab('game')" class="hidden bg-purple-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-purple-700 shadow-lg transition w-full md:w-auto">Play Clock Speed Dash <i class="fa-solid fa-gamepad ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RETRO GAME SECTION -->
+        <div id="game-section" class="tab-content no-print">
+            <div class="bg-gray-900 p-6 sm:p-8 rounded-2xl shadow-xl max-w-4xl mx-auto border-4 border-gray-700 flex flex-col items-center">
+                <div class="text-center mb-4 w-full">
+                    <h1 class="text-3xl font-extrabold text-emerald-400 mb-2 tracking-widest uppercase" style="font-family: monospace;">Clock Speed Dash</h1>
+                    <p class="text-gray-300 text-sm">Leap over thermal throttling hazards and collect Hertz Boost icons ($1\text{ GHz}, 2\text{ GHz}$) to accelerate your CPU runner! Press <strong class="text-yellow-400">Spacebar</strong> or <strong class="text-yellow-400">Tap Screen</strong> to Jump.</p>
+                </div>
+                
+                <div class="flex justify-between items-center w-full max-w-[400px] sm:max-w-[700px] mb-2 px-4 text-white font-mono text-xl">
+                    <div>Instructions Processed: <span id="game-score" class="text-emerald-400 font-bold">0</span></div>
+                    <div>CPU Speed: <span id="game-speed" class="text-blue-400 font-bold">2.0</span> GHz</div>
+                </div>
+
+                <div class="relative flex justify-center w-full">
+                    <!-- Game Canvas -->
+                    <canvas id="game-canvas" width="700" height="300" class="w-full max-w-[400px] sm:max-w-[700px] bg-gray-800 border-2 border-gray-600 rounded shadow-lg"></canvas>
+                    
+                    <!-- Overlay Start Button -->
+                    <div id="game-overlay" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-70 rounded-lg max-w-[400px] sm:max-w-[700px] mx-auto z-10">
+                        <button id="start-game-btn" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold font-mono py-3 px-6 rounded-lg text-xl border-4 border-emerald-800 uppercase transform transition hover:scale-105">Boot CPU (Start Game)</button>
+                    </div>
+                </div>
+
+                <div class="mt-8 text-center w-full border-t border-gray-700 pt-6">
+                    <button onclick="switchTab('cert')" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">View Certificate <i class="fa-solid fa-award ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CERTIFICATE SECTION -->
+        <div id="cert-section" class="tab-content">
+            <div class="max-w-5xl mx-auto">
+                
+                <!-- Controls -->
+                <div class="bg-white p-6 rounded shadow mb-6 no-print text-center border border-gray-200">
+                    <h2 class="text-2xl font-bold text-emerald-600 mb-2">🎉 Congratulations! 🎉</h2>
+                    <p class="text-gray-700 mb-4">You have achieved mastery of Unit 03 Section 1.3.3: Processing Speed.</p>
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+                        <input type="text" id="student-name-input" value="Student" placeholder="Enter your first name" class="border-2 border-gray-300 rounded px-4 py-2 w-full md:w-64 focus:border-emerald-500 focus:outline-none">
+                        <button onclick="updateCertName()" class="bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700 transition">Update Name</button>
+                        <button id="download-btn" onclick="downloadCert()" class="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900 transition flex items-center justify-center">
+                            <i class="fa-solid fa-download mr-2"></i>Download PNG
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Certificate Render Container -->
+                <div class="cert-preview-container print:p-0 print:bg-white">
+                    <div id="certificate">
+                        <div class="gold-seal">
+                            <div class="gold-seal-inner-1">
+                                <div class="gold-seal-inner-2">
+                                     <span class="embossed-text embossed-text-large">Certificate</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-small">Of</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-large">Excellence</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="relative z-20 w-full h-full flex flex-col pt-[48px] pl-[380px] pr-[48px]">
+                            <h1 class="text-[#065f46] text-[4.5rem] leading-none font-serif font-bold tracking-wide uppercase mb-2">CERTIFICATE</h1>
+                            <h2 class="text-gray-800 text-3xl font-serif tracking-widest uppercase mb-10">Of Achievement</h2>
+                            
+                            <p class="text-[1.4rem] font-body text-gray-800 mb-4">This is to certify that</p>
+                            
+                            <div class="relative mb-8 w-full">
+                                <h3 id="cert-student-name" class="text-[4rem] text-[#065f46] font-serif italic leading-none pb-2 relative z-10 text-center w-full block">Student</h3>
+                                <div class="w-full border-b-[2px] border-[#065f46] absolute bottom-[4px] left-0 z-0"></div>
+                                <div class="w-full border-b-[2px] border-dotted border-amber-500 absolute bottom-[0px] left-0 z-0"></div>
+                            </div>
+                            
+                            <p class="text-[1.3rem] font-body text-gray-800 leading-relaxed w-full pr-4">
+                                Has successfully completed the assessment for 
+                                <strong class="text-[1.8rem] text-[#065f46] block mt-4 mb-2 font-serif">Cyber.org Tech+ Unit 03 Section 1.3.3</strong>
+                                <strong class="text-[1.5rem] text-black block mb-4 font-serif italic">Processing Speed & CPU Performance</strong>
+                                <span class="text-[1.1rem] text-gray-700 leading-snug block">Demonstrating proficiency in analyzing CPU instruction execution, hertz measurements (MHz vs GHz), square wave clock synchronization, and multi-core concurrency.</span>
+                            </p>
+                            
+                            <div class="flex justify-end gap-16 items-end mt-auto mb-[60px] w-full pr-8">
+                                <div class="w-64">
+                                    <div class="border-b border-gray-600 mb-2 h-20 flex items-end justify-center relative">
+                                        <span class="font-script text-[5rem] text-[#065f46] absolute bottom-[-10px] transform -rotate-3 opacity-90">Dr. M. S</span>
+                                    </div>
+                                    <p class="font-serif text-xl text-gray-800 text-center">Administration</p>
+                                </div>
+                                
+                                <div class="w-64">
+                                    <div class="border-b border-gray-600 mb-2 text-center h-20 flex items-end justify-center">
+                                        <p id="cert-date" class="font-body text-2xl text-gray-800 pb-1">Date Here</p>
+                                    </div>
+                                    <p class="font-serif text-xl text-gray-800 text-center">Date</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Custom Modal for Alerts -->
+    <div id="custom-modal" class="fixed inset-0 bg-black bg-opacity-50 z-[100] hidden flex justify-center items-center backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all">
+            <div class="text-center">
+                <div id="modal-icon" class="text-5xl mb-4"></div>
+                <h3 id="modal-title" class="text-2xl font-bold mb-2 text-gray-900"></h3>
+                <p id="modal-msg" class="text-gray-600 mb-6"></p>
+                <button onclick="closeModal()" class="bg-emerald-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-emerald-700 transition w-full">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Briefing Modal -->
+    <div id="briefing-modal" class="fixed inset-0 bg-black bg-opacity-70 z-[120] hidden flex justify-center items-center backdrop-blur-sm p-4 sm:p-6">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col transform transition-all overflow-hidden border-4 border-emerald-700">
+            <div class="p-6 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+                <div class="flex items-center gap-4">
+                    <div id="briefing-modal-icon" class="text-4xl"></div>
+                    <h3 id="briefing-modal-title" class="text-2xl md:text-3xl font-bold text-gray-900"></h3>
+                </div>
+                <button onclick="closeBriefing()" class="text-gray-400 hover:text-red-600 transition text-4xl leading-none">&times;</button>
+            </div>
+            <div id="briefing-modal-content" class="p-6 md:p-10 overflow-y-auto flex-grow text-gray-700 text-lg leading-relaxed bg-white">
+                <!-- Dynamic Content Injected Here -->
+            </div>
+            <div class="p-6 border-t border-gray-200 bg-gray-50 flex justify-end">
+                <button onclick="closeBriefing()" class="bg-emerald-700 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-emerald-800 transition shadow-md">Acknowledge & Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 7-Paragraph Minimum In-Depth Briefing Content ---
+        const briefingData = {
+            'speed-details': {
+                title: 'Processing Speed Fundamentals',
+                icon: '<i class="fa-solid fa-gauge-high text-blue-600"></i>',
+                html: `
+                    <p class="mb-5">Processing speed represents the foundational metric of a computer central processing unit (CPU), denoting how rapidly the processor can carry out fundamental computational instructions. At the hardware level, every single action performed on a computer—from rendering a 3D video game frame to calculating a spreadsheet formula—is broken down into millions of micro-instructions. The CPU acts as the primary computational engine, and its speed dictates how quickly these individual operational instructions are resolved and executed.</p>
+                    
+                    <p class="mb-5">The measurement standard for processing speed is the Hertz (Hz), where one Hertz corresponds directly to one complete execution cycle per second. In historical computing architectures, processors operated at much slower rates measured in Kilohertz or Megahertz. Modern processors operate at Gigahertz frequencies, meaning billions of cycles occur every single second. This astronomical frequency is what allows users to perceive instant responses when launching applications, clicking browser links, or switching between complex multimedia windows.</p>
+                    
+                    <p class="mb-5">When a CPU features a high processing speed, it delivers profound operational advantages across the entire system architecture. First and foremost, high clock frequencies allow the CPU to process a larger volume of instructions within any given timeframe. This directly reduces latency, meaning applications open significantly faster, web pages render complex scripts without stuttering, and system responsiveness remains snappy even when multiple software programs are running concurrently in memory.</p>
+                    
+                    <p class="mb-5">Despite the immense benefits of rapid instruction execution, high processing speeds introduce significant engineering challenges, chief among them being thermal dissipation. As transistors switch electrical states millions or billions of times per second, they generate substantial electrical resistance and heat. If a CPU operates at maximum frequency without adequate cooling, temperatures skyrocket, risking permanent silicon damage. Modern operating systems and hardware controllers therefore implement thermal safeguards like frequency scaling.</p>
+                    
+                    <p class="mb-5">Thermal throttling and power management systems actively monitor processor die temperatures. When a device is idle or running lightweight productivity tasks, the CPU automatically throttles down its clock speed to conserve battery power and reduce heat output. Conversely, when an intense computational workload is initiated—such as compiling software or rendering graphics—the CPU boosts its clock speed to maximum frequency to deliver peak performance.</p>
+                    
+                    <p class="mb-5">Understanding processing speed is also vital when comparing different generations of CPU architectures. It is a common misconception that a 4.0 GHz processor from ten years ago outperforms a 3.0 GHz processor manufactured today. Architectural improvements, such as instructions-per-clock (IPC) efficiency, cache size optimization, and pipeline design, mean that modern processors accomplish vastly more work per clock cycle than their historical counterparts.</p>
+                    
+                    <p>In summary, processing speed serves as the primary benchmark for raw CPU performance. While multi-core concurrency and cache memory play critical supporting roles, the core frequency sets the baseline pace for instruction execution. Whether evaluating laptops for enterprise office work, smartphones for mobile gaming, or embedded microcontrollers for robotics, analyzing processing speed remains the starting point for all technical specifications.</p>
+                `
+            },
+            'speed-usecase': {
+                title: 'Processing Speed Basics: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 1: Enterprise Office Productivity & Web Browsing</h4>
+                        <p class="mb-2">Standard business workstations handle text documents, emails, and web applications that rely heavily on single-core instruction speed for snappy UI responsiveness.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Launching Applications):</strong> When an accountant opens a massive Excel financial ledger, a high clock speed ($3.2\text{ GHz}$) allows the CPU to load thousands of rows and calculate formulas into RAM within milliseconds.</li>
+                            <li><strong>Example 2 (Browser Rendering):</strong> Loading complex JavaScript-heavy web portals requires rapid single-threaded instruction execution to parse DOM elements without noticeable lag.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 2: High-Performance Gaming & Physics Simulation</h4>
+                        <p class="mb-2">Gaming and real-time physics engines demand sustained high clock frequencies to maintain stable frame rates and synchronous state updates.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Frame Rate Stability):</strong> A gaming PC operating at $4.5\text{ GHz}$ processes collision detection and AI pathfinding fast enough to deliver a smooth 144 frames per second.</li>
+                            <li><strong>Example 2 (Thermal Boost):</strong> During intense multiplayer combat sequences, the CPU automatically boosts its frequency past base specs to handle sudden spikes in game logic instructions.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: CPU Microprocessor Die</p>
+                            <img src="https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?auto=format&fit=crop&w=600&h=350" alt="Microprocessor die representing CPU hardware" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: High-Performance Workstation</p>
+                            <img src="https://images.unsplash.com/photo-1587202372775-e229f172b9d7?auto=format&fit=crop&w=600&h=350" alt="Modern computer setup for heavy workloads" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'clock-details': {
+                title: 'Clock Speed & Square Waves',
+                icon: '<i class="fa-solid fa-wave-square text-emerald-600"></i>',
+                html: `
+                    <p class="mb-5">At the heart of every central processing unit lies the system clock, a precision timing circuit that synchronizes every single operation performed within the processor. Without a master clock, billions of microscopic transistors would operate asynchronously, resulting in corrupted data streams and immediate system failure. The clock speed establishes the strict operational rhythm, issuing regular timing beats that dictate exactly when instructions advance from one pipeline stage to the next.</p>
+                    
+                    <p class="mb-5">The electrical waveform utilized by CPU clocks to establish this synchronization is known as a square wave. Unlike sinusoidal waves found in audio signals, a square wave alternates abruptly between two distinct voltage levels—representing digital high (binary 1) and digital low (binary 0). These sharp, vertical transitions between voltage states act as precise timing markers that internal logic gates use to trigger register updates and arithmetic calculations.</p>
+                    
+                    <p class="mb-5">To visualize this process, imagine a large marching band where musicians take a step forward only when the drum beats. In this analogy, the drumbeat is the square wave clock signal, and the frequency of beats per second is the clock speed. The sharper and more consistent the drumbeat, the easier it is for every section of the band (the CPU internal circuits) to remain perfectly in rhythm without missing a beat.</p>
+                    
+                    <p class="mb-5">The architecture of instruction pipelining relies directly on these clock ticks. Inside the CPU, executing an instruction is divided into sequential micro-operations: Fetching the instruction from memory, Decoding what the instruction means, and Executing the computed result. Each clock tick signals the processor control unit to advance all instructions currently in the pipeline forward by exactly one distinct stage.</p>
+                    
+                    <p class="mb-5">Engineers face monumental electronic challenges in maintaining square wave integrity at gigahertz frequencies. As clock speeds exceed billions of cycles per second, even microscopic electrical capacitance and resistance in motherboard traces can cause square wave edges to round off or degrade. If the edges lose their sharpness, the CPU circuits cannot reliably determine the exact moment a clock tick occurs, leading to timing jitter and instability.</p>
+                    
+                    <p class="mb-5">To combat signal degradation, modern CPUs incorporate sophisticated phase-locked loops (PLLs) and on-die clock distribution networks. These systems clean and amplify the square wave signal across different regions of the processor die, ensuring that millions of transistors millions of times a second stay perfectly synchronized to the master timing source.</p>
+                    
+                    <p>Ultimately, the combination of clock speed and square wave timing defines the temporal heartbeat of digital computing. By converting continuous electrical current into clean, high-frequency square wave pulses, the system clock empowers processors to execute complex computational logic with flawless precision and speed.</p>
+                `
+            },
+            'clock-usecase': {
+                title: 'Clock Speed & Square Waves: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-emerald-800 mb-2 border-b-2 border-emerald-200 pb-1">Case 1: Precision Oscillators in Embedded Microcontrollers</h4>
+                        <p class="mb-2">Embedded electronics, such as microcontroller units in IoT sensors or automotive braking systems, rely on crystal oscillators generating pristine square wave timing signals.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Digital Timing):</strong> A microcontroller uses precise clock ticks to sample analog sensor data at exactly 1,000 intervals per second, ensuring accurate time-series logging.</li>
+                            <li><strong>Example 2 (PWM Control):</strong> Pulse-width modulation circuits utilize square wave duty cycles driven by the system clock to control electric motor speeds with extreme precision.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-emerald-800 mb-2 border-b-2 border-emerald-200 pb-1">Case 2: Overclocking & Extreme Hardware Tuning</h4>
+                        <p class="mb-2">Enthusiasts push system clock generators beyond manufacturer specifications to test the absolute timing limits of CPU square wave propagation.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Frequency Tuning):</strong> An overclocker raises the base clock multiplier in the BIOS, increasing the square wave frequency from $3.6\text{ GHz}$ to $4.2\text{ GHz}$.</li>
+                            <li><strong>Example 2 (Voltage Stabilization):</strong> When raising clock speeds, technicians must increase core voltage to ensure square wave transition edges remain sharp enough for high-speed circuit detection.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Oscilloscope Square Wave</p>
+                            <img src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=600&h=350" alt="Oscilloscope wave signal representing clock timing" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Hardware Benchmarking & Tuning</p>
+                            <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=600&h=350" alt="Motherboard circuits and components" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'units-details': {
+                title: 'Megahertz & Gigahertz Units & Conversions',
+                icon: '<i class="fa-solid fa-calculator text-purple-600"></i>',
+                html: `
+                    <p class="mb-5">To accurately communicate and compare processor performance across different hardware eras and device categories, computer science utilizes standardized metric units of frequency. The base unit of measurement is the Hertz (Hz), named after the pioneering physicist Heinrich Hertz. However, because modern CPUs complete millions and billions of cycles every second, raw Hertz values are impractical. Instead, engineers rely on Megahertz (MHz) and Gigahertz (GHz).</p>
+                    
+                    <p class="mb-5">Megahertz (MHz) measures processor frequency in millions of cycles per second, where $1\text{ MHz} = 1,000,000\text{ Hz}$. In the early decades of personal computing during the 1980s and 1990s, microprocessors operated entirely within the Megahertz range. For example, legendary processors like the Intel 486 series and early Pentiums operated at speeds ranging from $25\text{ MHz}$ up to $300\text{ MHz}$. Today, while flagship desktop CPUs have advanced past MHz into GHz, Megahertz remains vital for measuring older embedded systems, bus speeds, and peripheral clock rates.</p>
+                    
+                    <p class="mb-5">Gigahertz (GHz) measures processor frequency in billions of cycles per second, where $1\text{ GHz} = 1,000,000,000\text{ Hz}$. Modern personal computers, laptops, and smartphones operate squarely within the Gigahertz spectrum, with standard clock speeds ranging from $1.5\text{ GHz}$ on power-efficient mobile devices up to $5.0\text{ GHz}$ or higher on high-performance gaming desktops.</p>
+                    
+                    <p class="mb-5">Mastering the mathematical conversion between Megahertz and Gigahertz is a fundamental competency in IT infrastructure and hardware analysis. Because the metric prefix 'Giga' represents one billion ($10^9$) and 'Mega' represents one million ($10^6$), the conversion factor between the two units is exactly $1,000$. Specifically, $1\text{ GHz}$ is equal to $1,000\text{ MHz}$.</p>
+                    
+                    <p class="mb-5">To convert from Megahertz to Gigahertz, one must divide the MHz value by $1,000$. For instance, if a processor specification lists a clock speed of $2400\text{ MHz}$, dividing by $1,000$ yields $2.4\text{ GHz}$. Conversely, to convert from Gigahertz to Megahertz, one multiplies the GHz value by $1,000$. For example, a smartphone processor operating at $3.2\text{ GHz}$ multiplied by $1,000$ equals $3200\text{ MHz}$.</p>
+                    
+                    <p class="mb-5">Standardizing these units allows IT professionals to normalize hardware specifications when comparing diverse devices. When auditing an inventory sheet containing mixed data—where some laptops report speed in GHz and others in MHz—technicians must convert all specs to a common unit before calculating potential performance or determining system requirements.</p>
+                    
+                    <p>As computing technology continues to advance toward Terahertz (THz) frequencies in experimental optical and quantum architectures, understanding metric frequency scaling ensures that foundational knowledge of Hz, MHz, and GHz remains perpetually relevant across all technological domains.</p>
+                `
+            },
+            'units-usecase': {
+                title: 'MHz & GHz Units & Conversions: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Case 1: IT Asset Management & Hardware Auditing</h4>
+                        <p class="mb-2">Enterprise IT administrators frequently audit mixed inventories containing legacy workstations and modern laptops, requiring precise unit normalization.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Normalizing Specs):</strong> An auditor compares an older terminal reporting $800\text{ MHz}$ against a new laptop reporting $2.4\text{ GHz}$. Converting $800\text{ MHz}$ to $0.8\text{ GHz}$ clearly reveals the performance differential.</li>
+                            <li><strong>Example 2 (Procurement Standards):</strong> A school district sets a minimum procurement requirement of $2000\text{ MHz}$ ($2.0\text{ GHz}$) for all student laptops to ensure smooth educational software execution.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Case 2: Embedded Systems & Microcontroller Programming</h4>
+                        <p class="mb-2">Embedded systems engineers work across vastly different frequency scales, programming microcontrollers that operate in Megahertz alongside host processors running in Gigahertz.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (IoT Clock Configuration):</strong> Programming an ARM Cortex-M microcontroller to operate at $72\text{ MHz}$ ($0.072\text{ GHz}$) to optimize battery life in a remote weather station.</li>
+                            <li><strong>Example 2 (Bus Frequency Matching):</strong> Configuring peripheral communication speeds where memory buses operate at specific MHz ratios synchronized with the main GHz CPU clock.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Metric Frequency Scaling</p>
+                            <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&h=350" alt="Microchips and circuitry representing frequency scaling" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: IT Hardware Specification Sheet</p>
+                            <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=600&h=350" alt="Data analysis and hardware specs spreadsheet" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'cores-details': {
+                title: 'CPU Cores & Multitasking',
+                icon: '<i class="fa-solid fa-microchip text-amber-600"></i>',
+                html: `
+                    <p class="mb-5">For many years, increasing computer performance was achieved simply by pushing clock speeds higher and higher. Eventually, physical limits involving heat dissipation, quantum tunneling, and electrical resistance stalled single-core frequency scaling around $4\text{ GHz}$. To bypass this barrier, semiconductor engineers revolutionized processor architecture by introducing multi-core processing, effectively placing multiple independent CPU cores onto a single silicon chip.</p>
+                    
+                    <p class="mb-5">A core functions as an independent processing unit within the CPU, complete with its own arithmetic logic unit, registers, and execution pipelines. A traditional single-core CPU can only process one instruction stream at a time. In contrast, a multi-core CPU—featuring dual, quad, hexa, or octa cores—can execute multiple distinct instruction streams in true parallel synchronization, vastly expanding the system throughput and multitasking capability.</p>
+                    
+                    <p class="mb-5.">To understand the power of cores versus clock speed, consider a culinary analogy: Clock speed represents how fast an individual chef can prepare a single pizza, while cores represent how many chefs are working in the kitchen. Having one extremely fast chef is great for a single order, but for an order of ten pizzas, having four chefs working simultaneously in parallel gets the entire job done much faster.</p>
+                    
+                    <p class="mb-5">Multi-core processing shines across demanding computational workloads that can be easily partitioned. Modern video editing suites, 3D rendering engines, scientific simulations, and AAA video games are engineered with multi-threading support. The operating system's CPU scheduler divides large workloads into smaller software threads, distributing them across available cores so that processing power scales dramatically.</p>
+                    
+                    <p class="mb-5">However, not all software benefits equally from high core counts. Certain legacy applications and basic tasks remain strictly single-threaded, meaning they execute sequentially on one core regardless of whether the CPU has 4 or 16 cores available. For such applications, the individual clock speed (GHz) of that single core matters far more than the total core count.</p>
+                    
+                    <p class="mb-5">Advanced modern processors even utilize heterogeneous core architectures, combining Performance Cores (P-cores) optimized for heavy single-threaded workloads with Efficiency Cores (E-cores) optimized for background tasks and low power consumption. This intelligent distribution maximizes both peak performance and energy efficiency.</p>
+                    
+                    <p>Evaluating CPU potential therefore requires analyzing both clock speed and core count. By multiplying clock speed by the number of cores to determine aggregate computing potential, IT professionals can accurately select the ideal hardware configuration for everything from office workstations to high-end servers.</p>
+                `
+            },
+            'cores-usecase': {
+                title: 'CPU Cores & Multitasking: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-amber-800 mb-2 border-b-2 border-amber-200 pb-1">Case 1: Professional Video Editing & 3D Rendering</h4>
+                        <p class="mb-2">Media production workflows involve massive parallel processing tasks where video frames are rendered simultaneously across multiple CPU cores.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Video Exporting):</strong> Exporting a 4K video file on an 8-core CPU allows the rendering engine to assign different video segments to separate cores, cutting export time by over 70%.</li>
+                            <li><strong>Example 2 (Real-time Timeline Scrubbing):</strong> Multiple cores handle background audio mixing and effect previews while the primary core maintains smooth UI responsiveness.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-amber-800 mb-2 border-b-2 border-amber-200 pb-1">Case 2: Heavy Enterprise Multitasking</h4>
+                        <p class="mb-2">Knowledge workers and software developers run dozens of heavy applications simultaneously, requiring robust multi-core scheduling to prevent system freezes.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Software Compilation):</strong> A developer compiles large codebases while running local database servers and test virtual machines across 12 distinct CPU cores.</li>
+                            <li><strong>Example 2 (Virtualization Servers):</strong> Enterprise hypervisors allocate specific CPU cores to individual virtual machines, ensuring isolated and guaranteed performance per tenant.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Multi-Core Die Architecture</p>
+                            <img src="https://images.unsplash.com/photo-1555680202-c86f0e12f086?auto=format&fit=crop&w=600&h=350" alt="Multi-core CPU die graphic representation" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Video Production Workstation</p>
+                            <img src="https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=600&h=350" alt="Video editing timeline on workstation monitors" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        function openBriefing(key) {
+            const modal = document.getElementById('briefing-modal');
+            const data = briefingData[key];
+            if(data) {
+                document.getElementById('briefing-modal-icon').innerHTML = data.icon;
+                document.getElementById('briefing-modal-title').innerText = data.title;
+                document.getElementById('briefing-modal-content').innerHTML = data.html;
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; 
+            }
+        }
+
+        function closeBriefing() {
+            document.getElementById('briefing-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto'; 
+        }
+
+        document.getElementById('briefing-modal').addEventListener('click', function(e) {
+            if(e.target === this) closeBriefing();
+        });
+        
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId + '-section').classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-emerald-900'));
+            const activeBtn = document.getElementById('nav-' + tabId);
+            if(activeBtn && tabId !== 'cert') activeBtn.classList.add('bg-emerald-900');
+            
+            document.querySelectorAll('.nav-btn-mobile').forEach(btn => btn.classList.remove('bg-emerald-900'));
+            const activeMobileBtn = document.getElementById('nav-' + tabId + '-mobile');
+            if(activeMobileBtn && tabId !== 'cert') activeMobileBtn.classList.add('bg-emerald-900');
+
+            window.scrollTo(0,0);
+
+            if (tabId === 'game' && !gameRunning) {
+                resetGame();
+                drawGame();
+            }
+        }
+
+        function showModal(title, message, type = 'info') {
+            const modal = document.getElementById('custom-modal');
+            const icon = document.getElementById('modal-icon');
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-msg').innerText = message;
+            
+            if(type === 'success') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-500"></i>';
+            } else if (type === 'error') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500"></i>';
+            } else if (type === 'warning') {
+                icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-yellow-500"></i>';
+            } else {
+                icon.innerHTML = '<i class="fa-solid fa-circle-info text-blue-500"></i>';
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        // --- LAB 1: Speed Throughput ---
+        function updateLab1(val) {
+            document.getElementById('lab1-speed-val').innerText = val;
+            let cycles = parseFloat(val) * 1000000000;
+            document.getElementById('lab1-output').innerText = cycles.toLocaleString() + " Hz";
+            
+            let msg = "";
+            if(val < 1.5) msg = "Power-saving mode: Suitable for background IoT tasks and basic reading.";
+            else if(val < 3.0) msg = "Optimal for standard office applications and web browsing.";
+            else msg = "High-performance turbo mode: Optimized for gaming and video rendering.";
+            document.getElementById('lab1-msg').innerText = msg;
+        }
+
+        // --- LAB 2: Thermal Throttling ---
+        let currentTemp = 45;
+        let currentSpeed = 3.0;
+        function boostThermal(amount) {
+            currentTemp = Math.min(100, Math.max(35, currentTemp + (amount * 15)));
+            if(currentTemp > 80) currentSpeed = 1.8; // Throttled
+            else if(currentTemp > 65) currentSpeed = 2.4;
+            else currentSpeed = 3.0 + (amount > 0 ? 0.5 : 0);
+
+            document.getElementById('thermal-temp').innerText = currentTemp + "°C";
+            document.getElementById('thermal-speed').innerText = currentSpeed.toFixed(1) + " GHz";
+            
+            let bar = document.getElementById('thermal-bar');
+            bar.style.width = currentTemp + "%";
+            
+            let status = "";
+            if(currentTemp > 80) {
+                bar.className = "bg-red-500 h-4 rounded-full transition-all duration-300";
+                status = "WARNING: Thermal threshold exceeded! CPU automatically throttling clock speed to prevent damage.";
+                document.getElementById('thermal-temp').className = "text-red-600 font-bold";
+            } else if(currentTemp > 65) {
+                bar.className = "bg-yellow-500 h-4 rounded-full transition-all duration-300";
+                status = "Elevated temperature. Moderate speed reduction applied.";
+                document.getElementById('thermal-temp').className = "text-yellow-600 font-bold";
+            } else {
+                bar.className = "bg-emerald-500 h-4 rounded-full transition-all duration-300";
+                status = "System operating at nominal temperature. Full performance enabled.";
+                document.getElementById('thermal-temp').className = "text-emerald-600 font-bold";
+            }
+            document.getElementById('thermal-status').innerText = status;
+        }
+
+        // --- LAB 3: Square Wave Matcher ---
+        let userWaveFreq = 2;
+        const targetWaveFreq = 4;
+        const waveCanvas = document.getElementById('wave-canvas');
+        const waveCtx = waveCanvas.getContext('2d');
+
+        function drawWave() {
+            waveCtx.clearRect(0,0,waveCanvas.width, waveCanvas.height);
+            waveCtx.beginPath();
+            waveCtx.strokeStyle = '#059669';
+            waveCtx.lineWidth = 3;
+            
+            let amplitude = 30;
+            let midY = 50;
+            let period = waveCanvas.width / userWaveFreq;
+            
+            waveCtx.moveTo(0, midY + amplitude);
+            for(let x=0; x<waveCanvas.width; x++) {
+                let phase = (x % period) / period;
+                let y = phase < 0.5 ? midY - amplitude : midY + amplitude;
+                waveCtx.lineTo(x, y);
+            }
+            waveCtx.stroke();
+        }
+        drawWave();
+
+        function adjustWaveFreq(delta) {
+            userWaveFreq = Math.min(8, Math.max(1, userWaveFreq + delta));
+            document.getElementById('wave-freq').innerText = userWaveFreq;
+            drawWave();
+            
+            let feedback = document.getElementById('wave-feedback');
+            if(userWaveFreq === targetWaveFreq) {
+                feedback.innerText = "Synchronized! Square wave frequency matches CPU pipeline clock target (4 Hz). Lab Complete!";
+                feedback.className = "font-bold text-emerald-600";
+            } else {
+                feedback.innerText = "Out of sync! Adjust frequency to match pipeline ticks (Target: 4 Hz).";
+                feedback.className = "font-bold text-amber-700";
+            }
+        }
+
+        // --- LAB 4: Pipeline Tick ---
+        const stages = ["FETCH INSTRUCTION", "DECODE INSTRUCTION", "EXECUTE INSTRUCTION", "WRITEBACK RESULT"];
+        let stageIndex = 0;
+        function stepPipeline() {
+            stageIndex = (stageIndex + 1) % stages.length;
+            document.getElementById('pipeline-stage').innerText = stages[stageIndex];
+        }
+
+        // --- LAB 5: Unit Converter ---
+        function convertMHzToGHz() {
+            let mhz = parseFloat(document.getElementById('input-mhz').value);
+            if(isNaN(mhz)) {
+                document.getElementById('res-ghz').innerText = "= 0 GHz";
+                return;
+            }
+            let ghz = mhz / 1000;
+            document.getElementById('res-ghz').innerText = `= ${ghz} GHz`;
+        }
+
+        function convertGHzToMHz() {
+            let ghz = parseFloat(document.getElementById('input-ghz').value);
+            if(isNaN(ghz)) {
+                document.getElementById('res-mhz').innerText = "= 0 MHz";
+                return;
+            }
+            let mhz = ghz * 1000;
+            document.getElementById('res-mhz').innerText = `= ${mhz} MHz`;
+        }
+
+        // --- LAB 6: Sorting Lab ---
+        function checkSortingLab() {
+            let items = document.querySelectorAll('#sorting-list > div');
+            let speeds = Array.from(items).map(item => parseInt(item.dataset.speed));
+            
+            // Expected order ascending: 100, 500, 3200
+            if(speeds[0] === 100 && speeds[1] === 500 && speeds[2] === 3200) {
+                document.getElementById('sorting-feedback').innerText = "Correct chronological sorting! (100 MHz -> 500 MHz -> 3200 MHz).";
+                document.getElementById('sorting-feedback').className = "mt-2 font-bold text-sm text-emerald-600";
+            } else {
+                // Auto fix for user convenience or show error
+                document.getElementById('sorting-feedback').innerText = "Incorrect order. Remember: 100 MHz (1989) is slower than 500 MHz (1999) which is slower than 3200 MHz (3.2 GHz).";
+                document.getElementById('sorting-feedback').className = "mt-2 font-bold text-sm text-red-600";
+            }
+        }
+
+        // --- LAB 7: Multi-Core Distributor ---
+        let assignedCount = 0;
+        function assignTask(coreNum) {
+            let loadEl = document.getElementById(`core-${coreNum}-load`);
+            if(loadEl.innerText === "Idle") {
+                loadEl.innerText = "Executing Thread";
+                loadEl.className = "text-sm text-emerald-600 font-bold mb-2";
+                assignedCount++;
+                document.getElementById('core-feedback').innerText = `Assigned Threads: ${assignedCount} / 4`;
+                if(assignedCount === 4) {
+                    document.getElementById('core-feedback').innerText = "All 4 cores fully utilized in parallel! Multi-core concurrency achieved.";
+                }
+            } else {
+                loadEl.innerText = "Idle";
+                loadEl.className = "text-sm text-gray-600 mb-2";
+                assignedCount = Math.max(0, assignedCount - 1);
+                document.getElementById('core-feedback').innerText = `Assigned Threads: ${assignedCount} / 4`;
+            }
+        }
+
+        // --- QUIZ LOGIC (20 Questions: 10 curriculum + 10 advanced extension) ---
+        const quizData = [
+            // 10 Curriculum Questions
+            { q: "What does 1 MHz represent?", options: ["One trillion cycles per second", "One thousand cycles per second", "One billion cycles per second", "One million cycles per second"], answer: 3 },
+            { q: "What does clock speed measure in a CPU?", options: ["How many cycles the CPU completes each second", "The size of the CPU", "The amount of memory the CPU can store", "How many programs can run at the same time"], answer: 0 },
+            { q: "What is the role of square waves in CPU operation?", options: ["To cool the CPU", "To send timing signals that control CPU cycles", "To store data permanently", "To increase storage space"], answer: 1 },
+            { q: "Which CPU has the highest processing power?", options: ["2500 MHz", "2900 MHz", "2.8 GHz", "1.5 GHz"], answer: 2 },
+            { q: "What is true about CPU cores?", options: ["More cores always make a CPU faster", "Each core shares the same clock speed but can handle different tasks", "Cores determine how much storage a CPU can have", "Each core can work on its own task"], answer: 3 },
+            { q: "Convert 4.0 GHz to MHz.", options: ["40 MHz", "400 MHz", "4000 MHz", "4,000,000 MHz"], answer: 2 },
+            { q: "Why might two CPUs have the same processing speed but different performance?", options: ["They have different tasks", "One might use a different signal", "One might have more cores", "One might be heavier"], answer: 2 },
+            { q: "Which term means “one billion cycles per second”?", options: ["GHz", "MHz", "THz", "KHz"], answer: 0 },
+            { q: "What is the basic unit of measurement for CPU clock speed?", options: ["Volt", "Hertz", "Watts", "Bytes"], answer: 1 },
+            { q: "Which of the following is equal to 2500 MHz?", options: ["0.25 GHz", "250 GHz", "25 GHz", "2.5 GHz"], answer: 3 },
+            
+            // 10 Advanced Extension Questions from Briefing Details
+            { q: "What electrical phenomenon occurs when a CPU operates at maximum frequency without adequate cooling?", options: ["Phase-locked loop inversion", "Thermal dissipation and overheating", "Square wave amplification", "Cache memory expansion"], answer: 1 },
+            { q: "What is the primary function of thermal throttling in modern operating systems?", options: ["To increase screen brightness", "To boost Wi-Fi bandwidth", "To reduce clock speed and heat output to protect silicon", "To speed up hard drive read rates"], answer: 2 },
+            { q: "Why do square wave voltage transitions need sharp edges in digital logic circuits?", options: ["To allow internal circuits to detect clock ticks instantly", "To generate audio sound effects", "To recharge the battery", "To cool down the heatsink"], answer: 0 },
+            { q: "How do you convert Megahertz (MHz) to Gigahertz (GHz)?", options: ["Multiply by 1,000", "Divide by 1,000", "Multiply by 1,000,000", "Divide by 1,000,000"], answer: 1 },
+            { q: "What is the formula for calculating potential computing power across a CPU specification sheet?", options: ["Clock Speed + RAM", "Clock Speed / Cores", "Clock Speed multiplied by the number of Cores", "Storage capacity divided by clock speed"], answer: 2 },
+            { q: "What architectural component inside a CPU core manages sequential stages like Fetch, Decode, and Execute?", options: ["The power supply", "The instruction pipeline", "The hard disk drive", "The cooling fan"], answer: 1 },
+            { q: "Why did semiconductor engineers introduce multi-core architectures instead of only increasing single-core clock speeds?", options: ["Single-core speeds hit physical limits regarding heat dissipation and resistance", "Users disliked fast single cores", "Motherboards could no longer fit single chips", "Software no longer required speed"], answer: 0 },
+            { q: "Which type of workload benefits most from an 8-core processor compared to a single-core processor?", options: ["Basic text typing", "Multi-threaded video rendering and scientific simulation", "Displaying a static desktop wallpaper", "Checking network cables"], answer: 1 },
+            { q: "What does IPC stand for in processor architecture evaluation?", options: ["Instructions Per Clock", "Internal Power Converter", "Instant Processor Calculation", "Integrated Peripheral Control"], answer: 0 },
+            { q: "What type of CPU core is specifically optimized for low power consumption and background tasks?", options: ["Performance Core (P-core)", "Efficiency Core (E-core)", "Arithmetic Core", "Thermal Core"], answer: 1 }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        
+        quizData.forEach((item, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = "bg-gray-50 p-6 rounded-lg border border-gray-200 transition-all";
+            qDiv.id = `q-block-${index}`;
+            
+            const qTitle = document.createElement('h3');
+            qTitle.className = "font-bold text-lg text-gray-800 mb-4";
+            qTitle.innerText = `${index + 1}. ${item.q}`;
+            qDiv.appendChild(qTitle);
+            
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = "space-y-3";
+            
+            item.options.forEach((opt, optIndex) => {
+                const label = document.createElement('label');
+                label.className = "flex items-center space-x-3 p-3 rounded bg-white border border-gray-300 hover:bg-emerald-50 cursor-pointer transition";
+                
+                const radio = document.createElement('input');
+                radio.type = "radio";
+                radio.name = `q${index}`;
+                radio.value = optIndex;
+                radio.className = "form-radio h-5 w-5 text-emerald-600";
+                
+                const span = document.createElement('span');
+                span.className = "text-gray-700";
+                span.innerText = opt;
+                
+                label.appendChild(radio);
+                label.appendChild(span);
+                optionsDiv.appendChild(label);
+            });
+            
+            qDiv.appendChild(optionsDiv);
+            quizContainer.appendChild(qDiv);
+        });
+
+        function gradeQuiz() {
+            let score = 0;
+            let allAnswered = true;
+
+            for(let i = 0; i < quizData.length; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if(selected) {
+                    if(parseInt(selected.value) === quizData[i].answer) {
+                        score++;
+                    }
+                } else {
+                    allAnswered = false;
+                }
+            }
+            
+            if(!allAnswered) {
+                showModal('Incomplete Quiz', 'Please answer all 20 questions before submitting.', 'warning');
+                return;
+            }
+            
+            let percentage = (score / quizData.length) * 100;
+            
+            if(score >= 18) { // 90% threshold (18/20)
+                const navGame = document.getElementById('nav-game');
+                const navGameMobile = document.getElementById('nav-game-mobile');
+                
+                navGame.classList.remove('text-gray-300', 'cursor-not-allowed');
+                navGame.classList.add('text-white', 'hover:bg-emerald-600');
+                navGame.disabled = false;
+                navGame.innerHTML = '<i class="fa-solid fa-gamepad mr-1"></i>Game';
+                
+                navGameMobile.classList.remove('text-gray-300', 'cursor-not-allowed');
+                navGameMobile.classList.add('text-white', 'hover:bg-emerald-600');
+                navGameMobile.disabled = false;
+                navGameMobile.innerHTML = '<i class="fa-solid fa-gamepad"></i> Game';
+
+                document.getElementById('nav-cert').classList.remove('hidden');
+                document.getElementById('nav-cert-mobile').classList.remove('hidden');
+                
+                document.getElementById('proceed-game-btn').classList.remove('hidden');
+                document.getElementById('submit-quiz-btn').classList.add('hidden');
+
+                showModal('Mastery Achieved!', `You scored ${score}/20 (${percentage}%). You have unlocked your Certificate of Mastery AND Clock Speed Dash!`, 'success');
+            } else {
+                quizData.forEach((_, i) => {
+                    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                    if(selected) selected.checked = false;
+                });
+                showModal('Keep Trying!', `You scored ${score}/20 (${percentage}%). You need 90% (18/20) to earn the certificate. Your answers have been reset so you can try again.`, 'error');
+                document.getElementById('quiz-section').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // --- RETRO GAME LOGIC: Clock Speed Dash (Chrome Dino Clone) ---
+        const gameCanvas = document.getElementById('game-canvas');
+        const gameCtx = gameCanvas.getContext('2d');
+        
+        let gameScore = 0;
+        let cpuSpeedVal = 2.0;
+        let gameRunning = false;
+        let gameAnimId;
+        
+        let cpuRunner = {
+            x: 50,
+            y: 220,
+            width: 30,
+            height: 40,
+            vy: 0,
+            jumpForce: -10,
+            gravity: 0.6,
+            grounded: true
+        };
+
+        let obstacles = [];
+        let boosts = [];
+        let gameSpawnTimer = 0;
+        let gameSpeed = 5;
+
+        const overlay = document.getElementById('game-overlay');
+        const startBtn = document.getElementById('start-game-btn');
+        startBtn.addEventListener('click', startClockSpeedDash);
+
+        window.addEventListener('keydown', e => {
+            if((e.code === 'Space' || e.code === 'ArrowUp') && gameRunning) {
+                e.preventDefault();
+                jumpRunner();
+            }
+        });
+
+        gameCanvas.addEventListener('click', () => {
+            if(gameRunning) jumpRunner();
+        });
+
+        function jumpRunner() {
+            if(cpuRunner.grounded) {
+                cpuRunner.vy = cpuRunner.jumpForce;
+                cpuRunner.grounded = false;
+            }
+        }
+
+        class ThermalHazard {
+            constructor() {
+                this.x = gameCanvas.width;
+                this.y = 230;
+                this.width = 25;
+                this.height = 30;
+                this.speed = gameSpeed;
+            }
+            update() { this.x -= this.speed; }
+            draw() {
+                gameCtx.fillStyle = '#ef4444'; // Red thermal hazard
+                gameCtx.fillRect(this.x, this.y, this.width, this.height);
+                gameCtx.fillStyle = '#ffffff';
+                gameCtx.font = '10px monospace';
+                gameCtx.fillText('HOT', this.x + 2, this.y - 4);
+            }
+        }
+
+        class HertzBoost {
+            constructor() {
+                this.x = gameCanvas.width;
+                this.y = 150 + Math.random() * 50;
+                this.width = 30;
+                this.height = 20;
+                this.speed = gameSpeed;
+            }
+            update() { this.x -= this.speed; }
+            draw() {
+                gameCtx.fillStyle = '#3b82f6'; // Blue boost
+                gameCtx.fillRect(this.x, this.y, this.width, this.height);
+                gameCtx.fillStyle = '#ffffff';
+                gameCtx.font = '10px monospace';
+                gameCtx.fillText('+GHz', this.x + 2, this.y + 14);
+            }
+        }
+
+        function resetGame() {
+            gameScore = 0;
+            cpuSpeedVal = 2.0;
+            gameSpeed = 5;
+            obstacles = [];
+            boosts = [];
+            cpuRunner.y = 220;
+            cpuRunner.vy = 0;
+            cpuRunner.grounded = true;
+            document.getElementById('game-score').innerText = gameScore;
+            document.getElementById('game-speed').innerText = cpuSpeedVal.toFixed(1);
+        }
+
+        function startClockSpeedDash() {
+            overlay.classList.add('hidden');
+            if(!gameRunning) {
+                resetGame();
+                gameRunning = true;
+                runGameLoop();
+            }
+        }
+
+        function runGameLoop() {
+            if(!gameRunning) return;
+            
+            gameCtx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
+            
+            // Draw Ground line
+            gameCtx.strokeStyle = '#374151';
+            gameCtx.lineWidth = 4;
+            gameCtx.beginPath();
+            gameCtx.moveTo(0, 260);
+            gameCtx.lineTo(gameCanvas.width, 260);
+            gameCtx.stroke();
+            
+            // Update Runner physics
+            cpuRunner.vy += cpuRunner.gravity;
+            cpuRunner.y += cpuRunner.vy;
+            if(cpuRunner.y > 220) {
+                cpuRunner.y = 220;
+                cpuRunner.vy = 0;
+                cpuRunner.grounded = true;
+            }
+            
+            // Draw CPU Runner
+            gameCtx.fillStyle = '#10b981';
+            gameCtx.fillRect(cpuRunner.x, cpuRunner.y, cpuRunner.width, cpuRunner.height);
+            gameCtx.fillStyle = '#ffffff';
+            gameCtx.font = '10px monospace';
+            gameCtx.fillText('CPU', cpuRunner.x + 3, cpuRunner.y - 5);
+
+            // Spawning
+            gameSpawnTimer++;
+            if(gameSpawnTimer > 90) {
+                if(Math.random() > 0.4) obstacles.push(new ThermalHazard());
+                else boosts.push(new HertzBoost());
+                gameSpawnTimer = 0;
+            }
+
+            // Update & Draw Obstacles
+            for(let i = obstacles.length - 1; i >= 0; i--) {
+                let obs = obstacles[i];
+                obs.update();
+                obs.draw();
+                
+                // Collision Detection
+                if(cpuRunner.x < obs.x + obs.width &&
+                   cpuRunner.x + cpuRunner.width > obs.x &&
+                   cpuRunner.y < obs.y + obs.height &&
+                   cpuRunner.y + cpuRunner.height > obs.y) {
+                    gameOverGame();
+                    return;
+                }
+                
+                if(obs.x < -50) obstacles.splice(i, 1);
+            }
+
+            // Update & Draw Boosts
+            for(let i = boosts.length - 1; i >= 0; i--) {
+                let b = boosts[i];
+                b.update();
+                b.draw();
+                
+                // Boost Collection
+                if(cpuRunner.x < b.x + b.width &&
+                   cpuRunner.x + cpuRunner.width > b.x &&
+                   cpuRunner.y < b.y + b.height &&
+                   cpuRunner.y + cpuRunner.height > b.y) {
+                    cpuSpeedVal += 0.5;
+                    gameSpeed += 0.5;
+                    document.getElementById('game-speed').innerText = cpuSpeedVal.toFixed(1);
+                    boosts.splice(i, 1);
+                }
+                
+                if(b.x < -50) boosts.splice(i, 1);
+            }
+
+            gameScore += Math.floor(cpuSpeedVal);
+            document.getElementById('game-score').innerText = gameScore;
+
+            gameAnimId = requestAnimationFrame(runGameLoop);
+        }
+
+        function gameOverGame() {
+            gameRunning = false;
+            cancelAnimationFrame(gameAnimId);
+            overlay.classList.remove('hidden');
+            startBtn.innerText = "Thermal Shutdown! Reboot CPU";
+            startBtn.classList.replace('bg-emerald-600', 'bg-red-600');
+            startBtn.classList.replace('border-emerald-800', 'border-red-800');
+        }
+
+        // --- CERTIFICATE LOGIC ---
+        function updateCertName() {
+            let name = document.getElementById('student-name-input').value.trim();
+            if(name) {
+                if (name.includes(' ')) {
+                    name = name.split(' ')[0];
+                    document.getElementById('student-name-input').value = name;
+                    showModal('Notice', 'Only your first name has been applied to the certificate.', 'info');
+                }
+                document.getElementById('cert-student-name').innerText = name;
+            } else {
+                showModal('Wait!', 'Please enter your first name to update the certificate.', 'warning');
+            }
+        }
+
+        const today = new Date();
+        document.getElementById('cert-date').innerText = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        function downloadCert() {
+            const certEl = document.getElementById('certificate');
+            const name = document.getElementById('cert-student-name').innerText;
+            let filename = 'Processing_Speed_Certificate.png';
+            if (name && name !== 'Student') {
+                filename = `${name.replace(/\s+/g, '_')}_Processing_Speed_Certificate.png`;
+            }
+
+            const originalTransform = certEl.style.transform;
+            certEl.style.transform = 'none';
+
+            const btn = document.getElementById('download-btn');
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Generating...';
+            btn.disabled = true;
+
+            html2canvas(certEl, { 
+                scale: 2, 
+                useCORS: true,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+            }).catch(err => {
+                console.error(err);
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                showModal('Error', 'Failed to generate image. Try using a desktop browser.', 'error');
+            });
+        }
+
+        window.onload = () => {
+            // Draw static preview for game canvas
+            gameCtx.fillStyle = '#1f2937';
+            gameCtx.fillRect(0,0,gameCanvas.width,gameCanvas.height);
+            gameCtx.fillStyle = '#10b981';
+            gameCtx.font = '20px monospace';
+            gameCtx.textAlign = 'center';
+            gameCtx.fillText('CLOCK SPEED DASH: READY TO BOOT', gameCanvas.width/2, gameCanvas.height/2);
+        }
+    </script>
+</body>
+</html>

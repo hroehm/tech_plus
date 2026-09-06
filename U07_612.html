@@ -1,0 +1,1455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 07 Section 6.1.2 Mastery - Integrity Concerns</title>
+    
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load HTML2Canvas for Certificate Download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- Load Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Qwitcher+Grypen:wght@700&family=VT323&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; 
+            color: #0f172a;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #e2e8f0; }
+        ::-webkit-scrollbar-thumb { background: #0284c7; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #0369a1; }
+
+        /* Lab Specific Styles */
+        .drag-item { cursor: grab; transition: transform 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .drag-item:active { cursor: grabbing; transform: scale(0.95); }
+        .drop-zone { transition: background-color 0.2s ease; }
+        .drop-zone.drag-over { background: #cbd5e1; border-color: #0284c7; }
+        
+        .diff-line { transition: background-color 0.2s; cursor: pointer; font-family: monospace;}
+        .diff-line:hover { background-color: #fecaca; }
+
+        .packet-anim {
+            position: absolute;
+            transition: left 2s linear;
+        }
+
+        /* Retro Game Canvas */
+        #game-canvas {
+            background-color: #000000;
+            border: 6px solid #475569;
+            border-radius: 4px;
+            box-shadow: 0 0 30px rgba(2, 132, 199, 0.4);
+            max-width: 100%;
+            height: auto;
+            image-rendering: pixelated;
+        }
+
+        /* --- CERTIFICATE STYLES --- */
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .font-body { font-family: 'Lora', serif; }
+        .font-script { font-family: 'Qwitcher Grypen', cursive; }
+        
+        .cert-preview-container {
+            width: 100%;
+            overflow: auto;
+            display: flex;
+            justify-content: center;
+            background: #e2e8f0;
+            padding: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        #certificate {
+            width: 1056px !important;
+            height: 816px !important;
+            flex-shrink: 0;
+            background-color: #ffffff;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1056" height="816"><polygon points="0,0 250,0 0,650" fill="%230ea5e9"/><polygon points="0,0 350,0 0,900" fill="%230284c7" opacity="0.8"/><polygon points="0,0 120,0 0,300" fill="%2338bdf8"/><polygon points="0,450 650,816 0,816" fill="%230ea5e9"/><polygon points="0,550 450,816 0,816" fill="%230284c7" opacity="0.8"/><polygon points="800,0 1056,0 1056,256" fill="%23f1f5f9"/><polygon points="1056,500 1056,816 750,816" fill="%23f1f5f9"/></svg>');
+            background-size: cover;
+            border: 4px solid #cbd5e1;
+        }
+
+        .gold-seal {
+            position: absolute;
+            left: 110px;
+            top: 350px;
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c, #fcf6ba);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3), inset 0 0 15px rgba(255,255,255,0.7), inset 0 0 25px rgba(139,105,20,0.9);
+            z-index: 10;
+        }
+        .gold-seal::before {
+            content: '';
+            position: absolute;
+            top: -4px; bottom: -4px; left: -4px; right: -4px;
+            border-radius: 50%;
+            border: 6px dashed #0284c7;
+        }
+        .gold-seal-inner-1 {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 2px solid rgba(139, 105, 20, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #e8c678, #dbab46);
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.2), 0 2px 5px rgba(255,255,255,0.7);
+            z-index: 1;
+        }
+        .gold-seal-inner-2 {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: radial-gradient(circle, #fcf6ba, #d4af37);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            padding: 10px;
+        }
+        .embossed-text {
+            color: #0f172a;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2);
+            font-family: 'Playfair Display', serif;
+            font-weight: 800;
+            line-height: 1.1;
+            text-transform: uppercase;
+        }
+        .embossed-text-large { font-size: 14px; letter-spacing: 1px; }
+        .embossed-text-small { font-size: 11px; letter-spacing: 2px; margin: 2px 0; }
+        .embossed-star { font-size: 12px; color: #0f172a; text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2); margin: 2px 0; }
+
+        @media (max-width: 1100px) {
+            #certificate { transform: scale(0.7); transform-origin: top left; margin-bottom: -240px; margin-right: -310px; }
+        }
+        @media (max-width: 768px) {
+            #certificate { transform: scale(0.4); transform-origin: top left; margin-bottom: -490px; margin-right: -630px; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen flex flex-col">
+
+    <nav class="bg-sky-700 text-white shadow-lg sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-shield-virus text-2xl"></i>
+                    <span class="font-bold text-xl tracking-wider hidden sm:inline-block">Tech+ Unit 07 Section 6.1.2</span>
+                    <span class="font-bold text-xl tracking-wider sm:hidden">6.1.2</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-2">
+                        <button onclick="switchTab('briefing')" class="nav-btn bg-sky-900 px-3 py-2 rounded-md text-sm font-medium hover:bg-sky-600 transition" id="nav-briefing"><i class="fa-solid fa-book-open mr-1"></i>Briefing</button>
+                        <button onclick="switchTab('activity')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-sky-600 transition" id="nav-activity"><i class="fa-solid fa-flask mr-1"></i>Lab Activity</button>
+                        <button onclick="switchTab('quiz')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-sky-600 transition" id="nav-quiz"><i class="fa-solid fa-clipboard-check mr-1"></i>Quiz</button>
+                        <button onclick="switchTab('game')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-slate-400 cursor-not-allowed transition" id="nav-game" disabled><i class="fa-solid fa-lock mr-1"></i>Game</button>
+                        <button onclick="switchTab('cert')" class="nav-btn hidden px-3 py-2 rounded-md text-sm font-medium text-yellow-300 hover:bg-sky-600 transition" id="nav-cert"><i class="fa-solid fa-award mr-1"></i>Certificate</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Nav -->
+        <div class="md:hidden flex flex-wrap justify-center gap-2 py-2 px-2 bg-sky-800">
+            <button onclick="switchTab('briefing')" class="nav-btn-mobile px-3 py-1 text-sm rounded bg-sky-900" id="nav-briefing-mobile">Briefing</button>
+            <button onclick="switchTab('activity')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-activity-mobile">Lab</button>
+            <button onclick="switchTab('quiz')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-quiz-mobile">Quiz</button>
+            <button onclick="switchTab('game')" class="nav-btn-mobile px-3 py-1 text-sm rounded text-slate-400 cursor-not-allowed" id="nav-game-mobile" disabled><i class="fa-solid fa-lock"></i></button>
+            <button onclick="switchTab('cert')" id="nav-cert-mobile" class="hidden px-2 py-1 text-sm text-yellow-300 rounded"><i class="fa-solid fa-award"></i></button>
+        </div>
+    </nav>
+
+    <main class="flex-grow w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <!-- BRIEFING SECTION -->
+        <div id="briefing-section" class="tab-content active no-print">
+            <div class="text-center mb-10">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4">Integrity Concerns</h1>
+                <p class="text-lg text-slate-600 max-w-3xl mx-auto">Explore the "I" in the CIA Triad. Learn how data tampering, replay attacks, and on-path attacks threaten the trustworthiness of data, and how file hashing and digital signatures secure it.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- Tile 1 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-red-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-red-700"><i class="fa-solid fa-file-pen mr-2"></i>Data Tampering</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>Integrity:</strong> Ensuring data is accurate, reliable, and unaltered by unauthorized parties.</li>
+                            <li><strong>Intentional Tampering:</strong> Malicious actors or disgruntled insiders modifying data.</li>
+                            <li><strong>Accidental Tampering:</strong> Negligent actions causing data corruption or loss.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('tampering-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('tampering-usecase')" class="flex-1 bg-red-100 hover:bg-red-200 text-red-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 2 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-orange-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-orange-700"><i class="fa-solid fa-rotate-right mr-2"></i>Replay Attacks</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>Network Snooping:</strong> Capturing data packets as they travel across a network.</li>
+                            <li><strong>Reuse of Data:</strong> Using previously captured, valid authentication data at a later time.</li>
+                            <li><strong>Passive Interception:</strong> The attacker does not alter the data, they simply capture and replay it.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('replay-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('replay-usecase')" class="flex-1 bg-orange-100 hover:bg-orange-200 text-orange-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 3 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-purple-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-purple-700"><i class="fa-solid fa-mask mr-2"></i>On-Path Attacks</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>Adversary-in-the-Middle:</strong> An attacker establishing themselves between a client and a server.</li>
+                            <li><strong>Active Alteration:</strong> Capturing data, modifying it in transit, and sending the forged payload.</li>
+                            <li><strong>Rogue Networks:</strong> Often executed via fake public Wi-Fi access points.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('onpath-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('onpath-usecase')" class="flex-1 bg-purple-100 hover:bg-purple-200 text-purple-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 4 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-green-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-green-700"><i class="fa-solid fa-fingerprint mr-2"></i>Ensuring Integrity</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>File Hashing:</strong> Using algorithms (MD5, SHA-512) to generate unique file checksums.</li>
+                            <li><strong>Digital Signatures:</strong> Authenticating the integrity and origin of data using cryptographic keys.</li>
+                            <li><strong>Secure Protocols:</strong> Utilizing HTTPS and WPA2/WPA3 to encrypt data and prevent interception.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('hashing-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('hashing-usecase')" class="flex-1 bg-green-100 hover:bg-green-200 text-green-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 flex justify-center">
+                <button onclick="switchTab('activity')" class="bg-sky-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-sky-500 shadow-lg transition transform hover:scale-105">Proceed to Lab Activity <i class="fa-solid fa-arrow-right ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- LAB ACTIVITY SECTION -->
+        <div id="activity-section" class="tab-content no-print">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-extrabold text-slate-900 mb-2">Interactive Lab Activity</h1>
+                <p class="text-slate-600">Complete these 8 interactive modules (2 per concept) to master Data Integrity and Validation.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Concept 1: Tampering -->
+                <div class="bg-white p-5 rounded-xl shadow-md border border-slate-200">
+                    <h2 class="text-lg font-bold mb-3 text-red-700"><i class="fa-solid fa-file-pen mr-2"></i>Lab 1: Detect the Tampering</h2>
+                    <p class="text-xs text-slate-600 mb-3">Compare the Original student record with the Current database. Click the <strong>three</strong> tampered values in the Current Database to flag them.</p>
+                    
+                    <div class="flex gap-4 text-xs font-mono mb-2">
+                        <div class="w-1/2 bg-slate-100 p-2 rounded border border-slate-300">
+                            <strong>Original Record:</strong><br>
+                            Name: John Doe<br>
+                            ID: 10554<br>
+                            GPA: 3.2<br>
+                            Status: Active
+                        </div>
+                        <div class="w-1/2 bg-red-50 p-2 rounded border border-red-300">
+                            <strong>Current Database:</strong><br>
+                            Name: John Doe<br>
+                            ID: <span class="cursor-pointer hover:bg-red-200 p-1 rounded" onclick="lab1Check(this, true)">10555</span><br>
+                            GPA: <span class="cursor-pointer hover:bg-red-200 p-1 rounded" onclick="lab1Check(this, true)">3.9</span><br>
+                            Status: <span class="cursor-pointer hover:bg-red-200 p-1 rounded" onclick="lab1Check(this, true)">Graduated</span>
+                        </div>
+                    </div>
+                    <div id="lab1-feedback" class="text-center font-bold h-5 text-sm text-sky-600">Anomalies found: 0/3</div>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl shadow-md border border-slate-200">
+                    <h2 class="text-lg font-bold mb-3 text-red-700"><i class="fa-solid fa-users mr-2"></i>Lab 2: Threat Categorization</h2>
+                    <p class="text-xs text-slate-600 mb-3">Drag the scenario to the correct Integrity Threat category.</p>
+                    
+                    <div class="flex flex-col gap-2 mb-4" id="lab2-items">
+                        <div class="drag-item bg-white p-2 text-xs border border-slate-300 rounded text-center" draggable="true" data-type="insider">A disgruntled payroll clerk gives themselves a $5,000 raise.</div>
+                        <div class="drag-item bg-white p-2 text-xs border border-slate-300 rounded text-center" draggable="true" data-type="accidental">A teacher accidentally deletes a column in the gradebook spreadsheet.</div>
+                        <div class="drag-item bg-white p-2 text-xs border border-slate-300 rounded text-center" draggable="true" data-type="attacker">A hacker breaches the web server and defaces the homepage.</div>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-2">
+                        <div class="drop-zone bg-slate-100 border-2 border-dashed border-slate-400 p-2 text-center rounded min-h-[60px]" data-target="insider"><span class="text-xs font-bold">Insider Threat</span></div>
+                        <div class="drop-zone bg-slate-100 border-2 border-dashed border-slate-400 p-2 text-center rounded min-h-[60px]" data-target="accidental"><span class="text-xs font-bold">Accidental</span></div>
+                        <div class="drop-zone bg-slate-100 border-2 border-dashed border-slate-400 p-2 text-center rounded min-h-[60px]" data-target="attacker"><span class="text-xs font-bold">External Attacker</span></div>
+                    </div>
+                    <div id="lab2-feedback" class="text-center font-bold mt-2 h-5 text-sm text-sky-600"></div>
+                </div>
+
+                <!-- Concept 2: Replay -->
+                <div class="bg-white p-5 rounded-xl shadow-md border border-slate-200">
+                    <h2 class="text-lg font-bold mb-3 text-orange-700"><i class="fa-solid fa-network-wired mr-2"></i>Lab 3: Packet Sniffing (Replay Prep)</h2>
+                    <p class="text-xs text-slate-600 mb-3">You are monitoring an unencrypted network. Click "Transmit" to send a login packet, then click the packet *while it is moving* to capture its auth token for a replay attack.</p>
+                    
+                    <div class="relative bg-slate-100 border border-slate-300 h-24 rounded flex items-center justify-between px-4 mb-2 overflow-hidden">
+                        <i class="fa-solid fa-laptop text-2xl text-slate-700 z-10 bg-slate-100"></i>
+                        
+                        <!-- Packet -->
+                        <div id="network-packet" class="absolute left-10 w-8 h-6 bg-orange-500 rounded flex items-center justify-center text-white text-[10px] cursor-pointer hidden" onclick="capturePacket()">
+                            <i class="fa-solid fa-envelope"></i>
+                        </div>
+
+                        <i class="fa-solid fa-server text-2xl text-slate-700 z-10 bg-slate-100"></i>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <button class="bg-slate-800 text-white px-4 py-1 rounded text-xs hover:bg-slate-700" onclick="startTransmission()">Transmit Data</button>
+                        <div id="lab3-feedback" class="font-bold text-sm text-sky-600">Token: [Empty]</div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl shadow-md border border-slate-200">
+                    <h2 class="text-lg font-bold mb-3 text-orange-700"><i class="fa-solid fa-shield mr-2"></i>Lab 4: Mitigate the Replay</h2>
+                    <p class="text-xs text-slate-600 mb-3">The server is vulnerable to replay attacks because it accepts static tokens indefinitely. Toggle the server configuration to block the simulated replay attack.</p>
+                    
+                    <div class="flex items-center justify-center gap-4 mb-4 bg-slate-50 p-3 border rounded">
+                        <span class="text-xs font-bold">Auth Method:</span>
+                        <button id="toggle-token-btn" class="bg-red-100 text-red-800 border border-red-400 px-3 py-1 rounded text-xs font-bold" onclick="toggleToken()">Static (Persistent)</button>
+                    </div>
+                    
+                    <div class="text-center">
+                        <button class="bg-orange-600 text-white px-4 py-2 rounded text-xs font-bold hover:bg-orange-700" onclick="simulateReplay()">Execute Replay Attack</button>
+                        <div id="lab4-feedback" class="font-bold mt-2 h-5 text-sm text-slate-600">Server Status: Waiting</div>
+                    </div>
+                </div>
+
+                <!-- Concept 3: On-Path -->
+                <div class="bg-white p-5 rounded-xl shadow-md border border-slate-200">
+                    <h2 class="text-lg font-bold mb-3 text-purple-700"><i class="fa-solid fa-wifi mr-2"></i>Lab 5: Avoid the Trap</h2>
+                    <p class="text-xs text-slate-600 mb-3">You need to connect to a network to do banking. Select the network that is encrypted and safe from easy On-Path (Adversary-in-the-Middle) interception.</p>
+                    
+                    <div class="border border-slate-300 rounded overflow-hidden">
+                        <div class="bg-slate-100 px-3 py-2 border-b border-slate-300 text-sm font-bold flex justify-between"><span>Wi-Fi Networks</span><i class="fa-solid fa-wifi"></i></div>
+                        <div class="px-3 py-2 border-b border-slate-200 flex justify-between items-center cursor-pointer hover:bg-slate-50" onclick="lab5Check(false)">
+                            <span class="text-sm">Airport_Free_WiFi</span> <span class="text-[10px] bg-red-100 text-red-800 px-1 rounded border border-red-300">Unsecured</span>
+                        </div>
+                        <div class="px-3 py-2 border-b border-slate-200 flex justify-between items-center cursor-pointer hover:bg-slate-50" onclick="lab5Check(true)">
+                            <span class="text-sm">Corp_Secure_Net</span> <i class="fa-solid fa-lock text-slate-500 text-xs"></i>
+                        </div>
+                        <div class="px-3 py-2 flex justify-between items-center cursor-pointer hover:bg-slate-50" onclick="lab5Check(false)">
+                            <span class="text-sm">Starbucks_Guest</span> <span class="text-[10px] bg-red-100 text-red-800 px-1 rounded border border-red-300">Unsecured</span>
+                        </div>
+                    </div>
+                    <div id="lab5-feedback" class="text-center font-bold mt-2 h-5 text-sm text-sky-600"></div>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl shadow-md border border-slate-200">
+                    <h2 class="text-lg font-bold mb-3 text-purple-700"><i class="fa-solid fa-mask mr-2"></i>Lab 6: Active Alteration</h2>
+                    <p class="text-xs text-slate-600 mb-3">Unlike a Replay attack which just resends data, an On-Path attack actively changes it. You have intercepted a bank transfer. Change the amount to 9999 before forwarding it.</p>
+                    
+                    <div class="bg-slate-800 p-3 rounded mb-3 text-green-400 font-mono text-xs">
+                        > INTERCEPTED PAYLOAD:<br>
+                        {<br>
+                        &nbsp;&nbsp;"accountTo": "Alice",<br>
+                        &nbsp;&nbsp;"amount": $<input type="text" id="intercept-amount" value="100" class="bg-slate-700 text-green-400 border border-slate-600 w-12 px-1 focus:outline-none">,<br>
+                        &nbsp;&nbsp;"currency": "USD"<br>
+                        }
+                    </div>
+                    
+                    <div class="text-center">
+                        <button class="bg-purple-600 text-white px-4 py-2 rounded text-xs font-bold hover:bg-purple-700" onclick="forwardPayload()">Forward Altered Payload</button>
+                        <div id="lab6-feedback" class="font-bold mt-2 h-5 text-sm text-slate-600"></div>
+                    </div>
+                </div>
+
+                <!-- Concept 4: Hashing -->
+                <div class="bg-white p-5 rounded-xl shadow-md border border-slate-200">
+                    <h2 class="text-lg font-bold mb-3 text-green-700"><i class="fa-solid fa-hashtag mr-2"></i>Lab 7: The Avalanche Effect</h2>
+                    <p class="text-xs text-slate-600 mb-3">Hashing algorithms are highly sensitive. Type in the box below to see how changing even a single character drastically completely alters the resulting hash checksum.</p>
+                    
+                    <input type="text" id="hash-input" value="Integrity" onkeyup="updateHashSim()" class="w-full border-2 border-slate-300 rounded px-3 py-2 text-sm mb-3 focus:outline-none focus:border-green-500">
+                    
+                    <div class="bg-slate-100 border border-slate-300 rounded p-3">
+                        <div class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Simulated SHA-256 Checksum:</div>
+                        <div id="hash-output" class="font-mono text-xs text-green-700 break-all h-8"></div>
+                    </div>
+                    <div id="lab7-feedback" class="text-center font-bold mt-2 h-5 text-sm text-green-600 hidden">Avalanche Effect Observed!</div>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl shadow-md border border-slate-200">
+                    <h2 class="text-lg font-bold mb-3 text-green-700"><i class="fa-solid fa-code-compare mr-2"></i>Lab 8: Configuration Diff</h2>
+                    <p class="text-xs text-slate-600 mb-3">You are checking the integrity of a system file. Click the specific line in the modified file that introduces a massive security flaw by allowing passwords to be blank.</p>
+                    
+                    <div class="bg-slate-900 text-slate-300 font-mono text-[10px] p-3 rounded h-32 overflow-y-auto mb-2 border border-slate-700">
+                        <div class="text-slate-500 mb-1 border-b border-slate-700 pb-1">sshd_config_copy (Modified)</div>
+                        <div class="diff-line p-1" onclick="lab8Check(false)">#IgnoreRhosts yes</div>
+                        <div class="diff-line p-1" onclick="lab8Check(false)">PasswordAuthentication yes</div>
+                        <div class="diff-line p-1" onclick="lab8Check(true)">PermitEmptyPasswords yes</div>
+                        <div class="diff-line p-1" onclick="lab8Check(false)">#Change to yes to enable challenge-response</div>
+                    </div>
+                    
+                    <div id="lab8-feedback" class="text-center font-bold h-5 text-sm text-sky-600"></div>
+                </div>
+
+            </div>
+            
+            <div class="text-center mt-10">
+                <button onclick="switchTab('quiz')" class="bg-sky-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-sky-500 shadow-lg transition transform hover:scale-105">Take the Mastery Quiz <i class="fa-solid fa-clipboard-check ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- QUIZ SECTION -->
+        <div id="quiz-section" class="tab-content no-print">
+            <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-xl max-w-4xl mx-auto">
+                <div class="text-center mb-8 border-b pb-4">
+                    <h1 class="text-3xl font-extrabold text-slate-900 mb-2">Integrity Mastery Quiz</h1>
+                    <p class="text-slate-600">Score 90% or higher (18/20) to earn your Certificate of Mastery and unlock the Retro Game!</p>
+                </div>
+
+                <div id="quiz-container" class="space-y-8">
+                    <!-- Questions injected via JS -->
+                </div>
+
+                <div class="mt-10 text-center border-t pt-6 flex flex-col md:flex-row justify-center items-center gap-4">
+                    <button id="submit-quiz-btn" onclick="gradeQuiz()" class="bg-sky-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-sky-700 shadow-lg transition w-full md:w-auto">Submit Quiz</button>
+                    <button id="proceed-game-btn" onclick="switchTab('game')" class="hidden bg-purple-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-purple-700 shadow-lg transition w-full md:w-auto">Play Retro Game <i class="fa-solid fa-gamepad ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RETRO GAME SECTION -->
+        <div id="game-section" class="tab-content no-print">
+            <div class="bg-slate-900 p-6 sm:p-8 rounded-2xl shadow-xl max-w-4xl mx-auto border-4 border-slate-700 flex flex-col items-center">
+                <div class="text-center mb-4 w-full">
+                    <h1 class="text-4xl font-extrabold text-green-400 mb-2 tracking-widest uppercase" style="font-family: 'VT323', monospace; text-shadow: 0 0 10px #4ade80;">DATA DEFENDER</h1>
+                    <p class="text-slate-300 text-sm">Protect the Core! Use <strong>WASD</strong> or <strong>Arrow Keys</strong> to move your blue Antivirus Tank. Press <strong>SPACEBAR</strong> to shoot the red Malware Tanks before they can tamper with the central Data Core.</p>
+                </div>
+                
+                <div class="flex justify-between items-center w-full max-w-[600px] mb-2 px-4 text-white font-mono text-xl" style="font-family: 'VT323', monospace;">
+                    <div>SCORE: <span id="game-score" class="text-yellow-400 font-bold">0</span></div>
+                    <div>CORE INTEGRITY: <span id="game-lives" class="text-red-400 font-bold">3</span></div>
+                </div>
+
+                <div class="relative flex justify-center w-full">
+                    <!-- Game Canvas -->
+                    <canvas id="game-canvas" width="600" height="400" class="w-full max-w-[600px] bg-black"></canvas>
+                    
+                    <!-- Overlay Start Button -->
+                    <div id="game-overlay" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-80 max-w-[600px] mx-auto z-10 border-6 border-transparent">
+                        <div class="text-center">
+                            <h2 id="game-status-text" class="text-red-500 text-5xl mb-6 font-bold uppercase hidden" style="font-family: 'VT323', monospace; text-shadow: 0 0 20px red;">INTEGRITY LOST</h2>
+                            <button id="start-game-btn" class="bg-green-600 hover:bg-green-500 text-white font-bold py-3 px-8 rounded text-2xl border-4 border-green-800 uppercase transform transition hover:scale-105" style="font-family: 'VT323', monospace;">INITIALIZE SYSTEM</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 text-center w-full border-t border-slate-700 pt-6">
+                    <button onclick="switchTab('cert')" class="bg-sky-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-sky-700 shadow-lg transition w-full md:w-auto">View Certificate <i class="fa-solid fa-award ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CERTIFICATE SECTION -->
+        <div id="cert-section" class="tab-content">
+            <div class="max-w-5xl mx-auto">
+                
+                <!-- Controls -->
+                <div class="bg-white p-6 rounded shadow mb-6 no-print text-center border border-slate-200">
+                    <h2 class="text-2xl font-bold text-sky-600 mb-2">🎉 Congratulations! 🎉</h2>
+                    <p class="text-slate-700 mb-4">You have successfully mastered Data Integrity validation and protection techniques.</p>
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+                        <input type="text" id="student-name-input" value="Student" placeholder="Enter your first name" class="border-2 border-slate-300 rounded px-4 py-2 w-full md:w-64 focus:border-sky-500 focus:outline-none">
+                        <button onclick="updateCertName()" class="bg-sky-600 text-white px-4 py-2 rounded hover:bg-sky-700 transition">Update Name</button>
+                        <button id="download-btn" onclick="downloadCert()" class="bg-slate-800 text-white px-4 py-2 rounded hover:bg-slate-900 transition flex items-center justify-center">
+                            <i class="fa-solid fa-download mr-2"></i>Download PNG
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Certificate Render Container -->
+                <div class="cert-preview-container print:p-0 print:bg-white">
+                    <div id="certificate">
+                        <div class="gold-seal">
+                            <div class="gold-seal-inner-1">
+                                <div class="gold-seal-inner-2">
+                                     <span class="embossed-text embossed-text-large">Certificate</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-small">Of</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-large">Excellence</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="relative z-20 w-full h-full flex flex-col pt-[48px] pl-[380px] pr-[48px]">
+                            <h1 class="text-[#0369a1] text-[4.5rem] leading-none font-serif font-bold tracking-wide uppercase mb-2">CERTIFICATE</h1>
+                            <h2 class="text-slate-800 text-3xl font-serif tracking-widest uppercase mb-10">Of Achievement</h2>
+                            
+                            <p class="text-[1.4rem] font-body text-slate-800 mb-4">This is to certify that</p>
+                            
+                            <div class="relative mb-8 w-full">
+                                <h3 id="cert-student-name" class="text-[4rem] text-[#0369a1] font-serif italic leading-none pb-2 relative z-10 text-center w-full block">Student</h3>
+                                <div class="w-full border-b-[2px] border-[#0369a1] absolute bottom-[4px] left-0 z-0"></div>
+                                <div class="w-full border-b-[2px] border-dotted border-red-500 absolute bottom-[0px] left-0 z-0"></div>
+                            </div>
+                            
+                            <p class="text-[1.3rem] font-body text-slate-800 leading-relaxed w-full pr-4">
+                                Has successfully completed the assessment for 
+                                <strong class="text-[1.8rem] text-[#0369a1] block mt-4 mb-2 font-serif">Cyber.org Tech+ Unit 07 Section 6.1.2</strong>
+                                <strong class="text-[1.5rem] text-black block mb-4 font-serif italic">Integrity Concerns</strong>
+                                <span class="text-[1.1rem] text-slate-700 leading-snug block">Demonstrating proficiency in identifying data tampering threats, defending against Replay and On-Path network attacks, and verifying file integrity using cryptographic hashing and digital signatures.</span>
+                            </p>
+                            
+                            <div class="flex justify-end gap-16 items-end mt-auto mb-[60px] w-full pr-8">
+                                <div class="w-64">
+                                    <div class="border-b border-slate-600 mb-2 h-20 flex items-end justify-center relative">
+                                        <span class="font-script text-[5rem] text-[#0369a1] absolute bottom-[-10px] transform -rotate-3 opacity-90">Dr. M. S</span>
+                                    </div>
+                                    <p class="font-serif text-xl text-slate-800 text-center">Administration</p>
+                                </div>
+                                
+                                <div class="w-64">
+                                    <div class="border-b border-slate-600 mb-2 text-center h-20 flex items-end justify-center">
+                                        <p id="cert-date" class="font-body text-2xl text-slate-800 pb-1">Date Here</p>
+                                    </div>
+                                    <p class="font-serif text-xl text-slate-800 text-center">Date</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Custom Modal for Alerts -->
+    <div id="custom-modal" class="fixed inset-0 bg-black bg-opacity-50 z-[100] hidden flex justify-center items-center backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all border-t-8 border-sky-600">
+            <div class="text-center">
+                <div id="modal-icon" class="text-5xl mb-4"></div>
+                <h3 id="modal-title" class="text-2xl font-bold mb-2 text-slate-900"></h3>
+                <p id="modal-msg" class="text-slate-600 mb-6"></p>
+                <button onclick="closeModal()" class="bg-sky-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-sky-700 transition w-full">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Briefing Modal -->
+    <div id="briefing-modal" class="fixed inset-0 bg-black bg-opacity-70 z-[120] hidden flex justify-center items-center backdrop-blur-sm p-4 sm:p-6">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col transform transition-all overflow-hidden border-4 border-sky-700">
+            <div class="p-6 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+                <div class="flex items-center gap-4">
+                    <div id="briefing-modal-icon" class="text-4xl"></div>
+                    <h3 id="briefing-modal-title" class="text-2xl md:text-3xl font-bold text-slate-900"></h3>
+                </div>
+                <button onclick="closeBriefing()" class="text-slate-400 hover:text-red-600 transition text-4xl leading-none">&times;</button>
+            </div>
+            <div id="briefing-modal-content" class="p-6 md:p-10 overflow-y-auto flex-grow text-slate-700 text-lg leading-relaxed bg-white">
+                <!-- Dynamic Content Injected Here -->
+            </div>
+            <div class="p-6 border-t border-slate-200 bg-slate-50 flex justify-end">
+                <button onclick="closeBriefing()" class="bg-sky-700 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-sky-800 transition shadow-md">Acknowledge & Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Extensive Briefing Content Data (Min 7 Paragraphs per detail, 2 Use cases, 2 Examples, Images) ---
+        const briefingData = {
+            'tampering-details': {
+                title: 'Integrity & Data Tampering',
+                icon: '<i class="fa-solid fa-file-pen text-red-600"></i>',
+                html: `
+                    <p class="mb-5">In the realm of cybersecurity, the CIA Triad serves as the foundational framework for protecting information systems. This triad consists of Confidentiality (keeping data secret), Integrity, and Availability (keeping data accessible). While confidentiality often takes the spotlight, the "I"—Integrity—is arguably just as critical for the survival of an organization.</p>
+                    
+                    <p class="mb-5"><strong>Integrity</strong> ensures that data is accurate, reliable, trustworthy, and remains unaltered by unauthorized individuals or accidental events. When you look at a bank balance, read a medical chart, or review a student's grades, you are operating under the assumption that the data presented has absolute integrity. If that trust is broken, the data becomes useless, or worse, dangerously misleading.</p>
+                    
+                    <p class="mb-5">A failure of integrity usually manifests as <strong>Data Tampering</strong>. Data tampering is the unauthorized modification, removal, or manipulation of information. Unlike a data breach where data is simply copied and stolen (a failure of confidentiality), tampering involves actively changing the digital environment to benefit the attacker or harm the victim.</p>
+                    
+                    <p class="mb-5">One of the primary sources of data tampering is <strong>Intentional External Attacks</strong>. Cybercriminals may breach a network specifically to alter data for financial gain or reputation destruction. For example, a hacker might infiltrate a retail database to drastically lower the price of an expensive electronic item right before purchasing it, or they might deface a company's homepage by replacing it with malicious imagery.</p>
+                    
+                    <p class="mb-5">Another severe threat to integrity is the <strong>Insider Threat</strong>. These are authorized users, such as disgruntled employees, who abuse their legitimate access privileges. Because they already have the keys to the kingdom, insider tampering is notoriously difficult to detect. A payroll clerk could easily add a few extra zeros to their paycheck, or an unhappy salesperson might delete the entire client contact database before quitting to join a competitor.</p>
+                    
+                    <p class="mb-5">However, not all data tampering is malicious. A significant portion of integrity loss is entirely <strong>Accidental</strong>. Human error is a constant factor in IT. An authorized user might accidentally hit "delete" on a critical folder, a developer might inadvertently run a script that wipes a production database, or a hardware failure might corrupt a file while it is saving. Regardless of intent, the integrity of the data is destroyed.</p>
+                    
+                    <p>Finally, data tampering often relies on <strong>Impersonation or Spoofing</strong>. To bypass security controls, attackers will often steal credentials or spoof IP addresses to appear as a legitimate, authorized user. Once the system trusts them, they are free to manipulate records. This emphasizes why strict access controls, logging, and continuous verification are essential to maintaining absolute data integrity.</p>
+                `
+            },
+            'tampering-usecase': {
+                title: 'Data Tampering: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-red-800 mb-2 border-b-2 border-red-200 pb-1">Case 1: Insider Financial Fraud</h4>
+                        <p class="mb-2">Employees with high-level access can manipulate internal records for personal gain, destroying the integrity of corporate financial data.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1:</strong> An accountant modifies the routing numbers in the vendor payment database, causing legitimate company payments to be silently diverted into their personal offshore bank account.</li>
+                            <li><strong>Example 2:</strong> A disgruntled warehouse manager accesses the inventory system and marks $50,000 worth of laptops as "destroyed in transit," allowing them to physically steal the items without raising immediate alarms in the system.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-red-800 mb-2 border-b-2 border-red-200 pb-1">Case 2: Accidental Data Corruption</h4>
+                        <p class="mb-2">Integrity loss does not always require a villain; simple human error or hardware malfunctions can permanently alter critical information.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1:</strong> A tired teacher sorting a spreadsheet of student grades accidentally highlights only the "Names" column before sorting alphabetically, permanently mismatching every student with the wrong grade and destroying the document's integrity.</li>
+                            <li><strong>Example 2:</strong> During a massive data migration, a failing hard drive introduces random bit-flips into a medical database, changing a patient's recorded blood type from A+ to O-, posing a lethal physical risk due to digital integrity loss.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Financial Tampering</p>
+                            <img src="https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=600&h=350" alt="Financial graphs and data" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Spreadsheet Errors</p>
+                            <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=600&h=350" alt="Spreadsheet data on a monitor" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'replay-details': {
+                title: 'Replay Attacks',
+                icon: '<i class="fa-solid fa-rotate-right text-orange-600"></i>',
+                html: `
+                    <p class="mb-5">When considering data integrity, we must look beyond data sitting still on a hard drive (data at rest) and examine data moving across a network (data in transit). As information flows between a user's laptop and a web server, it is vulnerable to interception. A specific, highly dangerous form of this interception is the <strong>Replay Attack</strong>.</p>
+                    
+                    <p class="mb-5">A Replay Attack begins with <strong>Network Snooping</strong>. Using specialized hardware or software packet sniffers, an attacker silently monitors the traffic on a network. The attacker is looking for a very specific type of data payload: authentication credentials, session cookies, or authorization tokens. They wait patiently until a legitimate user logs in or authorizes a transaction.</p>
+                    
+                    <p class="mb-5">Once the legitimate user sends their data, the attacker captures an exact copy of that data packet. The essence of a <strong>Replay Attack</strong> is that the attacker does <em>not</em> need to decipher, decrypt, or alter the packet. Instead, they simply hold onto that exact packet and "replay" it—sending it back to the server at a later time as if it were a new request coming from the original user.</p>
+                    
+                    <p class="mb-5">Why is this effective even if the data is encrypted? Imagine a physical scenario: You do not need to know how to build a car key to steal a car; you just need to steal the key. In a replay attack, the encrypted authentication token <em>is</em> the key. The server receives the perfectly valid, properly encrypted token from the attacker, verifies the cryptography, and falsely assumes the legitimate user is making a second, identical request.</p>
+                    
+                    <p class="mb-5">While often discussed alongside confidentiality (because data is captured), Replay Attacks are primarily a breach of <strong>Integrity</strong>. The attacker is using previously validated data to fraudulently perform actions that the original sender never authorized or intended, thereby corrupting the integrity of the system's transaction ledger.</p>
+                    
+                    <p class="mb-5">Consider a scenario where a user authorizes a $100 bank transfer. The attacker captures that exact encrypted transfer authorization packet. A day later, the attacker replays that identical packet to the bank's server 50 times. If the server does not have defenses in place, it will process 50 identical, cryptographically valid $100 transfers, draining the victim's account.</p>
+                    
+                    <p>To defend against replay attacks, modern systems implement strict mitigation techniques. Servers will utilize <strong>Time-Stamped Tokens</strong>, ensuring a packet is only valid for a few milliseconds. They also use <strong>Session Nonces</strong> (Number Used Once), meaning the server remembers every token it has ever accepted and will immediately reject any token that is submitted a second time, rendering the captured packet useless to the attacker.</p>
+                `
+            },
+            'replay-usecase': {
+                title: 'Replay Attacks: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-orange-800 mb-2 border-b-2 border-orange-200 pb-1">Case 1: Smart Home Vulnerabilities</h4>
+                        <p class="mb-2">Internet of Things (IoT) devices, like smart locks, often use simple wireless protocols that are highly susceptible to replay attacks if poorly designed.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1:</strong> A homeowner uses a wireless key fob to unlock their front door. A burglar hiding in the bushes uses a radio receiver to capture the exact frequency and digital signal. That night, the burglar replays the exact same signal, and the smart lock opens, assuming it's the homeowner.</li>
+                            <li><strong>Example 2:</strong> An attacker captures the network packet sent from a smartphone app that commands a smart thermostat to turn on the heater. The attacker replays the packet continuously, forcing the heater to run indefinitely and hiking the victim's utility bill.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-orange-800 mb-2 border-b-2 border-orange-200 pb-1">Case 2: Financial Transaction Duplication</h4>
+                        <p class="mb-2">If financial institutions do not use nonces (single-use numbers) or timestamps, attackers can force duplicate payments.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1:</strong> A user buys a $5 coffee using a digital wallet on a coffee shop's unencrypted Wi-Fi. A malicious user captures the transaction token. They later replay that token 20 times, forcing the victim's account to pay for 20 coffees they never received.</li>
+                            <li><strong>Example 2:</strong> A stockbroker submits a command to "Buy 100 shares of XYZ Corp." An attacker captures this command and replays it when the stock price is artificially inflated, causing the broker's system to automatically execute catastrophic, unintended purchases.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Capturing Signals</p>
+                            <img src="https://images.unsplash.com/photo-1558346490-a72e53ae2d4f?auto=format&fit=crop&w=600&h=350" alt="Network router and signals" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: IoT Smart Locks</p>
+                            <img src="https://images.unsplash.com/photo-1558002038-1055907df827?auto=format&fit=crop&w=600&h=350" alt="Smart home lock on a door" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'onpath-details': {
+                title: 'On-Path Attacks',
+                icon: '<i class="fa-solid fa-mask text-purple-600"></i>',
+                html: `
+                    <p class="mb-5">While replay attacks involve passively capturing and resending identical data, <strong>On-Path Attacks</strong> (formerly known as Man-in-the-Middle or Adversary-in-the-Middle attacks) are highly active and aggressive. In this scenario, the attacker successfully establishes themselves directly between the client (the user) and the server, acting as a hidden mediator for all traffic flowing between them.</p>
+                    
+                    <p class="mb-5">The defining characteristic of an On-Path attack is <strong>Active Interception and Alteration</strong>. Because the attacker controls the pathway, they don't just watch the data go by; they stop the packet, open it, change the contents, repackage it, and send it to the destination. Neither the user nor the server realizes they are talking to a malicious third party.</p>
+                    
+                    <p class="mb-5">These attacks predominantly exploit <strong>Unsecured Networks</strong>, particularly public Wi-Fi. An attacker might sit in an airport and broadcast a rogue Wi-Fi signal named "Free_Airport_WiFi." When victims connect, all their internet traffic routes directly through the attacker's laptop. The attacker can now intercept login credentials or alter web pages before they reach the victim's screen.</p>
+                    
+                    <p class="mb-5">On local networks, attackers often use a technique called <strong>ARP Spoofing</strong>. The Address Resolution Protocol (ARP) connects IP addresses to physical MAC addresses. The attacker sends forged ARP messages to the network, tricking the victim's computer into believing the attacker's machine is the network router. Consequently, the victim's computer sends all its internet-bound traffic directly to the attacker.</p>
+                    
+                    <p class="mb-5">Another common vector is <strong>DNS Hijacking or Spoofing</strong>. The Domain Name System (DNS) translates URLs (like www.bank.com) into IP addresses. In an On-Path attack, the attacker intercepts the DNS request and replies with the IP address of a fake, malicious server. The victim types the correct URL but is silently routed to a perfect visual clone of their bank's login page, handing their passwords directly to the attacker.</p>
+                    
+                    <p class="mb-5">The threat to <strong>Data Integrity</strong> here is immense. If a user tries to transfer money, the attacker can intercept the packet, change the destination account number to their own, change the amount, and then forward it to the bank. The bank receives a valid request from the user's active session, and the user's funds are stolen in real-time.</p>
+                    
+                    <p>Defending against On-Path attacks requires robust, end-to-end encryption. Utilizing <strong>HTTPS</strong> ensures that even if an attacker intercepts the traffic, they cannot read or alter the payload without breaking the cryptographic seal. Additionally, utilizing Virtual Private Networks (VPNs) when on public Wi-Fi creates an encrypted tunnel that shields data from local eavesdroppers and interceptors.</p>
+                `
+            },
+            'onpath-usecase': {
+                title: 'On-Path Attacks: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Case 1: The Rogue Coffee Shop Wi-Fi</h4>
+                        <p class="mb-2">Attackers frequently target public spaces where people expect free internet access, setting up "Evil Twin" networks to intercept traffic.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1:</strong> An attacker sets up a hotspot named "Starbucks_Guest" right outside a real cafe. A victim connects and logs into their unencrypted email. The attacker acts as an On-Path mediator, capturing the plaintext password as it passes through their laptop before forwarding the login request to the email server.</li>
+                            <li><strong>Example 2:</strong> A user connected to a rogue network attempts to download a software update. The On-Path attacker intercepts the download request and instead serves the user a malicious file infected with ransomware, completely violating the integrity of the downloaded data.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Case 2: Corporate Espionage and Alteration</h4>
+                        <p class="mb-2">If an attacker gains a foothold inside a corporate network, they can use ARP spoofing to alter internal communications in real-time.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1:</strong> The CEO emails the HR department approving a $5,000 bonus for an employee. The On-Path attacker intercepts the internal email, alters the text to say "$50,000", and forwards it to HR. The integrity of the communication is destroyed.</li>
+                            <li><strong>Example 2:</strong> An attacker intercepts traffic between a company's web server and its database backend. When a customer makes a purchase, the attacker modifies the database query in transit, changing the shipping address to their own house while leaving the customer's billing information intact.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Intercepted Connections</p>
+                            <img src="https://images.unsplash.com/photo-1563206767-5b18f218e8de?auto=format&fit=crop&w=600&h=350" alt="Hacker in a hoodie representing interception" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Public Wi-Fi Risks</p>
+                            <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=600&h=350" alt="Person using laptop in a coffee shop" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'hashing-details': {
+                title: 'Ensuring Integrity: Hashing & Signatures',
+                icon: '<i class="fa-solid fa-fingerprint text-green-600"></i>',
+                html: `
+                    <p class="mb-5">Because data tampering, replay attacks, and on-path attacks pose such severe threats to modern computing, IT professionals rely heavily on cryptographic tools to guarantee that data remains authentic and unaltered. The most fundamental of these tools is <strong>File Hashing</strong>, a mathematical process that acts as a digital fingerprint for data.</p>
+                    
+                    <p class="mb-5">File hashing uses a cryptographic algorithm to read the contents of a file and generate a fixed-length string of characters, known as a <strong>Checksum</strong> or hash digest. The most crucial feature of a hashing algorithm is the "Avalanche Effect." If even a single period is added to a 1,000-page document, the resulting checksum will completely and radically change. By comparing the checksum of a downloaded file against the original checksum provided by the creator, a user can definitively prove the file's integrity.</p>
+                    
+                    <p class="mb-5">Historically, the <strong>MD5 (Message Digest 5)</strong> algorithm was widely used. However, as computing power increased, MD5 became vulnerable to "collisions"—instances where two entirely different files mathematically produce the exact same hash. Consequently, MD5 is now considered insecure for cryptographic purposes. Modern systems rely on the <strong>SHA (Secure Hash Algorithm)</strong> family, specifically SHA-256 and SHA-512, which generate massive, complex hashes that are currently resistant to brute-force and collision attacks.</p>
+                    
+                    <p class="mb-5">Beyond checking static files, integrity must be maintained for communications and documents. This is achieved through <strong>Digital Signatures</strong>. A digital signature utilizes asymmetric cryptography, involving a matched pair of keys: a private key and a public key. The sender uses their secretly held private key to mathematically "sign" the document's hash.</p>
+                    
+                    <p class="mb-5">When the recipient receives the document, they use the sender's widely available public key to verify the signature. If the document was altered in transit (an On-Path attack), the hash will not match the signature, and the verification will fail instantly. This proves both the Integrity of the document (it hasn't changed) and Non-Repudiation (it definitely came from the sender).</p>
+                    
+                    <p class="mb-5">At the network level, integrity is enforced by <strong>Secure Protocols</strong>. When browsing the web, the <strong>HTTPS</strong> protocol (Hypertext Transfer Protocol Secure) ensures that all traffic between the browser and the web server is wrapped in a TLS (Transport Layer Security) encrypted tunnel. This prevents on-path attackers from reading or altering the web traffic.</p>
+                    
+                    <p>Similarly, when connecting to wireless networks, users must look for <strong>WPA2 or WPA3</strong> (Wi-Fi Protected Access) security. These protocols encrypt the radio waves traveling through the air between the laptop and the wireless router. By combining strong file hashing, digital signatures, and secure network protocols, organizations can successfully defend the Integrity of their critical data.</p>
+                `
+            },
+            'hashing-usecase': {
+                title: 'Ensuring Integrity: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-green-800 mb-2 border-b-2 border-green-200 pb-1">Case 1: Verifying Software Downloads</h4>
+                        <p class="mb-2">When downloading operating systems or critical software, IT administrators must verify the download wasn't corrupted or injected with malware.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1:</strong> An admin downloads a Linux ISO file. They run the <code>sha512sum</code> command in their terminal and compare the output to the hash posted on the official Linux website. The hashes match perfectly, proving the massive 4GB file transferred without a single byte of corruption.</li>
+                            <li><strong>Example 2:</strong> A user downloads what they think is an update for their web browser from a third-party site. They check the digital signature attached to the installer file. The OS flags the signature as invalid because the file was secretly tampered with by a hacker to include a keylogger.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-green-800 mb-2 border-b-2 border-green-200 pb-1">Case 2: Securing System Configurations</h4>
+                        <p class="mb-2">Administrators must constantly monitor core system files for unauthorized changes made by attackers attempting to weaken security.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1:</strong> A server runs a nightly automated script that checks the SHA-256 hash of the <code>sshd_config</code> file. If an attacker breaches the system and alters the config to allow blank passwords, the hash changes, and the script instantly alerts the security team of the tampering.</li>
+                            <li><strong>Example 2:</strong> An admin uses the Linux <code>diff</code> command to compare the current system firewall rules file against a known secure backup file. The <code>diff</code> output immediately highlights exactly which line of text was maliciously added to open a backdoor port.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Cryptographic Hashing</p>
+                            <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=600&h=350" alt="Matrix code representing hashing algorithms" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Secure Protocols</p>
+                            <img src="https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?auto=format&fit=crop&w=600&h=350" alt="Padlock on a laptop screen representing HTTPS" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        // Modal Control Functions
+        function openBriefing(key) {
+            const modal = document.getElementById('briefing-modal');
+            const data = briefingData[key];
+            if(data) {
+                document.getElementById('briefing-modal-icon').innerHTML = data.icon;
+                document.getElementById('briefing-modal-title').innerText = data.title;
+                document.getElementById('briefing-modal-content').innerHTML = data.html;
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; 
+            }
+        }
+
+        function closeBriefing() {
+            document.getElementById('briefing-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto'; 
+        }
+
+        document.getElementById('briefing-modal').addEventListener('click', function(e) {
+            if(e.target === this) closeBriefing();
+        });
+        
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId + '-section').classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-sky-900'));
+            const activeBtn = document.getElementById('nav-' + tabId);
+            if(activeBtn && tabId !== 'cert') activeBtn.classList.add('bg-sky-900');
+            
+            document.querySelectorAll('.nav-btn-mobile').forEach(btn => btn.classList.remove('bg-sky-900'));
+            const activeMobileBtn = document.getElementById('nav-' + tabId + '-mobile');
+            if(activeMobileBtn && tabId !== 'cert') activeMobileBtn.classList.add('bg-sky-900');
+
+            window.scrollTo(0,0);
+
+            if (tabId === 'game' && !gameRunning) {
+                resetGame();
+                drawGame();
+            }
+        }
+
+        function showModal(title, message, type = 'info') {
+            const modal = document.getElementById('custom-modal');
+            const icon = document.getElementById('modal-icon');
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-msg').innerText = message;
+            
+            if(type === 'success') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-check text-green-500"></i>';
+            } else if (type === 'error') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500"></i>';
+            } else if (type === 'warning') {
+                icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-yellow-500"></i>';
+            } else {
+                icon.innerHTML = '<i class="fa-solid fa-circle-info text-sky-500"></i>';
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        // --- LAB 1: Detect Tampering ---
+        let lab1Count = 0;
+        function lab1Check(el, isCorrect) {
+            if(el.classList.contains('bg-red-500')) return; // already clicked
+            
+            if(isCorrect) {
+                el.classList.add('bg-red-500', 'text-white');
+                el.classList.remove('hover:bg-red-200');
+                lab1Count++;
+                document.getElementById('lab1-feedback').innerText = `Anomalies found: ${lab1Count}/3`;
+                if(lab1Count === 3) {
+                    document.getElementById('lab1-feedback').innerText = "All Tampering Detected! Integrity Restored.";
+                    document.getElementById('lab1-feedback').classList.replace('text-sky-600', 'text-green-600');
+                }
+            }
+        }
+
+        // --- LAB 2: Threat Categorization ---
+        let draggedLab2Item = null;
+        let lab2Count = 0;
+
+        document.querySelectorAll('#lab2-items .drag-item').forEach(item => {
+            item.addEventListener('dragstart', function() {
+                draggedLab2Item = this;
+                setTimeout(() => this.classList.add('opacity-50'), 0);
+            });
+            item.addEventListener('dragend', function() {
+                setTimeout(() => this.classList.remove('opacity-50'), 0);
+                draggedLab2Item = null;
+            });
+        });
+
+        document.querySelectorAll('.drop-zone').forEach(zone => {
+            zone.addEventListener('dragover', e => e.preventDefault());
+            zone.addEventListener('dragenter', function(e) { e.preventDefault(); this.classList.add('bg-slate-200'); });
+            zone.addEventListener('dragleave', function() { this.classList.remove('bg-slate-200'); });
+            zone.addEventListener('drop', function() {
+                this.classList.remove('bg-slate-200');
+                if(draggedLab2Item) {
+                    if(draggedLab2Item.dataset.type === this.dataset.target) {
+                        this.appendChild(draggedLab2Item);
+                        draggedLab2Item.classList.replace('bg-white', 'bg-green-100');
+                        draggedLab2Item.classList.replace('border-slate-300', 'border-green-400');
+                        draggedLab2Item.setAttribute('draggable', 'false');
+                        lab2Count++;
+                        if(lab2Count === 3) {
+                            document.getElementById('lab2-feedback').innerText = "All threats correctly categorized!";
+                            document.getElementById('lab2-feedback').classList.replace('text-sky-600', 'text-green-600');
+                        }
+                    } else {
+                        document.getElementById('lab2-feedback').innerText = "Incorrect category. Try again.";
+                        document.getElementById('lab2-feedback').classList.replace('text-sky-600', 'text-red-600');
+                        setTimeout(() => { document.getElementById('lab2-feedback').innerText = ""; document.getElementById('lab2-feedback').classList.replace('text-red-600', 'text-sky-600'); }, 2000);
+                    }
+                }
+            });
+        });
+
+        // --- LAB 3: Packet Sniffing ---
+        function startTransmission() {
+            const packet = document.getElementById('network-packet');
+            packet.classList.remove('hidden');
+            packet.style.left = '40px';
+            packet.style.transition = 'none';
+            
+            setTimeout(() => {
+                packet.style.transition = 'left 3s linear';
+                packet.style.left = 'calc(100% - 60px)';
+            }, 50);
+
+            setTimeout(() => {
+                packet.classList.add('hidden');
+            }, 3050);
+        }
+
+        function capturePacket() {
+            document.getElementById('network-packet').classList.add('hidden');
+            document.getElementById('lab3-feedback').innerText = "Token: Auth_0x8F2A Captured!";
+            document.getElementById('lab3-feedback').classList.replace('text-sky-600', 'text-green-600');
+        }
+
+        // --- LAB 4: Mitigate Replay ---
+        let isTokenSecure = false;
+        function toggleToken() {
+            const btn = document.getElementById('toggle-token-btn');
+            isTokenSecure = !isTokenSecure;
+            if(isTokenSecure) {
+                btn.innerText = "Time-Stamped & Nonce";
+                btn.className = "bg-green-100 text-green-800 border border-green-400 px-3 py-1 rounded text-xs font-bold";
+            } else {
+                btn.innerText = "Static (Persistent)";
+                btn.className = "bg-red-100 text-red-800 border border-red-400 px-3 py-1 rounded text-xs font-bold";
+            }
+        }
+
+        function simulateReplay() {
+            const fb = document.getElementById('lab4-feedback');
+            if(isTokenSecure) {
+                fb.innerText = "Attack Blocked! Token expired/already used.";
+                fb.className = "font-bold mt-2 h-5 text-sm text-green-600";
+            } else {
+                fb.innerText = "Attack Successful! Duplicate transaction processed.";
+                fb.className = "font-bold mt-2 h-5 text-sm text-red-600";
+            }
+        }
+
+        // --- LAB 5: On-Path Network ---
+        function lab5Check(isSecure) {
+            const fb = document.getElementById('lab5-feedback');
+            if(isSecure) {
+                fb.innerText = "Connected Securely. On-Path Attack Mitigated.";
+                fb.className = "text-center font-bold mt-2 h-5 text-sm text-green-600";
+            } else {
+                fb.innerText = "Danger! You connected to an unsecured rogue network.";
+                fb.className = "text-center font-bold mt-2 h-5 text-sm text-red-600";
+            }
+        }
+
+        // --- LAB 6: Active Alteration ---
+        function forwardPayload() {
+            const amt = document.getElementById('intercept-amount').value;
+            const fb = document.getElementById('lab6-feedback');
+            if(amt !== "100") {
+                fb.innerText = `Success (for the attacker). Payload altered to $${amt}. Integrity destroyed.`;
+                fb.className = "font-bold mt-2 h-5 text-sm text-red-500";
+            } else {
+                fb.innerText = "You forwarded the original amount. No tampering occurred.";
+                fb.className = "font-bold mt-2 h-5 text-sm text-slate-500";
+            }
+        }
+
+        // --- LAB 7: Hashing Simulator ---
+        function updateHashSim() {
+            const txt = document.getElementById('hash-input').value;
+            // Extremely simple pseudo-hash just for visual avalanche effect
+            let hash1 = 0, hash2 = 0;
+            for (let i = 0; i < txt.length; i++) {
+                let char = txt.charCodeAt(i);
+                hash1 = ((hash1 << 5) - hash1) + char;
+                hash1 = hash1 & hash1; 
+                hash2 = ((hash2 << 7) - hash2) + (char * 31);
+                hash2 = hash2 & hash2;
+            }
+            let hex = Math.abs(hash1).toString(16).padStart(16, '0') + Math.abs(hash2).toString(16).padStart(16, 'f') + Math.abs(hash1*7).toString(16).padStart(32, 'a');
+            
+            document.getElementById('hash-output').innerText = hex.substring(0, 64);
+            document.getElementById('lab7-feedback').classList.remove('hidden');
+        }
+        window.onload = updateHashSim; // init hash
+
+        // --- LAB 8: Config Diff ---
+        let lab8Solved = false;
+        function lab8Check(isCorrect) {
+            if(lab8Solved) return;
+            if(isCorrect) {
+                event.currentTarget.classList.add('bg-red-200', 'text-red-900', 'font-bold');
+                document.getElementById('lab8-feedback').innerText = "Critical Vulnerability Identified!";
+                document.getElementById('lab8-feedback').classList.replace('text-sky-600', 'text-green-600');
+                lab8Solved = true;
+            } else {
+                document.getElementById('lab8-feedback').innerText = "That line does not represent a critical tampering threat.";
+                document.getElementById('lab8-feedback').classList.replace('text-sky-600', 'text-red-600');
+                setTimeout(() => { document.getElementById('lab8-feedback').innerText = ""; document.getElementById('lab8-feedback').classList.replace('text-red-600', 'text-sky-600'); }, 2000);
+            }
+        }
+
+
+        // --- QUIZ LOGIC (20 Questions) ---
+        const quizData = [
+            // Provided from prompt
+            { q: "Which of these best describes 'integrity' in the CIA Triad?", options: ["Keeping data secret", "Ensuring data is accurate and reliable", "Making data accessible", "Encrypting data"], answer: 1 },
+            { q: "Which of the following is NOT considered a form of data tampering?", options: ["Unauthorized modification", "Accidental deletion", "Authorized backups", "Unauthorized removal of data"], answer: 2 },
+            { q: "What is another term commonly used for an 'on-path attack'?", options: ["Man-in-the-middle attack", "Replay attack", "Phishing attack", "Brute-force attack"], answer: 0 },
+            { q: "A replay attack primarily involves:", options: ["Altering data actively in transit", "Capturing data and reusing it later", "Encrypting data without authorization", "Modifying stored files directly"], answer: 1 },
+            { q: "Which cryptographic method is commonly used to verify data integrity?", options: ["Symmetric encryption", "Hashing", "Asymmetric encryption", "Digital watermarking"], answer: 1 },
+            { q: "Which of the following hashing algorithms is considered insecure?", options: ["SHA-2", "SHA-512", "MD5", "SHA-3"], answer: 2 },
+            { q: "Which of the following Linux commands is commonly used to generate a file’s checksum?", options: ["diff", "md5sum", "chmod", "cd"], answer: 1 },
+            { q: "What effect does a small change in file content have on its checksum?", options: ["No change", "Slightly altered checksum", "Completely different checksum", "The checksum length shortens"], answer: 2 },
+            { q: "Digital signatures primarily help ensure:", options: ["Data encryption", "File compression", "Data integrity and authenticity", "Faster data transmission"], answer: 2 },
+            { q: "What is a safe practice when using public Wi-Fi networks?", options: ["Only use websites with HTTP", "Avoid using secure protocols", "Avoid sensitive transactions", "Turn off firewall software"], answer: 2 },
+            { q: "Which is true about MD5 compared to SHA-512?", options: ["MD5 is more secure than SHA-512", "MD5 produces shorter hashes than SHA-512", "MD5 hashes cannot change with file edits", "MD5 is less commonly used"], answer: 1 },
+            { q: "To protect data integrity during online transactions, one should:", options: ["Use HTTP instead of HTTPS", "Connect only to secure networks and use HTTPS", "Rely solely on firewall protection", "Avoid digital signatures"], answer: 1 },
+            
+            // 8 Custom Questions from Briefing
+            { q: "Which type of integrity threat involves an authorized employee maliciously altering data using their legitimate access privileges?", options: ["External Attack", "Insider Threat", "Accidental Tampering", "Replay Attack"], answer: 1 },
+            { q: "What is the primary difference between a Replay attack and an On-Path attack?", options: ["Replay reuses valid data; On-Path alters it in transit.", "Replay targets hard drives; On-Path targets networks.", "Replay is an active attack; On-Path is passive.", "Replay uses encryption; On-Path uses hashing."], answer: 0 },
+            { q: "If you download a critical software update and want to ensure it hasn't been tampered with by an attacker, what should you verify?", options: ["The file's modified date", "The checksum/hash", "The file size in kilobytes", "The file's read permissions"], answer: 1 },
+            { q: "What cryptographic concept is required to ensure that a digital signature is valid and actually originated from the claimed sender?", options: ["A symmetric AES key", "Public/Private Key pairs", "An unencrypted network", "A static nonce"], answer: 1 },
+            { q: "Which command in Linux is used to compare two configuration files line-by-line to identify unauthorized differences?", options: ["grep", "md5sum", "diff", "ls"], answer: 2 },
+            { q: "Why is it dangerous to perform financial transactions on an unsecured public Wi-Fi network like 'Airport_Free_WiFi'?", options: ["It uses too much bandwidth.", "It is highly susceptible to On-Path interception.", "It automatically formats your hard drive.", "It requires a physical network cable."], answer: 1 },
+            { q: "What secure protocol should you always verify in your web browser's address bar to ensure data integrity during transmission?", options: ["HTTP", "FTP", "HTTPS", "SMTP"], answer: 2 },
+            { q: "Which of the following mitigation techniques prevents a captured authentication token from being successfully used in a Replay Attack?", options: ["Time-stamped nonces (single-use numbers)", "Using a shorter password", "Switching from WPA3 to WPA2", "Using a GUI instead of a CLI"], answer: 0 }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        
+        quizData.forEach((item, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = "bg-slate-50 p-6 rounded-lg border border-slate-200 transition-all";
+            qDiv.id = `q-block-${index}`;
+            
+            const qTitle = document.createElement('h3');
+            qTitle.className = "font-bold text-lg text-slate-800 mb-4";
+            qTitle.innerText = `${index + 1}. ${item.q}`;
+            qDiv.appendChild(qTitle);
+            
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = "space-y-3";
+            
+            item.options.forEach((opt, optIndex) => {
+                const label = document.createElement('label');
+                label.className = "flex items-center space-x-3 p-3 rounded bg-white border border-slate-300 hover:bg-sky-50 cursor-pointer transition";
+                
+                const radio = document.createElement('input');
+                radio.type = "radio";
+                radio.name = `q${index}`;
+                radio.value = optIndex;
+                radio.className = "form-radio h-5 w-5 text-sky-600";
+                
+                const span = document.createElement('span');
+                span.className = "text-slate-700";
+                span.innerText = opt;
+                
+                label.appendChild(radio);
+                label.appendChild(span);
+                optionsDiv.appendChild(label);
+            });
+            
+            qDiv.appendChild(optionsDiv);
+            quizContainer.appendChild(qDiv);
+        });
+
+        function gradeQuiz() {
+            let score = 0;
+            let allAnswered = true;
+
+            for(let i = 0; i < quizData.length; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if(selected) {
+                    if(parseInt(selected.value) === quizData[i].answer) {
+                        score++;
+                    }
+                } else {
+                    allAnswered = false;
+                }
+            }
+            
+            if(!allAnswered) {
+                showModal('Incomplete Quiz', 'Please answer all 20 questions before submitting.', 'warning');
+                return;
+            }
+            
+            const percentage = (score / quizData.length) * 100;
+            
+            if(score >= 18) { 
+                const navGame = document.getElementById('nav-game');
+                const navGameMobile = document.getElementById('nav-game-mobile');
+                
+                navGame.classList.remove('text-slate-400', 'cursor-not-allowed');
+                navGame.classList.add('text-white', 'hover:bg-sky-600');
+                navGame.disabled = false;
+                navGame.innerHTML = '<i class="fa-solid fa-gamepad mr-1"></i>Game';
+                
+                navGameMobile.classList.remove('text-slate-400', 'cursor-not-allowed');
+                navGameMobile.classList.add('text-white', 'hover:bg-sky-600');
+                navGameMobile.disabled = false;
+                navGameMobile.innerHTML = '<i class="fa-solid fa-gamepad"></i> Game';
+
+                document.getElementById('nav-cert').classList.remove('hidden');
+                document.getElementById('nav-cert-mobile').classList.remove('hidden');
+                
+                document.getElementById('proceed-game-btn').classList.remove('hidden');
+                document.getElementById('submit-quiz-btn').classList.add('hidden');
+
+                showModal('Outstanding!', `You scored ${score}/20 (${percentage}%). You have unlocked your Certificate of Mastery AND the Data Defender Game!`, 'success');
+            } else {
+                quizData.forEach((_, i) => {
+                    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                    if(selected) selected.checked = false;
+                });
+                showModal('Keep Trying!', `You scored ${score}/20 (${percentage}%). You need 90% (18/20) to earn the certificate. Your answers have been reset so you can try again.`, 'error');
+                document.getElementById('quiz-section').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // --- RETRO GAME LOGIC: DATA DEFENDER (Battle City / Top-Down Tank Clone) ---
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let score = 0;
+        let lives = 3;
+        let gameRunning = false;
+        let animationId;
+        
+        const KEYS = {};
+        window.addEventListener('keydown', e => KEYS[e.code] = true);
+        window.addEventListener('keyup', e => KEYS[e.code] = false);
+
+        const overlay = document.getElementById('game-overlay');
+        const startBtn = document.getElementById('start-game-btn');
+        const statusText = document.getElementById('game-status-text');
+        startBtn.addEventListener('click', startGame);
+
+        const core = { x: canvas.width/2 - 30, y: canvas.height - 40, w: 60, h: 40, color: '#22c55e' };
+        
+        class Tank {
+            constructor(x, y, color, isPlayer) {
+                this.x = x;
+                this.y = y;
+                this.w = 20;
+                this.h = 20;
+                this.color = color;
+                this.isPlayer = isPlayer;
+                this.speed = isPlayer ? 3 : 1.5;
+                this.dir = {x: 0, y: -1}; // Facing up
+                this.cooldown = 0;
+                this.moveTimer = 0;
+            }
+
+            update() {
+                if (this.isPlayer) {
+                    let moving = false;
+                    if (KEYS['ArrowUp'] || KEYS['KeyW']) { this.y -= this.speed; this.dir = {x:0, y:-1}; moving = true;}
+                    else if (KEYS['ArrowDown'] || KEYS['KeyS']) { this.y += this.speed; this.dir = {x:0, y:1}; moving = true;}
+                    else if (KEYS['ArrowLeft'] || KEYS['KeyA']) { this.x -= this.speed; this.dir = {x:-1, y:0}; moving = true;}
+                    else if (KEYS['ArrowRight'] || KEYS['KeyD']) { this.x += this.speed; this.dir = {x:1, y:0}; moving = true;}
+                    
+                    if(this.cooldown > 0) this.cooldown--;
+                    if (KEYS['Space'] && this.cooldown <= 0) {
+                        bullets.push(new Bullet(this.x + this.w/2, this.y + this.h/2, this.dir, true));
+                        this.cooldown = 20; // fire rate
+                    }
+                } else {
+                    // Enemy AI
+                    this.moveTimer--;
+                    if(this.moveTimer <= 0) {
+                        // Change direction
+                        const dirs = [{x:0, y:1}, {x:0, y:-1}, {x:1, y:0}, {x:-1, y:0}];
+                        // Bias towards core (down)
+                        if(Math.random() > 0.5) this.dir = {x:0, y:1};
+                        else this.dir = dirs[Math.floor(Math.random()*dirs.length)];
+                        this.moveTimer = 60 + Math.random()*60;
+                    }
+                    this.x += this.dir.x * this.speed;
+                    this.y += this.dir.y * this.speed;
+
+                    // Enemy shoot
+                    if(Math.random() < 0.015) {
+                        bullets.push(new Bullet(this.x + this.w/2, this.y + this.h/2, this.dir, false));
+                    }
+                }
+
+                // Bounds
+                this.x = Math.max(0, Math.min(canvas.width - this.w, this.x));
+                this.y = Math.max(0, Math.min(canvas.height - this.h, this.y));
+                
+                // Keep enemies out of core
+                if(!this.isPlayer && AABB(this, core)) {
+                    this.y -= this.dir.y * this.speed * 2; // bounce back
+                    this.dir = {x: (Math.random()>0.5?1:-1), y: 0}; // force move sideways
+                }
+            }
+
+            draw(ctx) {
+                ctx.fillStyle = this.color;
+                ctx.fillRect(this.x, this.y, this.w, this.h);
+                // Draw barrel
+                ctx.fillStyle = '#cbd5e1';
+                if(this.dir.y === -1) ctx.fillRect(this.x + 8, this.y - 6, 4, 10); // up
+                if(this.dir.y === 1) ctx.fillRect(this.x + 8, this.y + 16, 4, 10); // down
+                if(this.dir.x === -1) ctx.fillRect(this.x - 6, this.y + 8, 10, 4); // left
+                if(this.dir.x === 1) ctx.fillRect(this.x + 16, this.y + 8, 10, 4); // right
+            }
+        }
+
+        class Bullet {
+            constructor(x, y, dir, isPlayer) {
+                this.x = x - 2;
+                this.y = y - 2;
+                this.w = 4;
+                this.h = 4;
+                this.dir = dir;
+                this.speed = 6;
+                this.isPlayer = isPlayer;
+                this.color = isPlayer ? '#38bdf8' : '#ef4444';
+                this.active = true;
+            }
+            update() {
+                this.x += this.dir.x * this.speed;
+                this.y += this.dir.y * this.speed;
+                if(this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) this.active = false;
+            }
+            draw(ctx) {
+                ctx.fillStyle = this.color;
+                ctx.fillRect(this.x, this.y, this.w, this.h);
+            }
+        }
+
+        let player;
+        let enemies = [];
+        let bullets = [];
+        let enemySpawnTimer = 0;
+
+        function AABB(rect1, rect2) {
+            return rect1.x < rect2.x + rect2.w &&
+                   rect1.x + rect1.w > rect2.x &&
+                   rect1.y < rect2.y + rect2.h &&
+                   rect1.h + rect1.y > rect2.y;
+        }
+
+        function loseLife() {
+            lives--;
+            document.getElementById('game-lives').innerText = lives;
+            // Visual flash
+            ctx.fillStyle = "rgba(255,0,0,0.5)";
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            
+            if(lives <= 0) {
+                gameOver();
+            } else {
+                // reset player
+                player.x = canvas.width/2 - 10;
+                player.y = canvas.height - 80;
+            }
+        }
+
+        function resetGame() {
+            player = new Tank(canvas.width/2 - 10, canvas.height - 80, '#3b82f6', true);
+            enemies = [];
+            bullets = [];
+            score = 0;
+            lives = 3;
+            document.getElementById('game-score').innerText = score;
+            document.getElementById('game-lives').innerText = lives;
+            statusText.classList.add('hidden');
+        }
+
+        function startGame() {
+            overlay.classList.add('hidden');
+            if(!gameRunning) {
+                resetGame();
+                gameRunning = true;
+                drawGame();
+            }
+        }
+
+        function drawGame() {
+            if(!gameRunning) return;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw Grid Background
+            ctx.strokeStyle = '#1e293b';
+            ctx.lineWidth = 1;
+            for(let i=0; i<canvas.width; i+=20) { ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke(); }
+            for(let i=0; i<canvas.height; i+=20) { ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(canvas.width, i); ctx.stroke(); }
+
+            // Draw Core
+            ctx.fillStyle = core.color;
+            ctx.fillRect(core.x, core.y, core.w, core.h);
+            ctx.fillStyle = '#000';
+            ctx.font = '16px monospace';
+            ctx.fillText('DATA', core.x + 12, core.y + 25);
+            
+            // Spawning
+            enemySpawnTimer++;
+            if(enemySpawnTimer > 100 - (score/100)) { // Gets faster
+                let ex = Math.random() * (canvas.width - 20);
+                enemies.push(new Tank(ex, 0, '#ef4444', false));
+                enemySpawnTimer = 0;
+            }
+
+            // Update & Draw
+            player.update();
+            player.draw(ctx);
+
+            for(let i = enemies.length-1; i>=0; i--) {
+                let e = enemies[i];
+                e.update();
+                e.draw(ctx);
+                
+                // Collision with core
+                if(AABB(e, core)) {
+                    loseLife();
+                    enemies.splice(i, 1);
+                    continue;
+                }
+                // Collision with player
+                if(AABB(e, player)) {
+                    loseLife();
+                    enemies.splice(i, 1);
+                }
+            }
+
+            for(let i = bullets.length-1; i>=0; i--) {
+                let b = bullets[i];
+                b.update();
+                b.draw(ctx);
+
+                if(!b.active) { bullets.splice(i, 1); continue; }
+
+                if(b.isPlayer) {
+                    for(let j = enemies.length-1; j>=0; j--) {
+                        if(AABB(b, enemies[j])) {
+                            enemies.splice(j, 1);
+                            bullets.splice(i, 1);
+                            score += 100;
+                            document.getElementById('game-score').innerText = score;
+                            break;
+                        }
+                    }
+                } else {
+                    if(AABB(b, player)) {
+                        loseLife();
+                        bullets.splice(i, 1);
+                    } else if(AABB(b, core)) {
+                        loseLife();
+                        bullets.splice(i, 1);
+                    }
+                }
+            }
+
+            animationId = requestAnimationFrame(drawGame);
+        }
+
+        function gameOver() {
+            gameRunning = false;
+            cancelAnimationFrame(animationId);
+            overlay.classList.remove('hidden');
+            overlay.classList.replace('bg-opacity-80', 'bg-opacity-90');
+            statusText.classList.remove('hidden');
+            startBtn.innerText = "REBOOT SYSTEM";
+        }
+
+        // --- CERTIFICATE LOGIC ---
+        function updateCertName() {
+            let name = document.getElementById('student-name-input').value.trim();
+            if(name) {
+                if (name.includes(' ')) {
+                    name = name.split(' ')[0];
+                    document.getElementById('student-name-input').value = name;
+                    showModal('Notice', 'Only your first name has been applied to the certificate.', 'info');
+                }
+                document.getElementById('cert-student-name').innerText = name;
+            } else {
+                showModal('Wait!', 'Please enter your first name to update the certificate.', 'warning');
+            }
+        }
+
+        const today = new Date();
+        document.getElementById('cert-date').innerText = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        function downloadCert() {
+            const certEl = document.getElementById('certificate');
+            const name = document.getElementById('cert-student-name').innerText;
+            let filename = 'Certificate.png';
+            if (name && name !== 'Student') {
+                filename = `${name.replace(/\s+/g, '_')}_Certificate.png`;
+            }
+
+            const originalTransform = certEl.style.transform;
+            certEl.style.transform = 'none';
+
+            const btn = document.getElementById('download-btn');
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Generating...';
+            btn.disabled = true;
+
+            html2canvas(certEl, { 
+                scale: 2, 
+                useCORS: true,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+            }).catch(err => {
+                console.error(err);
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                showModal('Error', 'Failed to generate image. Try using a desktop browser.', 'error');
+            });
+        }
+    </script>
+</body>
+</html>
+```eof

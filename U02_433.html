@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 02 Section 4.3.3 Mastery - Functions in Programming</title>
+    
+    <!-- Load Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load HTML2Canvas for Certificate Download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- Load Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Qwitcher+Grypen:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; 
+            color: #1e293b;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        /* Interactive Elements CSS */
+        .io-dropzone { min-height: 70px; min-width: 130px; border: 2px dashed #94a3b8; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: #f1f5f9; transition: all 0.2s;}
+        .io-dropzone.drag-over { background: #e2e8f0; border-color: #2563eb; box-shadow: inset 0 0 10px rgba(37, 99, 235, 0.2);}
+        
+        .io-item { cursor: grab; transition: transform 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .io-item:active { cursor: grabbing; transform: scale(0.95); }
+        
+        .cat-dropzone { transition: background-color 0.2s ease; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #e2e8f0; }
+        ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #1d4ed8; }
+
+        /* Retro Game Canvas */
+        #game-canvas {
+            background-color: #0f172a;
+            border: 4px solid #334155;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(234, 179, 8, 0.3);
+            max-width: 100%;
+            height: auto;
+            touch-action: none;
+        }
+        .game-btn { touch-action: manipulation; user-select: none; }
+
+        /* --- CERTIFICATE STYLES --- */
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .font-body { font-family: 'Lora', serif; }
+        .font-script { font-family: 'Qwitcher Grypen', cursive; }
+        
+        .cert-preview-container {
+            width: 100%;
+            overflow: auto;
+            display: flex;
+            justify-content: center;
+            background: #e2e8f0;
+            padding: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        #certificate {
+            width: 1056px !important;
+            height: 816px !important;
+            flex-shrink: 0;
+            background-color: #ffffff;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1056" height="816"><polygon points="0,0 250,0 0,650" fill="%2393c5fd"/><polygon points="0,0 350,0 0,900" fill="%231d4ed8" opacity="0.8"/><polygon points="0,0 120,0 0,300" fill="%23bfdbfe"/><polygon points="0,450 650,816 0,816" fill="%23bfdbfe"/><polygon points="0,550 450,816 0,816" fill="%231d4ed8" opacity="0.8"/><polygon points="800,0 1056,0 1056,256" fill="%23f8fafc"/><polygon points="1056,500 1056,816 750,816" fill="%23f8fafc"/></svg>');
+            background-size: cover;
+            border: 4px solid #e2e8f0;
+        }
+
+        .gold-seal {
+            position: absolute;
+            left: 110px;
+            top: 350px;
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c, #fcf6ba);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3), inset 0 0 15px rgba(255,255,255,0.7), inset 0 0 25px rgba(139,105,20,0.9);
+            z-index: 10;
+        }
+        .gold-seal::before {
+            content: '';
+            position: absolute;
+            top: -4px; bottom: -4px; left: -4px; right: -4px;
+            border-radius: 50%;
+            border: 6px dashed #d4af37;
+        }
+        .gold-seal-inner-1 {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 2px solid rgba(139, 105, 20, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #e8c678, #dbab46);
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.2), 0 2px 5px rgba(255,255,255,0.7);
+            z-index: 1;
+        }
+        .gold-seal-inner-2 {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: radial-gradient(circle, #fcf6ba, #d4af37);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            padding: 10px;
+        }
+        .embossed-text {
+            color: #b38728;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2);
+            font-family: 'Playfair Display', serif;
+            font-weight: 800;
+            line-height: 1.1;
+            text-transform: uppercase;
+        }
+        .embossed-text-large { font-size: 14px; letter-spacing: 1px; }
+        .embossed-text-small { font-size: 11px; letter-spacing: 2px; margin: 2px 0; }
+        .embossed-star { font-size: 12px; color: #b38728; text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2); margin: 2px 0; }
+
+        @media (max-width: 1100px) {
+            #certificate { transform: scale(0.7); transform-origin: top left; margin-bottom: -240px; margin-right: -310px; }
+        }
+        @media (max-width: 768px) {
+            #certificate { transform: scale(0.4); transform-origin: top left; margin-bottom: -490px; margin-right: -630px; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen flex flex-col">
+
+    <nav class="bg-blue-700 text-white shadow-lg sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-code text-2xl"></i>
+                    <span class="font-bold text-xl tracking-wider hidden sm:inline-block">Tech+ Unit 02 Section 4.3.3</span>
+                    <span class="font-bold text-xl tracking-wider sm:hidden">4.3.3</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-2">
+                        <button onclick="switchTab('briefing')" class="nav-btn bg-blue-900 px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-600 transition" id="nav-briefing"><i class="fa-solid fa-book-open mr-1"></i>Briefing</button>
+                        <button onclick="switchTab('activity')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-600 transition" id="nav-activity"><i class="fa-solid fa-flask mr-1"></i>Lab Activity</button>
+                        <button onclick="switchTab('quiz')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-600 transition" id="nav-quiz"><i class="fa-solid fa-clipboard-check mr-1"></i>Quiz</button>
+                        <button onclick="switchTab('game')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-slate-400 cursor-not-allowed transition" id="nav-game" disabled><i class="fa-solid fa-lock mr-1"></i>Game</button>
+                        <button onclick="switchTab('cert')" class="nav-btn hidden px-3 py-2 rounded-md text-sm font-medium text-yellow-300 hover:bg-blue-600 transition" id="nav-cert"><i class="fa-solid fa-award mr-1"></i>Certificate</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Nav -->
+        <div class="md:hidden flex flex-wrap justify-center gap-2 py-2 px-2 bg-blue-800">
+            <button onclick="switchTab('briefing')" class="nav-btn-mobile px-3 py-1 text-sm rounded bg-blue-900" id="nav-briefing-mobile">Briefing</button>
+            <button onclick="switchTab('activity')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-activity-mobile">Lab</button>
+            <button onclick="switchTab('quiz')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-quiz-mobile">Quiz</button>
+            <button onclick="switchTab('game')" class="nav-btn-mobile px-3 py-1 text-sm rounded text-slate-400 cursor-not-allowed" id="nav-game-mobile" disabled><i class="fa-solid fa-lock"></i></button>
+            <button onclick="switchTab('cert')" id="nav-cert-mobile" class="hidden px-2 py-1 text-sm text-yellow-300 rounded"><i class="fa-solid fa-award"></i></button>
+        </div>
+    </nav>
+
+    <main class="flex-grow w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <!-- BRIEFING SECTION -->
+        <div id="briefing-section" class="tab-content active no-print">
+            <div class="text-center mb-10">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4">Functions in Programming</h1>
+                <p class="text-lg text-slate-600 max-w-3xl mx-auto">Functions are reusable building blocks of code designed to encapsulate specific tasks, simplify complex problems, promote code reuse, and streamline software development.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- Tile 1 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-blue-600 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-blue-700"><i class="fa-solid fa-box-archive mr-2"></i>What is a Function?</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>Definition:</strong> A reusable block of code that performs a specific action when invoked.</li>
+                            <li><strong>Anatomy:</strong> Comprises keywords, descriptive naming, parameters (inputs), body processing, and return values (outputs).</li>
+                            <li><strong>Invocation:</strong> Executed via a function call using its name and parentheses.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('definition-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('definition-usecase')" class="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 2 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-indigo-600 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-indigo-700"><i class="fa-solid fa-puzzle-piece mr-2"></i>Simplifying Code</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>Decomposition:</strong> Breaks massive, complex programming problems down into manageable sub-tasks.</li>
+                            <li><strong>Abstraction:</strong> Hides intricate implementation details behind a clean, intuitive function interface.</li>
+                            <li><strong>Efficiency:</strong> Reduces code bloat and eliminates redundant calculations across large programs.</li>
+                        </ul>
+                    </div>
+                 <div class="bg-slate-50 border-t border-slate-100 p-4">
+                    <div class="flex gap-4">
+                        <button onclick="openBriefing('simplify-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                        <button onclick="openBriefing('simplify-usecase')" class="flex-1 bg-indigo-100 hover:bg-indigo-200 text-indigo-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                    </div>
+                </div>
+                </div>
+
+                <!-- Tile 3 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-emerald-600 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-emerald-700"><i class="fa-solid fa-recycle mr-2"></i>Code Reuse & Readability</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>DRY Principle:</strong> "Don't Repeat Yourself" by writing logic once and calling it across multiple scenarios.</li>
+                            <li><strong>Descriptive Naming:</strong> Clear function names communicate exact operational intent to human readers.</li>
+                            <li><strong>Maintainability:</strong> Enhances peer collaboration and long-term project comprehension.</li>
+                        </ul>
+                    </div>
+                 <div class="bg-slate-50 border-t border-slate-100 p-4">
+                    <div class="flex gap-4">
+                        <button onclick="openBriefing('reuse-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                        <button onclick="openBriefing('reuse-usecase')" class="flex-1 bg-emerald-100 hover:bg-emerald-200 text-emerald-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                    </div>
+                </div>
+                </div>
+
+                <!-- Tile 4 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-amber-600 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-amber-700"><i class="fa-solid fa-bug-slash mr-2"></i>Modifying & Debugging</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>Single Point of Edit:</strong> Update code logic once inside a function definition to apply changes application-wide.</li>
+                            <li><strong>Isolated Testing:</strong> Verify individual helper functions independently before full software integration.</li>
+                            <li><strong>Error Containment:</strong> Localizes bugs and prevents cascading failures across complex systems.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('debug-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('debug-usecase')" class="flex-1 bg-amber-100 hover:bg-amber-200 text-amber-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 flex justify-center">
+                <button onclick="switchTab('activity')" class="bg-blue-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-blue-500 shadow-lg transition transform hover:scale-105">Proceed to Lab Activity <i class="fa-solid fa-arrow-right ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- LAB ACTIVITY SECTION -->
+        <div id="activity-section" class="tab-content no-print">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-extrabold text-slate-900 mb-2">Interactive Lab Activity</h1>
+                <p class="text-slate-600">Apply your mastery of functions across these 4 distinct interactive simulations.</p>
+            </div>
+
+            <!-- Lab 1: Function Anatomist (Categorization) -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-slate-200">
+                <h2 class="text-xl font-bold mb-4 text-blue-700"><i class="fa-solid fa-cubes mr-2"></i>Lab 1: Function Anatomist</h2>
+                <p class="text-sm text-slate-600 mb-4">Drag each code snippet or element to its correct category in the function anatomy structure.</p>
+                
+                <div class="flex flex-wrap gap-3 mb-6" id="cat-items">
+                    <div class="io-item px-4 py-2 bg-blue-100 border border-blue-300 rounded font-bold text-sm" draggable="true" data-type="keyword">def</div>
+                    <div class="io-item px-4 py-2 bg-blue-100 border border-blue-300 rounded font-bold text-sm" draggable="true" data-type="name">calculateArea</div>
+                    <div class="io-item px-4 py-2 bg-blue-100 border border-blue-300 rounded font-bold text-sm" draggable="true" data-type="input">(width, height)</div>
+                    <div class="io-item px-4 py-2 bg-blue-100 border border-blue-300 rounded font-bold text-sm" draggable="true" data-type="body">result = width * height</div>
+                    <div class="io-item px-4 py-2 bg-blue-100 border border-blue-300 rounded font-bold text-sm" draggable="true" data-type="output">return result</div>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                    <div class="cat-dropzone border-2 border-dashed border-blue-400 bg-blue-50 rounded-lg p-2 min-h-[100px] flex flex-col items-center" data-target="keyword">
+                        <h3 class="font-bold text-blue-800 mb-1 border-b border-blue-200 w-full text-center pb-1 text-xs">Keyword</h3>
+                    </div>
+                    <div class="cat-dropzone border-2 border-dashed border-indigo-400 bg-indigo-50 rounded-lg p-2 min-h-[100px] flex flex-col items-center" data-target="name">
+                        <h3 class="font-bold text-indigo-800 mb-1 border-b border-indigo-200 w-full text-center pb-1 text-xs">Function Name</h3>
+                    </div>
+                    <div class="cat-dropzone border-2 border-dashed border-emerald-400 bg-emerald-50 rounded-lg p-2 min-h-[100px] flex flex-col items-center" data-target="input">
+                        <h3 class="font-bold text-emerald-800 mb-1 border-b border-emerald-200 w-full text-center pb-1 text-xs">Inputs (Parameters)</h3>
+                    </div>
+                    <div class="cat-dropzone border-2 border-dashed border-amber-400 bg-amber-50 rounded-lg p-2 min-h-[100px] flex flex-col items-center" data-target="body">
+                        <h3 class="font-bold text-amber-800 mb-1 border-b border-amber-200 w-full text-center pb-1 text-xs">Processing Body</h3>
+                    </div>
+                    <div class="cat-dropzone border-2 border-dashed border-purple-400 bg-purple-50 rounded-lg p-2 min-h-[100px] flex flex-col items-center" data-target="output">
+                        <h3 class="font-bold text-purple-800 mb-1 border-b border-purple-200 w-full text-center pb-1 text-xs">Output (Return)</h3>
+                    </div>
+                </div>
+                <div id="lab1-feedback" class="text-center font-bold mt-4 h-6 text-emerald-600"></div>
+            </div>
+
+            <!-- Lab 2: Code Simplifier (Refactoring) -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-slate-200">
+                <h2 class="text-xl font-bold mb-4 text-indigo-700"><i class="fa-solid fa-wand-magic-sparkles mr-2"></i>Lab 2: DRY Code Refactorer</h2>
+                <p class="text-sm text-slate-600 mb-4">A programmer has repeated greeting code 3 times. Click the correct refactored function solution that applies the DRY (Don't Repeat Yourself) principle.</p>
+                
+                <div class="bg-slate-900 text-slate-200 p-4 rounded-lg font-mono text-xs sm:text-sm mb-4 overflow-x-auto">
+                    # Unrefactored Code<br>
+                    print("Hello, Alice!")<br>
+                    print("Hello, Bob!")<br>
+                    print("Hello, Charlie!")
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="p-4 border-2 border-slate-300 rounded-lg hover:border-indigo-500 cursor-pointer bg-slate-50 transition" onclick="checkLab2(false)">
+                        <h4 class="font-bold text-slate-800 mb-1">Option A</h4>
+                        <pre class="font-mono text-xs text-slate-600">print("Hello, Everyone!")</pre>
+                    </div>
+                    <div class="p-4 border-2 border-slate-300 rounded-lg hover:border-indigo-500 cursor-pointer bg-slate-50 transition" onclick="checkLab2(true)">
+                        <h4 class="font-bold text-slate-800 mb-1">Option B (Correct)</h4>
+                        <pre class="font-mono text-xs text-slate-600">def greet(name):<br>&nbsp;&nbsp;&nbsp;&nbsp;return "Hello, " + name + "!"<br>print(greet("Alice"))<br>print(greet("Bob"))<br>print(greet("Charlie"))</pre>
+                    </div>
+                </div>
+                <div id="lab2-feedback" class="text-center font-bold mt-4 h-6 text-emerald-600"></div>
+            </div>
+            
+            <!-- Lab 3: Calculator Debugger -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-slate-200">
+                <h2 class="text-xl font-bold mb-4 text-emerald-700"><i class="fa-solid fa-bug mr-2"></i>Lab 3: Division-by-Zero Guard</h2>
+                <p class="text-sm text-slate-600 mb-4">In Python calculators, dividing by zero causes a fatal crash. Click the correct helper function snippet that safely guards against division by zero.</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="p-4 border-2 border-slate-300 rounded-lg hover:border-emerald-500 cursor-pointer bg-slate-50 transition" onclick="checkLab3(false)">
+                        <h4 class="font-bold text-slate-800 mb-1">Snippet A (Unsafe)</h4>
+                        <pre class="font-mono text-xs text-slate-600">def divide(a, b):<br>&nbsp;&nbsp;&nbsp;&nbsp;return a / b</pre>
+                    </div>
+                    <div class="p-4 border-2 border-slate-300 rounded-lg hover:border-emerald-500 cursor-pointer bg-slate-50 transition" onclick="checkLab3(true)">
+                        <h4 class="font-bold text-slate-800 mb-1">Snippet B (Safe & Robust)</h4>
+                        <pre class="font-mono text-xs text-slate-600">def divide(a, b):<br>&nbsp;&nbsp;&nbsp;&nbsp;if b == 0:<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return "NaN"<br>&nbsp;&nbsp;&nbsp;&nbsp;else:<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return a / b</pre>
+                    </div>
+                </div>
+                <div id="lab3-feedback" class="text-center font-bold mt-4 h-6 text-emerald-600"></div>
+            </div>
+            
+            <!-- Lab 4: Function Invocation Tester -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-slate-200">
+                <h2 class="text-xl font-bold mb-4 text-amber-700"><i class="fa-solid fa-terminal mr-2"></i>Lab 4: Function Output Predictor</h2>
+                <p class="text-sm text-slate-600 mb-4">Analyze the function definition below and select the exact output returned by the function call.</p>
+                
+                <div class="bg-slate-900 text-slate-200 p-4 rounded-lg font-mono text-xs sm:text-sm mb-4">
+                    def duplicate(word):<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;return word + word<br>
+                    print(duplicate("tomato"))
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <button class="p-3 border-2 border-slate-300 rounded-lg hover:border-amber-500 font-mono font-bold text-slate-700 bg-slate-50 transition" onclick="checkLab4('tomato')">tomato</button>
+                    <button class="p-3 border-2 border-slate-300 rounded-lg hover:border-amber-500 font-mono font-bold text-slate-700 bg-slate-50 transition" onclick="checkLab4('tomatotomato')">tomatotomato</button>
+                    <button class="p-3 border-2 border-slate-300 rounded-lg hover:border-amber-500 font-mono font-bold text-slate-700 bg-slate-50 transition" onclick="checkLab4('error')">TypeError</button>
+                </div>
+                <div id="lab4-feedback" class="text-center font-bold mt-4 h-6 text-emerald-600"></div>
+            </div>
+
+            <div class="text-center">
+                <button onclick="switchTab('quiz')" class="bg-blue-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-blue-500 shadow-lg transition transform hover:scale-105">Take the Mastery Quiz <i class="fa-solid fa-clipboard-check ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- QUIZ SECTION -->
+        <div id="quiz-section" class="tab-content no-print">
+            <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-xl max-w-4xl mx-auto">
+                <div class="text-center mb-8 border-b pb-4">
+                    <h1 class="text-3xl font-extrabold text-slate-900 mb-2">Unit 02 Section 4.3.3 Mastery Quiz</h1>
+                    <p class="text-slate-600">Score 90% or higher (18/20) to earn your Certificate of Mastery and unlock the Isometric Tile Jumper Retro Game!</p>
+                </div>
+
+                <div id="quiz-container" class="space-y-8">
+                    <!-- Questions injected via JS -->
+                </div>
+
+                <div class="mt-10 text-center border-t pt-6 flex flex-col md:flex-row justify-center items-center gap-4">
+                    <button id="submit-quiz-btn" onclick="gradeQuiz()" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">Submit Quiz</button>
+                    <button id="proceed-game-btn" onclick="switchTab('game')" class="hidden bg-indigo-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-indigo-700 shadow-lg transition w-full md:w-auto">Play Retro Game <i class="fa-solid fa-gamepad ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RETRO GAME SECTION -->
+        <div id="game-section" class="tab-content no-print">
+            <div class="bg-slate-900 p-6 sm:p-8 rounded-2xl shadow-xl max-w-4xl mx-auto border-4 border-slate-700 flex flex-col items-center">
+                <div class="text-center mb-4 w-full">
+                    <h1 class="text-3xl font-extrabold text-yellow-400 mb-2 tracking-widest uppercase font-mono">Isometric Tile Jumper</h1>
+                    <p class="text-slate-300 text-sm">Use <strong class="text-yellow-400">ARROW KEYS</strong> or on-screen buttons to hop across every tile on the platform pyramid and change all their colors to gold!</p>
+                </div>
+                
+                <div class="flex justify-between items-center w-full max-w-[400px] sm:max-w-[600px] mb-2 px-4 text-white font-mono text-sm sm:text-base">
+                    <div>Score: <span id="game-score" class="text-yellow-400 font-bold">0</span></div>
+                    <div>Lives: <span id="game-lives" class="text-red-400 font-bold">3</span></div>
+                </div>
+
+                <div class="relative flex justify-center w-full flex-col items-center">
+                    <!-- Game Canvas -->
+                    <canvas id="game-canvas" width="600" height="420" class="w-full max-w-[400px] sm:max-w-[600px] bg-slate-950 border-2 border-slate-700 rounded shadow-lg"></canvas>
+                    
+                    <!-- On-Screen Controls for Mobile/Touch -->
+                    <div class="grid grid-cols-3 gap-2 w-full max-w-[280px] mt-3">
+                        <div></div>
+                        <button class="game-btn bg-slate-800 hover:bg-slate-700 text-white font-bold py-3 rounded border border-slate-600" id="btn-up"><i class="fa-solid fa-arrow-up"></i></button>
+                        <div></div>
+                        <button class="game-btn bg-slate-800 hover:bg-slate-700 text-white font-bold py-3 rounded border border-slate-600" id="btn-left"><i class="fa-solid fa-arrow-left"></i></button>
+                        <button class="game-btn bg-slate-800 hover:bg-slate-700 text-white font-bold py-3 rounded border border-slate-600" id="btn-down"><i class="fa-solid fa-arrow-down"></i></button>
+                        <button class="game-btn bg-slate-800 hover:bg-slate-700 text-white font-bold py-3 rounded border border-slate-600" id="btn-right"><i class="fa-solid fa-arrow-right"></i></button>
+                    </div>
+
+                    <!-- Overlay Start Button -->
+                    <div id="game-overlay" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-80 rounded-lg max-w-[400px] sm:max-w-[600px] mx-auto z-10">
+                        <button id="start-game-btn" class="bg-yellow-500 hover:bg-yellow-400 text-slate-950 font-bold font-mono py-3 px-6 rounded-lg text-xl border-4 border-yellow-700 uppercase transform transition hover:scale-105">Start Tile Jumper</button>
+                    </div>
+                </div>
+
+                <div class="mt-8 text-center w-full border-t border-slate-800 pt-6">
+                    <button onclick="switchTab('cert')" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">View Certificate <i class="fa-solid fa-award ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CERTIFICATE SECTION -->
+        <div id="cert-section" class="tab-content">
+            <div class="max-w-5xl mx-auto">
+                
+                <!-- Controls -->
+                <div class="bg-white p-6 rounded shadow mb-6 no-print text-center border border-slate-200">
+                    <h2 class="text-2xl font-bold text-blue-600 mb-2">🎉 Congratulations! 🎉</h2>
+                    <p class="text-slate-700 mb-4">You have achieved mastery of Functions in Programming.</p>
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+                        <input type="text" id="student-name-input" value="Student" placeholder="Enter your first name" class="border-2 border-slate-300 rounded px-4 py-2 w-full md:w-64 focus:border-blue-500 focus:outline-none">
+                        <button onclick="updateCertName()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">Update Name</button>
+                        <button id="download-btn" onclick="downloadCert()" class="bg-slate-800 text-white px-4 py-2 rounded hover:bg-slate-900 transition flex items-center justify-center">
+                            <i class="fa-solid fa-download mr-2"></i>Download PNG
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Certificate Render Container -->
+                <div class="cert-preview-container print:p-0 print:bg-white">
+                    <div id="certificate">
+                        <div class="gold-seal">
+                            <div class="gold-seal-inner-1">
+                                <div class="gold-seal-inner-2">
+                                     <span class="embossed-text embossed-text-large">Certificate</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-small">Of</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-large">Excellence</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="relative z-20 w-full h-full flex flex-col pt-[48px] pl-[380px] pr-[48px]">
+                            <h1 class="text-[#1d4ed8] text-[4.5rem] leading-none font-serif font-bold tracking-wide uppercase mb-2">CERTIFICATE</h1>
+                            <h2 class="text-slate-800 text-3xl font-serif tracking-widest uppercase mb-10">Of Achievement</h2>
+                            
+                            <p class="text-[1.4rem] font-body text-slate-800 mb-4">This is to certify that</p>
+                            
+                            <div class="relative mb-8 w-full">
+                                <h3 id="cert-student-name" class="text-[4rem] text-[#1d4ed8] font-serif italic leading-none pb-2 relative z-10 text-center w-full block">Student</h3>
+                                <div class="w-full border-b-[2px] border-[#1d4ed8] absolute bottom-[4px] left-0 z-0"></div>
+                                <div class="w-full border-b-[2px] border-dotted border-amber-500 absolute bottom-[0px] left-0 z-0"></div>
+                            </div>
+                            
+                            <p class="text-[1.3rem] font-body text-slate-800 leading-relaxed w-full pr-4">
+                                Has successfully completed the assessment for 
+                                <strong class="text-[1.8rem] text-[#1d4ed8] block mt-4 mb-2 font-serif">Tech+ Unit 02 Section 4.3.3</strong>
+                                <strong class="text-[1.5rem] text-black block mb-4 font-serif italic">Functions in Programming</strong>
+                                <span class="text-[1.1rem] text-slate-700 leading-snug block">Demonstrating exemplary proficiency in function anatomy, syntax, parameter passing, code simplification, DRY reuse, readability, and modular debugging.</span>
+                            </p>
+                            
+                            <div class="flex justify-end gap-16 items-end mt-auto mb-[60px] w-full pr-8">
+                                <div class="w-64">
+                                    <div class="border-b border-slate-600 mb-2 h-20 flex items-end justify-center relative">
+                                        <span class="font-script text-[5rem] text-[#1d4ed8] absolute bottom-[-10px] transform -rotate-3 opacity-90">Dr. M. S</span>
+                                    </div>
+                                    <p class="font-serif text-xl text-slate-800 text-center">Administration</p>
+                                </div>
+                                
+                                <div class="w-64">
+                                    <div class="border-b border-slate-600 mb-2 text-center h-20 flex items-end justify-center">
+                                        <p id="cert-date" class="font-body text-2xl text-slate-800 pb-1">Date Here</p>
+                                    </div>
+                                    <p class="font-serif text-xl text-slate-800 text-center">Date</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Custom Modal for Alerts -->
+    <div id="custom-modal" class="fixed inset-0 bg-black bg-opacity-50 z-[100] hidden flex justify-center items-center backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all">
+            <div class="text-center">
+                <div id="modal-icon" class="text-5xl mb-4"></div>
+                <h3 id="modal-title" class="text-2xl font-bold mb-2 text-slate-900"></h3>
+                <p id="modal-msg" class="text-slate-600 mb-6"></p>
+                <button onclick="closeModal()" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-700 transition w-full">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Briefing Modal -->
+    <div id="briefing-modal" class="fixed inset-0 bg-black bg-opacity-70 z-[120] hidden flex justify-center items-center backdrop-blur-sm p-4 sm:p-6">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col transform transition-all overflow-hidden border-4 border-blue-700">
+            <div class="p-6 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+                <div class="flex items-center gap-4">
+                    <div id="briefing-modal-icon" class="text-4xl"></div>
+                    <h3 id="briefing-modal-title" class="text-2xl md:text-3xl font-bold text-slate-900"></h3>
+                </div>
+                <button onclick="closeBriefing()" class="text-slate-400 hover:text-red-600 transition text-4xl leading-none">&times;</button>
+            </div>
+            <div id="briefing-modal-content" class="p-6 md:p-10 overflow-y-auto flex-grow text-slate-700 text-lg leading-relaxed bg-white">
+                <!-- Dynamic Content Injected Here -->
+            </div>
+            <div class="p-6 border-t border-slate-200 bg-slate-50 flex justify-end">
+                <button onclick="closeBriefing()" class="bg-blue-700 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-800 transition shadow-md">Acknowledge & Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Extensive Briefing Content Data (Min 7 Paragraphs per detail, specific structure for Use Cases) ---
+        const briefingData = {
+            'definition-details': {
+                title: 'What is a Function?',
+                icon: '<i class="fa-solid fa-box-archive text-blue-600"></i>',
+                html: `
+                    <p class="mb-5">In computer programming, a <strong>function</strong> is a self-contained, reusable block of statements designed to perform a specific, well-defined task. Rather than writing the exact same sequence of instructions over and over again throughout a software project, a developer packages those instructions into a named function. Whenever the program needs that task performed, it simply "calls" or invokes the function by name, passing any necessary data and receiving the computed result.</p>
+                    
+                    <p class="mb-5">To fully understand how functions operate, it is helpful to visualize them as automated mathematical or logical machines. Every standard function acts as a processing pipeline that transitions from input to output. Data is fed into the function through parameters, the internal processing body executes specific operations on that data, and the function yields a resulting output back to the main program.</p>
+                    
+                    <p class="mb-5">The first essential component of a function is its <strong>Definition Syntax and Keywords</strong>. Different programming languages utilize distinct reserved words to signal the creation of a function. For example, Python uses the concise <code>def</code> keyword, whereas statically typed languages like Java require explicit access modifiers (such as <code>public static</code>) alongside a declared return data type.</p>
+                    
+                    <p class="mb-5">The second core component is the <strong>Function Name</strong>. Just like variables, function names serve as identifiers and should be chosen with immense care. A descriptive function name immediately communicates its operational intent to any developer reading the codebase, turning complex procedural logic into readable English sentences.</p>
+                    
+                    <p class="mb-5">The third component involves <strong>Inputs, Parameters, and Arguments</strong>. Parameters are placeholder variables defined within the function's parentheses that accept initial information needed to complete its task. When the function is subsequently invoked, specific values passed into those parentheses are referred to as arguments.</p>
+                    
+                    <p class="mb-5">The fourth and most computationally intensive component is the <strong>Function Body</strong>. Enclosed within indentation or curly braces, the body houses the actual statements, loops, conditionals, and mathematical operations that manipulate the inputs and complete the assigned task.</p>
+                    
+                    <p>Finally, functions conclude with <strong>Results and Return Values</strong>. Using keywords like <code>return</code>, a function hands its finalized output back to the calling scope. This modular architecture is the cornerstone of structured, scalable software development across all modern programming languages.</p>
+                `
+            },
+            'definition-usecase': {
+                title: 'What is a Function?: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 1: Mathematical Calculation Libraries</h4>
+                        <p class="mb-2">Scientific and financial software require executing complex mathematical computations repeatedly across different user inputs.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Square Root):</strong> A developer invokes <code>math.sqrt(x)</code> inside a physics simulation to instantly calculate velocity without rewriting square root algorithms.</li>
+                            <li><strong>Example 2 (Compound Interest):</strong> An application calls a custom <code>calculateInterest(principal, rate, time)</code> function to compute loan outputs dynamically.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 2: String Formatting and User Greeting</h4>
+                        <p class="mb-2">User-facing web applications constantly need to format text strings and display personalized greetings across various pages.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Name Concatenation):</strong> A program defines <code>greet(name)</code> to return <code>"Hello, " + name + "!"</code> whenever a user logs in.</li>
+                            <li><strong>Example 2 (Text Truncation):</strong> A blogging platform invokes a helper function to slice long article titles down to 50 characters for thumbnail displays.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Function Pipeline</p>
+                            <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=600&h=350" alt="Code structure representing function inputs and outputs" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Modular Architecture</p>
+                            <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=600&h=350" alt="Software engineering workstation" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'simplify-details': {
+                title: 'Simplifying Code',
+                icon: '<i class="fa-solid fa-puzzle-piece text-indigo-600"></i>',
+                html: `
+                    <p class="mb-5">One of the primary driving forces behind the invention of functions in programming is the necessity to <strong>simplify massive codebases</strong>. When building complex enterprise software, artificial intelligence models, or video games, the overarching problem is frequently too vast and intricate for the human brain to comprehend as a single monolithic block of text.</p>
+                    
+                    <p class="mb-5">To overcome this limitation, programmers rely on a foundational software engineering principle known as <strong>Problem Decomposition</strong>. Decomposition is the act of taking a gigantic, intimidating programming objective and systematically breaking it down into smaller, highly manageable, self-contained sub-tasks. Each sub-task is then coded and tested inside its own dedicated function.</p>
+                    
+                    <p class="mb-5">Consider the classic mathematical problem of calculating the hypotenuse of a right triangle using the Pythagorean theorem ($c = \\sqrt{a^2 + b^2}$). Without functions, a programmer might write tangled, nested arithmetic expressions directly into the main execution thread. By utilizing functions, the developer creates a small helper function called <code>square(a)</code> and then calls it cleanly inside the main <code>pythagorean(a, b)</code> function.</p>
+                    
+                    <p class="mb-5">This architectural strategy directly introduces <strong>Hardware and Logical Abstraction</strong>. Abstraction allows a developer to interact with a function based entirely on its expected inputs and outputs without needing to mentally parse every single low-level statement inside its body. Once a function is written and verified, it acts as a trusted black box.</p>
+                    
+                    <p class="mb-5">Furthermore, simplifying code through functions prevents cognitive overload. When debugging an application that spans 50,000 lines of code, being able to isolate a suspected bug down to a single 10-line function transforms an impossible task into a trivial inspection.</p>
+                    
+                    <p class="mb-5">Functions also allow programmers to write modular code that can be easily rearranged or replaced. If a better mathematical algorithm is discovered for a specific sub-task, the developer only needs to rewrite the internal body of that single function, leaving the rest of the software completely untouched.</p>
+                    
+                    <p>Ultimately, writing simplified code through functions transforms software engineering from chaotic scripting into disciplined, elegant architecture, ensuring that programs remain scalable and robust as they grow over time.</p>
+                `
+            },
+            'simplify-usecase': {
+                title: 'Simplifying Code: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-indigo-800 mb-2 border-b-2 border-indigo-200 pb-1">Case 1: Geometry and Physics Engines</h4>
+                        <p class="mb-2">Game development requires continuous spatial calculations where complex formulas must be broken down into simpler component functions.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Pythagorean Theorem):</strong> Instead of complex inline math, a physics engine invokes <code>pythagorean(a, b)</code> which relies on a helper <code>square(x)</code> function to compute collision distances cleanly.</li>
+                            <li><strong>Example 2 (Vector Normalization):</strong> A 3D graphics pipeline decomposes vector math into separate magnitude, dot-product, and normalization functions.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-indigo-800 mb-2 border-b-2 border-indigo-200 pb-1">Case 2: Data Analytics and Parsing Pipelines</h4>
+                        <p class="mb-2">Enterprise software processing large streams of incoming raw data must decompose ingestion into manageable transformation stages.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (CSV Cleaning):</strong> A data script calls <code>cleanRow(data)</code>, which internally executes sub-functions to strip whitespace, format dates, and validate ID numbers.</li>
+                            <li><strong>Example 2 (Report Generation):</strong> A financial dashboard breaks monthly profit calculations into revenue summing, tax deduction, and net margin functions.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Problem Decomposition</p>
+                            <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&h=350" alt="Complex processor motherboard representing hardware decomposition" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Software Architecture</p>
+                            <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=600&h=350" alt="Code abstractions on a display" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'reuse-details': {
+                title: 'Code Reuse & Readability',
+                icon: '<i class="fa-solid fa-recycle text-emerald-600"></i>',
+                html: `
+                    <p class="mb-5">In software engineering, there is a golden rule known by the acronym <strong>DRY: "Don't Repeat Yourself."</strong> Violating the DRY principle by copying and pasting identical blocks of code throughout a program is one of the most common pitfalls for novice programmers, leading to massive maintenance nightmares and bloated file sizes.</p>
+                    
+                    <p class="mb-5">Functions serve as the ultimate vehicle for achieving code reuse. By containing frequently executed operations inside a named function, a developer writes the logic once, stores it in memory, and invokes it in dozens or hundreds of different scenarios across the software project.</p>
+                    
+                    <p class="mb-5">Beyond efficiency, functions drastically improve <strong>Code Readability</strong>. Code is read far more often than it is written—by collaborating peers, code reviewers, and by the original author returning to the project months later. Descriptive naming acts as inline documentation.</p>
+                    
+                    <p class="mb-5">Consider a program that needs to validate user passwords. If the main execution script is cluttered with raw regex checks, length comparisons, and character counting loops, it becomes unreadable. Wrapping those checks inside a function named <code>passwordStrength(pw)</code> turns raw code into plain English.</p>
+                    
+                    <p class="mb-5">Readability also facilitates seamless team collaboration. In professional software development environments, multiple engineers work concurrently on different modules. When functions have clear, standardized names, inputs, and outputs, developers can seamlessly integrate each other's work without needing to audit every line of internal implementation.</p>
+                    
+                    <p class="mb-5">Furthermore, reusable functions promote cross-project utility. Many professional developers maintain personal libraries of utility functions (such as date formatters, validators, and encryption wrappers) that they import into virtually every new software application they build.</p>
+                    
+                    <p>Ultimately, combining the DRY principle with descriptive naming conventions ensures that codebases remain clean, professional, highly cohesive, and easy for any human being to understand and maintain.</p>
+                `
+            },
+            'reuse-usecase': {
+                title: 'Code Reuse & Readability: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-emerald-800 mb-2 border-b-2 border-emerald-200 pb-1">Case 1: Enterprise User Authentication Portals</h4>
+                        <p class="mb-2">Web applications with thousands of daily logins must consistently validate user credentials across multiple different entry pages.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (DRY Principle):</strong> Instead of re-typing validation code on the login page, registration page, and password reset page, the system calls a centralized <code>verifyPasswordStrength(pw)</code> function.</li>
+                            <li><strong>Example 2 (Readability):</strong> Junior developers reviewing security logs can instantly understand code execution by reading descriptive function calls like <code>authenticateUser()</code> and <code>logAccessAttempt()</code>.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-emerald-800 mb-2 border-b-2 border-emerald-200 pb-1">Case 2: E-Commerce Checkout Systems</h4>
+                        <p class="mb-2">Online shopping carts must calculate taxes, currency conversions, and discounts across various international customer checkouts.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Reusable Currency Converter):</strong> An e-commerce platform calls <code>convertToUSD(amount, currencyType)</code> across product listings, cart summaries, and invoice generators.</li>
+                            <li><strong>Example 2 (Tax Calculation):</strong> A single <code>calculateSalesTax(subtotal, region)</code> function is reused for every state and country checkout option.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: DRY Principle</p>
+                            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&h=350" alt="Data dashboards representing reusable code modules" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Collaborative Coding</p>
+                            <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&h=350" alt="Team collaborating on software development" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'debug-details': {
+                title: 'Modifying & Debugging',
+                icon: '<i class="fa-solid fa-bug-slash text-amber-600"></i>',
+                html: `
+                    <p class="mb-5">Software development is an iterative process, and bugs are an inevitable reality of writing code. When requirements change or software flaws are discovered, the speed and efficiency with which a developer can modify and debug the program determines its commercial viability. Functions provide exceptional structural advantages for maintenance and debugging.</p>
+                    
+                    <p class="mb-5">The most powerful maintenance benefit of functions is the <strong>Single Point of Edit</strong> principle. If a programmer hardcodes a specific mathematical formula or formatting rule in twenty different places throughout a procedural script, updating that rule requires painstakingly hunting down all twenty instances—frequently missing one and introducing critical errors.</p>
+                    
+                    <p class="mb-5">When that same logic is encapsulated within a single function, a developer modifying the application only needs to update the code in <strong>one single place</strong>: inside the function definition. That single edit instantly propagates across every single place the function is called throughout the entire software project.</p>
+                    
+                    <p class="mb-5">Furthermore, functions drastically streamline the debugging process by allowing for <strong>Isolated Unit Testing</strong>. If an application produces incorrect output, a skilled programmer does not test the entire 10,000-line program at once. Instead, they isolate individual helper functions, pass test arguments directly into them, and verify their return values independently.</p>
+                    
+                    <p class="mb-5">Functions also enforce strict <strong>Error Containment and Local Scope</strong>. Variables defined inside a function are local to that function, meaning bugs cannot accidentally leak out and corrupt global state variables elsewhere in the program.</p>
+                    
+                    <p class="mb-5">In languages like Python and Java, error handling mechanisms (such as <code>try-except</code> blocks or conditional guard clauses) are effortlessly organized inside functions. For instance, putting a division-by-zero check directly inside a <code>divide(a, b)</code> helper function ensures error handling is applied consistently.</p>
+                    
+                    <p>Ultimately, mastering function-based architecture turns debugging from frustrating guesswork into a methodical, clinical science, allowing software engineers to isolate, diagnose, and resolve defects with supreme confidence and speed.</p>
+                `
+            },
+            'debug-usecase': {
+                title: 'Modifying & Debugging: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-amber-800 mb-2 border-b-2 border-amber-200 pb-1">Case 1: Updating Tax Legislation in Financial Software</h4>
+                        <p class="mb-2">When government tax laws change annually, financial software applications must be updated rapidly and flawlessly.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Single Point of Edit):</strong> Rather than updating tax formulas across 50 different invoice scripts, the engineer updates the calculation once inside <code>calculateTaxRate()</code>, updating the entire application instantly.</li>
+                            <li><strong>Example 2 (Unit Testing):</strong> Before deploying the tax update, QA engineers run automated test suites against the isolated tax function to verify calculations before live release.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-amber-800 mb-2 border-b-2 border-amber-200 pb-1">Case 2: Handling Run-time Exceptions in Calculators</h4>
+                        <p class="mb-2">Robust applications must gracefully handle user input errors without crashing or displaying raw stack traces.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Error Containment):</strong> A custom <code>divide(a, b)</code> function contains an internal conditional check for <code>b == 0</code>, safely returning <code>"NaN"</code> rather than crashing the program.</li>
+                            <li><strong>Example 2 (Isolating Bugs):</strong> When a user reports calculation errors, developers use breakpoints specifically inside the math helper functions to inspect parameter values.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Isolated Unit Testing</p>
+                            <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=600&h=350" alt="Code debugging visualization" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: System Maintenance</p>
+                            <img src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=600&h=350" alt="Engineer debugging software" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        // Modal Control Functions
+        function openBriefing(key) {
+            const modal = document.getElementById('briefing-modal');
+            const data = briefingData[key];
+            if(data) {
+                document.getElementById('briefing-modal-icon').innerHTML = data.icon;
+                document.getElementById('briefing-modal-title').innerText = data.title;
+                document.getElementById('briefing-modal-content').innerHTML = data.html;
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; 
+            }
+        }
+
+        function closeBriefing() {
+            document.getElementById('briefing-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto'; 
+        }
+
+        document.getElementById('briefing-modal').addEventListener('click', function(e) {
+            if(e.target === this) closeBriefing();
+        });
+        
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId + '-section').classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-blue-900'));
+            const activeBtn = document.getElementById('nav-' + tabId);
+            if(activeBtn && tabId !== 'cert') activeBtn.classList.add('bg-blue-900');
+            
+            document.querySelectorAll('.nav-btn-mobile').forEach(btn => btn.classList.remove('bg-blue-900'));
+            const activeMobileBtn = document.getElementById('nav-' + tabId + '-mobile');
+            if(activeMobileBtn && tabId !== 'cert') activeMobileBtn.classList.add('bg-blue-900');
+
+            window.scrollTo(0,0);
+
+            if (tabId === 'game' && !gameRunning) {
+                resetGame();
+                drawGame();
+            }
+        }
+
+        function showModal(title, message, type = 'info') {
+            const modal = document.getElementById('custom-modal');
+            const icon = document.getElementById('modal-icon');
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-msg').innerText = message;
+            
+            if(type === 'success') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-500"></i>';
+            } else if (type === 'error') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500"></i>';
+            } else if (type === 'warning') {
+                icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-amber-500"></i>';
+            } else {
+                icon.innerHTML = '<i class="fa-solid fa-circle-info text-blue-500"></i>';
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        // --- LAB 1: Function Anatomist Categorization Logic ---
+        let draggedCatItem = null;
+        let lab1Count = 0;
+
+        document.querySelectorAll('.io-item').forEach(item => {
+            item.addEventListener('dragstart', function() {
+                draggedCatItem = this;
+                setTimeout(() => this.classList.add('opacity-50'), 0);
+            });
+            item.addEventListener('dragend', function() {
+                setTimeout(() => this.classList.remove('opacity-50'), 0);
+                draggedCatItem = null;
+            });
+        });
+
+        document.querySelectorAll('.cat-dropzone').forEach(zone => {
+            zone.addEventListener('dragover', e => e.preventDefault());
+            zone.addEventListener('dragenter', function(e) { e.preventDefault(); this.classList.add('brightness-95'); });
+            zone.addEventListener('dragleave', function() { this.classList.remove('brightness-95'); });
+            zone.addEventListener('drop', function() {
+                this.classList.remove('brightness-95');
+                if(draggedCatItem) {
+                    if(draggedCatItem.dataset.type === this.dataset.target) {
+                        this.appendChild(draggedCatItem);
+                        draggedCatItem.classList.remove('bg-blue-100', 'cursor-grab');
+                        draggedCatItem.classList.add('bg-emerald-100', 'text-emerald-800', 'cursor-default', 'mt-2', 'w-[90%]');
+                        draggedCatItem.setAttribute('draggable', 'false');
+                        lab1Count++;
+                        
+                        document.getElementById('lab1-feedback').innerText = "Correct Function Anatomy Component!";
+                        document.getElementById('lab1-feedback').className = "text-center font-bold mt-4 h-6 text-emerald-600";
+                        
+                        if(lab1Count === 5) {
+                            setTimeout(() => showModal('Lab 1 Complete!', 'You successfully categorized all core function anatomy parts.', 'success'), 500);
+                        }
+                    } else {
+                        document.getElementById('lab1-feedback').innerText = "Incorrect placement. Review the function structure carefully.";
+                        document.getElementById('lab1-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
+                    }
+                }
+            });
+        });
+
+        // --- LAB 2: Refactorer Logic ---
+        function checkLab2(isCorrect) {
+            if(isCorrect) {
+                document.getElementById('lab2-feedback').innerText = "Correct! DRY principle applied successfully.";
+                document.getElementById('lab2-feedback').className = "text-center font-bold mt-4 h-6 text-emerald-600";
+                setTimeout(() => showModal('Lab 2 Complete!', 'You successfully refactored code using a reusable function.', 'success'), 500);
+            } else {
+                document.getElementById('lab2-feedback').innerText = "Incorrect. Option A does not reuse code or accept parameters.";
+                document.getElementById('lab2-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
+            }
+        }
+
+        // --- LAB 3: Debugger Logic ---
+        function checkLab3(isCorrect) {
+            if(isCorrect) {
+                document.getElementById('lab3-feedback').innerText = "Correct! Division-by-zero successfully guarded.";
+                document.getElementById('lab3-feedback').className = "text-center font-bold mt-4 h-6 text-emerald-600";
+                setTimeout(() => showModal('Lab 3 Complete!', 'You successfully protected the calculator against runtime crashes.', 'success'), 500);
+            } else {
+                document.getElementById('lab3-feedback').innerText = "Incorrect. Snippet A will cause a fatal crash if b is 0.";
+                document.getElementById('lab3-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
+            }
+        }
+
+        // --- LAB 4: Invocation Tester Logic ---
+        function checkLab4(choice) {
+            if(choice === 'tomatotomato') {
+                document.getElementById('lab4-feedback').innerText = "Correct! duplicate('tomato') returns 'tomatotomato'.";
+                document.getElementById('lab4-feedback').className = "text-center font-bold mt-4 h-6 text-emerald-600";
+                setTimeout(() => showModal('Lab 4 Complete!', 'You correctly predicted string concatenation return values.', 'success'), 500);
+            } else {
+                document.getElementById('lab4-feedback').innerText = "Incorrect. The function concatenates the input string with itself.";
+                document.getElementById('lab4-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
+            }
+        }
+
+
+        // --- QUIZ DATA & LOGIC (20 Questions: 10 provided + 10 extended) ---
+        const quizData = [
+            // 10 provided from Document
+            { q: "What is a function in programming?", options: ["a sequence of commands", "the logical flow of a program", "a blueprint used to create objects", "a reusable piece of code that performs a single task"], answer: 3 },
+            { q: "Which of the following is NOT a benefit of functions?", options: ["handles complex queries", "simplifies code", "improves readability", "supports debugging"], answer: 0 },
+            { q: "Which of the following would best name a function that takes in two numbers, compares their values, and returns the larger number?", options: ["numbers", "big", "biggerNumber", "mystery"], answer: 2 },
+            { q: "Which of the following is a keyword used to define a function in Python?", options: ["return", "import", "void", "def"], answer: 3 },
+            { q: "Which of the following is commonly used as part of defining a function in Java?", options: ["return", "public", "import", "def"], answer: 1 },
+            { q: "What is in the body of a function?", options: ["processing", "its name", "a call to the function", "definitions"], answer: 0 },
+            { q: "What is the name of this function: def greet(name): return \"Hello, \" + name?", options: ["name", "greet", "function", "return"], answer: 1 },
+            { q: "What is the input of this function: def greet(name): return \"Hello, \" + name?", options: ["name", "greet", "function", "return"], answer: 0 },
+            { q: "Using the function definition, what is the return of this function call: greet(\"Sara\")?", options: ["Sara", "Hello, name", "Hello, Sara", "return \"Hello, \" + name"], answer: 2 },
+            { q: "How does defining functions support debugging?", options: ["breaks larger problems into smaller pieces", "describes what processes are happening", "allows changes to be made in one place and applied in many places", "defines frequently used processes"], answer: 2 },
+            
+            // 10 extended questions based on briefing and lab guides
+            { q: "What does the DRY principle stand for in programming?", options: ["Do Repeat Yourself", "Don't Repeat Yourself", "Data Retrieval Yield", "Dynamic Runtime Yield"], answer: 1 },
+            { q: "What is the primary purpose of problem decomposition?", options: ["To make code harder to read", "To break complex problems into smaller manageable sub-tasks", "To eliminate the need for variables", "To speed up computer hardware"], answer: 1 },
+            { q: "What is the term for placeholder variables defined inside a function's parentheses during its setup?", options: ["Arguments", "Parameters", "Constants", "Objects"], answer: 1 },
+            { q: "What is the term for actual data values passed into a function when it is invoked?", options: ["Parameters", "Arguments", "Attributes", "Methods"], answer: 1 },
+            { q: "Why is checking for division by zero inside a division function important?", options: ["To make the code run slower", "To prevent fatal runtime crashes and handle errors gracefully", "To increase memory usage", "It is legally required by Python"], answer: 1 },
+            { q: "What keyword is used in Python to hand a computed result back to the calling program?", options: ["output", "send", "return", "give"], answer: 2 },
+            { q: "Which of the following best describes 'Hardware and Logical Abstraction' in functions?", options: ["Hiding intricate implementation details behind a clean function interface", "Writing all code in binary", "Deleting unused files", "Encrypting database passwords"], answer: 0 },
+            { q: "What is a major advantage of the 'Single Point of Edit' rule provided by functions?", options: ["It prevents anyone else from editing your code", "Updating logic inside a function definition applies changes application-wide", "It automatically formats your monitor", "It eliminates syntax errors"], answer: 1 },
+            { q: "What will print(duplicate(\"tomato\")) return if def duplicate(word): return word + word?", options: ["tomato", "tomatotomato", "Error", "None"], answer: 1 },
+            { q: "What does isolated unit testing allow a developer to do?", options: ["Test individual helper functions independently from the main program", "Test the entire computer's power supply", "Benchmark internet connection speeds", "Format hard drives"], answer: 0 }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        
+        quizData.forEach((item, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = "bg-slate-50 p-6 rounded-lg border border-slate-200 transition-all";
+            qDiv.id = `q-block-${index}`;
+            
+            const qTitle = document.createElement('h3');
+            qTitle.className = "font-bold text-lg text-slate-800 mb-4";
+            qTitle.innerText = `${index + 1}. ${item.q}`;
+            qDiv.appendChild(qTitle);
+            
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = "space-y-3";
+            
+            item.options.forEach((opt, optIndex) => {
+                const label = document.createElement('label');
+                label.className = "flex items-center space-x-3 p-3 rounded bg-white border border-slate-300 hover:bg-blue-50 cursor-pointer transition";
+                
+                const radio = document.createElement('input');
+                radio.type = "radio";
+                radio.name = `q${index}`;
+                radio.value = optIndex;
+                radio.className = "form-radio h-5 w-5 text-blue-600";
+                
+                const span = document.createElement('span');
+                span.className = "text-slate-700";
+                span.innerText = opt;
+                
+                label.appendChild(radio);
+                label.appendChild(span);
+                optionsDiv.appendChild(label);
+            });
+            
+            qDiv.appendChild(optionsDiv);
+            quizContainer.appendChild(qDiv);
+        });
+
+        function gradeQuiz() {
+            let score = 0;
+            let allAnswered = true;
+
+            for(let i = 0; i < quizData.length; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if(selected) {
+                    if(parseInt(selected.value) === quizData[i].answer) {
+                        score++;
+                    }
+                } else {
+                    allAnswered = false;
+                }
+            }
+            
+            if(!allAnswered) {
+                showModal('Incomplete Quiz', 'Please answer all 20 questions before submitting.', 'warning');
+                return;
+            }
+            
+            const percentage = (score / quizData.length) * 100;
+            
+            if(score >= 18) { 
+                const navGame = document.getElementById('nav-game');
+                const navGameMobile = document.getElementById('nav-game-mobile');
+                
+                navGame.classList.remove('text-slate-400', 'cursor-not-allowed');
+                navGame.classList.add('text-white', 'hover:bg-blue-600');
+                navGame.disabled = false;
+                navGame.innerHTML = '<i class="fa-solid fa-gamepad mr-1"></i>Game';
+                
+                navGameMobile.classList.remove('text-slate-400', 'cursor-not-allowed');
+                navGameMobile.classList.add('text-white', 'hover:bg-blue-600');
+                navGameMobile.disabled = false;
+                navGameMobile.innerHTML = '<i class="fa-solid fa-gamepad"></i> Game';
+
+                document.getElementById('nav-cert').classList.remove('hidden');
+                document.getElementById('nav-cert-mobile').classList.remove('hidden');
+                
+                document.getElementById('proceed-game-btn').classList.remove('hidden');
+                document.getElementById('submit-quiz-btn').classList.add('hidden');
+
+                showModal('Outstanding!', `You scored ${score}/20 (${percentage}%). You have unlocked your Certificate of Mastery AND the Isometric Tile Jumper Game!`, 'success');
+            } else {
+                quizData.forEach((_, i) => {
+                    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                    if(selected) selected.checked = false;
+                });
+                showModal('Keep Trying!', `You scored ${score}/20 (${percentage}%). You need 90% (18/20) to earn the certificate. Your answers have been reset so you can try again.`, 'error');
+                document.getElementById('quiz-section').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // --- RETRO GAME LOGIC: Isometric Tile Jumper (Q*bert Style) ---
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let score = 0;
+        let lives = 3;
+        let gameRunning = false;
+        let animationId;
+        
+        // Pyramid configuration (4 rows)
+        const rows = 4;
+        let tiles = []; // stores color state: false = blue, true = gold
+        let player = { r: 0, c: 0 }; // top of pyramid
+
+        const overlay = document.getElementById('game-overlay');
+        const startBtn = document.getElementById('start-game-btn');
+        startBtn.addEventListener('click', startGame);
+
+        function initLevel() {
+            tiles = [];
+            for(let r=0; r<rows; r++) {
+                tiles[r] = [];
+                for(let c=0; c<=r; c++) {
+                    tiles[r][c] = false; // false = blue, true = gold
+                }
+            }
+            player = { r: 0, c: 0 };
+            tiles[0][0] = true; // starting tile
+        }
+
+        function movePlayer(dr, dc) {
+            if(!gameRunning) return;
+            let newR = player.r + dr;
+            let newC = player.c + dc;
+            
+            // Check boundaries
+            if(newR >= 0 && newR < rows && newC >= 0 && newC <= newR) {
+                player.r = newR;
+                player.c = newC;
+                
+                if(!tiles[player.r][player.c]) {
+                    tiles[player.r][player.c] = true;
+                    score += 25;
+                    document.getElementById('game-score').innerText = score;
+                    checkWin();
+                }
+            } else {
+                // Fell off pyramid
+                lives--;
+                document.getElementById('game-lives').innerText = lives;
+                player = { r: 0, c: 0 };
+                if(lives <= 0) {
+                    gameOver();
+                }
+            }
+        }
+
+        window.addEventListener('keydown', e => {
+            if(!gameRunning) return;
+            if(e.code === "ArrowUp") { movePlayer(-1, 0); e.preventDefault(); }
+            if(e.code === "ArrowDown") { movePlayer(1, 1); e.preventDefault(); }
+            if(e.code === "ArrowLeft") { movePlayer(1, 0); e.preventDefault(); }
+            if(e.code === "ArrowRight") { movePlayer(-1, -1); e.preventDefault(); }
+        });
+
+        // Touch buttons
+        document.getElementById('btn-up').onclick = () => movePlayer(-1, 0);
+        document.getElementById('btn-down').onclick = () => movePlayer(1, 1);
+        document.getElementById('btn-left').onclick = () => movePlayer(1, 0);
+        document.getElementById('btn-right').onclick = () => movePlayer(-1, -1);
+
+        function checkWin() {
+            for(let r=0; r<rows; r++) {
+                for(let c=0; c<=r; c++) {
+                    if(!tiles[r][c]) return;
+                }
+            }
+            // Win level bonus
+            score += 200;
+            document.getElementById('game-score').innerText = score;
+            showModal('Level Cleared!', 'You successfully changed every tile to gold! Resetting pyramid for next round.', 'success');
+            initLevel();
+        }
+
+        function resetGame() {
+            score = 0;
+            lives = 3;
+            document.getElementById('game-score').innerText = score;
+            document.getElementById('game-lives').innerText = lives;
+            initLevel();
+        }
+
+        function startGame() {
+            overlay.classList.add('hidden');
+            resetGame();
+            if(!gameRunning) {
+                gameRunning = true;
+                drawGame();
+            }
+        }
+
+        function drawGame() {
+            if(!gameRunning) return;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw isometric pyramid
+            let startX = canvas.width / 2;
+            let startY = 80;
+            let tileWidth = 70;
+            let tileHeight = 40;
+
+            for(let r=0; r<rows; r++) {
+                for(let c=0; c<=r; c++) {
+                    let x = startX + (c - r/2) * tileWidth;
+                    let y = startY + r * (tileHeight * 0.8);
+                    
+                    // Draw tile diamond
+                    ctx.beginPath();
+                    ctx.moveTo(x, y);
+                    ctx.lineTo(x + tileWidth/2, y + tileHeight/2);
+                    ctx.lineTo(x, y + tileHeight);
+                    ctx.lineTo(x - tileWidth/2, y + tileHeight/2);
+                    ctx.closePath();
+                    
+                    ctx.fillStyle = tiles[r][c] ? '#eab308' : '#2563eb'; // gold vs blue
+                    ctx.fill();
+                    ctx.strokeStyle = '#93c5fd';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                    
+                    // Draw player on tile
+                    if(player.r === r && player.c === c) {
+                        ctx.fillStyle = '#ef4444'; // Red character
+                        ctx.beginPath();
+                        ctx.arc(x, y + tileHeight/2 - 10, 14, 0, Math.PI*2);
+                        ctx.fill();
+                        ctx.strokeStyle = '#ffffff';
+                        ctx.lineWidth = 2;
+                        ctx.stroke();
+                        
+                        // Eyes
+                        ctx.fillStyle = '#ffffff';
+                        ctx.fillRect(x - 5, y + tileHeight/2 - 15, 3, 3);
+                        ctx.fillRect(x + 2, y + tileHeight/2 - 15, 3, 3);
+                    }
+                }
+            }
+
+            animationId = requestAnimationFrame(drawGame);
+        }
+
+        function gameOver() {
+            gameRunning = false;
+            cancelAnimationFrame(animationId);
+            overlay.classList.remove('hidden');
+            startBtn.innerText = "Game Over - Retry";
+            startBtn.classList.replace('bg-yellow-500', 'bg-red-700');
+            startBtn.classList.replace('border-yellow-700', 'border-red-900');
+        }
+
+        // --- CERTIFICATE LOGIC ---
+        function updateCertName() {
+            let name = document.getElementById('student-name-input').value.trim();
+            if(name) {
+                if (name.includes(' ')) {
+                    name = name.split(' ')[0];
+                    document.getElementById('student-name-input').value = name;
+                    showModal('Notice', 'Only your first name has been applied to the certificate.', 'info');
+                }
+                document.getElementById('cert-student-name').innerText = name;
+            } else {
+                showModal('Wait!', 'Please enter your first name to update the certificate.', 'warning');
+            }
+        }
+
+        const today = new Date();
+        document.getElementById('cert-date').innerText = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        function downloadCert() {
+            const certEl = document.getElementById('certificate');
+            const name = document.getElementById('cert-student-name').innerText;
+            let filename = 'Certificate.png';
+            if (name && name !== 'Student') {
+                filename = `${name.replace(/\s+/g, '_')}_Certificate.png`;
+            }
+
+            const originalTransform = certEl.style.transform;
+            certEl.style.transform = 'none';
+
+            const btn = document.getElementById('download-btn');
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Generating...';
+            btn.disabled = true;
+
+            html2canvas(certEl, { 
+                scale: 2, 
+                useCORS: true,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+            }).catch(err => {
+                console.error(err);
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                showModal('Error', 'Failed to generate image. Try using a desktop browser.', 'error');
+            });
+        }
+
+        window.onload = () => {
+            // Draw static preview on canvas
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle = '#eab308';
+            ctx.font = '20px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('TILE JUMPER READY', canvas.width/2, canvas.height/2);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 07 Section 6.2.4 Mastery - Safe Browsing Practices</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Qwitcher+Grypen:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0fdf4; 
+            color: #1f2937;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        /* Interactive Elements CSS */
+        .io-dropzone { min-height: 70px; min-width: 130px; border: 2px dashed #9ca3af; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: #f9fafb; transition: all 0.2s;}
+        .io-dropzone.drag-over { background: #e5e7eb; border-color: #16a34a; box-shadow: inset 0 0 10px rgba(22, 163, 74, 0.2);}
+        
+        .io-item { cursor: grab; transition: transform 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .io-item:active { cursor: grabbing; transform: scale(0.95); }
+        
+        .cat-dropzone { transition: background-color 0.2s ease; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #e5e7eb; }
+        ::-webkit-scrollbar-thumb { background: #10b981; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #059669; }
+
+        /* Retro Game Canvas */
+        #game-canvas {
+            background-color: #111827;
+            border: 4px solid #374151;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+            max-width: 100%;
+            height: auto;
+            touch-action: none; 
+            cursor: pointer;
+        }
+        .game-btn { touch-action: manipulation; user-select: none; }
+
+        /* --- CERTIFICATE STYLES --- */
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .font-body { font-family: 'Lora', serif; }
+        .font-script { font-family: 'Qwitcher Grypen', cursive; }
+        
+        .cert-preview-container {
+            width: 100%;
+            overflow: auto;
+            display: flex;
+            justify-content: center;
+            background: #e5e7eb;
+            padding: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        #certificate {
+            width: 1056px !important;
+            height: 816px !important;
+            flex-shrink: 0;
+            background-color: #ffffff;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1056" height="816"><polygon points="0,0 250,0 0,650" fill="%23fcd34d"/><polygon points="0,0 350,0 0,900" fill="%23d97706" opacity="0.8"/><polygon points="0,0 120,0 0,300" fill="%23fcd34d"/><polygon points="0,450 650,816 0,816" fill="%23fcd34d"/><polygon points="0,550 450,816 0,816" fill="%23d97706" opacity="0.8"/><polygon points="800,0 1056,0 1056,256" fill="%23f3f4f6"/><polygon points="1056,500 1056,816 750,816" fill="%23f3f4f6"/></svg>');
+            background-size: cover;
+            border: 4px solid #e5e7eb;
+        }
+
+        .gold-seal {
+            position: absolute;
+            left: 110px;
+            top: 350px;
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c, #fcf6ba);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3), inset 0 0 15px rgba(255,255,255,0.7), inset 0 0 25px rgba(139,105,20,0.9);
+            z-index: 10;
+        }
+        .gold-seal::before {
+            content: '';
+            position: absolute;
+            top: -4px; bottom: -4px; left: -4px; right: -4px;
+            border-radius: 50%;
+            border: 6px dashed #d4af37;
+        }
+        .gold-seal-inner-1 {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 2px solid rgba(139, 105, 20, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #e8c678, #dbab46);
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.2), 0 2px 5px rgba(255,255,255,0.7);
+            z-index: 1;
+        }
+        .gold-seal-inner-2 {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: radial-gradient(circle, #fcf6ba, #d4af37);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            padding: 10px;
+        }
+        .embossed-text {
+            color: #b38728;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2);
+            font-family: 'Playfair Display', serif;
+            font-weight: 800;
+            line-height: 1.1;
+            text-transform: uppercase;
+        }
+        .embossed-text-large { font-size: 14px; letter-spacing: 1px; }
+        .embossed-text-small { font-size: 11px; letter-spacing: 2px; margin: 2px 0; }
+        .embossed-star { font-size: 12px; color: #b38728; text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2); margin: 2px 0; }
+
+        @media (max-width: 1100px) {
+            #certificate { transform: scale(0.7); transform-origin: top left; margin-bottom: -240px; margin-right: -310px; }
+        }
+        @media (max-width: 768px) {
+            #certificate { transform: scale(0.4); transform-origin: top left; margin-bottom: -490px; margin-right: -630px; }
+        }
+        
+        /* Lab Specific Styles */
+        .phish-flag { cursor: pointer; transition: all 0.2s; border: 2px solid transparent; border-radius: 4px; padding: 2px;}
+        .phish-flag:hover { background-color: #fee2e2; border-color: #ef4444; }
+        .phish-flag.found { background-color: #fca5a5; border-color: #b91c1c; font-weight: bold; }
+        
+        .cert-card { transition: transform 0.2s; cursor: pointer; }
+        .cert-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        .cert-card.selected { border: 4px solid #3b82f6; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
+    <nav class="bg-green-700 text-white shadow-lg sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-shield-virus text-2xl"></i>
+                    <span class="font-bold text-xl tracking-wider hidden sm:inline-block">Tech+ Unit 07 Section 6.2.4</span>
+                    <span class="font-bold text-xl tracking-wider sm:hidden">6.2.4</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-2">
+                        <button onclick="switchTab('briefing')" class="nav-btn bg-green-900 px-3 py-2 rounded-md text-sm font-medium hover:bg-green-600 transition" id="nav-briefing"><i class="fa-solid fa-book-open mr-1"></i>Briefing</button>
+                        <button onclick="switchTab('activity')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-green-600 transition" id="nav-activity"><i class="fa-solid fa-flask mr-1"></i>Lab Activity</button>
+                        <button onclick="switchTab('quiz')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-green-600 transition" id="nav-quiz"><i class="fa-solid fa-clipboard-check mr-1"></i>Quiz</button>
+                        <button onclick="switchTab('game')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-gray-400 cursor-not-allowed transition" id="nav-game" disabled><i class="fa-solid fa-gamepad mr-1"></i>Game</button>
+                        <button onclick="switchTab('cert')" class="nav-btn hidden px-3 py-2 rounded-md text-sm font-medium text-yellow-300 hover:bg-green-600 transition" id="nav-cert"><i class="fa-solid fa-award mr-1"></i>Certificate</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="md:hidden flex flex-wrap justify-center gap-2 py-2 px-2 bg-green-800">
+            <button onclick="switchTab('briefing')" class="nav-btn-mobile px-3 py-1 text-sm rounded bg-green-900" id="nav-briefing-mobile">Briefing</button>
+            <button onclick="switchTab('activity')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-activity-mobile">Lab</button>
+            <button onclick="switchTab('quiz')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-quiz-mobile">Quiz</button>
+            <button onclick="switchTab('game')" class="nav-btn-mobile px-3 py-1 text-sm rounded text-gray-400 cursor-not-allowed" id="nav-game-mobile" disabled><i class="fa-solid fa-gamepad"></i></button>
+            <button onclick="switchTab('cert')" id="nav-cert-mobile" class="hidden px-2 py-1 text-sm text-yellow-300 rounded"><i class="fa-solid fa-award"></i></button>
+        </div>
+    </nav>
+
+    <main class="flex-grow w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <div id="briefing-section" class="tab-content active no-print">
+            <div class="text-center mb-10">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">Safe Browsing Practices</h1>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">Learn how to tell if a website is safe to use and why it is important to check for a valid certificate when browsing online to protect your sensitive data[cite: 154].</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-blue-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-blue-700"><i class="fa-solid fa-user-shield mr-2"></i>Safe Browsing Fundamentals</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>HTTPS & Links:</strong> Use secure websites and be cautious with unfamiliar links and attachments[cite: 4].</li>
+                            <li><strong>Passwords & MFA:</strong> Utilize strong, unique passwords and enable Multi-Factor Authentication[cite: 173, 176].</li>
+                            <li><strong>Networks & Updates:</strong> Avoid public Wi-Fi without VPNs and always keep your browser software updated[cite: 182, 184].</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('safe-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('safe-usecase')" class="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-green-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-green-700"><i class="fa-solid fa-certificate mr-2"></i>Web Certificates</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Digital Identity:</strong> Certificates establish secure connections and verify website identities[cite: 6].</li>
+                            <li><strong>Certificate Authorities:</strong> Trusted organizations (CAs) that issue and validate these digital certificates[cite: 8].</li>
+                            <li><strong>Valid vs. Invalid:</strong> A valid cert is issued by a trusted CA, matches the domain, and is not expired or revoked[cite: 13].</li>
+                        </ul>
+                    </div>
+                     <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('cert-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('cert-usecase')" class="flex-1 bg-green-100 hover:bg-green-200 text-green-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 flex justify-center">
+                <button onclick="switchTab('activity')" class="bg-green-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-green-500 shadow-lg transition transform hover:scale-105">Proceed to Lab Activity <i class="fa-solid fa-arrow-right ml-2"></i></button>
+            </div>
+        </div>
+
+        <div id="activity-section" class="tab-content no-print">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Interactive Lab Activity</h1>
+                <p class="text-gray-600">Apply your knowledge of safe browsing and certificates across these 4 distinct simulations.</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-blue-700"><i class="fa-solid fa-envelope-open-text mr-2"></i>Lab 1: Phishing Email Analyzer</h2>
+                <p class="text-sm text-gray-600 mb-4">Review the email below. Click on the <strong>3 red flags</strong> that indicate this is a phishing attempt and not a safe communication[cite: 186].</p>
+                
+                <div class="border rounded-lg border-gray-300 overflow-hidden max-w-2xl mx-auto bg-gray-50">
+                    <div class="bg-gray-200 px-4 py-2 border-b border-gray-300 flex items-center">
+                        <span class="font-bold mr-2 text-gray-700">From:</span> 
+                        <span class="phish-flag text-blue-600" data-phish="true" onclick="checkLab1(this)">support@paypa1-security.com</span>
+                    </div>
+                    <div class="bg-gray-200 px-4 py-2 border-b border-gray-300 flex items-center">
+                        <span class="font-bold mr-2 text-gray-700">Subject:</span> 
+                        <span class="phish-flag text-gray-800" data-phish="true" onclick="checkLab1(this)">URGENT: Your Account Will Be Suspended in 24 Hours!</span>
+                    </div>
+                    <div class="p-6 bg-white text-gray-800 space-y-4">
+                        <p class="phish-flag" data-phish="false" onclick="checkLab1(this)">Dear Customer,</p>
+                        <p class="phish-flag" data-phish="false" onclick="checkLab1(this)">We noticed some unusual login activity on your account today.</p>
+                        <p class="phish-flag" data-phish="false" onclick="checkLab1(this)">To ensure your protection, we have temporarily restricted your access.</p>
+                        <p class="phish-flag text-center mt-4" data-phish="true" onclick="checkLab1(this)">
+                            <a href="#" class="inline-block bg-blue-600 text-white font-bold py-2 px-6 rounded hover:bg-blue-700 pointer-events-none">Click Here to Verify Your Identity: http://bit.ly/secure-login-882</a>
+                        </p>
+                        <p class="phish-flag" data-phish="false" onclick="checkLab1(this)">Thank you for your prompt attention to this matter.</p>
+                    </div>
+                </div>
+                <div id="lab1-feedback" class="text-center font-bold mt-4 h-6 text-blue-600">Flags Found: <span id="lab1-score">0</span> / 3</div>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-purple-700"><i class="fa-solid fa-key mr-2"></i>Lab 2: Account Security Setup</h2>
+                <p class="text-sm text-gray-600 mb-4">Type a strong, unique password (must include uppercase, lowercase, number, symbol, and be at least 8 chars long)[cite: 173]. Then, enable Multi-Factor Authentication[cite: 176].</p>
+                
+                <div class="max-w-md mx-auto bg-gray-50 p-6 rounded border border-gray-200">
+                    <div class="mb-4">
+                        <label class="block text-gray-700 font-bold mb-2">New Password:</label>
+                        <input type="password" id="lab2-password" onkeyup="checkPasswordStrength()" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-purple-500" placeholder="Enter secure password">
+                    </div>
+                    <ul class="text-sm text-gray-500 mb-6 space-y-1" id="pw-criteria">
+                        <li id="req-len"><i class="fa-solid fa-times text-red-500 mr-2 w-4"></i>At least 8 characters</li>
+                        <li id="req-up"><i class="fa-solid fa-times text-red-500 mr-2 w-4"></i>Uppercase letter</li>
+                        <li id="req-num"><i class="fa-solid fa-times text-red-500 mr-2 w-4"></i>Number</li>
+                        <li id="req-sym"><i class="fa-solid fa-times text-red-500 mr-2 w-4"></i>Symbol (!@#$%^&*)</li>
+                    </ul>
+                    
+                    <div class="flex items-center justify-between border-t border-gray-300 pt-4">
+                        <span class="font-bold text-gray-700">Enable Multi-Factor Authentication (MFA)</span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                          <input type="checkbox" id="mfa-toggle" class="sr-only peer" onchange="checkLab2()">
+                          <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                        </label>
+                    </div>
+                </div>
+                <div id="lab2-feedback" class="text-center font-bold mt-4 h-6 text-gray-500">Awaiting secure configuration...</div>
+            </div>
+            
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-green-700"><i class="fa-solid fa-magnifying-glass-chart mr-2"></i>Lab 3: Certificate Inspector</h2>
+                <p class="text-sm text-gray-600 mb-4">Review the certificate details for <strong class="text-red-500">badssl.com</strong>. Based on the rules of valid certificates [cite: 141, 144], determine if this connection is Valid or Invalid[cite: 100].</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                    <div class="bg-gray-100 p-4 rounded border border-gray-300 font-mono text-sm">
+                        <h3 class="font-bold text-lg mb-2 border-b border-gray-300 pb-1 text-center">Certificate Viewer</h3>
+                        <p class="mb-1"><span class="font-bold">Website URL:</span> badssl.com</p>
+                        <p class="mb-1"><span class="font-bold">Issued To:</span> BadSSL</p>
+                        <p class="mb-1"><span class="font-bold text-red-600">Issued By:</span> BadSSL Untrusted Root</p>
+                        <p class="mb-1"><span class="font-bold">Valid Dates:</span> 08/26/25 - 08/26/27</p>
+                    </div>
+                    <div class="flex flex-col gap-4">
+                        <button onclick="checkLab3(true)" class="bg-green-600 text-white font-bold py-4 rounded hover:bg-green-700 transition shadow">Mark as VALID</button>
+                        <button onclick="checkLab3(false)" class="bg-red-600 text-white font-bold py-4 rounded hover:bg-red-700 transition shadow">Mark as INVALID</button>
+                    </div>
+                </div>
+                <div id="lab3-feedback" class="text-center font-bold mt-4 h-6 text-gray-500"></div>
+            </div>
+            
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-teal-700"><i class="fa-solid fa-network-wired mr-2"></i>Lab 4: Certificate Type Matcher</h2>
+                <p class="text-sm text-gray-600 mb-4">Drag the certificate acronym and drop it onto the correct definition[cite: 309, 310, 311].</p>
+                
+                <div class="flex flex-wrap gap-4 justify-center mb-6" id="cert-items">
+                    <div class="io-item px-6 py-3 bg-teal-100 border-2 border-teal-400 rounded font-bold text-teal-800" draggable="true" data-type="dv">DV</div>
+                    <div class="io-item px-6 py-3 bg-teal-100 border-2 border-teal-400 rounded font-bold text-teal-800" draggable="true" data-type="ov">OV</div>
+                    <div class="io-item px-6 py-3 bg-teal-100 border-2 border-teal-400 rounded font-bold text-teal-800" draggable="true" data-type="ev">EV</div>
+                </div>
+
+                <div class="flex flex-col gap-4">
+                    <div class="flex items-center gap-4">
+                        <div class="cat-dropzone border-2 border-dashed border-gray-400 bg-gray-50 rounded-lg w-24 h-16 flex flex-col items-center justify-center shrink-0" data-target="dv"></div>
+                        <div class="bg-gray-100 p-3 rounded border border-gray-200 flex-grow text-sm">Proves the site owns the domain name and provides encryption.</div>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div class="cat-dropzone border-2 border-dashed border-gray-400 bg-gray-50 rounded-lg w-24 h-16 flex flex-col items-center justify-center shrink-0" data-target="ov"></div>
+                        <div class="bg-gray-100 p-3 rounded border border-gray-200 flex-grow text-sm">Proves domain ownership AND verifies the organization behind the site.</div>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div class="cat-dropzone border-2 border-dashed border-gray-400 bg-gray-50 rounded-lg w-24 h-16 flex flex-col items-center justify-center shrink-0" data-target="ev"></div>
+                        <div class="bg-gray-100 p-3 rounded border border-gray-200 flex-grow text-sm">Requires the strictest verification; provides the highest level of trust.</div>
+                    </div>
+                </div>
+                <div id="lab4-feedback" class="text-center font-bold mt-4 h-6 text-teal-600"></div>
+            </div>
+
+            <div class="text-center">
+                <button onclick="switchTab('quiz')" class="bg-green-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-green-500 shadow-lg transition transform hover:scale-105">Take the Mastery Quiz <i class="fa-solid fa-clipboard-check ml-2"></i></button>
+            </div>
+        </div>
+
+        <div id="quiz-section" class="tab-content no-print">
+            <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-xl max-w-4xl mx-auto">
+                <div class="text-center mb-8 border-b pb-4">
+                    <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Unit 07 Section 6.2.4 Mastery Quiz</h1>
+                    <p class="text-gray-600">Score 90% or higher (18/20) to earn your Certificate of Mastery and unlock the Retro Game!</p>
+                </div>
+
+                <div id="quiz-container" class="space-y-8">
+                    </div>
+
+                <div class="mt-10 text-center border-t pt-6 flex flex-col md:flex-row justify-center items-center gap-4">
+                    <button id="submit-quiz-btn" onclick="gradeQuiz()" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">Submit Quiz</button>
+                    <button id="proceed-game-btn" onclick="switchTab('game')" class="hidden bg-purple-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-purple-700 shadow-lg transition w-full md:w-auto">Play Retro Game <i class="fa-solid fa-gamepad ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <div id="game-section" class="tab-content no-print">
+            <div class="bg-amber-900 p-6 sm:p-8 rounded-2xl shadow-xl max-w-4xl mx-auto border-4 border-amber-700 flex flex-col items-center">
+                <div class="text-center mb-4 w-full">
+                    <h1 class="text-3xl font-extrabold text-yellow-400 mb-2 tracking-widest uppercase" style="font-family: monospace;">Cyber Chopper</h1>
+                    <p class="text-gray-200 text-sm">Chop down the malicious firewall blocks! Tap the Left or Right side of the canvas to chop from that side. Avoid the malware branches! Chop fast to keep the timer from hitting zero.</p>
+                </div>
+                
+                <div class="flex justify-between items-center w-full max-w-[400px] sm:max-w-[600px] mb-2 px-4 text-white font-mono text-xl">
+                    <div>Score: <span id="game-score" class="text-yellow-300 font-bold">0</span></div>
+                    <div class="w-1/2 bg-gray-800 h-4 rounded overflow-hidden border border-gray-600">
+                        <div id="game-time" class="bg-green-500 h-full w-full"></div>
+                    </div>
+                </div>
+
+                <div class="relative flex justify-center w-full">
+                    <canvas id="game-canvas" width="600" height="500" class="w-full max-w-[400px] sm:max-w-[600px] bg-sky-900 border-2 border-gray-600 rounded shadow-lg"></canvas>
+                    
+                    <div id="game-overlay" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-70 rounded-lg max-w-[400px] sm:max-w-[600px] mx-auto z-10">
+                        <button id="start-game-btn" class="bg-green-600 hover:bg-green-500 text-white font-bold font-mono py-3 px-6 rounded-lg text-xl border-4 border-green-800 uppercase transform transition hover:scale-105">Start Chopping</button>
+                    </div>
+                </div>
+
+                <div class="mt-8 text-center w-full border-t border-amber-700 pt-6">
+                    <button onclick="switchTab('cert')" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">View Certificate <i class="fa-solid fa-award ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <div id="cert-section" class="tab-content">
+            <div class="max-w-5xl mx-auto">
+                
+                <div class="bg-white p-6 rounded shadow mb-6 no-print text-center border border-gray-200">
+                    <h2 class="text-2xl font-bold text-green-600 mb-2">🎉 Congratulations! 🎉</h2>
+                    <p class="text-gray-700 mb-4">You have achieved mastery of Safe Browsing Practices.</p>
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+                        <input type="text" id="student-name-input" value="Student" placeholder="Enter your first name" class="border-2 border-gray-300 rounded px-4 py-2 w-full md:w-64 focus:border-green-500 focus:outline-none">
+                        <button onclick="updateCertName()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">Update Name</button>
+                        <button id="download-btn" onclick="downloadCert()" class="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900 transition flex items-center justify-center">
+                            <i class="fa-solid fa-download mr-2"></i>Download PNG
+                        </button>
+                    </div>
+                </div>
+
+                <div class="cert-preview-container print:p-0 print:bg-white">
+                    <div id="certificate">
+                        <div class="gold-seal">
+                            <div class="gold-seal-inner-1">
+                                <div class="gold-seal-inner-2">
+                                     <span class="embossed-text embossed-text-large">Certificate</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-small">Of</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-large">Excellence</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="relative z-20 w-full h-full flex flex-col pt-[48px] pl-[380px] pr-[48px]">
+                            <h1 class="text-[#1e3a8a] text-[4.5rem] leading-none font-serif font-bold tracking-wide uppercase mb-2">CERTIFICATE</h1>
+                            <h2 class="text-gray-800 text-3xl font-serif tracking-widest uppercase mb-10">Of Achievement</h2>
+                            
+                            <p class="text-[1.4rem] font-body text-gray-800 mb-4">This is to certify that</p>
+                            
+                            <div class="relative mb-8 w-full">
+                                <h3 id="cert-student-name" class="text-[4rem] text-[#1e3a8a] font-serif italic leading-none pb-2 relative z-10 text-center w-full block">Student</h3>
+                                <div class="w-full border-b-[2px] border-[#1e3a8a] absolute bottom-[4px] left-0 z-0"></div>
+                                <div class="w-full border-b-[2px] border-dotted border-red-500 absolute bottom-[0px] left-0 z-0"></div>
+                            </div>
+                            
+                            <p class="text-[1.3rem] font-body text-gray-800 leading-relaxed w-full pr-4">
+                                Has successfully completed the assessment for 
+                                <strong class="text-[1.8rem] text-[#1e3a8a] block mt-4 mb-2 font-serif">Cyber.org Tech+ Unit 07 Section 6.2.4</strong>
+                                <strong class="text-[1.5rem] text-black block mb-4 font-serif italic">Safe Browsing Practices</strong>
+                                <span class="text-[1.1rem] text-gray-700 leading-snug block">Demonstrating proficiency in explaining digital certificates, differentiating valid vs invalid certificates, and applying best practices to secure data online.</span>
+                            </p>
+                            
+                            <div class="flex justify-end gap-16 items-end mt-auto mb-[60px] w-full pr-8">
+                                <div class="w-64">
+                                    <div class="border-b border-gray-600 mb-2 h-20 flex items-end justify-center relative">
+                                        <span class="font-script text-[5rem] text-[#1e3a8a] absolute bottom-[-10px] transform -rotate-3 opacity-90">Dr. M. S</span>
+                                    </div>
+                                    <p class="font-serif text-xl text-gray-800 text-center">Administration</p>
+                                </div>
+                                
+                                <div class="w-64">
+                                    <div class="border-b border-gray-600 mb-2 text-center h-20 flex items-end justify-center">
+                                        <p id="cert-date" class="font-body text-2xl text-gray-800 pb-1">Date Here</p>
+                                    </div>
+                                    <p class="font-serif text-xl text-gray-800 text-center">Date</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="custom-modal" class="fixed inset-0 bg-black bg-opacity-50 z-[100] hidden flex justify-center items-center backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all">
+            <div class="text-center">
+                <div id="modal-icon" class="text-5xl mb-4"></div>
+                <h3 id="modal-title" class="text-2xl font-bold mb-2 text-gray-900"></h3>
+                <p id="modal-msg" class="text-gray-600 mb-6"></p>
+                <button onclick="closeModal()" class="bg-green-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-green-700 transition w-full">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="briefing-modal" class="fixed inset-0 bg-black bg-opacity-70 z-[120] hidden flex justify-center items-center backdrop-blur-sm p-4 sm:p-6">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col transform transition-all overflow-hidden border-4 border-green-700">
+            <div class="p-6 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+                <div class="flex items-center gap-4">
+                    <div id="briefing-modal-icon" class="text-4xl"></div>
+                    <h3 id="briefing-modal-title" class="text-2xl md:text-3xl font-bold text-gray-900"></h3>
+                </div>
+                <button onclick="closeBriefing()" class="text-gray-400 hover:text-red-600 transition text-4xl leading-none">&times;</button>
+            </div>
+            <div id="briefing-modal-content" class="p-6 md:p-10 overflow-y-auto flex-grow text-gray-700 text-lg leading-relaxed bg-white">
+                </div>
+            <div class="p-6 border-t border-gray-200 bg-gray-50 flex justify-end">
+                <button onclick="closeBriefing()" class="bg-green-700 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-green-800 transition shadow-md">Acknowledge & Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Extensive Briefing Content Data ---
+        const briefingData = {
+            'safe-details': {
+                title: 'Safe Browsing Fundamentals',
+                icon: '<i class="fa-solid fa-user-shield text-blue-600"></i>',
+                html: `
+                    <p class="mb-5">When browsing the internet, users often come across websites that request highly sensitive information such as login credentials, personal details, or payment data[cite: 138]. Ensuring that this data remains confidential and unaltered is the core goal of safe browsing practices. The modern internet is fraught with malicious actors actively trying to intercept communications or trick users into freely handing over their most sensitive credentials.</p>
+                    
+                    <p class="mb-5">The first line of defense is using Secure Websites that deploy HTTPS[cite: 164]. HTTPS (Hypertext Transfer Protocol Secure) ensures that all data exchanged between your local web browser and the remote server is encrypted[cite: 165]. This encryption scrambles the data so that even if an attacker intercepts the network traffic, they cannot read the contents. Most modern web browsers display a padlock icon in the search bar to indicate a secure HTTPS connection is established[cite: 166, 167].</p>
+                    
+                    <p class="mb-5">Beyond technical encryption, human vigilance is required when dealing with links and attachments. Cybercriminals frequently use phishing emails to distribute malware or steal passwords. You should always verify links by hovering over them with your mouse to preview their actual destination before clicking[cite: 169]. Furthermore, you must avoid downloading or opening attachments from unfamiliar or untrusted sources, as these files often contain malicious payloads[cite: 171].</p>
+                    
+                    <p class="mb-5">Securing your accounts requires the use of strong, unique passwords[cite: 172]. A strong password utilizes a complex mix of numbers, uppercase letters, lowercase letters, and symbols, and should never contain easily guessable personal information[cite: 173]. Because humans struggle to remember dozens of complex passwords, utilizing a reputable password manager to securely generate and store unique passwords for every single account is highly recommended[cite: 174].</p>
+                    
+                    <p class="mb-5">Even the strongest password can be compromised in a data breach. This is why enabling Multi-Factor Authentication (MFA) is critical[cite: 175]. MFA adds a vital extra layer of security by requiring two or more factors of authentication: something you know (like a password), something you have (like a physical smartphone or hardware token), and something you are (like a fingerprint or facial biometric)[cite: 176]. Even if a hacker steals your password, they cannot access your account without your physical device.</p>
+                    
+                    <p class="mb-5">Maintaining the underlying software is just as important. You must keep your browser updated by installing updates regularly to acquire the latest security patches and defensive improvements[cite: 177, 182]. This also applies to browser extensions or add-ons; update them often and only download them from reputable, official sources to prevent unauthorized data collection[cite: 183].</p>
+                    
+                    <p>Finally, your physical networking environment matters. You should avoid public Wi-Fi networks when possible[cite: 184]. If you must connect to a coffee shop or airport network, use a Virtual Private Network (VPN), especially when accessing sensitive information or conducting financial transactions, to shield your traffic from local snooping[cite: 185]. Pair this with managing your browser's privacy settings to limit tracking and regularly clear cookies to protect your overall digital privacy[cite: 189, 190].</p>
+                `
+            },
+            'safe-usecase': {
+                title: 'Safe Browsing: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 1: Remote Work in Public</h4>
+                        <p class="mb-2">An employee needs to check their corporate email while waiting at a local coffee shop. Public Wi-Fi networks are notorious for being insecure and easily intercepted by bad actors.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (VPN Usage):</strong> Before logging into any company portals, the employee activates their Virtual Private Network (VPN) software, creating a secure encrypted tunnel through the public Wi-Fi[cite: 185].</li>
+                            <li><strong>Example 2 (HTTPS Verification):</strong> The employee looks at the browser address bar to ensure the webmail portal is utilizing HTTPS and displays the padlock icon, confirming the session is encrypted[cite: 165, 166].</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 2: Defending Against Phishing</h4>
+                        <p class="mb-2">A user receives an urgent email claiming their bank account will be closed immediately unless they log in and verify their identity via a provided link.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Link Verification):</strong> By hovering their mouse cursor over the "Verify Now" button, the user sees the link actually points to a misspelled fake domain (e.g., www.bannk-login.com), revealing the phishing attempt[cite: 169].</li>
+                            <li><strong>Example 2 (MFA Protection):</strong> Even if the user accidentally clicked the link and entered their password, the hacker still cannot access the bank account because the user enabled Multi-Factor Authentication (MFA), which sends a one-time passcode to the user's physical phone[cite: 176].</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Multi-Factor Authentication</p>
+                            <img src="https://images.unsplash.com/photo-1614064641913-6b22037996c5?auto=format&fit=crop&w=600&h=350" alt="Smartphone displaying security code" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Public Wi-Fi Dangers</p>
+                            <img src="https://images.unsplash.com/photo-1499914485622-a88fac536970?auto=format&fit=crop&w=600&h=350" alt="Person working on laptop in a cafe" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'cert-details': {
+                title: 'Web Certificates & Validation',
+                icon: '<i class="fa-solid fa-certificate text-green-600"></i>',
+                html: `
+                    <p class="mb-5">To ensure that communication between a user and a website is secure, the modern internet relies heavily on digital certificates[cite: 139]. Certificates are digital documents used in web browsing to establish a secure connection and cryptographically verify the true identity of websites and servers[cite: 6]. Without these certificates, users would have no mathematical proof that they are actually communicating with their bank rather than an imposter intercepting their traffic.</p>
+                    
+                    <p class="mb-5">These digital certificates are not created by the websites themselves, but rather issued by specialized, trusted organizations called Certificate Authorities (CAs)[cite: 8]. There are many trusted CAs globally, and modern operating systems and web browsers keep a built-in, tightly guarded list of them[cite: 9, 206]. When a browser connects to a site, it checks if the site's certificate is signed by one of these recognized root CAs to establish a "chain of trust"[cite: 199].</p>
+                    
+                    <p class="mb-5">It is critical to distinguish between valid and invalid certificates. A valid certificate means the certificate was issued by a trusted CA, it has not expired or been revoked, and it perfectly matches the website's domain name[cite: 141, 142]. Conversely, an invalid certificate may be issued by an untrusted CA, it may be a "self-signed" certificate generated by the website owner themselves, it might not match the URL domain name, or it may have simply expired or been manually revoked[cite: 14, 144].</p>
+                    
+                    <p class="mb-5">Web certificates come in three primary validation levels. The most basic is Domain Validation (DV), which simply proves the site administrator owns the domain name and provides standard encryption[cite: 309]. While DV certificates are cheap and easy to get (even by malicious actors), they offer no proof of the actual business identity[cite: 207]. Organization Validation (OV) certificates are safer, as they prove domain ownership and independently verify the legal organization operating behind the site[cite: 310].</p>
+                    
+                    <p class="mb-5">The highest tier of digital trust is the Extended Validation (EV) certificate[cite: 311]. Issuing an EV certificate requires the strictest verification and background checks on the requesting organization[cite: 311]. Because of this rigorous process, it provides the absolute highest level of trust for users. In many browsers, users can click on the padlock icon to view detailed legal information about the organization that holds an EV certificate[cite: 311].</p>
+                    
+                    <p class="mb-5">The security of this entire system relies on the absolute integrity of the Certificate Authorities. A famous failure of this trust occurred in 2011 with a Dutch company named DigiNotar[cite: 210]. Hackers breached DigiNotar's internal systems and generated hundreds of fake, highly-trusted certificates for major domains[cite: 211]. Once the devastating breach was discovered, major web browsers like Chrome and Firefox immediately removed DigiNotar from their trusted list[cite: 212].</p>
+                    
+                    <p>When browsers revoked that trust, any certificate issued by DigiNotar was immediately flagged as invalid worldwide[cite: 217]. Because the company lost the fundamental trust required to be a CA, they went bankrupt within weeks[cite: 217]. This real-world incident proves why rigorous CA security is critical, why browsers maintain their own trust lists, and why users must never ignore browser warnings regarding invalid or untrusted certificates[cite: 218].</p>
+                `
+            },
+            'cert-usecase': {
+                title: 'Certificates: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-green-800 mb-2 border-b-2 border-green-200 pb-1">Case 1: Secure Online Shopping</h4>
+                        <p class="mb-2">A consumer is preparing to enter their credit card information into a new e-commerce website they haven't used before.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (EV Certificate Trust):</strong> The consumer clicks the browser padlock and reviews the certificate details. They see it is an Extended Validation (EV) certificate, which confirms the legal business name and provides the highest level of trust before entering payment data[cite: 311, 321].</li>
+                            <li><strong>Example 2 (Expired Warning):</strong> If the consumer visited the checkout page and received a full-screen browser warning stating the certificate had "Expired," they would immediately leave the site, as an expired certificate makes the connection invalid and potentially unsafe[cite: 144, 325].</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-green-800 mb-2 border-b-2 border-green-200 pb-1">Case 2: Internal IT Development</h4>
+                        <p class="mb-2">A software developer is building an internal company web application and needs to test secure login functions on a private testing server.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Self-Signed Certificates):</strong> Because the server isn't public, the developer generates a "self-signed" certificate. While this provides encryption for testing, modern browsers will flag it as an invalid certificate because it was not issued by a trusted CA[cite: 14].</li>
+                            <li><strong>Example 2 (Domain Mismatch):</strong> The developer accidentally applies the certificate intended for "app.company.com" to the testing server "test.company.com". The browser will display a domain mismatch warning, rendering the certificate invalid for that specific URL[cite: 14].</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: SSL/TLS Encryption</p>
+                            <img src="https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&w=600&h=350" alt="Code with padlock representing encryption" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Online Transactions</p>
+                            <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=600&h=350" alt="Person paying with credit card online" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        // Modal Control Functions
+        function openBriefing(key) {
+            const modal = document.getElementById('briefing-modal');
+            const data = briefingData[key];
+            if(data) {
+                document.getElementById('briefing-modal-icon').innerHTML = data.icon;
+                document.getElementById('briefing-modal-title').innerText = data.title;
+                document.getElementById('briefing-modal-content').innerHTML = data.html;
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; 
+            }
+        }
+
+        function closeBriefing() {
+            document.getElementById('briefing-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto'; 
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId + '-section').classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-green-900'));
+            const activeBtn = document.getElementById('nav-' + tabId);
+            if(activeBtn && tabId !== 'cert') activeBtn.classList.add('bg-green-900');
+            
+            document.querySelectorAll('.nav-btn-mobile').forEach(btn => btn.classList.remove('bg-green-900'));
+            const activeMobileBtn = document.getElementById('nav-' + tabId + '-mobile');
+            if(activeMobileBtn && tabId !== 'cert') activeMobileBtn.classList.add('bg-green-900');
+
+            window.scrollTo(0,0);
+
+            if (tabId === 'game' && !gameRunning) {
+                resetGame();
+                drawGame();
+            }
+        }
+
+        function showModal(title, message, type = 'info') {
+            const modal = document.getElementById('custom-modal');
+            const icon = document.getElementById('modal-icon');
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-msg').innerText = message;
+            
+            if(type === 'success') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-check text-green-500"></i>';
+            } else if (type === 'error') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500"></i>';
+            } else if (type === 'warning') {
+                icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-yellow-500"></i>';
+            } else {
+                icon.innerHTML = '<i class="fa-solid fa-circle-info text-blue-500"></i>';
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        // --- LAB 1: Phishing Analyzer ---
+        let flagsFound = 0;
+        let lab1Solved = false;
+        function checkLab1(element) {
+            if (lab1Solved || element.classList.contains('found')) return;
+            
+            if (element.getAttribute('data-phish') === 'true') {
+                element.classList.add('found');
+                flagsFound++;
+                document.getElementById('lab1-score').innerText = flagsFound;
+                
+                if (flagsFound === 3) {
+                    lab1Solved = true;
+                    document.getElementById('lab1-feedback').innerText = "Success! You correctly identified the phishing markers.";
+                    document.getElementById('lab1-feedback').className = "text-center font-bold mt-4 h-6 text-green-600";
+                    setTimeout(() => showModal('Lab 1 Complete!', 'You successfully detected the misspelled sender, the urgent threatening subject, and the suspicious disguised link.', 'success'), 500);
+                }
+            } else {
+                element.style.backgroundColor = '#fecaca';
+                setTimeout(() => { element.style.backgroundColor = 'transparent'; }, 500);
+            }
+        }
+
+        // --- LAB 2: Password & MFA ---
+        let pwStrong = false;
+        let lab2Solved = false;
+
+        function checkPasswordStrength() {
+            if(lab2Solved) return;
+            const pw = document.getElementById('lab2-password').value;
+            
+            const reqLen = pw.length >= 8;
+            const reqUp = /[A-Z]/.test(pw);
+            const reqNum = /[0-9]/.test(pw);
+            const reqSym = /[!@#$%^&*]/.test(pw);
+            
+            updatePwReq('req-len', reqLen);
+            updatePwReq('req-up', reqUp);
+            updatePwReq('req-num', reqNum);
+            updatePwReq('req-sym', reqSym);
+            
+            pwStrong = (reqLen && reqUp && reqNum && reqSym);
+            checkLab2();
+        }
+
+        function updatePwReq(id, isValid) {
+            const el = document.getElementById(id);
+            if(isValid) {
+                el.innerHTML = `<i class="fa-solid fa-check text-green-500 mr-2 w-4"></i>` + el.innerText;
+                el.classList.add('text-green-700');
+            } else {
+                el.innerHTML = `<i class="fa-solid fa-times text-red-500 mr-2 w-4"></i>` + el.innerText;
+                el.classList.remove('text-green-700');
+            }
+        }
+
+        function checkLab2() {
+            if(lab2Solved) return;
+            const mfa = document.getElementById('mfa-toggle').checked;
+            
+            if(pwStrong && mfa) {
+                lab2Solved = true;
+                document.getElementById('lab2-feedback').innerText = "Account fully secured!";
+                document.getElementById('lab2-feedback').className = "text-center font-bold mt-4 h-6 text-green-600";
+                setTimeout(() => showModal('Lab 2 Complete!', 'Excellent. You built a strong unique password and fortified it with Multi-Factor Authentication.', 'success'), 500);
+            } else if (mfa && !pwStrong) {
+                document.getElementById('lab2-feedback').innerText = "MFA enabled, but password is too weak.";
+                document.getElementById('lab2-feedback').className = "text-center font-bold mt-4 h-6 text-orange-600";
+            }
+        }
+
+        // --- LAB 3: Certificate Inspector ---
+        let lab3Solved = false;
+        function checkLab3(isValid) {
+            if(lab3Solved) return;
+            
+            if(!isValid) {
+                lab3Solved = true;
+                document.getElementById('lab3-feedback').innerText = "Correct! The CA is untrusted, making it invalid.";
+                document.getElementById('lab3-feedback').className = "text-center font-bold mt-4 h-6 text-green-600";
+                setTimeout(() => showModal('Lab 3 Complete!', 'Correct. Although the dates are valid, the certificate was issued by an "Untrusted Root", making the entire certificate invalid and unsafe.', 'success'), 500);
+            } else {
+                document.getElementById('lab3-feedback').innerText = "Incorrect. Look closely at who issued the certificate.";
+                document.getElementById('lab3-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
+            }
+        }
+
+        // --- LAB 4: Certificate Type Matcher ---
+        let draggedCert = null;
+        let lab4Count = 0;
+
+        document.querySelectorAll('#cert-items .io-item').forEach(item => {
+            item.addEventListener('dragstart', function() {
+                draggedCert = this;
+                setTimeout(() => this.classList.add('opacity-50'), 0);
+            });
+            item.addEventListener('dragend', function() {
+                setTimeout(() => this.classList.remove('opacity-50'), 0);
+                draggedCert = null;
+            });
+        });
+
+        document.querySelectorAll('.cat-dropzone').forEach(zone => {
+            zone.addEventListener('dragover', e => e.preventDefault());
+            zone.addEventListener('dragenter', function(e) { e.preventDefault(); this.classList.add('bg-teal-50'); });
+            zone.addEventListener('dragleave', function() { this.classList.remove('bg-teal-50'); });
+            zone.addEventListener('drop', function() {
+                this.classList.remove('bg-teal-50');
+                if(draggedCert) {
+                    if(draggedCert.dataset.type === this.dataset.target) {
+                        this.appendChild(draggedCert);
+                        draggedCert.classList.remove('cursor-grab');
+                        draggedCert.classList.add('cursor-default');
+                        draggedCert.setAttribute('draggable', 'false');
+                        lab4Count++;
+                        
+                        if(lab4Count === 3) {
+                            document.getElementById('lab4-feedback').innerText = "All certificate types mapped correctly!";
+                            setTimeout(() => showModal('Lab 4 Complete!', 'You successfully matched DV, OV, and EV certificates to their validation strictness levels.', 'success'), 500);
+                        }
+                    }
+                }
+            });
+        });
+
+
+        // --- QUIZ LOGIC (20 Questions) ---
+        const quizData = [
+            // 10 provided from Document
+            { q: "What is the primary purpose of an SSL/TLS certificate?", options: ["To make websites load faster.", "To verify a website’s identity and encrypt data.", "To block ads on websites.", "To track users online."], answer: 1 },
+            { q: "What does a self-signed certificate indicate?", options: ["The certificate is automatically valid.", "The website is an EV certificate.", "The certificate was issued by a trusted CA.", "The certificate was created and signed by the website itself."], answer: 3 },
+            { q: "Which of the following is a safe practice when browsing websites?", options: ["Entering passwords only on sites with valid certificates", "Using the same password for all sites", "Clicking unknown links from emails", "Ignoring certificate warnings"], answer: 0 },
+            { q: "A certificate with a domain mismatch warning should be considered:", options: ["Organization verified", "Invalid", "Valid", "Domain verified"], answer: 1 },
+            { q: "Clicking the padlock icon in a browser address bar allows you to:", options: ["Increase browser speed", "Delete cookies", "Disable SSL", "See the website’s certificate details"], answer: 3 },
+            { q: "Why should users avoid ignoring certificate warnings?", options: ["It invalidates passwords", "It blocks advertisements", "It may lead to phishing or data theft", "It makes the browser slower"], answer: 2 },
+            { q: "Which of the following is NOT a safe browsing practice?", options: ["Keeping your browser updated", "Visiting unknown websites without verifying them", "Checking certificates for unfamiliar websites", "Logging out of accounts when finished"], answer: 1 },
+            { q: "How can you tell if a website is using a secure connection?", options: ["The URL starts with ‘https://’ and shows a padlock icon", "The URL starts with ‘http://’", "There is a lot of pop-up ads", "The site has many images"], answer: 0 },
+            { q: "Which action can help prevent phishing attacks while browsing?", options: ["Clicking links from unknown emails without checking them", "Sharing passwords with friends", "Typing website URLs directly instead of following email links", "Disabling browser security warnings"], answer: 2 },
+            { q: "Which of the following is a red flag that a website may be unsafe?", options: ["Padlock icon present in the browser", "HTTPS in the URL", "Certificate issued by a trusted CA", "URL with misspelled domain names"], answer: 3 },
+            
+            // 10 new questions based on briefing details
+            { q: "What is a Certificate Authority (CA)?", options: ["A government agency that regulates internet speeds.", "A trusted organization that verifies identity and issues digital certificates.", "A hardware component inside a web server.", "An antivirus software program."], answer: 1 },
+            { q: "What does MFA stand for?", options: ["Main Frame Access", "Malicious File Analyzer", "Multi-Factor Authentication", "Multiple Firewalls Active"], answer: 2 },
+            { q: "What type of certificate provides the highest level of trust and strict background verification?", options: ["Domain Validation (DV)", "Organization Validation (OV)", "Extended Validation (EV)", "Self-Signed Validation (SSV)"], answer: 2 },
+            { q: "Why is public Wi-Fi considered dangerous without a VPN?", options: ["It limits your download speed.", "It drains laptop batteries faster.", "Traffic can be easily intercepted by bad actors on the same network.", "It prevents SSL/TLS certificates from loading."], answer: 2 },
+            { q: "What was the name of the Dutch CA company that went bankrupt in 2011 after hackers breached their systems?", options: ["Sectigo", "DigiNotar", "Comodo", "Verisign"], answer: 1 },
+            { q: "Which of the following is true about Domain Validation (DV) certificates?", options: ["They provide the highest level of legal organization verification.", "They are very difficult and expensive for malicious actors to obtain.", "They prove domain ownership but offer no proof of the actual business identity.", "They are completely immune to being revoked."], answer: 2 },
+            { q: "What exactly does HTTPS do to protect user data?", options: ["It encrypts the data exchanged between the browser and the server.", "It automatically deletes malware from your hard drive.", "It stops pop-up advertisements.", "It hides your IP address from the government."], answer: 0 },
+            { q: "Why is it important to keep your web browser constantly updated?", options: ["To ensure graphics render faster.", "To install the latest security patches and defensive improvements.", "To prevent your internet service provider from throttling speeds.", "To stop the browser from deleting your bookmarks."], answer: 1 },
+            { q: "What should you do immediately if your browser warns you about an invalid certificate on a login page?", options: ["Click 'Proceed anyway' to see if it works.", "Disable your firewall and refresh.", "Do not proceed, as the connection is unsafe or potentially a phishing attempt.", "Type your password quickly before the connection drops."], answer: 2 },
+            { q: "Which certificate type proves domain ownership AND independently verifies the legal organization operating behind the site, but isn't as strict as EV?", options: ["Self-Signed (SS)", "Domain Validation (DV)", "Organization Validation (OV)", "Untrusted Root (UR)"], answer: 2 }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        
+        quizData.forEach((item, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = "bg-gray-50 p-6 rounded-lg border border-gray-200 transition-all";
+            qDiv.id = `q-block-${index}`;
+            
+            const qTitle = document.createElement('h3');
+            qTitle.className = "font-bold text-lg text-gray-800 mb-4";
+            qTitle.innerText = `${index + 1}. ${item.q}`;
+            qDiv.appendChild(qTitle);
+            
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = "space-y-3";
+            
+            item.options.forEach((opt, optIndex) => {
+                const label = document.createElement('label');
+                label.className = "flex items-center space-x-3 p-3 rounded bg-white border border-gray-300 hover:bg-green-50 cursor-pointer transition";
+                
+                const radio = document.createElement('input');
+                radio.type = "radio";
+                radio.name = `q${index}`;
+                radio.value = optIndex;
+                radio.className = "form-radio h-5 w-5 text-green-600";
+                
+                const span = document.createElement('span');
+                span.className = "text-gray-700";
+                span.innerText = opt;
+                
+                label.appendChild(radio);
+                label.appendChild(span);
+                optionsDiv.appendChild(label);
+            });
+            
+            qDiv.appendChild(optionsDiv);
+            quizContainer.appendChild(qDiv);
+        });
+
+        function gradeQuiz() {
+            let score = 0;
+            let allAnswered = true;
+
+            for(let i = 0; i < quizData.length; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if(selected) {
+                    if(parseInt(selected.value) === quizData[i].answer) {
+                        score++;
+                    }
+                } else {
+                    allAnswered = false;
+                }
+            }
+            
+            if(!allAnswered) {
+                showModal('Incomplete Quiz', 'Please answer all 20 questions before submitting.', 'warning');
+                return;
+            }
+            
+            const percentage = (score / quizData.length) * 100;
+            
+            if(score >= 18) { 
+                const navGame = document.getElementById('nav-game');
+                const navGameMobile = document.getElementById('nav-game-mobile');
+                
+                navGame.classList.remove('text-gray-400', 'cursor-not-allowed');
+                navGame.classList.add('text-white', 'hover:bg-green-600');
+                navGame.disabled = false;
+                
+                navGameMobile.classList.remove('text-gray-400', 'cursor-not-allowed');
+                navGameMobile.classList.add('text-white', 'hover:bg-green-600');
+                navGameMobile.disabled = false;
+
+                document.getElementById('nav-cert').classList.remove('hidden');
+                document.getElementById('nav-cert-mobile').classList.remove('hidden');
+                
+                document.getElementById('proceed-game-btn').classList.remove('hidden');
+                document.getElementById('submit-quiz-btn').classList.add('hidden');
+
+                showModal('Outstanding!', `You scored ${score}/20 (${percentage}%). You have unlocked your Certificate of Mastery AND the Retro Game!`, 'success');
+            } else {
+                quizData.forEach((_, i) => {
+                    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                    if(selected) selected.checked = false;
+                });
+                showModal('Keep Trying!', `You scored ${score}/20 (${percentage}%). You need 90% (18/20) to earn the certificate. Your answers have been reset so you can try again.`, 'error');
+                document.getElementById('quiz-section').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // --- RETRO GAME LOGIC: Cyber Chopper (Timber Clone) ---
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let score = 0;
+        let gameRunning = false;
+        let animationId;
+        
+        let playerSide = 'left'; // 'left' or 'right'
+        let blocks = [];
+        let maxBlocks = 8;
+        let blockHeight = 60;
+        
+        let timeLeft = 100;
+        let lastTime = 0;
+        
+        const overlay = document.getElementById('game-overlay');
+        const startBtn = document.getElementById('start-game-btn');
+        startBtn.addEventListener('click', startGame);
+
+        // Input handling
+        function handleChop(e) {
+            if(!gameRunning) return;
+            e.preventDefault();
+            
+            let rect = canvas.getBoundingClientRect();
+            let clickX;
+            if(e.touches && e.touches.length > 0) {
+                clickX = e.touches[0].clientX - rect.left;
+            } else {
+                clickX = e.clientX - rect.left;
+            }
+            
+            playerSide = clickX < canvas.width / 2 ? 'left' : 'right';
+            
+            // Check if branch on that side is immediately above us before shifting
+            if (blocks[1] && blocks[1].branch === playerSide) {
+                gameOver();
+                return;
+            }
+            
+            chopBlock();
+        }
+
+        canvas.addEventListener('mousedown', handleChop);
+        canvas.addEventListener('touchstart', handleChop, {passive: false});
+
+        function generateBlock(isFirst = false) {
+            let branch = 'none';
+            if (!isFirst) {
+                // Ensure no impossible sequences
+                let lastBranch = blocks.length > 0 ? blocks[blocks.length-1].branch : 'none';
+                
+                let rand = Math.random();
+                if (rand < 0.3) branch = 'left';
+                else if (rand < 0.6) branch = 'right';
+                
+                // If last was a branch, force empty to allow crossing
+                if (lastBranch !== 'none') branch = 'none';
+            }
+            return { branch: branch };
+        }
+
+        function chopBlock() {
+            blocks.shift();
+            blocks.push(generateBlock());
+            
+            score += 10;
+            document.getElementById('game-score').innerText = score;
+            
+            // Add time
+            timeLeft += 3;
+            if(timeLeft > 100) timeLeft = 100;
+            
+            // Check immediate collision after chop
+            if (blocks[0].branch === playerSide) {
+                gameOver();
+            }
+        }
+
+        function resetGame() {
+            blocks = [];
+            score = 0;
+            timeLeft = 100;
+            playerSide = 'left';
+            
+            for(let i=0; i<maxBlocks; i++) {
+                blocks.push(generateBlock(i < 3)); // first 3 blocks are always safe
+            }
+            
+            document.getElementById('game-score').innerText = score;
+            document.getElementById('game-time').style.width = '100%';
+            document.getElementById('game-time').className = 'bg-green-500 h-full';
+            lastTime = Date.now();
+        }
+
+        function startGame() {
+            overlay.classList.add('hidden');
+            if(!gameRunning) {
+                resetGame();
+                gameRunning = true;
+                drawGame();
+            }
+        }
+
+        function drawGame() {
+            if(!gameRunning) return;
+            
+            let now = Date.now();
+            let dt = now - lastTime;
+            lastTime = now;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Background
+            ctx.fillStyle = '#0f172a'; // dark sky
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            
+            // Time logic
+            timeLeft -= dt * 0.015;
+            let timeEl = document.getElementById('game-time');
+            timeEl.style.width = Math.max(0, timeLeft) + '%';
+            if (timeLeft < 25) timeEl.className = 'bg-red-500 h-full';
+            else if (timeLeft < 50) timeEl.className = 'bg-yellow-500 h-full';
+            else timeEl.className = 'bg-green-500 h-full';
+            
+            if(timeLeft <= 0) {
+                gameOver();
+                return;
+            }
+            
+            // Draw Blocks (Firewall blocks)
+            let trunkWidth = 100;
+            let trunkX = (canvas.width - trunkWidth) / 2;
+            let baseY = canvas.height - 80;
+            
+            for(let i=0; i<blocks.length; i++) {
+                let y = baseY - (i * blockHeight);
+                
+                // Draw trunk block
+                ctx.fillStyle = '#b45309'; // brown
+                ctx.fillRect(trunkX, y, trunkWidth, blockHeight - 2);
+                
+                // Texture
+                ctx.strokeStyle = '#78350f';
+                ctx.strokeRect(trunkX, y, trunkWidth, blockHeight - 2);
+                
+                // Draw branch (malware)
+                if(blocks[i].branch === 'left') {
+                    ctx.fillStyle = '#ef4444'; // red malware branch
+                    ctx.fillRect(trunkX - 120, y + 10, 120, 30);
+                    // Spikes
+                    ctx.beginPath();
+                    ctx.moveTo(trunkX - 120, y + 10);
+                    ctx.lineTo(trunkX - 140, y + 25);
+                    ctx.lineTo(trunkX - 120, y + 40);
+                    ctx.fill();
+                } else if(blocks[i].branch === 'right') {
+                    ctx.fillStyle = '#ef4444';
+                    ctx.fillRect(trunkX + trunkWidth, y + 10, 120, 30);
+                    ctx.beginPath();
+                    ctx.moveTo(trunkX + trunkWidth + 120, y + 10);
+                    ctx.lineTo(trunkX + trunkWidth + 140, y + 25);
+                    ctx.lineTo(trunkX + trunkWidth + 120, y + 40);
+                    ctx.fill();
+                }
+            }
+            
+            // Draw Player
+            let playerX = playerSide === 'left' ? trunkX - 80 : trunkX + trunkWidth + 30;
+            let playerY = baseY;
+            
+            ctx.fillStyle = '#3b82f6'; // blue player
+            ctx.fillRect(playerX, playerY, 50, 70); // body
+            
+            // Chop graphic (axe/sword)
+            ctx.fillStyle = '#e2e8f0'; // silver axe
+            if(playerSide === 'left') {
+                ctx.fillRect(playerX + 50, playerY + 30, 40, 10);
+            } else {
+                ctx.fillRect(playerX - 40, playerY + 30, 40, 10);
+            }
+            
+            // Draw Ground
+            ctx.fillStyle = '#334155';
+            ctx.fillRect(0, baseY + 60, canvas.width, canvas.height - (baseY + 60));
+
+            animationId = requestAnimationFrame(drawGame);
+        }
+
+        function gameOver() {
+            gameRunning = false;
+            cancelAnimationFrame(animationId);
+            overlay.classList.remove('hidden');
+            startBtn.innerText = "System Breached! Restart";
+            startBtn.classList.replace('bg-green-600', 'bg-red-600');
+            startBtn.classList.replace('border-green-800', 'border-red-800');
+            
+            // Visual death red flash
+            ctx.fillStyle = "rgba(239,68,68,0.4)";
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+        }
+
+        // --- CERTIFICATE LOGIC ---
+        function updateCertName() {
+            let name = document.getElementById('student-name-input').value.trim();
+            if(name) {
+                if (name.includes(' ')) {
+                    name = name.split(' ')[0];
+                    document.getElementById('student-name-input').value = name;
+                    showModal('Notice', 'Only your first name has been applied to the certificate.', 'info');
+                }
+                document.getElementById('cert-student-name').innerText = name;
+            } else {
+                showModal('Wait!', 'Please enter your first name to update the certificate.', 'warning');
+            }
+        }
+
+        const today = new Date();
+        document.getElementById('cert-date').innerText = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        function downloadCert() {
+            const certEl = document.getElementById('certificate');
+            const name = document.getElementById('cert-student-name').innerText;
+            let filename = 'Certificate.png';
+            if (name && name !== 'Student') {
+                filename = `${name.replace(/\s+/g, '_')}_Certificate.png`;
+            }
+
+            const originalTransform = certEl.style.transform;
+            certEl.style.transform = 'none';
+
+            const btn = document.getElementById('download-btn');
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Generating...';
+            btn.disabled = true;
+
+            html2canvas(certEl, { 
+                scale: 2, 
+                useCORS: true,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+            }).catch(err => {
+                console.error(err);
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                showModal('Error', 'Failed to generate image. Try using a desktop browser.', 'error');
+            });
+        }
+
+        window.onload = () => {
+            // Draw static background for game preview
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle = '#64748b';
+            ctx.font = '20px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('CYBER CHOPPER KERNEL READY', canvas.width/2, canvas.height/2);
+        }
+    </script>
+</body>
+</html>

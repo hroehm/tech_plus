@@ -1,0 +1,1465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 05 Section 3.3.1 Mastery - Productivity Software</title>
+    
+    <!-- Load Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load HTML2Canvas for Certificate Download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- Load Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Qwitcher+Grypen:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; 
+            color: #0f172a;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        /* Interactive Elements CSS */
+        .drag-item { cursor: grab; transition: transform 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .drag-item:active { cursor: grabbing; transform: scale(0.95); }
+        .dropzone { transition: background-color 0.2s ease, border-color 0.2s ease; }
+        .dropzone.drag-over { background: #e0f2fe; border-color: #0ea5e9; box-shadow: inset 0 0 10px rgba(14, 165, 233, 0.2);}
+        
+        .clickable-error { cursor: pointer; transition: all 0.2s; border-bottom: 2px dotted red; }
+        .clickable-error.fixed { border-bottom: none; color: #16a34a; font-weight: bold; pointer-events: none;}
+        
+        .formula-btn { transition: all 0.2s; }
+        .formula-btn:active { transform: scale(0.95); }
+        .formula-btn.used { opacity: 0.5; pointer-events: none; }
+
+        .slide-item { cursor: grab; }
+        .slide-item:active { cursor: grabbing; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #e2e8f0; }
+        ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #2563eb; }
+
+        /* Retro Game Canvas */
+        #game-canvas {
+            background-color: #87CEEB; /* Sky blue */
+            border: 8px solid #334155;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+            max-width: 100%;
+            height: auto;
+            touch-action: none;
+            cursor: crosshair;
+        }
+
+        /* --- CERTIFICATE STYLES --- */
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .font-body { font-family: 'Lora', serif; }
+        .font-script { font-family: 'Qwitcher Grypen', cursive; }
+        
+        .cert-preview-container {
+            width: 100%;
+            overflow: auto;
+            display: flex;
+            justify-content: center;
+            background: #cbd5e1;
+            padding: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        #certificate {
+            width: 1056px !important;
+            height: 816px !important;
+            flex-shrink: 0;
+            background-color: #ffffff;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1056" height="816"><rect width="1056" height="816" fill="%23f8fafc"/><path d="M0 0 L300 0 L0 300 Z" fill="%233b82f6" opacity="0.1"/><path d="M1056 816 L756 816 L1056 516 Z" fill="%233b82f6" opacity="0.1"/><rect x="20" y="20" width="1016" height="776" fill="none" stroke="%231e293b" stroke-width="4"/><rect x="30" y="30" width="996" height="756" fill="none" stroke="%233b82f6" stroke-width="2"/></svg>');
+            background-size: cover;
+        }
+
+        .blue-seal {
+            position: absolute;
+            left: 110px;
+            top: 350px;
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6, #1d4ed8, #60a5fa, #1e40af, #3b82f6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3), inset 0 0 15px rgba(255,255,255,0.4), inset 0 0 25px rgba(30,58,138,0.9);
+            z-index: 10;
+        }
+        .blue-seal::before {
+            content: '';
+            position: absolute;
+            top: -4px; bottom: -4px; left: -4px; right: -4px;
+            border-radius: 50%;
+            border: 6px dashed #93c5fd;
+        }
+        .blue-seal-inner-1 {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 2px solid rgba(30, 58, 138, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #60a5fa, #2563eb);
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.2), 0 2px 5px rgba(255,255,255,0.5);
+            z-index: 1;
+        }
+        .blue-seal-inner-2 {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: radial-gradient(circle, #eff6ff, #93c5fd);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            padding: 10px;
+        }
+        .embossed-text-blue {
+            color: #1e3a8a;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.8), -1px -1px 0px rgba(0,0,0,0.1);
+            font-family: 'Playfair Display', serif;
+            font-weight: 800;
+            line-height: 1.1;
+            text-transform: uppercase;
+        }
+        .embossed-text-large { font-size: 14px; letter-spacing: 1px; }
+        .embossed-text-small { font-size: 11px; letter-spacing: 2px; margin: 2px 0; }
+
+        @media (max-width: 1100px) { #certificate { transform: scale(0.7); transform-origin: top left; margin-bottom: -240px; margin-right: -310px; } }
+        @media (max-width: 768px) { #certificate { transform: scale(0.4); transform-origin: top left; margin-bottom: -490px; margin-right: -630px; } }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- NAVIGATION -->
+    <nav class="bg-blue-800 text-white shadow-lg sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-briefcase text-2xl text-blue-300"></i>
+                    <span class="font-bold text-xl tracking-wider hidden sm:inline-block">Tech+ Unit 05 Section 3.3.1</span>
+                    <span class="font-bold text-xl tracking-wider sm:hidden">3.3.1</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-2">
+                        <button onclick="switchTab('briefing')" class="nav-btn bg-blue-900 px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition" id="nav-briefing"><i class="fa-solid fa-book-open mr-1"></i>Briefing</button>
+                        <button onclick="switchTab('activity')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition" id="nav-activity"><i class="fa-solid fa-flask mr-1"></i>Lab Activity</button>
+                        <button onclick="switchTab('quiz')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition" id="nav-quiz"><i class="fa-solid fa-clipboard-check mr-1"></i>Quiz</button>
+                        <button onclick="switchTab('game')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-blue-400 cursor-not-allowed transition" id="nav-game" disabled><i class="fa-solid fa-lock mr-1"></i>Game</button>
+                        <button onclick="switchTab('cert')" class="nav-btn hidden px-3 py-2 rounded-md text-sm font-medium text-yellow-300 hover:bg-blue-700 transition" id="nav-cert"><i class="fa-solid fa-award mr-1"></i>Certificate</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Nav -->
+        <div class="md:hidden flex flex-wrap justify-center gap-2 py-2 px-2 bg-blue-950">
+            <button onclick="switchTab('briefing')" class="nav-btn-mobile px-3 py-1 text-sm rounded bg-blue-800" id="nav-briefing-mobile">Briefing</button>
+            <button onclick="switchTab('activity')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-activity-mobile">Lab</button>
+            <button onclick="switchTab('quiz')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-quiz-mobile">Quiz</button>
+            <button onclick="switchTab('game')" class="nav-btn-mobile px-3 py-1 text-sm rounded text-blue-400 cursor-not-allowed" id="nav-game-mobile" disabled><i class="fa-solid fa-lock"></i></button>
+            <button onclick="switchTab('cert')" id="nav-cert-mobile" class="hidden px-2 py-1 text-sm text-yellow-300 rounded"><i class="fa-solid fa-award"></i></button>
+        </div>
+    </nav>
+
+    <main class="flex-grow w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <!-- BRIEFING SECTION -->
+        <div id="briefing-section" class="tab-content active no-print">
+            <div class="text-center mb-10">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-slate-800 mb-4">Productivity Software</h1>
+                <p class="text-lg text-slate-600 max-w-3xl mx-auto">Productivity software consists of essential applications designed to help individuals and teams create, organize, analyze, and share digital work efficiently. These tools are the foundation of modern academics and business operations.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- Tile 1 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-indigo-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-indigo-700"><i class="fa-solid fa-file-lines mr-2"></i>Word Processors</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>Purpose:</strong> Create, edit, and format text-based documents (e.g., reports, essays, letters).</li>
+                            <li><strong>Core Features:</strong> Spelling and grammar check, text styling, headers/footers, and page layouts.</li>
+                            <li><strong>Examples:</strong> Microsoft Word, Google Docs, LibreOffice Writer.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 border-t border-slate-100 p-4 flex gap-4">
+                        <button onclick="openBriefing('word-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                        <button onclick="openBriefing('word-usecase')" class="flex-1 bg-indigo-100 hover:bg-indigo-200 text-indigo-900 py-3 rounded text-sm font-bold transition shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                    </div>
+                </div>
+
+                <!-- Tile 2 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-emerald-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-emerald-700"><i class="fa-solid fa-table-cells mr-2"></i>Spreadsheet Software</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>Purpose:</strong> Organize, calculate, analyze, and visualize data using a grid of cells.</li>
+                            <li><strong>Core Features:</strong> Mathematical formulas, data sorting/filtering, and automatic chart generation.</li>
+                            <li><strong>Examples:</strong> Microsoft Excel, Google Sheets, LibreOffice Calc.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-slate-50 border-t border-slate-100 p-4 flex gap-4">
+                        <button onclick="openBriefing('sheet-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                        <button onclick="openBriefing('sheet-usecase')" class="flex-1 bg-emerald-100 hover:bg-emerald-200 text-emerald-900 py-3 rounded text-sm font-bold transition shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                    </div>
+                </div>
+
+                <!-- Tile 3 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-orange-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-orange-700"><i class="fa-solid fa-person-chalkboard mr-2"></i>Presentation Software</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>Purpose:</strong> Design and deliver digital slideshows combining text, visuals, and multimedia.</li>
+                            <li><strong>Core Features:</strong> Slide layouts, visual themes, object animations, and presenter delivery tools.</li>
+                            <li><strong>Examples:</strong> Microsoft PowerPoint, Google Slides, LibreOffice Impress.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-slate-50 border-t border-slate-100 p-4 flex gap-4">
+                        <button onclick="openBriefing('pres-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                        <button onclick="openBriefing('pres-usecase')" class="flex-1 bg-orange-100 hover:bg-orange-200 text-orange-900 py-3 rounded text-sm font-bold transition shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                    </div>
+                </div>
+
+                <!-- Tile 4 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-cyan-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-cyan-700"><i class="fa-solid fa-diagram-project mr-2"></i>Visual Diagramming</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>Purpose:</strong> Create flowcharts and visual representations of processes and hierarchies.</li>
+                            <li><strong>Core Features:</strong> Drag-and-drop shapes, logical connectors, and standardized symbols.</li>
+                            <li><strong>Examples:</strong> Microsoft Visio, Lucidchart, LibreOffice Draw.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 border-t border-slate-100 p-4 flex gap-4">
+                        <button onclick="openBriefing('diag-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                        <button onclick="openBriefing('diag-usecase')" class="flex-1 bg-cyan-100 hover:bg-cyan-200 text-cyan-900 py-3 rounded text-sm font-bold transition shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 flex justify-center">
+                <button onclick="switchTab('activity')" class="bg-blue-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-blue-700 shadow-lg transition transform hover:scale-105">Proceed to Lab Activity <i class="fa-solid fa-arrow-right ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- LAB ACTIVITY SECTION (8 Labs) -->
+        <div id="activity-section" class="tab-content no-print">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-extrabold text-slate-800 mb-2">Productivity Power Circuit</h1>
+                <p class="text-slate-600 max-w-2xl mx-auto">Complete all 8 interactive lab exercises to demonstrate your proficiency with the four core types of productivity software.</p>
+            </div>
+
+            <!-- WORD PROCESSOR LABS -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white p-5 rounded-xl shadow-md border-t-4 border-indigo-500">
+                    <h2 class="text-lg font-bold mb-2 text-indigo-700">Lab 1: Word Processor Toolbar</h2>
+                    <p class="text-sm text-slate-600 mb-4">Drag the text descriptions to the correct formatting icon on the toolbar.</p>
+                    
+                    <div class="flex gap-2 mb-4" id="lab1-items">
+                        <div class="drag-item bg-indigo-100 px-3 py-1 rounded text-sm border border-indigo-300" draggable="true" data-match="bold">Bold Text</div>
+                        <div class="drag-item bg-indigo-100 px-3 py-1 rounded text-sm border border-indigo-300" draggable="true" data-match="align">Center Align</div>
+                        <div class="drag-item bg-indigo-100 px-3 py-1 rounded text-sm border border-indigo-300" draggable="true" data-match="list">Bullet List</div>
+                    </div>
+                    
+                    <div class="bg-slate-100 border border-slate-300 p-2 rounded flex gap-4 justify-around">
+                        <div class="flex flex-col items-center">
+                            <i class="fa-solid fa-bold text-xl text-slate-700 mb-2"></i>
+                            <div class="dropzone w-24 h-8 border-2 border-dashed border-slate-400 rounded bg-white" data-target="bold"></div>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <i class="fa-solid fa-align-center text-xl text-slate-700 mb-2"></i>
+                            <div class="dropzone w-24 h-8 border-2 border-dashed border-slate-400 rounded bg-white" data-target="align"></div>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <i class="fa-solid fa-list-ul text-xl text-slate-700 mb-2"></i>
+                            <div class="dropzone w-24 h-8 border-2 border-dashed border-slate-400 rounded bg-white" data-target="list"></div>
+                        </div>
+                    </div>
+                    <div id="fb-lab1" class="text-center text-sm font-bold mt-2 h-5 text-green-600"></div>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl shadow-md border-t-4 border-indigo-500">
+                    <h2 class="text-lg font-bold mb-2 text-indigo-700">Lab 2: Document Proofing</h2>
+                    <p class="text-sm text-slate-600 mb-4">The word processor's spell check has found 3 errors. Click the dotted red words to accept the software's correction.</p>
+                    
+                    <div class="p-4 border border-slate-300 rounded bg-white text-slate-800 font-serif leading-relaxed">
+                        Dear Hiring Manager,<br><br>
+                        I am writing to express my intrest <span class="clickable-error text-red-600" onclick="fixSpelling(this, 'interest')">intrest</span> in the summer internship program at your tech company. I have excellent comuunication <span class="clickable-error text-red-600" onclick="fixSpelling(this, 'communication')">comuunication</span> skills and a strong desire to learn. I believe my technical background will definately <span class="clickable-error text-red-600" onclick="fixSpelling(this, 'definitely')">definately</span> be an asset to your team.
+                    </div>
+                    <div id="fb-lab2" class="text-center text-sm font-bold mt-2 h-5 text-green-600"></div>
+                </div>
+            </div>
+
+            <!-- SPREADSHEET LABS -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white p-5 rounded-xl shadow-md border-t-4 border-emerald-500">
+                    <h2 class="text-lg font-bold mb-2 text-emerald-700">Lab 3: Spreadsheet Formulas</h2>
+                    <p class="text-sm text-slate-600 mb-4">Click the buttons in the correct order to build a formula that calculates the Grand Total for items in rows 2 through 5.</p>
+                    
+                    <div class="bg-slate-100 p-2 rounded mb-3 font-mono border border-slate-300 min-h-[40px] flex items-center px-2 text-lg" id="formula-bar">
+                        <span class="text-slate-400 italic text-sm">Click components below to build formula...</span>
+                    </div>
+                    
+                    <div class="flex flex-wrap gap-2">
+                        <button class="formula-btn bg-emerald-100 border border-emerald-300 px-3 py-1 rounded" onclick="addToFormula('=SUM(')">=SUM(</button>
+                        <button class="formula-btn bg-emerald-100 border border-emerald-300 px-3 py-1 rounded" onclick="addToFormula('B5')">B5</button>
+                        <button class="formula-btn bg-emerald-100 border border-emerald-300 px-3 py-1 rounded" onclick="addToFormula(':')">:</button>
+                        <button class="formula-btn bg-emerald-100 border border-emerald-300 px-3 py-1 rounded" onclick="addToFormula('B2')">B2</button>
+                        <button class="formula-btn bg-emerald-100 border border-emerald-300 px-3 py-1 rounded" onclick="addToFormula(')')">)</button>
+                        <button class="bg-slate-300 px-3 py-1 rounded text-sm hover:bg-slate-400" onclick="clearFormula()"><i class="fa-solid fa-rotate-left"></i></button>
+                    </div>
+                    <div id="fb-lab3" class="text-center text-sm font-bold mt-2 h-5 text-green-600"></div>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl shadow-md border-t-4 border-emerald-500">
+                    <h2 class="text-lg font-bold mb-2 text-emerald-700">Lab 4: Data Visualization</h2>
+                    <p class="text-sm text-slate-600 mb-4">You have a column showing total sales percentages for 4 different products. Select the best chart type to visualize these parts of a whole.</p>
+                    
+                    <div class="flex justify-around items-center border border-slate-200 bg-slate-50 p-4 rounded">
+                        <div class="text-center cursor-pointer hover:bg-emerald-50 p-2 rounded border border-transparent hover:border-emerald-300 transition" onclick="checkChart('pie')">
+                            <i class="fa-solid fa-chart-pie text-4xl text-emerald-600 mb-2"></i>
+                            <p class="font-bold text-sm">Pie Chart</p>
+                        </div>
+                        <div class="text-center cursor-pointer hover:bg-emerald-50 p-2 rounded border border-transparent hover:border-emerald-300 transition" onclick="checkChart('line')">
+                            <i class="fa-solid fa-chart-line text-4xl text-blue-600 mb-2"></i>
+                            <p class="font-bold text-sm">Line Graph</p>
+                        </div>
+                    </div>
+                    <div id="fb-lab4" class="text-center text-sm font-bold mt-2 h-5 text-green-600"></div>
+                </div>
+            </div>
+
+            <!-- PRESENTATION LABS -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white p-5 rounded-xl shadow-md border-t-4 border-orange-500">
+                    <h2 class="text-lg font-bold mb-2 text-orange-700">Lab 5: Presentation Flow</h2>
+                    <p class="text-sm text-slate-600 mb-4">A slideshow must have a logical sequence. Click the Up/Down arrows to reorder these slides properly (Intro -> Problem -> Solution -> Summary).</p>
+                    
+                    <div class="space-y-2" id="slide-sorter">
+                        <div class="flex items-center bg-orange-50 border border-orange-200 p-2 rounded" data-order="3">
+                            <div class="flex flex-col mr-3 gap-1">
+                                <button onclick="moveSlide(this, -1)" class="text-slate-400 hover:text-slate-800 leading-none"><i class="fa-solid fa-caret-up"></i></button>
+                                <button onclick="moveSlide(this, 1)" class="text-slate-400 hover:text-slate-800 leading-none"><i class="fa-solid fa-caret-down"></i></button>
+                            </div>
+                            <span class="font-bold">Slide: The Solution Provided</span>
+                        </div>
+                        <div class="flex items-center bg-orange-50 border border-orange-200 p-2 rounded" data-order="1">
+                            <div class="flex flex-col mr-3 gap-1">
+                                <button onclick="moveSlide(this, -1)" class="text-slate-400 hover:text-slate-800 leading-none"><i class="fa-solid fa-caret-up"></i></button>
+                                <button onclick="moveSlide(this, 1)" class="text-slate-400 hover:text-slate-800 leading-none"><i class="fa-solid fa-caret-down"></i></button>
+                            </div>
+                            <span class="font-bold">Slide: Introduction & Title</span>
+                        </div>
+                        <div class="flex items-center bg-orange-50 border border-orange-200 p-2 rounded" data-order="4">
+                            <div class="flex flex-col mr-3 gap-1">
+                                <button onclick="moveSlide(this, -1)" class="text-slate-400 hover:text-slate-800 leading-none"><i class="fa-solid fa-caret-up"></i></button>
+                                <button onclick="moveSlide(this, 1)" class="text-slate-400 hover:text-slate-800 leading-none"><i class="fa-solid fa-caret-down"></i></button>
+                            </div>
+                            <span class="font-bold">Slide: Summary & Conclusion</span>
+                        </div>
+                        <div class="flex items-center bg-orange-50 border border-orange-200 p-2 rounded" data-order="2">
+                            <div class="flex flex-col mr-3 gap-1">
+                                <button onclick="moveSlide(this, -1)" class="text-slate-400 hover:text-slate-800 leading-none"><i class="fa-solid fa-caret-up"></i></button>
+                                <button onclick="moveSlide(this, 1)" class="text-slate-400 hover:text-slate-800 leading-none"><i class="fa-solid fa-caret-down"></i></button>
+                            </div>
+                            <span class="font-bold">Slide: The Problem Identified</span>
+                        </div>
+                    </div>
+                    <div class="mt-3 text-center"><button class="bg-orange-600 text-white px-4 py-1 rounded text-sm hover:bg-orange-700" onclick="checkSlideOrder()">Verify Order</button></div>
+                    <div id="fb-lab5" class="text-center text-sm font-bold mt-2 h-5 text-green-600"></div>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl shadow-md border-t-4 border-orange-500">
+                    <h2 class="text-lg font-bold mb-2 text-orange-700">Lab 6: Slide Design Rules</h2>
+                    <p class="text-sm text-slate-600 mb-4">Presentations should avoid "walls of text." Click on the slide element below that violates good visual communication design.</p>
+                    
+                    <div class="border-2 border-slate-800 aspect-video bg-white relative p-4 shadow-sm cursor-pointer hover:bg-slate-50 transition" onclick="checkSlideDesign()">
+                        <h1 class="text-xl font-bold border-b border-slate-300 pb-1 mb-2">History of Technology</h1>
+                        <p class="text-[10px] leading-tight text-slate-700">Technology began millions of years ago with the invention of stone tools. This allowed early humans to hunt more effectively. Then came the discovery of fire, which fundamentally altered human diet and socialization. Much later, the industrial revolution introduced steam power, massively expanding production capabilities. Today, the digital revolution has connected the globe via the internet, transforming how we work, learn, and communicate. We use computers and software for almost everything we do in modern society, making understanding technology a critical life skill.</p>
+                        <div id="bad-slide-overlay" class="absolute inset-0 bg-red-500 bg-opacity-20 hidden items-center justify-center border-4 border-red-500 font-bold text-red-700 text-lg">WALL OF TEXT!</div>
+                    </div>
+                    <div id="fb-lab6" class="text-center text-sm font-bold mt-2 h-5 text-green-600"></div>
+                </div>
+            </div>
+
+            <!-- VISUAL DIAGRAMMING LABS -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white p-5 rounded-xl shadow-md border-t-4 border-cyan-500">
+                    <h2 class="text-lg font-bold mb-2 text-cyan-700">Lab 7: Flowchart Symbols</h2>
+                    <p class="text-sm text-slate-600 mb-4">Match the standard flowchart shape to its correct function by clicking the shape, then its function.</p>
+                    
+                    <div class="flex justify-between mb-4">
+                        <div class="flex flex-col gap-2">
+                            <div class="shape-btn bg-cyan-100 border border-cyan-400 p-2 rounded text-center cursor-pointer hover:bg-cyan-200" onclick="selectShape(this, 'ellipse')"><div class="w-16 h-8 bg-blue-300 rounded-full mx-auto"></div></div>
+                            <div class="shape-btn bg-cyan-100 border border-cyan-400 p-2 rounded text-center cursor-pointer hover:bg-cyan-200" onclick="selectShape(this, 'diamond')"><div class="w-8 h-8 bg-blue-300 mx-auto transform rotate-45"></div></div>
+                            <div class="shape-btn bg-cyan-100 border border-cyan-400 p-2 rounded text-center cursor-pointer hover:bg-cyan-200" onclick="selectShape(this, 'rect')"><div class="w-16 h-8 bg-blue-300 mx-auto"></div></div>
+                        </div>
+                        <div class="flex flex-col gap-2 justify-center w-1/2">
+                            <div class="func-btn border-2 border-slate-300 p-2 rounded text-center cursor-pointer hover:bg-slate-100 text-sm font-bold" onclick="selectFunc(this, 'diamond')">Decision (Yes/No)</div>
+                            <div class="func-btn border-2 border-slate-300 p-2 rounded text-center cursor-pointer hover:bg-slate-100 text-sm font-bold" onclick="selectFunc(this, 'rect')">Process/Action</div>
+                            <div class="func-btn border-2 border-slate-300 p-2 rounded text-center cursor-pointer hover:bg-slate-100 text-sm font-bold" onclick="selectFunc(this, 'ellipse')">Start / End</div>
+                        </div>
+                    </div>
+                    <div id="fb-lab7" class="text-center text-sm font-bold mt-2 h-5 text-green-600"></div>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl shadow-md border-t-4 border-cyan-500">
+                    <h2 class="text-lg font-bold mb-2 text-cyan-700">Lab 8: Logical Connections</h2>
+                    <p class="text-sm text-slate-600 mb-4">Look at the flowchart logic. Click the button to select the missing connector label that leads to the "Turn on Switch" action.</p>
+                    
+                    <div class="flex flex-col items-center bg-slate-50 border border-slate-200 p-4 rounded relative">
+                        <div class="bg-blue-200 px-4 py-2 transform rotate-45 mb-4 border border-blue-400 flex items-center justify-center w-16 h-16"><span class="transform -rotate-45 text-xs text-center font-bold">Wi-Fi on?</span></div>
+                        
+                        <div class="absolute w-0.5 h-10 bg-slate-800 top-[88px] left-[50%]"></div>
+                        <div class="absolute w-16 h-0.5 bg-slate-800 top-[60px] left-[62%]"></div>
+                        
+                        <div class="flex w-full justify-between mt-4">
+                            <div class="bg-green-200 px-3 py-1 border border-green-400 font-bold text-xs">Connected</div>
+                            <div class="bg-orange-200 px-3 py-1 border border-orange-400 font-bold text-xs ml-4">Turn on Switch</div>
+                        </div>
+                        
+                        <div class="absolute top-[85px] left-[52%] text-xs font-bold text-green-600">Yes</div>
+                        
+                        <!-- Missing Label Buttons -->
+                        <div class="absolute top-[45px] right-[10%] flex flex-col gap-1">
+                            <button class="bg-slate-200 border border-slate-400 text-xs px-2 py-0.5 rounded hover:bg-slate-300" onclick="checkLogic('maybe')">Maybe</button>
+                            <button class="bg-slate-200 border border-slate-400 text-xs px-2 py-0.5 rounded hover:bg-slate-300" onclick="checkLogic('no')">No</button>
+                        </div>
+                    </div>
+                    <div id="fb-lab8" class="text-center text-sm font-bold mt-2 h-5 text-green-600"></div>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <button onclick="switchTab('quiz')" class="bg-blue-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-blue-500 shadow-lg transition transform hover:scale-105">Take the Mastery Quiz <i class="fa-solid fa-clipboard-check ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- QUIZ SECTION -->
+        <div id="quiz-section" class="tab-content no-print">
+            <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-xl max-w-4xl mx-auto border-t-8 border-blue-600">
+                <div class="text-center mb-8 border-b border-slate-200 pb-4">
+                    <h1 class="text-3xl font-extrabold text-slate-800 mb-2">Unit 05 Section 3.3.1 Mastery Quiz</h1>
+                    <p class="text-slate-600">Score 90% or higher (18/20) to earn your Certificate of Mastery and unlock the Retro Game!</p>
+                </div>
+
+                <div id="quiz-container" class="space-y-8">
+                    <!-- Questions injected via JS -->
+                </div>
+
+                <div class="mt-10 text-center border-t border-slate-200 pt-6 flex flex-col md:flex-row justify-center items-center gap-4">
+                    <button id="submit-quiz-btn" onclick="gradeQuiz()" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">Submit Quiz</button>
+                    <button id="proceed-game-btn" onclick="switchTab('game')" class="hidden bg-indigo-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-indigo-700 shadow-lg transition w-full md:w-auto">Play Retro Game <i class="fa-solid fa-gamepad ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RETRO GAME SECTION (Bug Hunt) -->
+        <div id="game-section" class="tab-content no-print">
+            <div class="bg-slate-900 p-6 sm:p-8 rounded-2xl shadow-xl max-w-4xl mx-auto border-4 border-slate-700 flex flex-col items-center">
+                <div class="text-center mb-4 w-full">
+                    <h1 class="text-4xl font-extrabold text-emerald-400 mb-2 tracking-widest uppercase" style="font-family: monospace;">Bug Hunt</h1>
+                    <p class="text-slate-300 text-sm">Productivity software is full of bugs! Use your crosshair to click and squash the software bugs flying across the screen. Don't let them escape!</p>
+                </div>
+                
+                <div class="flex justify-between items-center w-full max-w-[600px] mb-2 px-4 text-white font-mono text-xl bg-slate-800 rounded py-2 border border-slate-600">
+                    <div>Score: <span id="game-score" class="text-emerald-400 font-bold">0</span></div>
+                    <div>Bugs Escaped: <span id="game-misses" class="text-red-400 font-bold">0</span>/5</div>
+                </div>
+
+                <div class="relative flex justify-center w-full">
+                    <canvas id="game-canvas" width="600" height="400" class="w-full max-w-[600px]"></canvas>
+                    
+                    <div id="game-overlay" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-70 rounded-lg max-w-[600px] mx-auto z-10">
+                        <button id="start-game-btn" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold font-mono py-3 px-6 rounded-lg text-xl border-4 border-emerald-800 uppercase transform transition hover:scale-105">Start Debugging</button>
+                    </div>
+                </div>
+
+                <div class="mt-8 text-center w-full border-t border-slate-700 pt-6">
+                    <button onclick="switchTab('cert')" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">View Certificate <i class="fa-solid fa-award ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CERTIFICATE SECTION -->
+        <div id="cert-section" class="tab-content">
+            <div class="max-w-5xl mx-auto">
+                
+                <div class="bg-white p-6 rounded shadow mb-6 no-print text-center border border-slate-200">
+                    <h2 class="text-2xl font-bold text-blue-600 mb-2">🎉 Congratulations! 🎉</h2>
+                    <p class="text-slate-700 mb-4">You have achieved mastery of Productivity Software.</p>
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+                        <input type="text" id="student-name-input" value="Student" placeholder="Enter your first name" class="border-2 border-slate-300 rounded px-4 py-2 w-full md:w-64 focus:border-blue-500 focus:outline-none">
+                        <button onclick="updateCertName()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">Update Name</button>
+                        <button id="download-btn" onclick="downloadCert()" class="bg-slate-800 text-white px-4 py-2 rounded hover:bg-slate-900 transition flex items-center justify-center">
+                            <i class="fa-solid fa-download mr-2"></i>Download PNG
+                        </button>
+                    </div>
+                </div>
+
+                <div class="cert-preview-container print:p-0 print:bg-white">
+                    <div id="certificate">
+                        <div class="blue-seal">
+                            <div class="blue-seal-inner-1">
+                                <div class="blue-seal-inner-2">
+                                     <span class="embossed-text-blue embossed-text-large">Certificate</span>
+                                     <i class="fa-solid fa-check text-blue-800 my-1"></i>
+                                     <span class="embossed-text-blue embossed-text-small">Of</span>
+                                     <span class="embossed-text-blue embossed-text-large">Mastery</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="relative z-20 w-full h-full flex flex-col pt-[55px] pl-[380px] pr-[55px]">
+                            <h1 class="text-[#0f172a] text-[4.5rem] leading-none font-serif font-bold tracking-wide uppercase mb-2">CERTIFICATE</h1>
+                            <h2 class="text-blue-800 text-3xl font-serif tracking-widest uppercase mb-10">Of Achievement</h2>
+                            
+                            <p class="text-[1.4rem] font-body text-slate-800 mb-4">This is to certify that</p>
+                            
+                            <div class="relative mb-8 w-full">
+                                <h3 id="cert-student-name" class="text-[4rem] text-[#1e3a8a] font-serif italic leading-none pb-2 relative z-10 text-center w-full block">Student</h3>
+                                <div class="w-full border-b-[2px] border-[#1e3a8a] absolute bottom-[4px] left-0 z-0"></div>
+                            </div>
+                            
+                            <p class="text-[1.2rem] font-body text-slate-800 leading-relaxed w-full pr-4 text-justify">
+                                Has successfully completed the assessment and interactive labs for 
+                                <strong class="text-[1.6rem] text-[#1e3a8a] block mt-4 mb-2 font-serif text-center">Cyber.org Tech+ Unit 05 Section 3.3.1</strong>
+                                <strong class="text-[1.4rem] text-[#0f172a] block mb-4 font-serif italic text-center">Productivity Software</strong>
+                                <span class="text-[1.1rem] text-slate-700 leading-snug block">Demonstrating advanced proficiency in explaining the purpose and proper use of Word Processors, Spreadsheet Software, Presentation Software, and Visual Diagramming tools.</span>
+                            </p>
+                            
+                            <div class="flex justify-end gap-16 items-end mt-auto mb-[60px] w-full pr-8">
+                                <div class="w-64">
+                                    <div class="border-b border-slate-400 mb-2 h-20 flex items-end justify-center relative">
+                                        <span class="font-script text-[4.5rem] text-[#1e3a8a] absolute bottom-[-10px] transform -rotate-2 opacity-90">Instructor</span>
+                                    </div>
+                                    <p class="font-serif text-xl text-slate-800 text-center">Administration</p>
+                                </div>
+                                
+                                <div class="w-64">
+                                    <div class="border-b border-slate-400 mb-2 text-center h-20 flex items-end justify-center">
+                                        <p id="cert-date" class="font-body text-2xl text-slate-800 pb-1">Date Here</p>
+                                    </div>
+                                    <p class="font-serif text-xl text-slate-800 text-center">Date</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Generic Modal -->
+    <div id="custom-modal" class="fixed inset-0 bg-black bg-opacity-50 z-[100] hidden flex justify-center items-center backdrop-blur-sm p-4">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full transform transition-all">
+            <div class="text-center">
+                <div id="modal-icon" class="text-5xl mb-4"></div>
+                <h3 id="modal-title" class="text-2xl font-bold mb-2 text-slate-900"></h3>
+                <p id="modal-msg" class="text-slate-600 mb-6"></p>
+                <button onclick="closeModal()" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-700 transition w-full">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Briefing Content Modal -->
+    <div id="briefing-modal" class="fixed inset-0 bg-slate-900 bg-opacity-80 z-[120] hidden flex justify-center items-center backdrop-blur-sm p-4 sm:p-6">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col transform transition-all overflow-hidden border-4 border-blue-800">
+            <div class="p-5 sm:p-6 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+                <div class="flex items-center gap-3 sm:gap-4">
+                    <div id="briefing-modal-icon" class="text-3xl sm:text-4xl"></div>
+                    <h3 id="briefing-modal-title" class="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 leading-tight"></h3>
+                </div>
+                <button onclick="closeBriefing()" class="text-slate-400 hover:text-red-600 transition text-4xl leading-none">&times;</button>
+            </div>
+            <div id="briefing-modal-content" class="p-6 md:p-10 overflow-y-auto flex-grow text-slate-700 text-base sm:text-lg leading-relaxed bg-white">
+                <!-- Content Injected Here -->
+            </div>
+            <div class="p-5 border-t border-slate-200 bg-slate-50 flex justify-end">
+                <button onclick="closeBriefing()" class="bg-blue-700 text-white px-6 sm:px-8 py-2 sm:py-3 rounded-lg font-bold text-base sm:text-lg hover:bg-blue-800 transition shadow-md">Close Briefing</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- BRIEFING DATA (Min 7 Paragraphs per detail, 2 cases/2 examples/2 images per Use Case) ---
+        const briefingData = {
+            'word-details': {
+                title: 'Word Processors: Detailed Overview',
+                icon: '<i class="fa-solid fa-file-lines text-indigo-600"></i>',
+                html: `
+                    <p class="mb-5">A word processor is a fundamental type of productivity software designed for creating, editing, formatting, saving, and printing text-based documents. Before the advent of personal computers, creating a professional document required a typewriter. If a mistake was made, the entire page often had to be retyped. Word processors revolutionized this by introducing the concept of a digital workspace where text could be endlessly manipulated before a single drop of physical ink was ever used.</p>
+                    
+                    <p class="mb-5">At their core, modern word processors utilize a "WYSIWYG" (What You See Is What You Get) interface. This means that the document displayed on the computer monitor looks exactly like it will when printed on paper. This visual feedback allows users to immediately see the impact of their formatting choices, ensuring that margins, alignments, and fonts are perfectly suited for the intended audience, whether that is a teacher grading an essay or a CEO reviewing a business proposal.</p>
+                    
+                    <p class="mb-5">The formatting capabilities of a word processor go far beyond simply changing the font size. Users can apply structural formatting using headings and subheadings, which not only makes the document visually organized but also allows the software to automatically generate a Table of Contents. Furthermore, tools for lists (bulleted or numbered), paragraph spacing, and text alignment ensure that the document adheres to professional or academic standards, such as MLA or APA formats.</p>
+                    
+                    <p class="mb-5">One of the most significant benefits of word processing software is its built-in editing and proofing tools. Real-time spell checkers analyze words as they are typed, highlighting errors with a familiar red squiggle. Grammar checkers evaluate sentence structure, while built-in thesauruses help users vary their vocabulary. These tools drastically improve the accuracy and quality of the final document, saving users from embarrassing typographical errors.</p>
+                    
+                    <p class="mb-5">Beyond basic text, word processors allow for complex document layouts. Users can insert tables to organize data, embed images and charts to provide visual context, and add hyperlinks to reference external web sources. Headers and footers allow for consistent information across every page, such as the author's name, document title, and automated page numbers, which are essential for lengthy reports or manuscripts.</p>
+                    
+                    <p class="mb-5">In recent years, the defining feature of word processing software has shifted toward collaboration. Historically, multiple people working on a document had to email copies back and forth, resulting in confusing version control issues (e.g., "Report_Final_V3_ActualFinal.docx"). Today, cloud-based word processors allow multiple users to open the same document simultaneously. They can see each other typing in real-time, leave comments on specific sentences, and use "Track Changes" to suggest edits that the author can accept or reject.</p>
+                    
+                    <p>The market for word processors is diverse, offering both commercial and free options. Microsoft Word remains the industry standard in the corporate world, offering unparalleled advanced features and deep integration with the Microsoft Office ecosystem. Conversely, Google Docs provides a powerful, free, web-based alternative that excels in real-time collaboration. Open-source options like LibreOffice Writer offer full offline functionality without any subscription costs, ensuring that powerful text editing tools are accessible to everyone.</p>
+                `
+            },
+            'word-usecase': {
+                title: 'Word Processors: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-indigo-800 mb-2 border-b-2 border-indigo-200 pb-1">Case 1: Academic Writing and Research</h4>
+                        <p class="mb-2">Students and researchers rely heavily on word processors to draft essays, research papers, and dissertations.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Formatting):</strong> A college student uses the "Styles" pane to instantly format their entire 20-page research paper into strict APA formatting, ensuring all margins, font sizes, and headers meet the professor's rubric.</li>
+                            <li><strong>Example 2 (Proofing):</strong> Before submitting an essay, a high school student runs the built-in grammar check tool to identify and fix passive voice sentences and run-on paragraphs, improving their final grade.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-indigo-800 mb-2 border-b-2 border-indigo-200 pb-1">Case 2: Professional Business Communications</h4>
+                        <p class="mb-2">In the corporate world, word processors are used to create formal communications, contracts, and proposals.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Mail Merge):</strong> An HR manager uses the "Mail Merge" feature to automatically generate 50 personalized offer letters for new employees by linking a single word processor template to a spreadsheet of names and salaries.</li>
+                            <li><strong>Example 2 (Collaboration):</strong> A legal team uses the "Track Changes" and commenting features to securely review a contract draft. Three lawyers edit the document simultaneously, leaving notes on specific clauses before finalizing the text.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Document Formatting</p>
+                            <img src="https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?auto=format&fit=crop&w=600&h=350" alt="Printed documents with charts" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Collaborative Editing</p>
+                            <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&h=350" alt="Team collaborating on laptops" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'sheet-details': {
+                title: 'Spreadsheet Software: Detailed Overview',
+                icon: '<i class="fa-solid fa-table-cells text-emerald-600"></i>',
+                html: `
+                    <p class="mb-5">Spreadsheet software is designed to organize, calculate, analyze, and visualize data. Historically, accountants used massive paper ledgers with hand-drawn grids to track finances. A single mathematical error in one column meant pulling out an eraser and recalculating every subsequent total by hand. The invention of the digital spreadsheet (starting with VisiCalc in 1979) fundamentally altered business operations by introducing the concept of automated, instantaneous recalculation.</p>
+                    
+                    <p class="mb-5">The interface of a spreadsheet is built upon a vast grid of intersecting rows (designated by numbers) and columns (designated by letters). The intersection of a row and a column creates a "Cell" (e.g., Cell B4). Each individual cell can hold three specific types of data: raw text (like a person's name), numerical values (like a price or a date), or formulas. This simple grid structure allows users to organize massive amounts of information into readable, sortable tables.</p>
+                    
+                    <p class="mb-5">The true power of spreadsheet software lies in <strong>Formulas</strong>. A formula is a mathematical equation typed directly into a cell, always beginning with an equals sign (=). Instead of typing "= 5 + 10", a user types "= B2 + C2". This utilizes cell referencing. If the data in cell B2 changes next week, the formula automatically updates the total. This automation allows users to build complex financial models and budgets that instantly adapt to new data without manual recalculation.</p>
+                    
+                    <p class="mb-5">Beyond basic math, spreadsheets include hundreds of pre-built formulas known as <strong>Functions</strong>. Functions handle complex operations instantly. The SUM function quickly adds hundreds of cells together. The AVERAGE function finds the mean. More advanced functions, like VLOOKUP or XLOOKUP, can search through thousands of rows of inventory data to find the exact price of a specific item number. Logical functions like IF statements allow the spreadsheet to make decisions (e.g., IF the student's grade is > 90, display "A").</p>
+                    
+                    <p class="mb-5">Data visualization is another critical component. Staring at thousands of rows of numbers is overwhelming for the human brain. Spreadsheet software can take raw data and instantly generate dynamic Charts and Graphs. A user can highlight a column of monthly expenses and click a button to generate a colorful Pie Chart showing exactly where the money went. Bar charts can compare quarterly sales, and Line graphs can show trends over time, making data easily digestible for presentations.</p>
+                    
+                    <p class="mb-5">For deep data analysis, spreadsheets offer tools like Sorting, Filtering, and Pivot Tables. If a teacher has a spreadsheet of 500 students, they can apply a filter to instantly hide everyone except the 10th graders. Pivot Tables are advanced tools that allow users to instantly summarize massive datasets. A business owner can take a spreadsheet of every single sale made in a year and use a Pivot Table to instantly see total revenue categorized by region and salesperson, all without writing a single formula.</p>
+                    
+                    <p>Like word processors, modern spreadsheets offer robust cloud collaboration. Google Sheets popularized the ability for a dozen employees to edit the same financial ledger simultaneously. Microsoft Excel remains the powerhouse for complex data processing in finance and engineering, while free options like LibreOffice Calc provide offline capabilities. Furthermore, many modern web apps rely on exporting data as CSV (Comma Separated Values) files, which spreadsheets natively read, making them the universal language of business data.</p>
+                `
+            },
+            'sheet-usecase': {
+                title: 'Spreadsheet Software: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-emerald-800 mb-2 border-b-2 border-emerald-200 pb-1">Case 1: Financial Management and Budgeting</h4>
+                        <p class="mb-2">Individuals and corporations use spreadsheets as their primary tool for tracking income, expenses, and forecasting budgets.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Formulas):</strong> A family uses a spreadsheet to track their monthly budget. They set up a formula that automatically subtracts their total monthly expenses from their total income, instantly showing them how much disposable cash they have left.</li>
+                            <li><strong>Example 2 (Charts):</strong> A small business owner highlights a year's worth of monthly sales data and generates a line graph to visually identify that their highest sales consistently occur during the summer months.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-emerald-800 mb-2 border-b-2 border-emerald-200 pb-1">Case 2: Data Organization and Analysis</h4>
+                        <p class="mb-2">Spreadsheets excel at managing large lists of information, allowing users to sort, filter, and extract specific insights from raw data.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Data Filtering):</strong> A school administrator has a spreadsheet containing data for 1,000 students. They apply a filter to the "Grade Level" column to instantly hide everyone except the seniors, making it easy to print a senior class roster.</li>
+                            <li><strong>Example 2 (Functions):</strong> A retail manager uses the VLOOKUP function. When they type a product's barcode into a cell, the function searches a massive inventory database on another sheet and automatically fills in the product's name and current price.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Grid and Formulas</p>
+                            <img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=600&h=350" alt="Accounting spreadsheet and calculator" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Data Visualization</p>
+                            <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=600&h=350" alt="Analyzing charts and graphs on a laptop" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'pres-details': {
+                title: 'Presentation Software: Detailed Overview',
+                icon: '<i class="fa-solid fa-person-chalkboard text-orange-600"></i>',
+                html: `
+                    <p class="mb-5">Presentation software is a specialized tool designed to create visual aids for public speaking, lectures, and business meetings. Before digital presentations, speakers relied on physical whiteboards, flip charts, or transparent plastic sheets placed on overhead projectors. Presentation software digitized this process, allowing users to design distinct, individual digital pages—called "slides"—that can be projected onto a large screen to support the speaker's narrative.</p>
+                    
+                    <p class="mb-5">The core of presentation software revolves around visual communication. While a word processor is meant to be read independently by a user, a presentation slide is meant to be glanced at by an audience while they listen to the presenter. Therefore, presentation software emphasizes layouts, large fonts, and high-contrast color themes. Good software provides pre-built "Master Slides" ensuring that fonts, colors, and logos remain perfectly consistent across a 50-slide deck without manual adjustment.</p>
+                    
+                    <p class="mb-5">Multimedia integration is one of the most powerful features of presentation software. A speaker discussing the impact of a marketing campaign does not need to just describe a commercial; they can embed the video file directly into the slide and play it seamlessly for the audience. Users can also insert audio clips, interactive hyperlinks, and high-resolution photographs to make the content engaging and memorable.</p>
+                    
+                    <p class="mb-5">To control the flow of information, presentation software utilizes Transitions and Animations. Transitions govern how the software moves from one slide to the next (e.g., a smooth fade or a dynamic slide-in). Animations control how individual elements appear on a single slide. For example, a speaker can set three bullet points to appear one at a time upon a mouse click. This prevents the audience from reading ahead and keeps their attention focused exactly on the point the speaker is currently discussing.</p>
+                    
+                    <p class="mb-5">Creating the slides is only half the purpose of the software; the other half is Delivery. Presenter Tools are built into the software to aid the speaker. When connected to a projector, the audience sees the full-screen slides, but the speaker's laptop displays a "Presenter View." This view shows the current slide, a preview of the next slide, a timer to keep them on schedule, and private Speaker Notes that the audience cannot see, eliminating the need for physical flashcards.</p>
+                    
+                    <p class="mb-5">A common pitfall of presentation software is user error—specifically, putting too much text on a slide, often referred to as a "Wall of Text." The software is designed to support the speaker, not replace them. Best practices dictate using the "6x6 Rule" (no more than six bullet points, no more than six words per line) and relying heavily on charts generated by spreadsheet software to convey data visually rather than numerically.</p>
+                    
+                    <p>The presentation software market is dominated by Microsoft PowerPoint, which is so ubiquitous that its name is often used synonymously with presentations. Apple's Keynote is highly regarded for its cinematic animations and design aesthetics. Cloud-based tools like Google Slides offer excellent real-time collaboration, allowing a team to build a presentation together remotely, while web platforms like Canva have introduced highly stylized, graphic-design-focused presentation templates for modern users.</p>
+                `
+            },
+            'pres-usecase': {
+                title: 'Presentation Software: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-orange-800 mb-2 border-b-2 border-orange-200 pb-1">Case 1: Educational Lectures</h4>
+                        <p class="mb-2">Teachers and professors use presentation software daily to deliver structured lessons and visual content to large classrooms.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Multimedia):</strong> A history teacher embeds a short documentary video clip and high-resolution photos of historical artifacts directly into their slides, keeping students visually engaged during the lecture.</li>
+                            <li><strong>Example 2 (Animations):</strong> A math teacher uses object animation to make the steps of a complex algebra equation appear on the screen one by one, explaining each step before revealing the next to prevent student confusion.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-orange-800 mb-2 border-b-2 border-orange-200 pb-1">Case 2: Business Pitches and Meetings</h4>
+                        <p class="mb-2">Professionals rely on slide decks to pitch ideas to clients, report quarterly earnings, and align team goals.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Delivery Tools):</strong> During a high-stakes pitch to investors, a startup CEO uses the "Presenter View" on their laptop. They rely on their hidden digital speaker notes to remember specific financial figures without having to look down at paper notes.</li>
+                            <li><strong>Example 2 (Visuals):</strong> Instead of showing a table of 100 raw numbers, a marketing director copies a colorful pie chart from their spreadsheet and pastes it into their presentation slide to quickly prove that social media drives 70% of their web traffic.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Slide Design</p>
+                            <img src="https://images.unsplash.com/photo-1512758684365-1d173b2a3152?auto=format&fit=crop&w=600&h=350" alt="Person pointing at presentation screen" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Presenting to Audience</p>
+                            <img src="https://images.unsplash.com/photo-1540317580384-e5d43616b9aa?auto=format&fit=crop&w=600&h=350" alt="Audience watching a presentation" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'diag-details': {
+                title: 'Visual Diagramming: Detailed Overview',
+                icon: '<i class="fa-solid fa-diagram-project text-cyan-600"></i>',
+                html: `
+                    <p class="mb-5">Visual diagramming software is a distinct category of productivity tool used to create graphical representations of information, processes, hierarchies, and systems. While a word processor relies on text to explain a concept, diagramming software relies on shapes, lines, and spatial orientation. Human brains process visual information significantly faster than text, making diagramming software an essential tool for engineers, programmers, managers, and designers to clarify complex logic.</p>
+                    
+                    <p class="mb-5">One of the most common uses for this software is creating Flowcharts. Flowcharts map out processes and workflows step-by-step. Diagramming software provides standard ANSI flowchart symbols: an oval signifies the start/end of a process, a rectangle signifies an action step, and a diamond signifies a decision point (requiring a "Yes" or "No" path). By dragging and dropping these shapes, users can visually map out everything from a software algorithm to a company's customer service protocol.</p>
+                    
+                    <p class="mb-5">The defining feature of diagramming software, which separates it from basic drawing programs like MS Paint, is the use of "Smart Connectors." When a user draws a line connecting a rectangle to a diamond, the software mathematically binds that line to the shapes. If the user decides to move the diamond to the other side of the page to make room for a new step, the connecting line automatically stretches, bends, and routes itself around obstacles to maintain the connection. This saves countless hours of manual redrawing.</p>
+                    
+                    <p class="mb-5">Beyond flowcharts, the software is heavily used for Organizational Charts (Org Charts). Businesses use these to illustrate hierarchies and reporting structures. A user can easily generate a tree diagram showing the CEO at the top, branching down to Vice Presidents, Managers, and individual contributors. If a department is reorganized, the user simply clicks and drags a branch to a new manager, and the software instantly re-aligns the entire chart.</p>
+                    
+                    <p class="mb-5">In the IT and networking fields, diagramming software is critical for creating Network Topologies. Administrators use specialized shape libraries containing icons for servers, routers, firewalls, and cloud databases. They connect these icons to map out exactly how a company's physical and wireless network is constructed. This visual map is crucial for troubleshooting; if a server goes down, the IT team can look at the diagram to immediately see which departments will lose internet access.</p>
+                    
+                    <p class="mb-5">Another popular use is Mind Mapping, a brainstorming technique. Users start with a central idea in the middle of a blank digital canvas and branch out with related concepts in a non-linear fashion. This helps teams organize chaotic ideas before committing them to a formal word document or presentation. Diagramming software is also used for UI/UX wireframing, allowing developers to drag-and-drop buttons and menus to mock up what a new smartphone app will look like before writing any code.</p>
+                    
+                    <p>Microsoft Visio has long been the standard for enterprise diagramming, offering deep integration with databases (allowing shapes to change color based on live Excel data). However, cloud-based competitors like Lucidchart and Miro have gained massive popularity by focusing on real-time collaboration. These web apps act as infinite digital whiteboards where remote teams across the globe can simultaneously drag shapes, draw lines, and attach digital sticky notes to plan projects interactively.</p>
+                `
+            },
+            'diag-usecase': {
+                title: 'Visual Diagramming: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-cyan-800 mb-2 border-b-2 border-cyan-200 pb-1">Case 1: Process Mapping and Troubleshooting</h4>
+                        <p class="mb-2">Companies use diagramming tools to standardize procedures, making complex instructions easy to follow visually.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Flowcharts):</strong> An IT help desk creates a troubleshooting flowchart for "No Internet Connection." It starts with an oval, moves to a decision diamond ("Is the router plugged in?"), and uses labeled arrows ("Yes" / "No") to guide the technician to the correct solution without needing to read a dense manual.</li>
+                            <li><strong>Example 2 (Smart Connectors):</strong> When a manager decides to add a new quality-check step to an assembly line process map, they drag a new rectangle onto the canvas. The smart connector lines automatically snap and reroute around the new shape, keeping the diagram neat.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-cyan-800 mb-2 border-b-2 border-cyan-200 pb-1">Case 2: System Architecture and Planning</h4>
+                        <p class="mb-2">Engineers, IT professionals, and executives use diagramming to map out physical and logical structures.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Network Topology):</strong> A network administrator uses a library of specialized IT icons (servers, firewalls, switches) to map out the company's new office network, showing exactly which router connects to which department.</li>
+                            <li><strong>Example 2 (Organizational Charts):</strong> After a corporate merger, the HR department uses diagramming software to build a new Organizational Chart. They easily drag and drop entire department branches under new Vice Presidents, visually clarifying the new reporting hierarchy for all employees.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Flowcharts</p>
+                            <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=600&h=350" alt="Drawing flowcharts on whiteboard" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: UI/UX Wireframing</p>
+                            <img src="https://images.unsplash.com/photo-1618761714954-0b8cd0026356?auto=format&fit=crop&w=600&h=350" alt="Wireframing a website layout" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        function openBriefing(key) {
+            const modal = document.getElementById('briefing-modal');
+            const data = briefingData[key];
+            if(data) {
+                document.getElementById('briefing-modal-icon').innerHTML = data.icon;
+                document.getElementById('briefing-modal-title').innerText = data.title;
+                document.getElementById('briefing-modal-content').innerHTML = data.html;
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; 
+            }
+        }
+
+        function closeBriefing() {
+            document.getElementById('briefing-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto'; 
+        }
+
+        document.getElementById('briefing-modal').addEventListener('click', function(e) {
+            if(e.target === this) closeBriefing();
+        });
+        
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId + '-section').classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-blue-900'));
+            const activeBtn = document.getElementById('nav-' + tabId);
+            if(activeBtn && tabId !== 'cert') activeBtn.classList.add('bg-blue-900');
+            
+            document.querySelectorAll('.nav-btn-mobile').forEach(btn => btn.classList.remove('bg-blue-800'));
+            const activeMobileBtn = document.getElementById('nav-' + tabId + '-mobile');
+            if(activeMobileBtn && tabId !== 'cert') activeMobileBtn.classList.add('bg-blue-800');
+
+            window.scrollTo(0,0);
+
+            if (tabId === 'game' && !gameRunning) {
+                resetGame();
+                drawGame();
+            }
+        }
+
+        function showModal(title, message, type = 'info') {
+            const modal = document.getElementById('custom-modal');
+            const icon = document.getElementById('modal-icon');
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-msg').innerText = message;
+            
+            if(type === 'success') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-check text-green-500"></i>';
+            } else if (type === 'error') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500"></i>';
+            } else if (type === 'warning') {
+                icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-yellow-500"></i>';
+            } else {
+                icon.innerHTML = '<i class="fa-solid fa-circle-info text-blue-500"></i>';
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() { document.getElementById('custom-modal').classList.add('hidden'); }
+
+        // --- LAB 1 LOGIC (Word - Drag/Drop Toolbar) ---
+        let draggedItem = null;
+        let lab1Matches = 0;
+        
+        document.querySelectorAll('#lab1-items .drag-item').forEach(item => {
+            item.addEventListener('dragstart', function() {
+                draggedItem = this;
+                setTimeout(() => this.classList.add('opacity-50'), 0);
+            });
+            item.addEventListener('dragend', function() {
+                setTimeout(() => this.classList.remove('opacity-50'), 0);
+                draggedItem = null;
+            });
+        });
+
+        document.querySelectorAll('.dropzone').forEach(zone => {
+            zone.addEventListener('dragover', e => e.preventDefault());
+            zone.addEventListener('dragenter', function(e) { e.preventDefault(); this.classList.add('drag-over'); });
+            zone.addEventListener('dragleave', function() { this.classList.remove('drag-over'); });
+            zone.addEventListener('drop', function() {
+                this.classList.remove('drag-over');
+                if(draggedItem) {
+                    if(draggedItem.dataset.match === this.dataset.target) {
+                        this.appendChild(draggedItem);
+                        draggedItem.classList.remove('bg-indigo-100', 'cursor-grab');
+                        draggedItem.classList.add('bg-green-100', 'text-green-800', 'cursor-default', 'w-full', 'h-full', 'flex', 'items-center', 'justify-center', 'm-0', 'border-0');
+                        draggedItem.setAttribute('draggable', 'false');
+                        this.classList.replace('border-dashed', 'border-solid');
+                        this.classList.replace('border-slate-400', 'border-green-500');
+                        lab1Matches++;
+                        
+                        document.getElementById('fb-lab1').innerText = "Correct Icon!";
+                        if(lab1Matches === 3) {
+                            setTimeout(() => {
+                                document.getElementById('fb-lab1').innerText = "Lab 1 Complete! Formatting Toolbar Mastered.";
+                            }, 500);
+                        }
+                    } else {
+                        document.getElementById('fb-lab1').innerText = "Incorrect icon. Try again.";
+                        document.getElementById('fb-lab1').classList.replace('text-green-600', 'text-red-600');
+                        setTimeout(() => document.getElementById('fb-lab1').classList.replace('text-red-600', 'text-green-600'), 1500);
+                    }
+                }
+            });
+        });
+
+        // --- LAB 2 LOGIC (Word - Proofing) ---
+        let lab2Fixes = 0;
+        function fixSpelling(element, fixedWord) {
+            if(element.classList.contains('fixed')) return;
+            element.innerText = fixedWord;
+            element.classList.add('fixed');
+            element.classList.remove('text-red-600');
+            lab2Fixes++;
+            document.getElementById('fb-lab2').innerText = `Fixed ${lab2Fixes}/3 errors.`;
+            if(lab2Fixes === 3) {
+                document.getElementById('fb-lab2').innerText = "Lab 2 Complete! Document Proofed successfully.";
+            }
+        }
+
+        // --- LAB 3 LOGIC (Spreadsheet - Formula Builder) ---
+        let formulaParts = [];
+        const correctFormula = ["=SUM(", "B2", ":", "B5", ")"];
+        
+        function addToFormula(part) {
+            formulaParts.push(part);
+            updateFormulaBar();
+            // find event target and disable it visually
+            event.target.classList.add('used');
+            checkFormula();
+        }
+        function clearFormula() {
+            formulaParts = [];
+            updateFormulaBar();
+            document.querySelectorAll('.formula-btn').forEach(btn => btn.classList.remove('used'));
+            document.getElementById('fb-lab3').innerText = "";
+        }
+        function updateFormulaBar() {
+            const bar = document.getElementById('formula-bar');
+            if(formulaParts.length === 0) bar.innerHTML = '<span class="text-slate-400 italic text-sm">Click components below to build formula...</span>';
+            else bar.innerHTML = '<span class="font-bold text-slate-800">' + formulaParts.join('') + '</span>';
+        }
+        function checkFormula() {
+            if(formulaParts.length === correctFormula.length) {
+                let isCorrect = true;
+                for(let i=0; i<correctFormula.length; i++) {
+                    if(formulaParts[i] !== correctFormula[i]) isCorrect = false;
+                }
+                if(isCorrect) {
+                    document.getElementById('fb-lab3').innerText = "Lab 3 Complete! Perfect SUM formula.";
+                } else {
+                    document.getElementById('fb-lab3').innerText = "Incorrect syntax. Remember: =SUM(FirstCell:LastCell)";
+                    document.getElementById('fb-lab3').classList.replace('text-green-600', 'text-red-600');
+                    setTimeout(() => {
+                        clearFormula();
+                        document.getElementById('fb-lab3').classList.replace('text-red-600', 'text-green-600');
+                    }, 2000);
+                }
+            }
+        }
+
+        // --- LAB 4 LOGIC (Spreadsheet - Chart Selection) ---
+        function checkChart(type) {
+            if(type === 'pie') {
+                document.getElementById('fb-lab4').innerText = "Lab 4 Complete! Pie charts are best for 'parts of a whole' (percentages).";
+            } else {
+                document.getElementById('fb-lab4').innerText = "Incorrect. Line graphs are for trends over time.";
+                document.getElementById('fb-lab4').classList.replace('text-green-600', 'text-red-600');
+                setTimeout(() => document.getElementById('fb-lab4').classList.replace('text-red-600', 'text-green-600'), 1500);
+            }
+        }
+
+        // --- LAB 5 LOGIC (Presentation - Slide Sorter) ---
+        function moveSlide(btn, dir) {
+            const row = btn.closest('div[data-order]');
+            const container = document.getElementById('slide-sorter');
+            
+            if (dir === -1 && row.previousElementSibling) {
+                container.insertBefore(row, row.previousElementSibling);
+            } else if (dir === 1 && row.nextElementSibling) {
+                container.insertBefore(row.nextElementSibling, row);
+            }
+        }
+        function checkSlideOrder() {
+            const rows = document.getElementById('slide-sorter').children;
+            let correct = true;
+            for(let i=0; i<rows.length; i++) {
+                if(parseInt(rows[i].dataset.order) !== (i+1)) correct = false;
+            }
+            if(correct) {
+                document.getElementById('fb-lab5').innerText = "Lab 5 Complete! Logical presentation flow established.";
+            } else {
+                document.getElementById('fb-lab5').innerText = "Flow is incorrect. Check the logical sequence.";
+                document.getElementById('fb-lab5').classList.replace('text-green-600', 'text-red-600');
+                setTimeout(() => document.getElementById('fb-lab5').classList.replace('text-red-600', 'text-green-600'), 1500);
+            }
+        }
+
+        // --- LAB 6 LOGIC (Presentation - Slide Design) ---
+        function checkSlideDesign() {
+            document.getElementById('bad-slide-overlay').classList.remove('hidden');
+            document.getElementById('bad-slide-overlay').classList.add('flex');
+            document.getElementById('fb-lab6').innerText = "Lab 6 Complete! Slides should use short bullets, not paragraphs.";
+        }
+
+        // --- LAB 7 LOGIC (Diagramming - Symbols) ---
+        let selectedShape = null;
+        let selectedFunc = null;
+        let lab7Matches = 0;
+
+        function selectShape(el, type) {
+            document.querySelectorAll('.shape-btn').forEach(btn => btn.classList.remove('border-blue-600', 'bg-blue-100'));
+            el.classList.add('border-blue-600', 'bg-blue-100');
+            selectedShape = { el: el, type: type };
+            checkLab7();
+        }
+        function selectFunc(el, type) {
+            document.querySelectorAll('.func-btn').forEach(btn => btn.classList.remove('border-blue-600', 'bg-blue-100'));
+            el.classList.add('border-blue-600', 'bg-blue-100');
+            selectedFunc = { el: el, type: type };
+            checkLab7();
+        }
+        function checkLab7() {
+            if(selectedShape && selectedFunc) {
+                if(selectedShape.type === selectedFunc.type) {
+                    selectedShape.el.classList.replace('bg-cyan-100', 'bg-green-100');
+                    selectedShape.el.classList.replace('border-cyan-400', 'border-green-500');
+                    selectedFunc.el.classList.replace('hover:bg-slate-100', 'bg-green-100');
+                    selectedFunc.el.classList.replace('border-slate-300', 'border-green-500');
+                    selectedShape.el.onclick = null;
+                    selectedFunc.el.onclick = null;
+                    lab7Matches++;
+                    selectedShape = null;
+                    selectedFunc = null;
+                    if(lab7Matches === 3) document.getElementById('fb-lab7').innerText = "Lab 7 Complete! All symbols matched correctly.";
+                } else {
+                    document.getElementById('fb-lab7').innerText = "Incorrect match. Try again.";
+                    document.getElementById('fb-lab7').classList.replace('text-green-600', 'text-red-600');
+                    setTimeout(() => {
+                        document.getElementById('fb-lab7').innerText = "";
+                        document.getElementById('fb-lab7').classList.replace('text-red-600', 'text-green-600');
+                        document.querySelectorAll('.shape-btn').forEach(btn => btn.classList.remove('border-blue-600', 'bg-blue-100'));
+                        document.querySelectorAll('.func-btn').forEach(btn => btn.classList.remove('border-blue-600', 'bg-blue-100'));
+                        selectedShape = null;
+                        selectedFunc = null;
+                    }, 1000);
+                }
+            }
+        }
+
+        // --- LAB 8 LOGIC (Diagramming - Logic) ---
+        function checkLogic(answer) {
+            if(answer === 'no') {
+                document.getElementById('fb-lab8').innerText = "Lab 8 Complete! A decision branch must have a 'No' path.";
+            } else {
+                document.getElementById('fb-lab8').innerText = "Incorrect. A binary decision (Yes) requires a negative (No).";
+                document.getElementById('fb-lab8').classList.replace('text-green-600', 'text-red-600');
+                setTimeout(() => document.getElementById('fb-lab8').classList.replace('text-red-600', 'text-green-600'), 1500);
+            }
+        }
+
+
+        // --- QUIZ LOGIC (20 Questions) ---
+        const quizData = [
+            // 10 provided questions
+            { q: "Which type of software is best for creating a formal business letter?", options: ["Visual diagramming software", "Presentation software", "Word processors", "Spreadsheet software"], answer: 2 },
+            { q: "Which feature is commonly used in word processing software to create a list of items?", options: ["Merge cells", "Bullet points", "Slide transitions", "Connector lines"], answer: 1 },
+            { q: "What is an advantage of using word processing software?", options: ["It automatically checks grammar and spelling.", "It can perform advanced math calculations.", "It creates interactive charts.", "It uses flowchart shapes by default."], answer: 0 },
+            { q: "Which type of software is best for tracking and calculating totals and inventory items?", options: ["Word processors", "Spreadsheet software", "Visual diagramming software", "Presentation software"], answer: 1 },
+            { q: "In a spreadsheet, what is the main purpose of a formula?", options: ["To draw decision shapes", "To make slides transition", "To add animations to data", "To perform calculations automatically"], answer: 3 },
+            { q: "What software is best for designing a slideshow to explain an idea?", options: ["Spreadsheet software", "Visual diagramming software", "Presentation software", "Word processors"], answer: 2 },
+            { q: "Why are images used in presentation slides?", options: ["To help illustrate and reference key points", "To fill a space when there is little text", "To make the slide file size bigger", "To distract audience from the text"], answer: 0 },
+            { q: "Which type of software is best for creating a flowchart to show troubleshooting steps?", options: ["Spreadsheet software", "Visual diagramming software", "Word processors", "Presentation software"], answer: 1 },
+            { q: "What is an advantage of using diagramming software instead of plain text?", options: ["It can apply slide transitions.", "It organizes information into rows and columns.", "It makes steps easier to understand.", "It checks spelling and grammar automatically."], answer: 2 },
+            { q: "Which software type can be used to combine text, images, and video into a single visual document for sharing ideas?", options: ["Presentation", "Word processing", "Spreadsheet", "Visual diagramming"], answer: 0 },
+            
+            // 10 new questions based on briefing
+            { q: "What interface design allows modern word processors to display a document exactly how it will look when printed?", options: ["CLI (Command Line Interface)", "GUI (Graphical User Interface)", "WYSIWYG (What You See Is What You Get)", "ANSI (American National Standards)"], answer: 2 },
+            { q: "Which collaboration feature in a word processor allows multiple users to suggest edits that the original author can accept or reject?", options: ["Mail Merge", "Track Changes", "Format Painter", "Page Break"], answer: 1 },
+            { q: "In spreadsheet software, what do we call the intersection of a row and a column?", options: ["A Matrix", "A Value", "A Cell", "A Gridpoint"], answer: 2 },
+            { q: "Which of the following is a pre-built formula in a spreadsheet designed to handle complex operations instantly (e.g., AVERAGE or VLOOKUP)?", options: ["A Function", "A Macro", "An Operator", "A Filter"], answer: 0 },
+            { q: "What specialized spreadsheet tool allows a user to instantly summarize massive datasets and view them by categories without writing any formulas?", options: ["Mail Merge", "Pivot Table", "Line Graph", "Data Validation"], answer: 1 },
+            { q: "In presentation software, what feature governs how the software visually moves from one complete slide to the next?", options: ["Animations", "Themes", "Transitions", "Hyperlinks"], answer: 2 },
+            { q: "What tool allows a presenter to view their private notes and a timer on their laptop, while the audience only sees the full-screen slides on a projector?", options: ["Slide Sorter View", "Master Slide View", "Audience View", "Presenter View"], answer: 3 },
+            { q: "What is a major advantage of using 'Smart Connectors' in visual diagramming software?", options: ["They automatically calculate totals.", "They fix spelling errors in shapes.", "They automatically stretch and reroute when connected shapes are moved.", "They convert hand-drawn images into code."], answer: 2 },
+            { q: "In a standard flowchart, what does a diamond shape signify?", options: ["Start / End", "A Decision Point (Yes/No)", "A Process or Action", "A Database Storage"], answer: 1 },
+            { q: "Which specific type of diagram is crucial for IT Administrators to map out servers, routers, and firewalls in an office building?", options: ["Organizational Chart", "Mind Map", "UI Wireframe", "Network Topology"], answer: 3 }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        
+        quizData.forEach((item, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = "bg-slate-50 p-6 rounded-lg border border-slate-200";
+            
+            const qTitle = document.createElement('h3');
+            qTitle.className = "font-bold text-lg text-slate-800 mb-4";
+            qTitle.innerText = `${index + 1}. ${item.q}`;
+            qDiv.appendChild(qTitle);
+            
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = "space-y-3";
+            
+            item.options.forEach((opt, optIndex) => {
+                const label = document.createElement('label');
+                label.className = "flex items-center space-x-3 p-3 rounded bg-white border border-slate-300 hover:bg-blue-50 cursor-pointer transition";
+                
+                const radio = document.createElement('input');
+                radio.type = "radio";
+                radio.name = `q${index}`;
+                radio.value = optIndex;
+                radio.className = "form-radio h-5 w-5 text-blue-600";
+                
+                const span = document.createElement('span');
+                span.className = "text-slate-700";
+                span.innerText = opt;
+                
+                label.appendChild(radio);
+                label.appendChild(span);
+                optionsDiv.appendChild(label);
+            });
+            
+            qDiv.appendChild(optionsDiv);
+            quizContainer.appendChild(qDiv);
+        });
+
+        function gradeQuiz() {
+            let score = 0;
+            let allAnswered = true;
+
+            for(let i = 0; i < quizData.length; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if(selected) {
+                    if(parseInt(selected.value) === quizData[i].answer) score++;
+                } else {
+                    allAnswered = false;
+                }
+            }
+            
+            if(!allAnswered) {
+                showModal('Incomplete Quiz', 'Please answer all 20 questions before submitting.', 'warning');
+                return;
+            }
+            
+            const percentage = (score / quizData.length) * 100;
+            
+            if(score >= 18) { 
+                const navGame = document.getElementById('nav-game');
+                const navGameMobile = document.getElementById('nav-game-mobile');
+                
+                navGame.classList.remove('text-blue-400', 'cursor-not-allowed');
+                navGame.classList.add('text-white', 'hover:bg-blue-700');
+                navGame.disabled = false;
+                
+                navGameMobile.classList.remove('text-blue-400', 'cursor-not-allowed');
+                navGameMobile.classList.add('text-white', 'hover:bg-blue-700');
+                navGameMobile.disabled = false;
+
+                document.getElementById('nav-cert').classList.remove('hidden');
+                document.getElementById('nav-cert-mobile').classList.remove('hidden');
+                
+                document.getElementById('proceed-game-btn').classList.remove('hidden');
+                document.getElementById('submit-quiz-btn').classList.add('hidden');
+
+                showModal('Outstanding!', `You scored ${score}/20 (${percentage}%). You have unlocked your Certificate of Mastery AND the Bug Hunt Retro Game!`, 'success');
+            } else {
+                quizData.forEach((_, i) => {
+                    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                    if(selected) selected.checked = false;
+                });
+                showModal('Keep Trying!', `You scored ${score}/20 (${percentage}%). You need 90% (18/20) to earn the certificate. Your answers have been reset so you can try again.`, 'error');
+                document.getElementById('quiz-section').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // --- RETRO GAME LOGIC: Bug Hunt (Duck Hunt Clone) ---
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let gScore = 0;
+        let gMisses = 0;
+        let gameRunning = false;
+        let animationId;
+        
+        let bugs = [];
+        let lastTime = 0;
+        let spawnTimer = 0;
+        let spawnInterval = 1500;
+        
+        const overlay = document.getElementById('game-overlay');
+        const startBtn = document.getElementById('start-game-btn');
+        startBtn.addEventListener('click', startGame);
+
+        // Click detection
+        function getMousePos(e) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            return {
+                x: (e.clientX - rect.left) * scaleX,
+                y: (e.clientY - rect.top) * scaleY
+            };
+        }
+
+        canvas.addEventListener('mousedown', function(e) {
+            if(!gameRunning) return;
+            const pos = getMousePos(e);
+            
+            // Draw crosshair effect
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(pos.x, pos.y, 10, 0, Math.PI*2);
+            ctx.stroke();
+
+            // Check collision with bugs (iterate backwards to hit top bug)
+            let hit = false;
+            for(let i = bugs.length - 1; i >= 0; i--) {
+                let b = bugs[i];
+                if(!b.dead && Math.abs(pos.x - b.x) < b.r && Math.abs(pos.y - b.y) < b.r) {
+                    b.dead = true;
+                    b.vy = 5; // Fall down
+                    b.vx = 0;
+                    gScore += 100;
+                    document.getElementById('game-score').innerText = gScore;
+                    hit = true;
+                    // Increase difficulty
+                    if(spawnInterval > 400) spawnInterval -= 20; 
+                    break; 
+                }
+            }
+        });
+
+        class Bug {
+            constructor() {
+                this.r = 20;
+                // Spawn randomly on left or right edge
+                this.side = Math.random() > 0.5 ? 1 : -1;
+                this.x = this.side === 1 ? -this.r : canvas.width + this.r;
+                this.y = Math.random() * (canvas.height - 150) + 50;
+                
+                this.vx = (Math.random() * 2 + 2) * (this.side); // move towards center
+                this.vy = (Math.random() - 0.5) * 2; // slight vertical drift
+                
+                this.flapTimer = 0;
+                this.flapState = false;
+                this.dead = false;
+                
+                // Colors representing software bugs
+                const colors = ['#ef4444', '#f97316', '#a855f7'];
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+            }
+            
+            update(dt) {
+                this.x += this.vx;
+                this.y += this.vy;
+                
+                if(!this.dead) {
+                    this.flapTimer += dt;
+                    if(this.flapTimer > 150) {
+                        this.flapState = !this.flapState;
+                        this.flapTimer = 0;
+                    }
+                    // Wiggle
+                    this.y += Math.sin(Date.now() / 100) * 1.5;
+                }
+            }
+            
+            draw(ctx) {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                
+                if(this.dead) {
+                    // Draw dead bug (upside down, falling)
+                    ctx.scale(1, -1);
+                }
+
+                // Draw wings
+                ctx.fillStyle = 'rgba(255,255,255,0.7)';
+                ctx.beginPath();
+                if(this.flapState && !this.dead) {
+                    ctx.ellipse(-5, -10, 8, 15, -Math.PI/4, 0, Math.PI*2);
+                    ctx.ellipse(5, -10, 8, 15, Math.PI/4, 0, Math.PI*2);
+                } else {
+                    ctx.ellipse(-10, -5, 15, 8, -Math.PI/6, 0, Math.PI*2);
+                    ctx.ellipse(10, -5, 15, 8, Math.PI/6, 0, Math.PI*2);
+                }
+                ctx.fill();
+
+                // Draw body
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.ellipse(0, 0, 10, 15, 0, 0, Math.PI*2);
+                ctx.fill();
+                
+                // Draw eyes
+                ctx.fillStyle = 'white';
+                ctx.beginPath(); ctx.arc(-4, -8, 3, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(4, -8, 3, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = 'black';
+                ctx.beginPath(); ctx.arc(-4, -8, 1, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(4, -8, 1, 0, Math.PI*2); ctx.fill();
+
+                ctx.restore();
+            }
+        }
+
+        function resetGame() {
+            bugs = [];
+            gScore = 0;
+            gMisses = 0;
+            spawnInterval = 1500;
+            document.getElementById('game-score').innerText = gScore;
+            document.getElementById('game-misses').innerText = gMisses;
+            lastTime = Date.now();
+        }
+
+        function startGame() {
+            overlay.classList.add('hidden');
+            if(!gameRunning) {
+                resetGame();
+                gameRunning = true;
+                drawGame();
+            }
+        }
+
+        function drawGame() {
+            if(!gameRunning) return;
+            
+            let now = Date.now();
+            let dt = now - lastTime;
+            lastTime = now;
+            
+            // Draw background (sky and ground)
+            ctx.fillStyle = '#87CEEB';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#22c55e'; // Green grass
+            ctx.fillRect(0, canvas.height - 40, canvas.width, 40);
+            
+            // Spawn logic
+            spawnTimer += dt;
+            if(spawnTimer > spawnInterval) {
+                bugs.push(new Bug());
+                spawnTimer = 0;
+            }
+            
+            // Update and draw bugs
+            for(let i = bugs.length - 1; i >= 0; i--) {
+                let b = bugs[i];
+                b.update(dt);
+                b.draw(ctx);
+                
+                // Check if bug escaped (flew off screen while alive)
+                if(!b.dead && (b.x > canvas.width + b.r + 10 || b.x < -b.r - 10)) {
+                    bugs.splice(i, 1);
+                    gMisses++;
+                    document.getElementById('game-misses').innerText = gMisses;
+                    
+                    if(gMisses >= 5) {
+                        gameOver();
+                        return;
+                    }
+                }
+                
+                // Remove dead bugs that fell off bottom
+                if(b.dead && b.y > canvas.height + b.r) {
+                    bugs.splice(i, 1);
+                }
+            }
+
+            animationId = requestAnimationFrame(drawGame);
+        }
+
+        function gameOver() {
+            gameRunning = false;
+            cancelAnimationFrame(animationId);
+            overlay.classList.remove('hidden');
+            startBtn.innerText = "System Overrun! Restart";
+            startBtn.classList.replace('bg-emerald-600', 'bg-red-600');
+            startBtn.classList.replace('border-emerald-800', 'border-red-800');
+        }
+
+        // --- CERTIFICATE LOGIC ---
+        function updateCertName() {
+            let name = document.getElementById('student-name-input').value.trim();
+            if(name) {
+                if (name.includes(' ')) {
+                    name = name.split(' ')[0];
+                    document.getElementById('student-name-input').value = name;
+                    showModal('Notice', 'Only your first name has been applied to the certificate.', 'info');
+                }
+                document.getElementById('cert-student-name').innerText = name;
+            } else {
+                showModal('Wait!', 'Please enter your first name to update the certificate.', 'warning');
+            }
+        }
+
+        const today = new Date();
+        document.getElementById('cert-date').innerText = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        function downloadCert() {
+            const certEl = document.getElementById('certificate');
+            const name = document.getElementById('cert-student-name').innerText;
+            let filename = 'Certificate.png';
+            if (name && name !== 'Student') {
+                filename = `${name.replace(/\s+/g, '_')}_Productivity_Certificate.png`;
+            }
+
+            const originalTransform = certEl.style.transform;
+            certEl.style.transform = 'none';
+
+            const btn = document.getElementById('download-btn');
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Generating...';
+            btn.disabled = true;
+
+            html2canvas(certEl, { 
+                scale: 2, 
+                useCORS: true,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+            }).catch(err => {
+                console.error(err);
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                showModal('Error', 'Failed to generate image. Try using a desktop browser.', 'error');
+            });
+        }
+
+        window.onload = () => {
+            // Draw static background for game preview
+            ctx.fillStyle = '#87CEEB';
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle = '#22c55e';
+            ctx.fillRect(0, canvas.height - 40, canvas.width, 40);
+            ctx.fillStyle = '#1e293b';
+            ctx.font = '24px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('BUG HUNT READY', canvas.width/2, canvas.height/2);
+        }
+    </script>
+</body>
+</html>
+```eof

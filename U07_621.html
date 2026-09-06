@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 07 Section 6.2.1 Mastery - Security Awareness</title>
+    
+    <!-- Load Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load HTML2Canvas for Certificate Download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- Load Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Qwitcher+Grypen:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0fdf4; 
+            color: #1f2937;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        /* Interactive Elements CSS */
+        .io-dropzone { min-height: 70px; min-width: 130px; border: 2px dashed #9ca3af; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: #f9fafb; transition: all 0.2s;}
+        .io-dropzone.drag-over { background: #e5e7eb; border-color: #16a34a; box-shadow: inset 0 0 10px rgba(22, 163, 74, 0.2);}
+        
+        .io-item { cursor: grab; transition: transform 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .io-item:active { cursor: grabbing; transform: scale(0.95); }
+        
+        .cat-dropzone { transition: background-color 0.2s ease; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #e5e7eb; }
+        ::-webkit-scrollbar-thumb { background: #10b981; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #059669; }
+
+        /* Retro Game Canvas */
+        #game-canvas {
+            background-color: #111827;
+            border: 4px solid #374151;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+            max-width: 100%;
+            height: auto;
+            touch-action: none; 
+        }
+
+        /* --- CERTIFICATE STYLES --- */
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .font-body { font-family: 'Lora', serif; }
+        .font-script { font-family: 'Qwitcher Grypen', cursive; }
+        
+        .cert-preview-container {
+            width: 100%;
+            overflow: auto;
+            display: flex;
+            justify-content: center;
+            background: #e5e7eb;
+            padding: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        #certificate {
+            width: 1056px !important;
+            height: 816px !important;
+            flex-shrink: 0;
+            background-color: #ffffff;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1056" height="816"><polygon points="0,0 250,0 0,650" fill="%23fcd34d"/><polygon points="0,0 350,0 0,900" fill="%23d97706" opacity="0.8"/><polygon points="0,0 120,0 0,300" fill="%23fcd34d"/><polygon points="0,450 650,816 0,816" fill="%23fcd34d"/><polygon points="0,550 450,816 0,816" fill="%23d97706" opacity="0.8"/><polygon points="800,0 1056,0 1056,256" fill="%23f3f4f6"/><polygon points="1056,500 1056,816 750,816" fill="%23f3f4f6"/></svg>');
+            background-size: cover;
+            border: 4px solid #e5e7eb;
+        }
+
+        .gold-seal {
+            position: absolute;
+            left: 110px;
+            top: 350px;
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c, #fcf6ba);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3), inset 0 0 15px rgba(255,255,255,0.7), inset 0 0 25px rgba(139,105,20,0.9);
+            z-index: 10;
+        }
+        .gold-seal::before {
+            content: '';
+            position: absolute;
+            top: -4px; bottom: -4px; left: -4px; right: -4px;
+            border-radius: 50%;
+            border: 6px dashed #d4af37;
+        }
+        .gold-seal-inner-1 {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 2px solid rgba(139, 105, 20, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #e8c678, #dbab46);
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.2), 0 2px 5px rgba(255,255,255,0.7);
+            z-index: 1;
+        }
+        .gold-seal-inner-2 {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: radial-gradient(circle, #fcf6ba, #d4af37);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            padding: 10px;
+        }
+        .embossed-text {
+            color: #b38728;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2);
+            font-family: 'Playfair Display', serif;
+            font-weight: 800;
+            line-height: 1.1;
+            text-transform: uppercase;
+        }
+        .embossed-text-large { font-size: 14px; letter-spacing: 1px; }
+        .embossed-text-small { font-size: 11px; letter-spacing: 2px; margin: 2px 0; }
+        .embossed-star { font-size: 12px; color: #b38728; text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2); margin: 2px 0; }
+
+        @media (max-width: 1100px) {
+            #certificate { transform: scale(0.7); transform-origin: top left; margin-bottom: -240px; margin-right: -310px; }
+        }
+        @media (max-width: 768px) {
+            #certificate { transform: scale(0.4); transform-origin: top left; margin-bottom: -490px; margin-right: -630px; }
+        }
+        
+        /* Lab Specific Styles */
+        .phishing-flag { transition: all 0.3s; border: 2px solid transparent; cursor: pointer; }
+        .phishing-flag:hover { background-color: rgba(239, 68, 68, 0.1); border-color: #ef4444; }
+        .phishing-flag.found { background-color: rgba(239, 68, 68, 0.2); border-color: #ef4444; color: #991b1b; font-weight: bold; }
+        
+        .url-box { transition: background-color 0.2s; cursor: pointer;}
+        .url-box:hover { background-color: #fca5a5; }
+        .url-box.safe { background-color: #d1fae5; pointer-events: none; }
+        .url-box.danger { background-color: #fee2e2; border-color: #ef4444; pointer-events: none;}
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
+    <nav class="bg-green-700 text-white shadow-lg sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-shield-halved text-2xl"></i>
+                    <span class="font-bold text-xl tracking-wider hidden sm:inline-block">Tech+ Unit 07 Section 6.2.1</span>
+                    <span class="font-bold text-xl tracking-wider sm:hidden">6.2.1</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-2">
+                        <button onclick="switchTab('briefing')" class="nav-btn bg-green-900 px-3 py-2 rounded-md text-sm font-medium hover:bg-green-600 transition" id="nav-briefing"><i class="fa-solid fa-book-open mr-1"></i>Briefing</button>
+                        <button onclick="switchTab('activity')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-green-600 transition" id="nav-activity"><i class="fa-solid fa-flask mr-1"></i>Lab Activity</button>
+                        <button onclick="switchTab('quiz')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-green-600 transition" id="nav-quiz"><i class="fa-solid fa-clipboard-check mr-1"></i>Quiz</button>
+                        <button onclick="switchTab('game')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-gray-400 cursor-not-allowed transition" id="nav-game" disabled><i class="fa-solid fa-lock mr-1"></i>Game</button>
+                        <button onclick="switchTab('cert')" class="nav-btn hidden px-3 py-2 rounded-md text-sm font-medium text-yellow-300 hover:bg-green-600 transition" id="nav-cert"><i class="fa-solid fa-award mr-1"></i>Certificate</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Nav -->
+        <div class="md:hidden flex flex-wrap justify-center gap-2 py-2 px-2 bg-green-800">
+            <button onclick="switchTab('briefing')" class="nav-btn-mobile px-3 py-1 text-sm rounded bg-green-900" id="nav-briefing-mobile">Briefing</button>
+            <button onclick="switchTab('activity')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-activity-mobile">Lab</button>
+            <button onclick="switchTab('quiz')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-quiz-mobile">Quiz</button>
+            <button onclick="switchTab('game')" class="nav-btn-mobile px-3 py-1 text-sm rounded text-gray-400 cursor-not-allowed" id="nav-game-mobile" disabled><i class="fa-solid fa-lock"></i></button>
+            <button onclick="switchTab('cert')" id="nav-cert-mobile" class="hidden px-2 py-1 text-sm text-yellow-300 rounded"><i class="fa-solid fa-award"></i></button>
+        </div>
+    </nav>
+
+    <main class="flex-grow w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <!-- BRIEFING SECTION -->
+        <div id="briefing-section" class="tab-content active no-print">
+            <div class="text-center mb-10">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">Security Awareness</h1>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">Understanding phishing and other vectors for malicious content is critical to protecting yourself and others from social engineering attacks[cite: 4].</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- Tile 1 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-blue-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-blue-700"><i class="fa-solid fa-users mr-2"></i>Social Engineering & Phishing</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Social Engineering:</strong> Manipulating people into revealing confidential information or performing insecure actions[cite: 2, 4].</li>
+                            <li><strong>Phishing:</strong> Using fraudulent emails or messages to trick victims into giving up passwords or downloading malware[cite: 2, 4].</li>
+                            <li><strong>Targeted Attacks:</strong> Spear phishing targets specific individuals, while whaling specifically targets high-profile individuals[cite: 2, 4].</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('phishing-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('phishing-usecase')" class="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 2 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-red-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-red-700"><i class="fa-solid fa-globe mr-2"></i>Web Vectors & Malicious Content</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Attack Vector:</strong> The method or pathway a malicious actor uses to gain unauthorized access[cite: 4].</li>
+                            <li><strong>Typosquatting:</strong> Using misspelled domains that look legitimate to trick users into visiting malicious sites[cite: 2, 4].</li>
+                            <li><strong>Watering Hole Attacks:</strong> Infecting a commonly visited, weaker website to gain access to a more secure target[cite: 2, 4].</li>
+                        </ul>
+                    </div>
+                     <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('web-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('web-usecase')" class="flex-1 bg-red-100 hover:bg-red-200 text-red-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 flex justify-center">
+                <button onclick="switchTab('activity')" class="bg-green-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-green-500 shadow-lg transition transform hover:scale-105">Proceed to Lab Activity <i class="fa-solid fa-arrow-right ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- LAB ACTIVITY SECTION -->
+        <div id="activity-section" class="tab-content no-print">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Interactive Lab Activity</h1>
+                <p class="text-gray-600">Apply your security awareness across these 4 distinct simulations to achieve mastery.</p>
+            </div>
+
+            <!-- Lab 1: Phishing Email Analyzer -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-blue-700"><i class="fa-solid fa-envelope-open-text mr-2"></i>Lab 1: Phishing Analyzer</h2>
+                <p class="text-sm text-gray-600 mb-4">Review the email below. Click on exactly <strong>3 red flags</strong> that indicate this is a phishing attempt.</p>
+                
+                <div class="border border-gray-300 rounded p-4 bg-gray-50 relative">
+                    <div class="mb-4 border-b border-gray-300 pb-2 text-sm">
+                        <p><strong>From:</strong> <span class="phishing-flag rounded px-1" onclick="checkLab1(this, true)">Admin Support &lt;admin@paypa1-security.com&gt;</span></p>
+                        <p><strong>To:</strong> user@domain.com</p>
+                        <p><strong>Subject:</strong> <span class="phishing-flag rounded px-1" onclick="checkLab1(this, true)">URGENT: Your account will be suspended in 24 hours</span></p>
+                    </div>
+                    <div class="text-sm text-gray-800 space-y-3">
+                        <p>Dear Customer,</p>
+                        <p>We have noticed unusual login activity on your account. <span class="phishing-flag rounded px-1" onclick="checkLab1(this, false)">To ensure your security, we require you to verify your identity.</span></p>
+                        <p>If you do not verify your identity, your account will be permanently locked.</p>
+                        <p>Please click the secure link below to login and update your credentials:</p>
+                        <p><span class="phishing-flag rounded px-1 text-blue-600 underline" onclick="checkLab1(this, true)">http://secure-login-update.com/auth/</span></p>
+                        <p>Thank you,</p>
+                        <p>The Support Team</p>
+                    </div>
+                </div>
+                <div id="lab1-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
+            </div>
+
+            <!-- Lab 2: Attack Vector Categorization -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-blue-700"><i class="fa-solid fa-network-wired mr-2"></i>Lab 2: Vector Categorizer</h2>
+                <p class="text-sm text-gray-600 mb-4">Drag the specific attack term and drop it onto its correct definition.</p>
+                
+                <div class="flex flex-wrap gap-3 mb-6" id="cat-items">
+                    <div class="io-item px-4 py-2 bg-blue-100 border border-blue-300 rounded font-bold text-sm" draggable="true" data-type="smishing">Smishing</div>
+                    <div class="io-item px-4 py-2 bg-blue-100 border border-blue-300 rounded font-bold text-sm" draggable="true" data-type="whaling">Whaling</div>
+                    <div class="io-item px-4 py-2 bg-blue-100 border border-blue-300 rounded font-bold text-sm" draggable="true" data-type="baiting">Baiting</div>
+                    <div class="io-item px-4 py-2 bg-blue-100 border border-blue-300 rounded font-bold text-sm" draggable="true" data-type="vishing">Vishing</div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="flex flex-col md:flex-row items-center gap-2">
+                        <div class="cat-dropzone border-2 border-dashed border-gray-400 bg-gray-50 rounded-lg p-2 min-h-[50px] min-w-[150px] flex items-center justify-center" data-target="vishing"></div>
+                        <p class="text-sm text-gray-700 flex-1">Phishing via a voice call or other voice messaging systems.</p>
+                    </div>
+                    <div class="flex flex-col md:flex-row items-center gap-2">
+                        <div class="cat-dropzone border-2 border-dashed border-gray-400 bg-gray-50 rounded-lg p-2 min-h-[50px] min-w-[150px] flex items-center justify-center" data-target="smishing"></div>
+                        <p class="text-sm text-gray-700 flex-1">Phishing through text messages or other phone messaging applications.</p>
+                    </div>
+                    <div class="flex flex-col md:flex-row items-center gap-2">
+                        <div class="cat-dropzone border-2 border-dashed border-gray-400 bg-gray-50 rounded-lg p-2 min-h-[50px] min-w-[150px] flex items-center justify-center" data-target="whaling"></div>
+                        <p class="text-sm text-gray-700 flex-1">Phishing directed at high profile targets such as CEOs.</p>
+                    </div>
+                    <div class="flex flex-col md:flex-row items-center gap-2">
+                        <div class="cat-dropzone border-2 border-dashed border-gray-400 bg-gray-50 rounded-lg p-2 min-h-[50px] min-w-[150px] flex items-center justify-center" data-target="baiting"></div>
+                        <p class="text-sm text-gray-700 flex-1">Tempting a victim with something valuable to lure them into acting.</p>
+                    </div>
+                </div>
+                <div id="lab2-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
+            </div>
+            
+            <!-- Lab 3: Typosquatting Defender -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-red-700"><i class="fa-solid fa-keyboard mr-2"></i>Lab 3: Typosquatting Defender</h2>
+                <p class="text-sm text-gray-600 mb-4">You are monitoring web traffic. Click the <strong>2 URLs</strong> below that represent typosquatting attacks designed to mimic well-known sites.</p>
+                
+                <div class="space-y-2 max-w-md mx-auto border border-gray-300 rounded p-4 bg-gray-50">
+                    <div class="url-box p-3 border border-gray-300 rounded text-center font-mono text-sm" onclick="checkLab3(this, false)">https://www.google.com/mail</div>
+                    <div class="url-box p-3 border border-gray-300 rounded text-center font-mono text-sm" onclick="checkLab3(this, true)">https://www.amazan.com/login</div>
+                    <div class="url-box p-3 border border-gray-300 rounded text-center font-mono text-sm" onclick="checkLab3(this, false)">https://www.microsoft.com/en-us</div>
+                    <div class="url-box p-3 border border-gray-300 rounded text-center font-mono text-sm" onclick="checkLab3(this, true)">https://www.bankofarnerica.com/auth</div>
+                </div>
+                <div id="lab3-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
+            </div>
+            
+            <!-- Lab 4: Watering Hole Prevention -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-red-700"><i class="fa-solid fa-shield-virus mr-2"></i>Lab 4: Compromised Content Defense</h2>
+                <p class="text-sm text-gray-600 mb-4">A watering hole attack has compromised a local softball website visited by your employees. To prevent the attackers from using stolen data to access your corporate network, select the <strong>2 best practices</strong> you must enforce.</p>
+                
+                <div class="flex flex-col gap-3 mb-6 max-w-xl mx-auto">
+                    <label class="flex items-center gap-3 p-3 border rounded cursor-pointer hover:bg-gray-100">
+                        <input type="checkbox" class="lab4-check w-5 h-5 text-green-600" value="wrong">
+                        <span class="text-sm">Only allow employees to use social media-based browsers.</span>
+                    </label>
+                    <label class="flex items-center gap-3 p-3 border rounded cursor-pointer hover:bg-gray-100">
+                        <input type="checkbox" class="lab4-check w-5 h-5 text-green-600" value="correct">
+                        <span class="text-sm">Ensure employees do not reuse the same credentials across multiple sites.</span>
+                    </label>
+                    <label class="flex items-center gap-3 p-3 border rounded cursor-pointer hover:bg-gray-100">
+                        <input type="checkbox" class="lab4-check w-5 h-5 text-green-600" value="wrong">
+                        <span class="text-sm">Turn off Wi-Fi when browsing community forums.</span>
+                    </label>
+                    <label class="flex items-center gap-3 p-3 border rounded cursor-pointer hover:bg-gray-100">
+                        <input type="checkbox" class="lab4-check w-5 h-5 text-green-600" value="correct">
+                        <span class="text-sm">Keep all corporate software, browsers, and anti-virus updated.</span>
+                    </label>
+                </div>
+                <div class="text-center">
+                    <button class="bg-red-600 text-white px-6 py-2 rounded font-bold hover:bg-red-700" onclick="checkLab4()">Apply Defense Policy</button>
+                </div>
+                <div id="lab4-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
+            </div>
+
+            <div class="text-center">
+                <button onclick="switchTab('quiz')" class="bg-green-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-green-500 shadow-lg transition transform hover:scale-105">Take the Mastery Quiz <i class="fa-solid fa-clipboard-check ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- QUIZ SECTION -->
+        <div id="quiz-section" class="tab-content no-print">
+            <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-xl max-w-4xl mx-auto">
+                <div class="text-center mb-8 border-b pb-4">
+                    <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Unit 07 Section 6.2.1 Mastery Quiz</h1>
+                    <p class="text-gray-600">Score 90% or higher (18/20) to earn your Certificate of Mastery and unlock the Retro Game!</p>
+                </div>
+
+                <div id="quiz-container" class="space-y-8">
+                    <!-- Questions injected via JS -->
+                </div>
+
+                <div class="mt-10 text-center border-t pt-6 flex flex-col md:flex-row justify-center items-center gap-4">
+                    <button id="submit-quiz-btn" onclick="gradeQuiz()" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">Submit Quiz</button>
+                    <button id="proceed-game-btn" onclick="switchTab('game')" class="hidden bg-purple-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-purple-700 shadow-lg transition w-full md:w-auto">Play Retro Game <i class="fa-solid fa-gamepad ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RETRO GAME SECTION -->
+        <div id="game-section" class="tab-content no-print">
+            <div class="bg-gray-900 p-6 sm:p-8 rounded-2xl shadow-xl max-w-4xl mx-auto border-4 border-gray-700 flex flex-col items-center">
+                <div class="text-center mb-4 w-full">
+                    <h1 class="text-3xl font-extrabold text-green-500 mb-2 tracking-widest uppercase" style="font-family: monospace;">Malware Survivor</h1>
+                    <p class="text-gray-300 text-sm">Control the green Anti-Virus node using your <strong class="text-white bg-gray-700 px-2 rounded">Mouse/Touch</strong> or <strong class="text-white bg-gray-700 px-2 rounded">WASD/Arrows</strong>. You will <strong class="text-green-400">automatically target and shoot</strong> incoming threats. Survive the relentless swarm of red Phishing bugs!</p>
+                </div>
+                
+                <div class="flex justify-between items-center w-full max-w-[600px] mb-2 px-4 text-white font-mono text-xl">
+                    <div>Threats Neutralized: <span id="game-score" class="text-green-400 font-bold">0</span></div>
+                    <div>System Integrity: <span id="game-lives" class="text-red-400 font-bold">100</span>%</div>
+                </div>
+
+                <div class="relative flex justify-center w-full">
+                    <!-- Game Canvas -->
+                    <canvas id="game-canvas" width="600" height="400" class="w-full max-w-[600px] bg-gray-800 border-2 border-gray-600 rounded shadow-lg cursor-crosshair"></canvas>
+                    
+                    <!-- Overlay Start Button -->
+                    <div id="game-overlay" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-70 rounded-lg max-w-[600px] mx-auto z-10">
+                        <button id="start-game-btn" class="bg-green-600 hover:bg-green-500 text-white font-bold font-mono py-3 px-6 rounded-lg text-xl border-4 border-green-800 uppercase transform transition hover:scale-105">Deploy Anti-Virus</button>
+                    </div>
+                </div>
+
+                <div class="mt-8 text-center w-full border-t border-gray-700 pt-6">
+                    <button onclick="switchTab('cert')" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">View Certificate <i class="fa-solid fa-award ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CERTIFICATE SECTION -->
+        <div id="cert-section" class="tab-content">
+            <div class="max-w-5xl mx-auto">
+                <div class="bg-white p-6 rounded shadow mb-6 no-print text-center border border-gray-200">
+                    <h2 class="text-2xl font-bold text-green-600 mb-2">🎉 Congratulations! 🎉</h2>
+                    <p class="text-gray-700 mb-4">You have achieved mastery of Security Awareness (Unit 07 Section 6.2.1).</p>
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+                        <input type="text" id="student-name-input" value="Student" placeholder="Enter your first name" class="border-2 border-gray-300 rounded px-4 py-2 w-full md:w-64 focus:border-green-500 focus:outline-none">
+                        <button onclick="updateCertName()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">Update Name</button>
+                        <button id="download-btn" onclick="downloadCert()" class="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900 transition flex items-center justify-center">
+                            <i class="fa-solid fa-download mr-2"></i>Download PNG
+                        </button>
+                    </div>
+                </div>
+
+                <div class="cert-preview-container print:p-0 print:bg-white">
+                    <div id="certificate">
+                        <div class="gold-seal">
+                            <div class="gold-seal-inner-1">
+                                <div class="gold-seal-inner-2">
+                                     <span class="embossed-text embossed-text-large">Certificate</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-small">Of</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-large">Excellence</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="relative z-20 w-full h-full flex flex-col pt-[48px] pl-[380px] pr-[48px]">
+                            <h1 class="text-[#1e3a8a] text-[4.5rem] leading-none font-serif font-bold tracking-wide uppercase mb-2">CERTIFICATE</h1>
+                            <h2 class="text-gray-800 text-3xl font-serif tracking-widest uppercase mb-10">Of Achievement</h2>
+                            
+                            <p class="text-[1.4rem] font-body text-gray-800 mb-4">This is to certify that</p>
+                            
+                            <div class="relative mb-8 w-full">
+                                <h3 id="cert-student-name" class="text-[4rem] text-[#1e3a8a] font-serif italic leading-none pb-2 relative z-10 text-center w-full block">Student</h3>
+                                <div class="w-full border-b-[2px] border-[#1e3a8a] absolute bottom-[4px] left-0 z-0"></div>
+                                <div class="w-full border-b-[2px] border-dotted border-red-500 absolute bottom-[0px] left-0 z-0"></div>
+                            </div>
+                            
+                            <p class="text-[1.3rem] font-body text-gray-800 leading-relaxed w-full pr-4">
+                                Has successfully completed the assessment for 
+                                <strong class="text-[1.8rem] text-[#1e3a8a] block mt-4 mb-2 font-serif">Tech+ Unit 07 Section 6.2.1</strong>
+                                <strong class="text-[1.5rem] text-black block mb-4 font-serif italic">Security Awareness</strong>
+                                <span class="text-[1.1rem] text-gray-700 leading-snug block">Demonstrating proficiency in identifying attack vectors, understanding social engineering attacks like phishing, and recognizing malicious and compromised web content.</span>
+                            </p>
+                            
+                            <div class="flex justify-end gap-16 items-end mt-auto mb-[60px] w-full pr-8">
+                                <div class="w-64">
+                                    <div class="border-b border-gray-600 mb-2 h-20 flex items-end justify-center relative">
+                                        <span class="font-script text-[5rem] text-[#1e3a8a] absolute bottom-[-10px] transform -rotate-3 opacity-90">Dr. M. S</span>
+                                    </div>
+                                    <p class="font-serif text-xl text-gray-800 text-center">Administration</p>
+                                </div>
+                                
+                                <div class="w-64">
+                                    <div class="border-b border-gray-600 mb-2 text-center h-20 flex items-end justify-center">
+                                        <p id="cert-date" class="font-body text-2xl text-gray-800 pb-1">Date Here</p>
+                                    </div>
+                                    <p class="font-serif text-xl text-gray-800 text-center">Date</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Custom Modal for Alerts -->
+    <div id="custom-modal" class="fixed inset-0 bg-black bg-opacity-50 z-[100] hidden flex justify-center items-center backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all">
+            <div class="text-center">
+                <div id="modal-icon" class="text-5xl mb-4"></div>
+                <h3 id="modal-title" class="text-2xl font-bold mb-2 text-gray-900"></h3>
+                <p id="modal-msg" class="text-gray-600 mb-6"></p>
+                <button onclick="closeModal()" class="bg-green-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-green-700 transition w-full">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Briefing Modal -->
+    <div id="briefing-modal" class="fixed inset-0 bg-black bg-opacity-70 z-[120] hidden flex justify-center items-center backdrop-blur-sm p-4 sm:p-6">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col transform transition-all overflow-hidden border-4 border-green-700">
+            <div class="p-6 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+                <div class="flex items-center gap-4">
+                    <div id="briefing-modal-icon" class="text-4xl"></div>
+                    <h3 id="briefing-modal-title" class="text-2xl md:text-3xl font-bold text-gray-900"></h3>
+                </div>
+                <button onclick="closeBriefing()" class="text-gray-400 hover:text-red-600 transition text-4xl leading-none">&times;</button>
+            </div>
+            <div id="briefing-modal-content" class="p-6 md:p-10 overflow-y-auto flex-grow text-gray-700 text-lg leading-relaxed bg-white">
+                <!-- Dynamic Content Injected Here -->
+            </div>
+            <div class="p-6 border-t border-gray-200 bg-gray-50 flex justify-end">
+                <button onclick="closeBriefing()" class="bg-green-700 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-green-800 transition shadow-md">Acknowledge & Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const briefingData = {
+            'phishing-details': {
+                title: 'Social Engineering & Phishing',
+                icon: '<i class="fa-solid fa-users text-blue-600"></i>',
+                html: `
+                    <p class="mb-5">Security awareness focuses on making users aware of the tactics malicious actors use to carry out an attack[cite: 4]. Many of these attacks focus heavily on the human element, which is often considered the weakest link in any cybersecurity infrastructure[cite: 4]. By targeting human psychology, attackers can often bypass sophisticated technical defenses.</p>
+                    
+                    <p class="mb-5"><strong>Social engineering</strong> is the foundational concept behind these attacks. It is defined as the manipulation of people into performing actions or revealing confidential information[cite: 2]. Attackers use social engineering to trick victims into giving up passwords, downloading malware, or inadvertently granting access to secure systems[cite: 2]. This manipulation can be performed physically or digitally, by a single individual or a coordinated group[cite: 4].</p>
+                    
+                    <p class="mb-5">The most prevalent form of social engineering is <strong>phishing</strong>. Phishing is an attempt to gain sensitive information through fraudulent means, often taking the form of deceptive emails[cite: 2, 4]. These emails are crafted to look like they originate from legitimate organizations, tricking the user into clicking malicious links or entering their credentials[cite: 2, 4]. Phishing preys on human behavior and emotions like fear and urgency[cite: 2].</p>
+                    
+                    <p class="mb-5">As technology evolves, so do the mediums for phishing. <strong>Smishing</strong> is a variant of phishing that is conducted through text messages or other mobile messaging applications[cite: 2, 4]. Similarly, <strong>Vishing</strong> refers to phishing attempts carried out via a voice call or other voice messaging systems[cite: 2, 4]. Both methods attempt to establish false trust to extract sensitive data.</p>
+                    
+                    <p class="mb-5">Attackers also utilize highly targeted approaches. <strong>Spear phishing</strong> is a targeted form of phishing where the attacker tailors the message to a specific person or organization[cite: 2]. They typically use personal information gained from reconnaissance (recon) to make the attack highly convincing[cite: 2, 4]. A more specific sub-category is <strong>whaling</strong>, which targets high-profile individuals like executives, CEOs, or officials who are likely to possess higher security clearances or broad permissions[cite: 2, 4].</p>
+                    
+                    <p class="mb-5">Another common tactic is <strong>baiting</strong>. Baiting involves manipulating a potential victim by offering something valuable to lure them into releasing information or performing a dangerous action[cite: 4]. For example, an email might offer an in-game reward to someone who plays online games frequently, leading them to click an infected link[cite: 2].</p>
+                    
+                    <p>Recognizing the signs of these attacks is critical for defense. Common red flags include informal text, typos, or poor grammar[cite: 2]. An aggressive tone conveying a sense of urgency or an authoritative demand is also highly suspicious[cite: 2, 4]. Finally, users should always look out for incorrect, misleading, or ambiguous links, as well as unofficial sender email addresses[cite: 2, 4].</p>
+                `
+            },
+            'phishing-usecase': {
+                title: 'Social Engineering: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 1: Targeted Corporate Attacks</h4>
+                        <p class="mb-2">Malicious actors frequently target specific individuals within an organization who hold high-level access or financial authority.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Whaling):</strong> The CEO of a company receives a highly sophisticated email appearing to be a subpoena from a federal agency. Because it targets a high-profile individual[cite: 2], this whaling attack uses urgency to pressure the CEO into clicking a malicious link.</li>
+                            <li><strong>Example 2 (Spear Phishing):</strong> An attacker conducts recon on a company's CFO via their social media[cite: 4]. The attacker sends a tailored spear phishing email[cite: 2] referencing the CFO's recent business trip, tricking them into authorizing a fraudulent wire transfer.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 2: Broad Consumer Exploitation</h4>
+                        <p class="mb-2">Attackers often cast a wide net to exploit everyday consumers using text messages and enticing offers.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Smishing):</strong> A user receives a text message claiming their package delivery failed and providing a link to reschedule. This smishing attempt[cite: 2] aims to steal login credentials when the user clicks the link on their mobile device.</li>
+                            <li><strong>Example 2 (Baiting):</strong> A gamer receives an email offering a highly sought-after, free in-game reward. By tempting the victim with something valuable[cite: 4], this baiting attack tricks the user into downloading a file that installs malware on their system[cite: 2].</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Phishing Attempt</p>
+                            <img src="https://images.unsplash.com/photo-1563206767-5b18f218e8de?auto=format&fit=crop&w=600&h=350" alt="Hacker typing on laptop" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Smishing on Mobile</p>
+                            <img src="https://images.unsplash.com/photo-1512428559087-560fa5ceab42?auto=format&fit=crop&w=600&h=350" alt="Person looking suspiciously at a text message on a smartphone" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'web-details': {
+                title: 'Web Vectors & Malicious Content',
+                icon: '<i class="fa-solid fa-globe text-red-600"></i>',
+                html: `
+                    <p class="mb-5">In cybersecurity, understanding how an attacker infiltrates a system is just as important as knowing their motives. An <strong>attack vector</strong> is the specific method or pathway a malicious actor uses to gain unauthorized access to a system, network, or application[cite: 4]. Identifying and understanding these vectors is the crucial first step to stopping or slowing down attacks[cite: 2].</p>
+                    
+                    <p class="mb-5">One common vector involves exploiting human error through web navigation. <strong>Typosquatting</strong> (also known as URL hijacking) occurs when attackers use domain names that look incredibly similar to legitimate ones[cite: 2, 4]. The attacker hopes that users will make slight typographical errors when entering a URL directly into their browser[cite: 2, 4]. For instance, typing "cybre.org" instead of "cyber.org"[cite: 5].</p>
+                    
+                    <p class="mb-5">When a user lands on a typosquatted site, the hijacked domain is often designed to mimic the legitimate site perfectly. This compromised site is then used to steal sensitive login information, harvest financial data, or house malware that automatically downloads to the victim's machine[cite: 2]. The threat of typosquatting is so significant that many large corporations actively purchase domains with similar spellings to their own simply to prevent attackers from using them[cite: 4, 5].</p>
+                    
+                    <p class="mb-5">Another sophisticated web-based attack vector is the <strong>Watering Hole attack</strong>. Rather than attacking a highly secure corporate network directly, attackers infect a weaker website that is commonly visited by a specific, targeted group[cite: 2, 4]. By compromising this weaker, less secure site, the malicious actors hope to install malware or steal credentials from the targeted users when they visit[cite: 2, 4].</p>
+                    
+                    <p class="mb-5">For example, if an attacker wants to breach a manufacturing plant, they might avoid the plant's robust firewall. Instead, they compromise a simple, poorly secured local softball league website that they know the plant workers frequently visit on weekends[cite: 4, 5]. The attacker uses the credentials gained from the softball site to attempt access into the secure employee portal[cite: 4, 5].</p>
+                    
+                    <p class="mb-5">Identifying compromised content is vital for protection. Users must look for signs such as poor grammar, unusual formatting, suspicious URLs, unexpected pop-ups, or links that do not lead to their stated destinations[cite: 2]. Being vigilant when examining the context of messages and links is a primary defense mechanism[cite: 4, 5].</p>
+                    
+                    <p>To defend against these web vectors, organizations and individuals must adopt security best practices. Users should never click on unexpected links and should always double-check URLs or use bookmarks for trusted sites[cite: 2, 5]. Furthermore, software, browsers, and anti-virus programs must be kept updated[cite: 4, 5]. Most importantly, it is highly dangerous to reuse the same credentials across multiple accounts, as a breach on one site can instantly put all other accounts at risk[cite: 2, 5].</p>
+                `
+            },
+            'web-usecase': {
+                title: 'Web Vectors: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-red-800 mb-2 border-b-2 border-red-200 pb-1">Case 1: Deceptive Domain Registration</h4>
+                        <p class="mb-2">Attackers rely on user typos to redirect web traffic to malicious servers that steal credentials or distribute malware.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Typosquatting):</strong> A user intending to check their bank account types "bankofarnerica.com" instead of "bankofamerica.com" (using an 'r' and 'n' instead of an 'm'). The typosquatted domain[cite: 2] looks identical to the real bank and steals the user's login info.</li>
+                            <li><strong>Example 2 (Malware Delivery):</strong> A student misspells a popular research database URL. The typosquatted site automatically initiates an unexpected download[cite: 2] that installs a keylogger on the student's laptop.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-red-800 mb-2 border-b-2 border-red-200 pb-1">Case 2: Indirect Corporate Infiltration</h4>
+                        <p class="mb-2">When corporate networks are too secure, attackers will target weaker, third-party sites frequently visited by corporate employees.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Watering Hole Attack):</strong> An attacker compromises a popular niche industry forum[cite: 2, 4]. When engineers from a specific tech company visit the forum, their browsers are silently infected with malware, granting the attacker a backdoor into the tech company's secure network.</li>
+                            <li><strong>Example 2 (Credential Reuse):</strong> Attackers steal usernames and passwords from a poorly secured community softball website[cite: 4, 5]. Because an employee reused those exact same credentials[cite: 2] for their corporate VPN, the attackers successfully breach the corporate network.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Typosquatting</p>
+                            <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=600&h=350" alt="Keyboard showing the concept of typos" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Safe Browsing</p>
+                            <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=600&h=350" alt="Analyzing a URL on a computer screen" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        function openBriefing(key) {
+            const modal = document.getElementById('briefing-modal');
+            const data = briefingData[key];
+            if(data) {
+                document.getElementById('briefing-modal-icon').innerHTML = data.icon;
+                document.getElementById('briefing-modal-title').innerText = data.title;
+                document.getElementById('briefing-modal-content').innerHTML = data.html;
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; 
+            }
+        }
+
+        function closeBriefing() {
+            document.getElementById('briefing-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto'; 
+        }
+
+        document.getElementById('briefing-modal').addEventListener('click', function(e) {
+            if(e.target === this) closeBriefing();
+        });
+        
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId + '-section').classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-green-900'));
+            const activeBtn = document.getElementById('nav-' + tabId);
+            if(activeBtn && tabId !== 'cert') activeBtn.classList.add('bg-green-900');
+            
+            document.querySelectorAll('.nav-btn-mobile').forEach(btn => btn.classList.remove('bg-green-900'));
+            const activeMobileBtn = document.getElementById('nav-' + tabId + '-mobile');
+            if(activeMobileBtn && tabId !== 'cert') activeMobileBtn.classList.add('bg-green-900');
+
+            window.scrollTo(0,0);
+
+            if (tabId === 'game' && !gameRunning) {
+                resetGame();
+                drawGame();
+            }
+        }
+
+        function showModal(title, message, type = 'info') {
+            const modal = document.getElementById('custom-modal');
+            const icon = document.getElementById('modal-icon');
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-msg').innerText = message;
+            
+            if(type === 'success') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-check text-green-500"></i>';
+            } else if (type === 'error') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500"></i>';
+            } else if (type === 'warning') {
+                icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-yellow-500"></i>';
+            } else {
+                icon.innerHTML = '<i class="fa-solid fa-circle-info text-blue-500"></i>';
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        // --- LAB 1: Phishing Analyzer ---
+        let lab1FlagsFound = 0;
+        let lab1Solved = false;
+        function checkLab1(element, isFlag) {
+            if(lab1Solved) return;
+            if(element.classList.contains('found')) return;
+
+            if(isFlag) {
+                element.classList.add('found');
+                lab1FlagsFound++;
+                document.getElementById('lab1-feedback').innerText = `Red Flags Found: ${lab1FlagsFound}/3`;
+                document.getElementById('lab1-feedback').className = "text-center font-bold mt-4 h-6 text-blue-600";
+                
+                if(lab1FlagsFound === 3) {
+                    lab1Solved = true;
+                    document.getElementById('lab1-feedback').innerText = "All phishing indicators identified!";
+                    document.getElementById('lab1-feedback').className = "text-center font-bold mt-4 h-6 text-green-600";
+                    setTimeout(() => showModal('Lab 1 Complete!', 'You successfully identified the unofficial email, the urgent tone, and the incorrect link.', 'success'), 500);
+                }
+            } else {
+                document.getElementById('lab1-feedback').innerText = "That is not a clear indicator of phishing. Look for urgency, bad links, or unofficial senders.";
+                document.getElementById('lab1-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
+            }
+        }
+
+        // --- LAB 2: Categorization ---
+        let draggedCatItem = null;
+        let lab2Count = 0;
+
+        document.querySelectorAll('.io-item').forEach(item => {
+            item.addEventListener('dragstart', function() {
+                draggedCatItem = this;
+                setTimeout(() => this.classList.add('opacity-50'), 0);
+            });
+            item.addEventListener('dragend', function() {
+                setTimeout(() => this.classList.remove('opacity-50'), 0);
+                draggedCatItem = null;
+            });
+        });
+
+        document.querySelectorAll('.cat-dropzone').forEach(zone => {
+            zone.addEventListener('dragover', e => e.preventDefault());
+            zone.addEventListener('dragenter', function(e) { e.preventDefault(); this.classList.add('brightness-95', 'bg-blue-50'); });
+            zone.addEventListener('dragleave', function() { this.classList.remove('brightness-95', 'bg-blue-50'); });
+            zone.addEventListener('drop', function() {
+                this.classList.remove('brightness-95', 'bg-blue-50');
+                if(draggedCatItem) {
+                    if(draggedCatItem.dataset.type === this.dataset.target) {
+                        this.appendChild(draggedCatItem);
+                        draggedCatItem.classList.remove('bg-blue-100', 'cursor-grab');
+                        draggedCatItem.classList.add('bg-green-100', 'text-green-800', 'cursor-default', 'w-full', 'm-0');
+                        draggedCatItem.setAttribute('draggable', 'false');
+                        this.classList.add('border-green-400');
+                        lab2Count++;
+                        
+                        document.getElementById('lab2-feedback').innerText = "Correct classification!";
+                        document.getElementById('lab2-feedback').className = "text-center font-bold mt-4 h-6 text-green-600";
+                        
+                        if(lab2Count === 4) {
+                            setTimeout(() => showModal('Lab 2 Complete!', 'You successfully categorized the social engineering attack vectors.', 'success'), 500);
+                        }
+                    } else {
+                        document.getElementById('lab2-feedback').innerText = "Incorrect definition. Try again.";
+                        document.getElementById('lab2-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
+                    }
+                }
+            });
+        });
+
+        // --- LAB 3: Typosquatting ---
+        let lab3Found = 0;
+        let lab3Solved = false;
+        function checkLab3(element, isThreat) {
+            if(lab3Solved) return;
+            if(element.classList.contains('safe') || element.classList.contains('danger')) return;
+
+            if(isThreat) {
+                element.classList.add('danger');
+                lab3Found++;
+                document.getElementById('lab3-feedback').innerText = `Typosquatted URLs Found: ${lab3Found}/2`;
+                document.getElementById('lab3-feedback').className = "text-center font-bold mt-4 h-6 text-blue-600";
+                
+                if(lab3Found === 2) {
+                    lab3Solved = true;
+                    document.getElementById('lab3-feedback').innerText = "All Typosquatting domains identified!";
+                    document.getElementById('lab3-feedback').className = "text-center font-bold mt-4 h-6 text-green-600";
+                    setTimeout(() => showModal('Lab 3 Complete!', 'You successfully detected the misspelled domains (amazan instead of amazon, and bankofarnerica instead of bankofamerica).', 'success'), 500);
+                }
+            } else {
+                element.classList.add('safe');
+                document.getElementById('lab3-feedback').innerText = "That is a legitimate, correctly spelled URL.";
+                document.getElementById('lab3-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
+            }
+        }
+
+        // --- LAB 4: Watering Hole Defense ---
+        function checkLab4() {
+            const checks = document.querySelectorAll('.lab4-check');
+            let correctSelected = 0;
+            let wrongSelected = 0;
+
+            checks.forEach(check => {
+                if(check.checked) {
+                    if(check.value === 'correct') correctSelected++;
+                    else wrongSelected++;
+                }
+            });
+
+            if(correctSelected === 2 && wrongSelected === 0) {
+                document.getElementById('lab4-feedback').innerText = "Policy Applied: Best Practices Enforced.";
+                document.getElementById('lab4-feedback').className = "text-center font-bold mt-4 h-6 text-green-600";
+                setTimeout(() => showModal('Lab 4 Complete!', 'By ensuring updated software and preventing credential reuse, you mitigate the risk of a Watering Hole attack compromising the corporate network.', 'success'), 500);
+            } else {
+                document.getElementById('lab4-feedback').innerText = "Policy Denied. Review the best practices for preventing compromised content from spreading.";
+                document.getElementById('lab4-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
+            }
+        }
+
+        // --- QUIZ LOGIC (20 Questions) ---
+        const quizData = [
+            // 10 provided from Document
+            { q: "What is the primary goal of social engineering in cybersecurity?", options: ["To hack into systems directly", "To manipulate people into revealing confidential information", "To create secure network connections", "To bypass firewalls using malware"], answer: 1 },
+            { q: "Which of the following best defines “phishing”?", options: ["A way to encrypt data", "A type of firewall used in network security", "A scam that tricks users into revealing sensitive information", "A virus spread through USB drives"], answer: 2 },
+            { q: "What is smishing?", options: ["A type of malware that infects images", "Phishing done through text messages", "Phishing through websites only", "A form of voice-based hacking"], answer: 1 },
+            { q: "Which phishing method specifically targets high-level executives?", options: ["Smishing", "Spear Phishing", "Whaling", "Vishing"], answer: 2 },
+            { q: "What does “baiting” rely on to trick victims?", options: ["Fake phone calls", "Infected USB drives", "Offering something desirable to lure users", "Voice mimicking software"], answer: 2 },
+            { q: "What is one common sign of a phishing email?", options: ["Clear grammar and correct spelling", "Comes from a verified contact", "Uses urgent or alarming language", "Is formatted with a company logo"], answer: 2 },
+            { q: "Typosquatting takes advantage of what user behavior?", options: ["Downloading pirated content", "Reusing passwords", "Visiting websites with incorrect spelling", "Ignoring antivirus warnings"], answer: 2 },
+            { q: "What is the best practice when you receive an unexpected link or attachments?", options: ["Forward it to a friend for review", "Click on it only if it appears urgent", "Open it quickly before it expires", "Avoid clicking and inspect the source first"], answer: 3 },
+            { q: "Which of the following helps prevent compromised content from affecting your system?", options: ["Opening emails in incognito mode", "Using only social media-based browsers", "Keeping software and antivirus updated", "Turning off Wi-Fi when not browsing"], answer: 2 },
+            { q: "Why is using the same password across multiple platforms a security risk?", options: ["It makes remembering passwords easier", "It allows faster logins", "If one account is compromised, others are at risk too", "It helps prevent phishing"], answer: 2 },
+            
+            // 10 new questions based on briefing
+            { q: "What is an 'attack vector'?", options: ["A method or pathway a malicious actor uses to gain unauthorized access", "A piece of hardware that blocks incoming web traffic", "An antivirus protocol", "A secure way to store passwords"], answer: 0 },
+            { q: "Which of the following is considered the weakest link in a cybersecurity infrastructure?", options: ["The firewall", "The human element", "The wireless network", "The physical servers"], answer: 1 },
+            { q: "If an attacker calls a victim on the phone pretending to be IT support to steal a password, what type of attack is this?", options: ["Smishing", "Vishing", "Typosquatting", "Watering Hole"], answer: 1 },
+            { q: "What does 'recon' refer to in the context of a Spear Phishing attack?", options: ["Reconnecting to a lost server", "Intelligence gained by studying a target's online presence", "A type of malware", "Using an authoritative tone"], answer: 1 },
+            { q: "Why might a company deliberately purchase domain names that are misspellings of their own actual domain?", options: ["To sell them for a profit", "To prevent attackers from using them for typosquatting", "To confuse their competitors", "To increase their internet speed"], answer: 1 },
+            { q: "In a Watering Hole attack, why does the attacker compromise a weaker website instead of the main target directly?", options: ["Because it is cheaper to host", "To bypass robust technical security by exploiting the trusted habits of the target group", "Because weaker websites have faster download speeds", "To prevent typosquatting"], answer: 1 },
+            { q: "Which of the following is a key strategy attackers use to make a Phishing message effective?", options: ["Making the message extremely long", "Preying on human emotions like fear and urgency", "Ensuring the grammar is absolutely perfect", "Using highly complex technical jargon"], answer: 1 },
+            { q: "If an employee visits a local softball league website that has been compromised to secretly download malware, they are a victim of:", options: ["Vishing", "A Watering Hole attack", "Baiting", "Whaling"], answer: 1 },
+            { q: "What should you do to help ensure you visit the correct, secure version of a website?", options: ["Rely entirely on search engine results", "Use bookmarks for trusted sites", "Type the URL as fast as possible", "Click links provided in random text messages"], answer: 1 },
+            { q: "Which of the following describes a 'Whaling' attack?", options: ["Offering a user a free software download", "Sending mass text messages about package deliveries", "Targeting the CEO of a company with a tailored, urgent email", "Creating a fake domain name that looks like a bank"], answer: 2 }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        
+        quizData.forEach((item, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = "bg-gray-50 p-6 rounded-lg border border-gray-200 transition-all";
+            qDiv.id = `q-block-${index}`;
+            
+            const qTitle = document.createElement('h3');
+            qTitle.className = "font-bold text-lg text-gray-800 mb-4";
+            qTitle.innerText = `${index + 1}. ${item.q}`;
+            qDiv.appendChild(qTitle);
+            
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = "space-y-3";
+            
+            item.options.forEach((opt, optIndex) => {
+                const label = document.createElement('label');
+                label.className = "flex items-center space-x-3 p-3 rounded bg-white border border-gray-300 hover:bg-green-50 cursor-pointer transition";
+                
+                const radio = document.createElement('input');
+                radio.type = "radio";
+                radio.name = `q${index}`;
+                radio.value = optIndex;
+                radio.className = "form-radio h-5 w-5 text-green-600";
+                
+                const span = document.createElement('span');
+                span.className = "text-gray-700";
+                span.innerText = opt;
+                
+                label.appendChild(radio);
+                label.appendChild(span);
+                optionsDiv.appendChild(label);
+            });
+            
+            qDiv.appendChild(optionsDiv);
+            quizContainer.appendChild(qDiv);
+        });
+
+        function gradeQuiz() {
+            let score = 0;
+            let allAnswered = true;
+
+            for(let i = 0; i < quizData.length; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if(selected) {
+                    if(parseInt(selected.value) === quizData[i].answer) {
+                        score++;
+                    }
+                } else {
+                    allAnswered = false;
+                }
+            }
+            
+            if(!allAnswered) {
+                showModal('Incomplete Quiz', 'Please answer all 20 questions before submitting.', 'warning');
+                return;
+            }
+            
+            const percentage = (score / quizData.length) * 100;
+            
+            if(score >= 18) { 
+                const navGame = document.getElementById('nav-game');
+                const navGameMobile = document.getElementById('nav-game-mobile');
+                
+                navGame.classList.remove('text-gray-400', 'cursor-not-allowed');
+                navGame.classList.add('text-white', 'hover:bg-green-600');
+                navGame.disabled = false;
+                navGame.innerHTML = '<i class="fa-solid fa-gamepad mr-1"></i>Game';
+                
+                navGameMobile.classList.remove('text-gray-400', 'cursor-not-allowed');
+                navGameMobile.classList.add('text-white', 'hover:bg-green-600');
+                navGameMobile.disabled = false;
+                navGameMobile.innerHTML = '<i class="fa-solid fa-gamepad"></i> Game';
+
+                document.getElementById('nav-cert').classList.remove('hidden');
+                document.getElementById('nav-cert-mobile').classList.remove('hidden');
+                
+                document.getElementById('proceed-game-btn').classList.remove('hidden');
+                document.getElementById('submit-quiz-btn').classList.add('hidden');
+
+                showModal('Outstanding!', `You scored ${score}/20 (${percentage}%). You have unlocked your Certificate of Mastery AND the Retro Game!`, 'success');
+            } else {
+                quizData.forEach((_, i) => {
+                    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                    if(selected) selected.checked = false;
+                });
+                showModal('Keep Trying!', `You scored ${score}/20 (${percentage}%). You need 90% (18/20) to earn the certificate. Your answers have been reset so you can try again.`, 'error');
+                document.getElementById('quiz-section').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // --- RETRO GAME LOGIC: Malware Survivor (Auto-Arena Shooter) ---
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let score = 0;
+        let health = 100;
+        let gameRunning = false;
+        let animationId;
+        
+        // Player properties
+        let px = canvas.width / 2;
+        let py = canvas.height / 2;
+        let targetX = px;
+        let targetY = py;
+        let pSpeed = 3.5;
+        let pRadius = 15;
+        
+        // Projectiles and Enemies
+        let bullets = [];
+        let enemies = [];
+        let lastShot = 0;
+        let fireRate = 400; // ms
+        let spawnRate = 1200; // ms
+        let lastSpawn = 0;
+        
+        const overlay = document.getElementById('game-overlay');
+        const startBtn = document.getElementById('start-game-btn');
+        startBtn.addEventListener('click', startGame);
+
+        // Input Handling
+        let keys = {};
+        document.addEventListener('keydown', e => keys[e.key] = true);
+        document.addEventListener('keyup', e => keys[e.key] = false);
+
+        function setTarget(e) {
+            let rect = canvas.getBoundingClientRect();
+            let scaleX = canvas.width / rect.width;
+            let scaleY = canvas.height / rect.height;
+            let clientX = e.clientX || (e.touches && e.touches[0].clientX);
+            let clientY = e.clientY || (e.touches && e.touches[0].clientY);
+            targetX = (clientX - rect.left) * scaleX;
+            targetY = (clientY - rect.top) * scaleY;
+        }
+
+        canvas.addEventListener('mousemove', setTarget);
+        canvas.addEventListener('touchstart', (e) => { e.preventDefault(); setTarget(e); }, {passive: false});
+        canvas.addEventListener('touchmove', (e) => { e.preventDefault(); setTarget(e); }, {passive: false});
+
+        function resetGame() {
+            score = 0;
+            health = 100;
+            px = canvas.width / 2;
+            py = canvas.height / 2;
+            targetX = px;
+            targetY = py;
+            bullets = [];
+            enemies = [];
+            spawnRate = 1200;
+            lastShot = Date.now();
+            lastSpawn = Date.now();
+            
+            document.getElementById('game-score').innerText = score;
+            document.getElementById('game-lives').innerText = health;
+        }
+
+        function startGame() {
+            overlay.classList.add('hidden');
+            if(!gameRunning) {
+                resetGame();
+                gameRunning = true;
+                drawGame();
+            }
+        }
+
+        function drawGame() {
+            if(!gameRunning) return;
+            
+            let now = Date.now();
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw Arena Grid
+            ctx.strokeStyle = '#374151';
+            ctx.lineWidth = 1;
+            for(let i=0; i<canvas.width; i+=40) {
+                ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke();
+            }
+            for(let i=0; i<canvas.height; i+=40) {
+                ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(canvas.width, i); ctx.stroke();
+            }
+
+            // Player Movement (WASD overrides mouse)
+            let dx = 0, dy = 0;
+            if(keys['w'] || keys['ArrowUp']) dy -= 1;
+            if(keys['s'] || keys['ArrowDown']) dy += 1;
+            if(keys['a'] || keys['ArrowLeft']) dx -= 1;
+            if(keys['d'] || keys['ArrowRight']) dx += 1;
+
+            if(dx !== 0 || dy !== 0) {
+                let len = Math.hypot(dx, dy);
+                px += (dx/len) * pSpeed;
+                py += (dy/len) * pSpeed;
+                targetX = px; targetY = py; // sync target so mouse doesn't rubberband
+            } else {
+                let dist = Math.hypot(targetX - px, targetY - py);
+                if(dist > pSpeed) {
+                    px += ((targetX - px)/dist) * pSpeed;
+                    py += ((targetY - py)/dist) * pSpeed;
+                }
+            }
+            
+            // Constrain player to canvas
+            px = Math.max(pRadius, Math.min(canvas.width - pRadius, px));
+            py = Math.max(pRadius, Math.min(canvas.height - pRadius, py));
+
+            // Enemy Spawning
+            if(now - lastSpawn > spawnRate) {
+                let ex, ey;
+                if(Math.random() < 0.5) {
+                    ex = Math.random() < 0.5 ? -30 : canvas.width + 30;
+                    ey = Math.random() * canvas.height;
+                } else {
+                    ex = Math.random() * canvas.width;
+                    ey = Math.random() < 0.5 ? -30 : canvas.height + 30;
+                }
+                enemies.push({
+                    x: ex, y: ey, 
+                    radius: 12, 
+                    speed: 1.5 + Math.random() * 1.2
+                });
+                
+                spawnRate = Math.max(250, spawnRate - 15); // Increase difficulty
+                lastSpawn = now;
+            }
+
+            // Auto-Target Shooting
+            if(now - lastShot > fireRate && enemies.length > 0) {
+                let nearest = null;
+                let minDist = Infinity;
+                
+                for(let e of enemies) {
+                    let d = Math.hypot(e.x - px, e.y - py);
+                    if(d < minDist) {
+                        minDist = d;
+                        nearest = e;
+                    }
+                }
+                
+                if(nearest) {
+                    let angle = Math.atan2(nearest.y - py, nearest.x - px);
+                    bullets.push({
+                        x: px, y: py,
+                        vx: Math.cos(angle) * 8,
+                        vy: Math.sin(angle) * 8,
+                        radius: 5
+                    });
+                    lastShot = now;
+                }
+            }
+
+            // Update and Draw Bullets
+            for(let i = bullets.length - 1; i >= 0; i--) {
+                let b = bullets[i];
+                b.x += b.vx;
+                b.y += b.vy;
+                
+                ctx.fillStyle = '#10b981'; // Green laser
+                ctx.beginPath();
+                ctx.arc(b.x, b.y, b.radius, 0, Math.PI*2);
+                ctx.fill();
+                
+                // Remove out of bounds
+                if(b.x < -10 || b.x > canvas.width + 10 || b.y < -10 || b.y > canvas.height + 10) {
+                    bullets.splice(i, 1);
+                    continue;
+                }
+                
+                // Collision with enemies
+                let hit = false;
+                for(let j = enemies.length - 1; j >= 0; j--) {
+                    let e = enemies[j];
+                    if(Math.hypot(b.x - e.x, b.y - e.y) < b.radius + e.radius) {
+                        enemies.splice(j, 1);
+                        hit = true;
+                        score++;
+                        document.getElementById('game-score').innerText = score;
+                        break;
+                    }
+                }
+                if(hit) bullets.splice(i, 1);
+            }
+
+            // Update and Draw Enemies
+            for(let i = enemies.length - 1; i >= 0; i--) {
+                let e = enemies[i];
+                let angle = Math.atan2(py - e.y, px - e.x);
+                e.x += Math.cos(angle) * e.speed;
+                e.y += Math.sin(angle) * e.speed;
+                
+                // Check player collision
+                if(Math.hypot(px - e.x, py - e.y) < pRadius + e.radius - 2) {
+                    health -= 15;
+                    document.getElementById('game-lives').innerText = Math.max(0, health);
+                    enemies.splice(i, 1);
+                    
+                    // Flash red
+                    ctx.fillStyle = "rgba(239, 68, 68, 0.4)";
+                    ctx.fillRect(0,0,canvas.width,canvas.height);
+                    
+                    if(health <= 0) {
+                        gameOver();
+                        return;
+                    }
+                    continue;
+                }
+                
+                // Draw Enemy (Red Bug)
+                ctx.fillStyle = '#ef4444';
+                ctx.beginPath();
+                ctx.arc(e.x, e.y, e.radius, 0, Math.PI*2);
+                ctx.fill();
+            }
+
+            // Draw Player (Anti-Virus Node)
+            ctx.fillStyle = '#3b82f6';
+            ctx.beginPath();
+            ctx.arc(px, py, pRadius, 0, Math.PI*2);
+            ctx.fill();
+            ctx.strokeStyle = '#93c5fd';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            animationId = requestAnimationFrame(drawGame);
+        }
+
+        function gameOver() {
+            gameRunning = false;
+            cancelAnimationFrame(animationId);
+            overlay.classList.remove('hidden');
+            startBtn.innerText = "System Overrun! Reboot";
+            startBtn.classList.replace('bg-green-600', 'bg-red-600');
+            startBtn.classList.replace('border-green-800', 'border-red-800');
+        }
+
+        // --- CERTIFICATE LOGIC ---
+        function updateCertName() {
+            let name = document.getElementById('student-name-input').value.trim();
+            if(name) {
+                if (name.includes(' ')) {
+                    name = name.split(' ')[0];
+                    document.getElementById('student-name-input').value = name;
+                    showModal('Notice', 'Only your first name has been applied to the certificate.', 'info');
+                }
+                document.getElementById('cert-student-name').innerText = name;
+            } else {
+                showModal('Wait!', 'Please enter your first name to update the certificate.', 'warning');
+            }
+        }
+
+        const today = new Date();
+        document.getElementById('cert-date').innerText = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        function downloadCert() {
+            const certEl = document.getElementById('certificate');
+            const name = document.getElementById('cert-student-name').innerText;
+            let filename = 'Certificate.png';
+            if (name && name !== 'Student') {
+                filename = `${name.replace(/\s+/g, '_')}_Certificate.png`;
+            }
+
+            const originalTransform = certEl.style.transform;
+            certEl.style.transform = 'none';
+
+            const btn = document.getElementById('download-btn');
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Generating...';
+            btn.disabled = true;
+
+            html2canvas(certEl, { 
+                scale: 2, 
+                useCORS: true,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+            }).catch(err => {
+                console.error(err);
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                showModal('Error', 'Failed to generate image. Try using a desktop browser.', 'error');
+            });
+        }
+
+        window.onload = () => {
+            ctx.fillStyle = '#1f2937';
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle = '#9ca3af';
+            ctx.font = '20px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('ANTI-VIRUS KERNEL READY', canvas.width/2, canvas.height/2);
+        }
+    </script>
+</body>
+</html>

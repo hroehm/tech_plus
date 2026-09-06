@@ -1,0 +1,1616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 07 Section 6.1.5 Mastery - AAA Authentication</title>
+    
+    <!-- Load Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load HTML2Canvas for Certificate Download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- Load Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Qwitcher+Grypen:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; 
+            color: #0f172a;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        /* Interactive Elements CSS */
+        .io-dropzone { min-height: 70px; min-width: 130px; border: 2px dashed #9ca3af; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: #f9fafb; transition: all 0.2s;}
+        .io-dropzone.drag-over { background: #e5e7eb; border-color: #0284c7; box-shadow: inset 0 0 10px rgba(2, 132, 199, 0.2);}
+        
+        .io-item { cursor: grab; transition: transform 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .io-item:active { cursor: grabbing; transform: scale(0.95); }
+        
+        .cat-dropzone { transition: background-color 0.2s ease; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #e2e8f0; }
+        ::-webkit-scrollbar-thumb { background: #0284c7; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #0369a1; }
+
+        /* Retro Game Canvas */
+        #game-canvas {
+            background-color: #0f172a;
+            border: 4px solid #334155;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(14, 165, 233, 0.3);
+            max-width: 100%;
+            height: auto;
+            touch-action: none;
+        }
+
+        /* --- CERTIFICATE STYLES --- */
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .font-body { font-family: 'Lora', serif; }
+        .font-script { font-family: 'Qwitcher Grypen', cursive; }
+        
+        .cert-preview-container {
+            width: 100%;
+            overflow: auto;
+            display: flex;
+            justify-content: center;
+            background: #e2e8f0;
+            padding: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        #certificate {
+            width: 1056px !important;
+            height: 816px !important;
+            flex-shrink: 0;
+            background-color: #ffffff;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1056" height="816"><polygon points="0,0 250,0 0,650" fill="%230284c7"/><polygon points="0,0 350,0 0,900" fill="%230369a1" opacity="0.8"/><polygon points="0,0 120,0 0,300" fill="%2338bdf8"/><polygon points="0,450 650,816 0,816" fill="%230284c7"/><polygon points="0,550 450,816 0,816" fill="%230369a1" opacity="0.8"/><polygon points="800,0 1056,0 1056,256" fill="%23f8fafc"/><polygon points="1056,500 1056,816 750,816" fill="%23f8fafc"/></svg>');
+            background-size: cover;
+            border: 4px solid #cbd5e1;
+        }
+
+        .gold-seal {
+            position: absolute;
+            left: 110px;
+            top: 350px;
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c, #fcf6ba);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3), inset 0 0 15px rgba(255,255,255,0.7), inset 0 0 25px rgba(139,105,20,0.9);
+            z-index: 10;
+        }
+        .gold-seal::before {
+            content: '';
+            position: absolute;
+            top: -4px; bottom: -4px; left: -4px; right: -4px;
+            border-radius: 50%;
+            border: 6px dashed #d4af37;
+        }
+        .gold-seal-inner-1 {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 2px solid rgba(139, 105, 20, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #e8c678, #dbab46);
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.2), 0 2px 5px rgba(255,255,255,0.7);
+            z-index: 1;
+        }
+        .gold-seal-inner-2 {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: radial-gradient(circle, #fcf6ba, #d4af37);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            padding: 10px;
+        }
+        .embossed-text {
+            color: #b38728;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2);
+            font-family: 'Playfair Display', serif;
+            font-weight: 800;
+            line-height: 1.1;
+            text-transform: uppercase;
+        }
+        .embossed-text-large { font-size: 14px; letter-spacing: 1px; }
+        .embossed-text-small { font-size: 11px; letter-spacing: 2px; margin: 2px 0; }
+        .embossed-star { font-size: 12px; color: #b38728; text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2); margin: 2px 0; }
+
+        @media (max-width: 1100px) {
+            #certificate { transform: scale(0.7); transform-origin: top left; margin-bottom: -240px; margin-right: -310px; }
+        }
+        @media (max-width: 768px) {
+            #certificate { transform: scale(0.4); transform-origin: top left; margin-bottom: -490px; margin-right: -630px; }
+        }
+
+        /* Progress Bar Animation for SSO Lab */
+        @keyframes fillBar {
+            from { width: 0%; }
+            to { width: 100%; }
+        }
+        .animate-fill {
+            animation: fillBar 4s linear forwards;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <nav class="bg-sky-800 text-white shadow-lg sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-fingerprint text-2xl text-sky-300"></i>
+                    <span class="font-bold text-xl tracking-wider hidden sm:inline-block">Tech+ Unit 07 Section 6.1.5</span>
+                    <span class="font-bold text-xl tracking-wider sm:hidden">6.1.5</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-2">
+                        <button onclick="switchTab('briefing')" class="nav-btn bg-sky-950 px-3 py-2 rounded-md text-sm font-medium hover:bg-sky-600 transition" id="nav-briefing"><i class="fa-solid fa-book-open mr-1"></i>Briefing</button>
+                        <button onclick="switchTab('activity')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-sky-600 transition" id="nav-activity"><i class="fa-solid fa-flask mr-1"></i>Lab Activity</button>
+                        <button onclick="switchTab('quiz')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-sky-600 transition" id="nav-quiz"><i class="fa-solid fa-clipboard-check mr-1"></i>Quiz</button>
+                        <button onclick="switchTab('game')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-gray-400 cursor-not-allowed transition" id="nav-game" disabled><i class="fa-solid fa-lock mr-1"></i>Game</button>
+                        <button onclick="switchTab('cert')" class="nav-btn hidden px-3 py-2 rounded-md text-sm font-medium text-yellow-300 hover:bg-sky-600 transition" id="nav-cert"><i class="fa-solid fa-award mr-1"></i>Certificate</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Nav -->
+        <div class="md:hidden flex flex-wrap justify-center gap-2 py-2 px-2 bg-sky-900">
+            <button onclick="switchTab('briefing')" class="nav-btn-mobile px-3 py-1 text-sm rounded bg-sky-950" id="nav-briefing-mobile">Briefing</button>
+            <button onclick="switchTab('activity')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-activity-mobile">Lab</button>
+            <button onclick="switchTab('quiz')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-quiz-mobile">Quiz</button>
+            <button onclick="switchTab('game')" class="nav-btn-mobile px-3 py-1 text-sm rounded text-gray-400 cursor-not-allowed" id="nav-game-mobile" disabled><i class="fa-solid fa-lock"></i></button>
+            <button onclick="switchTab('cert')" id="nav-cert-mobile" class="hidden px-2 py-1 text-sm text-yellow-300 rounded"><i class="fa-solid fa-award"></i></button>
+        </div>
+    </nav>
+
+    <main class="flex-grow w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <!-- BRIEFING SECTION -->
+        <div id="briefing-section" class="tab-content active no-print">
+            <div class="text-center mb-10">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-slate-800 mb-4">AAA Authentication</h1>
+                <p class="text-lg text-slate-600 max-w-3xl mx-auto">Explore how systems securely confirm identity, control access, and track user actions using the fundamental frameworks of digital security.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- Tile 1 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-indigo-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-indigo-700"><i class="fa-solid fa-shield-cat mr-2"></i>The AAA Triad</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>Authentication:</strong> Proving exactly who you are to the system.</li>
+                            <li><strong>Authorization:</strong> Controlling what actions you are permitted to perform.</li>
+                            <li><strong>Accounting & Non-repudiation:</strong> Tracking your actions so they cannot be denied later.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('aaa-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('aaa-usecase')" class="flex-1 bg-indigo-100 hover:bg-indigo-200 text-indigo-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 2 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-red-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-red-700"><i class="fa-solid fa-key mr-2"></i>Single-Factor (SFA)</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>One Method:</strong> Relies on only a single form of verification to grant access.</li>
+                            <li><strong>Common Types:</strong> Usually a password, a PIN, or a standalone biometric scan.</li>
+                            <li><strong>Vulnerability:</strong> Highly susceptible to theft, guessing, and automated brute-force attacks.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('sfa-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('sfa-usecase')" class="flex-1 bg-red-100 hover:bg-red-200 text-red-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 3 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-emerald-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-emerald-700"><i class="fa-solid fa-user-shield mr-2"></i>Multi-Factor (MFA)</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>Defense in Depth:</strong> Requires two or more entirely different categories of factors.</li>
+                            <li><strong>The Factors:</strong> Something you Know, something you Have, and something you Are.</li>
+                            <li><strong>Enhanced Security:</strong> Attackers must simultaneously breach multiple independent security layers.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('mfa-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('mfa-usecase')" class="flex-1 bg-emerald-100 hover:bg-emerald-200 text-emerald-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 4 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-amber-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-amber-700"><i class="fa-solid fa-network-wired mr-2"></i>Single Sign-On (SSO)</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>One Login:</strong> A single authentication grants access to multiple interconnected applications.</li>
+                            <li><strong>User Experience:</strong> Drastically reduces password fatigue and lost credential issues.</li>
+                            <li><strong>The Master Key Risk:</strong> If the SSO token is compromised, the attacker accesses everything.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('sso-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('sso-usecase')" class="flex-1 bg-amber-100 hover:bg-amber-200 text-amber-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 flex justify-center">
+                <button onclick="switchTab('activity')" class="bg-sky-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-sky-500 shadow-lg transition transform hover:scale-105">Proceed to Lab Activities <i class="fa-solid fa-arrow-right ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- LAB ACTIVITY SECTION -->
+        <div id="activity-section" class="tab-content no-print">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-extrabold text-slate-800 mb-2">Interactive Lab Activities</h1>
+                <p class="text-slate-600">Complete these 8 interactive labs to master Authentication Concepts.</p>
+            </div>
+
+            <!-- CONCEPT 1: AAA Labs -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <!-- Lab 1: AAA Categorizer -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                    <h2 class="text-xl font-bold mb-4 text-indigo-700"><i class="fa-solid fa-sitemap mr-2"></i>Lab 1: AAA Mapping</h2>
+                    <p class="text-sm text-slate-600 mb-4">Drag the digital action to the correct AAA concept.</p>
+                    
+                    <div class="flex flex-col gap-2 mb-4" id="lab1-items">
+                        <div class="io-item px-3 py-2 bg-slate-100 border border-slate-300 rounded text-sm font-semibold" draggable="true" data-type="authn">Entering a Password</div>
+                        <div class="io-item px-3 py-2 bg-slate-100 border border-slate-300 rounded text-sm font-semibold" draggable="true" data-type="authz">Access Denied to Admin Folder</div>
+                        <div class="io-item px-3 py-2 bg-slate-100 border border-slate-300 rounded text-sm font-semibold" draggable="true" data-type="acc">Server saves login timestamp</div>
+                        <div class="io-item px-3 py-2 bg-slate-100 border border-slate-300 rounded text-sm font-semibold" draggable="true" data-type="nonrep">Cryptographic Digital Signature</div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="cat-dropzone border-2 border-dashed border-indigo-400 bg-indigo-50 rounded p-2 min-h-[60px]" data-target="authn">
+                            <h3 class="font-bold text-indigo-800 text-xs text-center border-b border-indigo-200 mb-1">Authentication</h3>
+                        </div>
+                        <div class="cat-dropzone border-2 border-dashed border-indigo-400 bg-indigo-50 rounded p-2 min-h-[60px]" data-target="authz">
+                            <h3 class="font-bold text-indigo-800 text-xs text-center border-b border-indigo-200 mb-1">Authorization</h3>
+                        </div>
+                        <div class="cat-dropzone border-2 border-dashed border-indigo-400 bg-indigo-50 rounded p-2 min-h-[60px]" data-target="acc">
+                            <h3 class="font-bold text-indigo-800 text-xs text-center border-b border-indigo-200 mb-1">Accounting</h3>
+                        </div>
+                        <div class="cat-dropzone border-2 border-dashed border-indigo-400 bg-indigo-50 rounded p-2 min-h-[60px]" data-target="nonrep">
+                            <h3 class="font-bold text-indigo-800 text-xs text-center border-b border-indigo-200 mb-1">Non-repudiation</h3>
+                        </div>
+                    </div>
+                    <div id="lab1-feedback" class="text-center font-bold mt-2 text-sm h-5 text-emerald-600"></div>
+                </div>
+
+                <!-- Lab 2: AAA Flow -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                    <h2 class="text-xl font-bold mb-4 text-indigo-700"><i class="fa-solid fa-arrow-right-arrow-left mr-2"></i>Lab 2: AAA Sequence</h2>
+                    <p class="text-sm text-slate-600 mb-4">Click the steps in the exact order an OS processes a user request to edit a file.</p>
+                    
+                    <div class="flex flex-col gap-3" id="lab2-container">
+                        <button class="lab2-btn bg-slate-100 hover:bg-indigo-100 border border-slate-300 p-3 rounded font-semibold text-left transition" data-step="3" onclick="checkLab2(this)">Log the 'File Edited' action</button>
+                        <button class="lab2-btn bg-slate-100 hover:bg-indigo-100 border border-slate-300 p-3 rounded font-semibold text-left transition" data-step="1" onclick="checkLab2(this)">Verify User Identity (Login)</button>
+                        <button class="lab2-btn bg-slate-100 hover:bg-indigo-100 border border-slate-300 p-3 rounded font-semibold text-left transition" data-step="2" onclick="checkLab2(this)">Check ACL Permissions (Write Access)</button>
+                    </div>
+                    <div class="mt-4 flex justify-between items-center">
+                        <div id="lab2-feedback" class="font-bold text-sm h-5 text-indigo-600">Step 1: Wait</div>
+                        <button onclick="resetLab2()" class="text-xs text-slate-500 hover:text-slate-800 underline">Reset Sequence</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONCEPT 2: SFA Labs -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <!-- Lab 3: Password Cracker Simulator -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                    <h2 class="text-xl font-bold mb-4 text-red-700"><i class="fa-solid fa-unlock-keyhole mr-2"></i>Lab 3: SFA Vulnerability</h2>
+                    <p class="text-sm text-slate-600 mb-4">Type a short password (under 6 chars) to see how quickly Single-Factor Auth falls to a brute-force attack.</p>
+                    
+                    <div class="flex gap-2 mb-4">
+                        <input type="password" id="lab3-input" placeholder="Type weak password..." class="border-2 border-slate-300 rounded px-3 py-2 flex-grow focus:border-red-500 focus:outline-none">
+                        <button onclick="runLab3()" class="bg-red-600 text-white px-4 py-2 rounded font-bold hover:bg-red-700">Attack</button>
+                    </div>
+                    
+                    <div class="bg-slate-900 rounded p-4 text-green-400 font-mono text-sm min-h-[100px] flex flex-col">
+                        <div>> Brute-Force Bot Initialized...</div>
+                        <div id="lab3-terminal"></div>
+                    </div>
+                </div>
+
+                <!-- Lab 4: SFA Simulator -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200 flex flex-col items-center">
+                    <h2 class="text-xl font-bold mb-4 text-red-700 w-full"><i class="fa-solid fa-mobile-screen mr-2"></i>Lab 4: SFA Login</h2>
+                    <p class="text-sm text-slate-600 w-full mb-4">Select exactly ONE valid authentication method to unlock the phone. Combining them turns it into MFA!</p>
+                    
+                    <div class="w-64 bg-slate-800 p-4 rounded-3xl border-8 border-slate-900 shadow-inner relative">
+                        <div class="text-center text-white mb-6 mt-4"><i class="fa-solid fa-lock text-3xl"></i></div>
+                        
+                        <div class="space-y-4">
+                            <label class="flex items-center space-x-3 bg-slate-700 p-2 rounded cursor-pointer">
+                                <input type="checkbox" id="lab4-pin" class="form-checkbox h-5 w-5 text-red-500 rounded lab4-cb">
+                                <span class="text-white text-sm font-semibold">Enter PIN</span>
+                            </label>
+                            <label class="flex items-center space-x-3 bg-slate-700 p-2 rounded cursor-pointer">
+                                <input type="checkbox" id="lab4-face" class="form-checkbox h-5 w-5 text-red-500 rounded lab4-cb">
+                                <span class="text-white text-sm font-semibold">Face Scan</span>
+                            </label>
+                        </div>
+                        
+                        <button onclick="checkLab4()" class="mt-6 w-full bg-slate-200 text-slate-900 py-2 rounded-full font-bold hover:bg-white transition">Unlock Device</button>
+                    </div>
+                    <div id="lab4-feedback" class="text-center font-bold mt-4 text-sm h-5 text-emerald-600"></div>
+                </div>
+            </div>
+
+            <!-- CONCEPT 3: MFA Labs -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <!-- Lab 5: MFA Categorizer -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                    <h2 class="text-xl font-bold mb-4 text-emerald-700"><i class="fa-solid fa-layer-group mr-2"></i>Lab 5: MFA Categories</h2>
+                    <p class="text-sm text-slate-600 mb-4">Drag the authentication factor into its correct MFA category bucket.</p>
+                    
+                    <div class="flex flex-wrap gap-2 mb-4" id="lab5-items">
+                        <div class="io-item px-2 py-1 bg-emerald-50 border border-emerald-300 rounded text-xs font-bold" draggable="true" data-type="know">PIN</div>
+                        <div class="io-item px-2 py-1 bg-emerald-50 border border-emerald-300 rounded text-xs font-bold" draggable="true" data-type="have">Smart Card</div>
+                        <div class="io-item px-2 py-1 bg-emerald-50 border border-emerald-300 rounded text-xs font-bold" draggable="true" data-type="are">Retina Scan</div>
+                        <div class="io-item px-2 py-1 bg-emerald-50 border border-emerald-300 rounded text-xs font-bold" draggable="true" data-type="know">Password</div>
+                        <div class="io-item px-2 py-1 bg-emerald-50 border border-emerald-300 rounded text-xs font-bold" draggable="true" data-type="have">Phone (SMS)</div>
+                        <div class="io-item px-2 py-1 bg-emerald-50 border border-emerald-300 rounded text-xs font-bold" draggable="true" data-type="are">Fingerprint</div>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-2">
+                        <div class="cat-dropzone border-2 border-dashed border-emerald-400 bg-emerald-50 rounded p-1 min-h-[100px]" data-target="know">
+                            <h3 class="font-bold text-emerald-800 text-[10px] uppercase text-center border-b border-emerald-200 mb-1">Know</h3>
+                        </div>
+                        <div class="cat-dropzone border-2 border-dashed border-emerald-400 bg-emerald-50 rounded p-1 min-h-[100px]" data-target="have">
+                            <h3 class="font-bold text-emerald-800 text-[10px] uppercase text-center border-b border-emerald-200 mb-1">Have</h3>
+                        </div>
+                        <div class="cat-dropzone border-2 border-dashed border-emerald-400 bg-emerald-50 rounded p-1 min-h-[100px]" data-target="are">
+                            <h3 class="font-bold text-emerald-800 text-[10px] uppercase text-center border-b border-emerald-200 mb-1">Are</h3>
+                        </div>
+                    </div>
+                    <div id="lab5-feedback" class="text-center font-bold mt-2 text-sm h-5 text-emerald-600"></div>
+                </div>
+
+                <!-- Lab 6: The MFA Vault -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200 flex flex-col">
+                    <h2 class="text-xl font-bold mb-4 text-emerald-700"><i class="fa-solid fa-vault mr-2"></i>Lab 6: The MFA Vault</h2>
+                    <p class="text-sm text-slate-600 mb-4">To unlock this high-security vault, configure an MFA system that uses exactly three DIFFERENT categories.</p>
+                    
+                    <div class="flex-grow flex flex-col justify-center space-y-4 bg-slate-100 p-4 rounded border border-slate-300">
+                        <select id="lab6-f1" class="w-full p-2 border rounded font-semibold text-slate-700 bg-white">
+                            <option value="">Select Factor 1...</option>
+                            <option value="know">Password (Something you know)</option>
+                            <option value="have">Key Fob (Something you have)</option>
+                            <option value="are">Voice Print (Something you are)</option>
+                        </select>
+                        <select id="lab6-f2" class="w-full p-2 border rounded font-semibold text-slate-700 bg-white">
+                            <option value="">Select Factor 2...</option>
+                            <option value="know">Security Question (Something you know)</option>
+                            <option value="have">Authenticator App (Something you have)</option>
+                            <option value="are">Face Scan (Something you are)</option>
+                        </select>
+                        <select id="lab6-f3" class="w-full p-2 border rounded font-semibold text-slate-700 bg-white">
+                            <option value="">Select Factor 3...</option>
+                            <option value="know">PIN Code (Something you know)</option>
+                            <option value="have">Smart Card (Something you have)</option>
+                            <option value="are">Fingerprint (Something you are)</option>
+                        </select>
+                    </div>
+                    
+                    <button onclick="checkLab6()" class="mt-4 w-full bg-emerald-600 text-white py-3 rounded font-bold hover:bg-emerald-700 transition">Attempt Unlock</button>
+                    <div id="lab6-feedback" class="text-center font-bold mt-2 text-sm h-5 text-emerald-600"></div>
+                </div>
+            </div>
+
+            <!-- CONCEPT 4: SSO Labs -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <!-- Lab 7: SSO Dashboard Router -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200 relative overflow-hidden">
+                    <h2 class="text-xl font-bold mb-4 text-amber-700"><i class="fa-solid fa-id-card-clip mr-2"></i>Lab 7: SSO Access</h2>
+                    <p class="text-sm text-slate-600 mb-4">Authenticate ONCE at the Identity Provider to receive your master token, then seamlessly access all connected apps.</p>
+                    
+                    <div class="text-center mb-6">
+                        <button id="lab7-login" onclick="runLab7()" class="bg-slate-800 text-white px-6 py-2 rounded-full font-bold hover:bg-slate-700 shadow border-2 border-amber-500">Login to Identity Provider</button>
+                    </div>
+
+                    <div class="flex justify-around items-center">
+                        <div id="app1" class="w-20 h-20 bg-slate-200 rounded-xl flex flex-col items-center justify-center text-slate-400 border-2 border-slate-300 transition-all">
+                            <i class="fa-solid fa-envelope text-2xl mb-1"></i><span class="text-xs font-bold">Email</span>
+                        </div>
+                        <i class="fa-solid fa-arrow-right text-slate-300"></i>
+                        <div id="app2" class="w-20 h-20 bg-slate-200 rounded-xl flex flex-col items-center justify-center text-slate-400 border-2 border-slate-300 transition-all">
+                            <i class="fa-solid fa-cloud text-2xl mb-1"></i><span class="text-xs font-bold">Cloud</span>
+                        </div>
+                        <i class="fa-solid fa-arrow-right text-slate-300"></i>
+                        <div id="app3" class="w-20 h-20 bg-slate-200 rounded-xl flex flex-col items-center justify-center text-slate-400 border-2 border-slate-300 transition-all">
+                            <i class="fa-solid fa-users text-2xl mb-1"></i><span class="text-xs font-bold">HR</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lab 8: SSO Risk Mitigation -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200 flex flex-col">
+                    <h2 class="text-xl font-bold mb-4 text-amber-700"><i class="fa-solid fa-triangle-exclamation mr-2"></i>Lab 8: SSO Master Key Risk</h2>
+                    <p class="text-sm text-slate-600 mb-4">A hacker has stolen an SSO token! Because of SSO, they have a "Master Key". Revoke the session immediately before they access all connected databases!</p>
+                    
+                    <div class="flex-grow flex flex-col justify-center mb-4">
+                        <div class="flex justify-between text-xs font-bold text-slate-500 mb-1">
+                            <span>Breach Detected...</span>
+                            <span>Total System Compromise</span>
+                        </div>
+                        <div class="w-full bg-slate-200 rounded-full h-4 overflow-hidden relative">
+                            <div id="lab8-bar" class="bg-red-600 h-4 w-0 absolute left-0 top-0"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-4">
+                        <button onclick="startLab8()" id="lab8-start-btn" class="bg-slate-700 text-white px-4 py-2 rounded font-bold hover:bg-slate-800">Simulate Breach</button>
+                        <button onclick="stopLab8()" id="lab8-stop-btn" class="bg-amber-600 text-white px-4 py-2 rounded font-bold hover:bg-amber-700 flex-grow disabled:opacity-50" disabled>REVOKE SSO TOKEN</button>
+                    </div>
+                    <div id="lab8-feedback" class="text-center font-bold mt-2 text-sm h-5 text-emerald-600"></div>
+                </div>
+            </div>
+
+            <div class="text-center mt-12">
+                <button onclick="switchTab('quiz')" class="bg-sky-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-sky-500 shadow-lg transition transform hover:scale-105">Take the Mastery Quiz <i class="fa-solid fa-clipboard-check ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- QUIZ SECTION -->
+        <div id="quiz-section" class="tab-content no-print">
+            <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-xl max-w-4xl mx-auto border-t-8 border-sky-600">
+                <div class="text-center mb-8 border-b pb-4">
+                    <h1 class="text-3xl font-extrabold text-slate-800 mb-2">Unit 07 Section 6.1.5 Mastery Quiz</h1>
+                    <p class="text-slate-600">Score 90% or higher (18/20) to earn your Certificate and unlock the Retro Game!</p>
+                </div>
+
+                <div id="quiz-container" class="space-y-8">
+                    <!-- Questions injected via JS -->
+                </div>
+
+                <div class="mt-10 text-center border-t pt-6 flex flex-col md:flex-row justify-center items-center gap-4">
+                    <button id="submit-quiz-btn" onclick="gradeQuiz()" class="bg-sky-700 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-sky-800 shadow-lg transition w-full md:w-auto">Submit Quiz</button>
+                    <button id="proceed-game-btn" onclick="switchTab('game')" class="hidden bg-indigo-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-indigo-700 shadow-lg transition w-full md:w-auto">Play Retro Game <i class="fa-solid fa-gamepad ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RETRO GAME SECTION -->
+        <div id="game-section" class="tab-content no-print">
+            <div class="bg-slate-900 p-6 sm:p-8 rounded-2xl shadow-xl max-w-4xl mx-auto border-4 border-slate-700 flex flex-col items-center relative overflow-hidden">
+                <div class="text-center mb-4 w-full z-10">
+                    <h1 class="text-3xl font-extrabold text-sky-400 mb-2 tracking-widest uppercase" style="font-family: monospace; text-shadow: 0 0 10px #38bdf8;">Server Climber</h1>
+                    <p class="text-slate-300 text-sm">Climb the server racks to insert the Master MFA Token! Use <strong class="text-white">Left/Right Arrows</strong> to move and <strong class="text-white">Spacebar</strong> to jump. Dodge the red Malware bugs rolling off the ledges!</p>
+                </div>
+                
+                <div class="flex justify-between items-center w-full max-w-[400px] sm:max-w-[600px] mb-2 px-4 text-white font-mono text-xl z-10">
+                    <div>Score: <span id="game-score" class="text-emerald-400 font-bold">0</span></div>
+                    <div>Lives: <span id="game-lives" class="text-red-400 font-bold">3</span></div>
+                </div>
+
+                <div class="relative flex justify-center w-full z-10">
+                    <canvas id="game-canvas" width="600" height="450" class="w-full max-w-[400px] sm:max-w-[600px] bg-slate-800 border-2 border-slate-600 rounded shadow-lg"></canvas>
+                    
+                    <div id="game-overlay" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-70 rounded-lg max-w-[400px] sm:max-w-[600px] mx-auto z-20">
+                        <button id="start-game-btn" class="bg-sky-600 hover:bg-sky-500 text-white font-bold font-mono py-3 px-6 rounded-lg text-xl border-4 border-sky-800 uppercase transform transition hover:scale-105">Initialize System</button>
+                    </div>
+                </div>
+                
+                <!-- On-Screen Controls for Mobile -->
+                <div class="flex gap-4 mt-4 md:hidden z-10 w-full max-w-[400px] justify-between">
+                    <div class="flex gap-2">
+                        <button class="game-btn bg-slate-700 p-4 rounded text-white" id="btn-left"><i class="fa-solid fa-arrow-left"></i></button>
+                        <button class="game-btn bg-slate-700 p-4 rounded text-white" id="btn-right"><i class="fa-solid fa-arrow-right"></i></button>
+                    </div>
+                    <button class="game-btn bg-sky-600 p-4 rounded text-white px-8" id="btn-jump">JUMP</button>
+                </div>
+
+                <div class="mt-8 text-center w-full border-t border-slate-700 pt-6 z-10">
+                    <button onclick="switchTab('cert')" class="bg-amber-500 text-slate-900 px-8 py-3 rounded-lg font-bold text-lg hover:bg-amber-400 shadow-lg transition w-full md:w-auto">View Certificate <i class="fa-solid fa-award ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CERTIFICATE SECTION -->
+        <div id="cert-section" class="tab-content">
+            <div class="max-w-5xl mx-auto">
+                <div class="bg-white p-6 rounded shadow mb-6 no-print text-center border border-slate-200 border-t-4 border-sky-500">
+                    <h2 class="text-2xl font-bold text-sky-700 mb-2">🎉 Congratulations! 🎉</h2>
+                    <p class="text-slate-700 mb-4">You have achieved mastery of AAA Authentication concepts.</p>
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+                        <input type="text" id="student-name-input" value="Student" placeholder="Enter your first name" class="border-2 border-slate-300 rounded px-4 py-2 w-full md:w-64 focus:border-sky-500 focus:outline-none">
+                        <button onclick="updateCertName()" class="bg-sky-700 text-white px-4 py-2 rounded hover:bg-sky-800 transition">Update Name</button>
+                        <button id="download-btn" onclick="downloadCert()" class="bg-slate-800 text-white px-4 py-2 rounded hover:bg-slate-900 transition flex items-center justify-center">
+                            <i class="fa-solid fa-download mr-2"></i>Download PNG
+                        </button>
+                    </div>
+                </div>
+
+                <div class="cert-preview-container print:p-0 print:bg-white">
+                    <div id="certificate">
+                        <div class="gold-seal">
+                            <div class="gold-seal-inner-1">
+                                <div class="gold-seal-inner-2">
+                                     <span class="embossed-text embossed-text-large">Certificate</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-small">Of</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-large">Excellence</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="relative z-20 w-full h-full flex flex-col pt-[48px] pl-[380px] pr-[48px]">
+                            <h1 class="text-[#0369a1] text-[4.5rem] leading-none font-serif font-bold tracking-wide uppercase mb-2">CERTIFICATE</h1>
+                            <h2 class="text-slate-800 text-3xl font-serif tracking-widest uppercase mb-10">Of Achievement</h2>
+                            
+                            <p class="text-[1.4rem] font-body text-slate-800 mb-4">This is to certify that</p>
+                            
+                            <div class="relative mb-8 w-full">
+                                <h3 id="cert-student-name" class="text-[4rem] text-[#0369a1] font-serif italic leading-none pb-2 relative z-10 text-center w-full block">Student</h3>
+                                <div class="w-full border-b-[2px] border-[#0369a1] absolute bottom-[4px] left-0 z-0"></div>
+                                <div class="w-full border-b-[2px] border-dotted border-sky-400 absolute bottom-[0px] left-0 z-0"></div>
+                            </div>
+                            
+                            <p class="text-[1.3rem] font-body text-slate-800 leading-relaxed w-full pr-4">
+                                Has successfully completed the assessment for 
+                                <strong class="text-[1.8rem] text-[#0369a1] block mt-4 mb-2 font-serif">Cyber.org Tech+ Unit 07 Section 6.1.5</strong>
+                                <strong class="text-[1.5rem] text-black block mb-4 font-serif italic">AAA Authentication</strong>
+                                <span class="text-[1.1rem] text-slate-700 leading-snug block">Demonstrating proficiency in explaining the foundational role of the AAA Triad, non-repudiation, and the comparative strengths and vulnerabilities of SFA, MFA, and SSO architectures.</span>
+                            </p>
+                            
+                            <div class="flex justify-end gap-16 items-end mt-auto mb-[60px] w-full pr-8">
+                                <div class="w-64">
+                                    <div class="border-b border-slate-600 mb-2 h-20 flex items-end justify-center relative">
+                                        <span class="font-script text-[5rem] text-[#0369a1] absolute bottom-[-10px] transform -rotate-3 opacity-90">Dr. M. S</span>
+                                    </div>
+                                    <p class="font-serif text-xl text-slate-800 text-center">Administration</p>
+                                </div>
+                                
+                                <div class="w-64">
+                                    <div class="border-b border-slate-600 mb-2 text-center h-20 flex items-end justify-center">
+                                        <p id="cert-date" class="font-body text-2xl text-slate-800 pb-1">Date Here</p>
+                                    </div>
+                                    <p class="font-serif text-xl text-slate-800 text-center">Date</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Custom Modal for Alerts -->
+    <div id="custom-modal" class="fixed inset-0 bg-black bg-opacity-50 z-[100] hidden flex justify-center items-center backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all border-t-8 border-sky-600">
+            <div class="text-center">
+                <div id="modal-icon" class="text-5xl mb-4"></div>
+                <h3 id="modal-title" class="text-2xl font-bold mb-2 text-slate-900"></h3>
+                <p id="modal-msg" class="text-slate-600 mb-6"></p>
+                <button onclick="closeModal()" class="bg-sky-700 text-white px-6 py-2 rounded-lg font-bold hover:bg-sky-800 transition w-full">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Briefing Modal -->
+    <div id="briefing-modal" class="fixed inset-0 bg-black bg-opacity-70 z-[120] hidden flex justify-center items-center backdrop-blur-sm p-4 sm:p-6">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col transform transition-all overflow-hidden border-4 border-sky-700">
+            <div class="p-6 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+                <div class="flex items-center gap-4">
+                    <div id="briefing-modal-icon" class="text-4xl"></div>
+                    <h3 id="briefing-modal-title" class="text-2xl md:text-3xl font-bold text-slate-900"></h3>
+                </div>
+                <button onclick="closeBriefing()" class="text-slate-400 hover:text-red-600 transition text-4xl leading-none">&times;</button>
+            </div>
+            <div id="briefing-modal-content" class="p-6 md:p-10 overflow-y-auto flex-grow text-slate-700 text-lg leading-relaxed bg-white">
+                <!-- Dynamic Content Injected Here -->
+            </div>
+            <div class="p-6 border-t border-slate-200 bg-slate-50 flex justify-end">
+                <button onclick="closeBriefing()" class="bg-sky-800 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-sky-900 transition shadow-md">Acknowledge & Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Extensive Briefing Content Data (Min 7 Paragraphs per detail, specific structure for Use Cases) ---
+        const briefingData = {
+            'aaa-details': {
+                title: 'The AAA Triad & Non-repudiation',
+                icon: '<i class="fa-solid fa-shield-cat text-indigo-600"></i>',
+                html: `
+                    <p class="mb-5">In the vast, interconnected landscape of modern digital networks, security is not just about building a firewall to keep attackers out; it is about meticulously managing who is allowed inside, what they are permitted to do once there, and keeping a rigorous record of their actions. This fundamental concept is governed by a core cybersecurity framework known as the AAA Triad. The acronym stands for Authentication, Authorization, and Accounting. Together, these three pillars form the absolute baseline architecture for securing access to any computer system, corporate network, or sensitive data repository.</p>
+                    
+                    <p class="mb-5">The first step in this sequence is <strong>Authentication</strong>. Authentication is solely concerned with identity verification. When a user approaches a digital gateway—such as a login screen—they claim an identity by providing a username. However, the system cannot blindly trust this claim. Authentication is the rigorous process of requiring the user to prove they are the legitimate owner of that identity. This is achieved by demanding credentials, such as a secret password, a physical security token, or a biometric scan. If the proof is valid, the system confirms the identity and the user crosses the threshold.</p>
+                    
+                    <p class="mb-5">Once a user has successfully proven their identity, the system immediately moves to the second phase: <strong>Authorization</strong>. While authentication asks "Who are you?", authorization asks "What are you allowed to do?" Just because an employee has successfully logged into a corporate network does not mean they should be allowed to view the CEO's private emails or format the central database. Authorization utilizes Access Control Lists (ACLs) and permission settings to strictly define the boundaries of a user's digital movement, ensuring they only have the minimum access required to perform their specific job role.</p>
+                    
+                    <p class="mb-5">The final core pillar of the triad is <strong>Accounting</strong>. Accounting is the continuous, invisible process of tracking and recording the user's behavior while they are logged into the system. Every time a user opens a file, deletes a record, changes a configuration, or logs out, the accounting system generates a log entry. These digital audit trails are critical. If a data breach or a malicious internal event occurs, cybersecurity analysts rely entirely on the accounting logs to perform forensics, trace the attacker's steps, and determine exactly how much damage was inflicted.</p>
+                    
+                    <p class="mb-5">Closely intertwined with the AAA triad—and particularly with accounting—is the legal and technical concept of <strong>Non-repudiation</strong>. In cybersecurity, repudiation means denying that you took a specific action. For example, a rogue employee might delete a critical database and then claim, "I didn't do it, someone else must have hacked my account." Non-repudiation is the assurance that a user cannot deny the authenticity of their actions or transactions.</p>
+                    
+                    <p class="mb-5">Systems achieve non-repudiation by generating irrefutable proof. This proof relies on the combination of strong authentication (proving it was definitively that user) and secure accounting logs (such as timestamped records and cryptographic digital signatures) that cannot be altered. If a digital contract is signed using a secure cryptographic key known only to the user, the mathematical properties of the signature provide non-repudiation; the user cannot legally or technically deny signing the document.</p>
+                    
+                    <p>In practice, the AAA Triad operates as a seamless, unified pipeline. A failure in any single pillar compromises the entire system. If authentication is weak, an attacker can steal an identity and the rest of the system operates under false pretenses. If authorization fails, a standard user gains disastrous administrative powers. And if accounting fails, malicious actions can occur completely undetected, leaving the organization blind to the attack. Mastering this framework is essential for anyone designing or defending digital infrastructure.</p>
+                `
+            },
+            'aaa-usecase': {
+                title: 'The AAA Triad: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-indigo-800 mb-2 border-b-2 border-indigo-200 pb-1">Case 1: Securing a Hospital Network</h4>
+                        <p class="mb-2">In healthcare, strict compliance with laws like HIPAA requires robust implementation of the AAA framework to protect sensitive patient medical records.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Authorization):</strong> A receptionist and a surgeon both log into the same hospital database. The authorization system grants the receptionist access to view patient appointment schedules, but explicitly denies them access to view X-ray results, which are strictly authorized only for the surgeon.</li>
+                            <li><strong>Example 2 (Accounting & Non-repudiation):</strong> A nurse updates a patient's medication dosage in the system. The accounting system logs the nurse's unique ID and the exact timestamp. Because this log is protected by a digital signature (non-repudiation), the nurse cannot later deny making the dosage change.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-indigo-800 mb-2 border-b-2 border-indigo-200 pb-1">Case 2: Corporate Financial Systems</h4>
+                        <p class="mb-2">Financial institutions require layered security to prevent both external theft and internal fraud, relying heavily on proper authentication and accounting.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Authentication):</strong> Before a bank manager can access the wire transfer portal, they must prove their identity by inserting a smart card into their computer and typing a secure PIN, satisfying the Authentication requirement of the AAA triad.</li>
+                            <li><strong>Example 2 (Accounting):</strong> When the manager initiates a transfer of $1,000,000, the accounting servers track the origin IP address, the time, and the destination account, storing this data in an unalterable log for quarterly financial audits.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Secure Infrastructure</p>
+                            <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=600&h=350" alt="Server racks representing secure infrastructure" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Auditing and Accounting</p>
+                            <img src="https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?auto=format&fit=crop&w=600&h=350" alt="IT professional analyzing data logs on multiple monitors" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'sfa-details': {
+                title: 'Single-Factor Authentication (SFA)',
+                icon: '<i class="fa-solid fa-key text-red-600"></i>',
+                html: `
+                    <p class="mb-5">Single-Factor Authentication (SFA) is the oldest and historically most common method of digital security. As the name implies, SFA relies on exactly one category of evidence to verify a user's identity before granting access to an account or system. Because it only demands one piece of proof, it represents the lowest acceptable tier of security in modern computing, functioning essentially like a simple physical key opening a standard door lock.</p>
+                    
+                    <p class="mb-5">By far, the most ubiquitous example of SFA is the traditional username and password combination. In this scenario, the user provides "something they know." Under the hood, when a user creates an account, the system does not store the raw password. Instead, it runs the text through a cryptographic hashing algorithm, generating a complex string of characters. When the user logs in later, the system hashes their input again and compares it to the stored hash. If they match, access is granted.</p>
+                    
+                    <p class="mb-5">It is important to understand that SFA is not limited exclusively to passwords. If a system allows a user to unlock a tablet using <em>only</em> a 4-digit PIN, that is SFA. Furthermore, if a high-tech gaming console unlocks by using <em>only</em> a biometric fingerprint scan (without requiring a password as well), it is still classified as Single-Factor Authentication. The classification depends on the <em>number</em> of independent factors required, not the advanced nature of the technology used.</p>
+                    
+                    <p class="mb-5">The primary advantage of SFA—and the reason it survived for so long—is user convenience and speed. Users only need to remember one secret or perform one action to gain instant access. It is cheap for companies to implement and requires zero additional hardware (like mobile phones or smart cards) on the part of the consumer. For low-risk applications, like an offline music player or a casual web forum, this convenience often outweighs the need for heavy security.</p>
+                    
+                    <p class="mb-5">However, the vulnerabilities inherent in SFA are severe and widely exploited. Because there is no backup layer of defense, a compromised password means immediate, total compromise of the account. Attackers routinely employ automated "brute-force" attacks, using massive computing power to guess thousands of password combinations per second until they break in. Weak or short passwords fall to these attacks in milliseconds.</p>
+                    
+                    <p class="mb-5">Beyond brute-force attacks, SFA is highly susceptible to human psychology. Phishing attacks trick users into willingly typing their one factor into a fake website. Furthermore, because users struggle to remember dozens of complex passwords, they often practice "password reuse." If a hacker breaches a poorly secured forum and steals a user's password, they will immediately try that same username and password combination on banking and email sites, often with devastating success.</p>
+                    
+                    <p>Due to these escalating threats, the cybersecurity industry is aggressively phasing out Single-Factor Authentication for any systems connected to the internet or containing sensitive data. While SFA remains a foundational concept to understand, modern security policies view a system protected solely by a password as functionally insecure, paving the way for the mandatory adoption of multi-factor frameworks.</p>
+                `
+            },
+            'sfa-usecase': {
+                title: 'Single-Factor Authentication: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-red-800 mb-2 border-b-2 border-red-200 pb-1">Case 1: Low-Risk Consumer Electronics</h4>
+                        <p class="mb-2">For personal devices that do not hold highly sensitive financial or corporate data, manufacturers often default to SFA for maximum user convenience and speed of access.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (PIN Code):</strong> Harper picks up her personal e-reader tablet to read a book. She wakes the screen and types a simple 4-digit PIN. The device immediately unlocks. Because only one factor (knowledge of the PIN) was used, this is SFA.</li>
+                            <li><strong>Example 2 (Standalone Biometric):</strong> Ryleigh sits down to play a video game console in her living room. She presses her thumb against the controller's scanner. The console recognizes her fingerprint and logs her into her gaming profile without asking for a password.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-red-800 mb-2 border-b-2 border-red-200 pb-1">Case 2: Legacy Web Services</h4>
+                        <p class="mb-2">Many older websites or low-stakes platforms still rely entirely on traditional usernames and passwords, leaving users vulnerable if those credentials are compromised.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Social Media Login):</strong> Evan visits an older blog forum he participates in. He types his username ("Evan123") and his password. Once he hits enter, he is fully authenticated and can post articles.</li>
+                            <li><strong>Example 2 (Vulnerability Event):</strong> A hacker discovers Evan's password in a data breach. Because the blog only uses SFA, the hacker simply types in Evan's password from a different country and immediately gains total control over Evan's account to post spam.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: A Single Key</p>
+                            <img src="https://images.unsplash.com/photo-1582139329536-e7284fece509?auto=format&fit=crop&w=600&h=350" alt="Vintage lock and single key representing SFA" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Traditional Password Login</p>
+                            <img src="https://images.unsplash.com/photo-1614064641936-a59266d9b8b0?auto=format&fit=crop&w=600&h=350" alt="Person typing on a laptop with a password screen" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'mfa-details': {
+                title: 'Multi-Factor Authentication (MFA)',
+                icon: '<i class="fa-solid fa-user-shield text-emerald-600"></i>',
+                html: `
+                    <p class="mb-5">Multi-Factor Authentication (MFA) represents a massive leap forward in digital security. It operates on the principle of "Defense in Depth." Rather than relying on a single point of failure (like a password), MFA mandates that a user present two or more independent pieces of evidence to prove their identity. By forcing an attacker to compromise multiple, entirely different security systems simultaneously, MFA stops the vast majority of automated hacks, phishing attacks, and credential theft dead in their tracks.</p>
+                    
+                    <p class="mb-5">To be considered true MFA, the factors used must come from at least two different conceptual categories. The first category is <strong>"Something You Know" (Knowledge Factor)</strong>. This is a secret stored in the user's brain. The most common examples are passwords, numerical PINs, or the answers to specific security questions (e.g., "What was the name of your first pet?"). While vital, knowledge factors are the most easily stolen via social engineering or keyloggers.</p>
+                    
+                    <p class="mb-5">The second category is <strong>"Something You Have" (Possession Factor)</strong>. This requires the user to physically possess a specific item. A common example is a smartphone that receives a one-time code via text message (SMS). More secure possession factors include cryptographic smart cards worn on an employee badge, USB hardware tokens (like a YubiKey), or an Authenticator App on a mobile device generating time-based codes.</p>
+                    
+                    <p class="mb-5">The third category is <strong>"Something You Are" (Inherence Factor)</strong>. These are unique biological or behavioral traits intrinsically tied to the user's physical body—commonly known as biometrics. Examples include fingerprint scanners, facial recognition cameras, retina scans, and voice-print analysis. Because biometrics cannot be easily forgotten or physically stolen over the internet, they provide a highly robust, user-friendly authentication layer.</p>
+                    
+                    <p class="mb-5">A critical rule of MFA is that combining two factors from the <em>same</em> category does not create true MFA. For example, forcing a user to enter a password and then forcing them to answer a security question is just requiring two Knowledge Factors. If a hacker installs a keylogger on the victim's computer, they can steal both pieces of information simultaneously. True MFA requires crossing categories (e.g., a password [Know] plus a fingerprint [Are]).</p>
+                    
+                    <p class="mb-5">A common implementation of MFA is Two-Factor Authentication (2FA). 2FA is simply a subset of MFA that strictly requires exactly two factors (usually a password and a phone code). All 2FA is MFA, but highly secure environments might require three or more factors (e.g., a password, a smart card, and a fingerprint) for access to critical infrastructure.</p>
+                    
+                    <p>While MFA adds slight friction to the login process, modern implementations have streamlined the experience. Features like Push Notifications—where a user logs in with a password and simply taps "Approve" on a prompt sent to their Apple Watch or phone—have made MFA widely accessible. Today, enabling MFA is universally considered the single most effective action a user or organization can take to secure their digital assets against modern cyber threats.</p>
+                `
+            },
+            'mfa-usecase': {
+                title: 'Multi-Factor Authentication: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-emerald-800 mb-2 border-b-2 border-emerald-200 pb-1">Case 1: Protecting Personal Finances</h4>
+                        <p class="mb-2">Banks and financial institutions heavily enforce MFA to ensure that even if a customer is tricked into giving away their password, attackers still cannot steal their money.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Know + Have):</strong> Sophia tries to log into her bank account from a new laptop. She enters her password (Something she knows). Before showing her balance, the bank texts a 6-digit code to her physical mobile phone (Something she has). She must enter the code to finish logging in.</li>
+                            <li><strong>Example 2 (Know + Are):</strong> Mia opens her banking app on her phone. She types in a 4-digit PIN (Something she knows). The app then immediately activates the phone's camera and requires a successful Face ID scan (Something she is) before authorizing a money transfer.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-emerald-800 mb-2 border-b-2 border-emerald-200 pb-1">Case 2: High-Security Work Environments</h4>
+                        <p class="mb-2">Government agencies and defense contractors often require strict, three-factor authentication to access highly classified systems or physical servers.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Know + Have + Are):</strong> Before logging into the main defense server, Noah must type a complex 16-character password (Know), insert his cryptographic government ID smart card into the reader (Have), and finally press his thumb against the biometric scanner (Are).</li>
+                            <li><strong>Example 2 (Mitigating Theft):</strong> A spy steals Noah's smart card from his desk. However, because the system utilizes MFA, the spy is completely blocked at the terminal because they do not know Noah's password and cannot replicate his fingerprint.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Defense in Depth</p>
+                            <img src="https://images.unsplash.com/photo-1614064641320-c11df280cd3c?auto=format&fit=crop&w=600&h=350" alt="Heavy vault door representing multiple layers of security" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Secondary Verification</p>
+                            <img src="https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&w=600&h=350" alt="Person holding a smartphone to receive an MFA code" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'sso-details': {
+                title: 'Single Sign-On (SSO)',
+                icon: '<i class="fa-solid fa-network-wired text-amber-600"></i>',
+                html: `
+                    <p class="mb-5">In the modern corporate world, a standard employee might rely on dozens of different software applications daily: a cloud storage drive, an HR portal, a video conferencing app, and an email client. If each app required a separate login, employees would suffer from severe "password fatigue," leading them to write passwords on sticky notes or reuse the same weak password across all platforms. <strong>Single Sign-On (SSO)</strong> was developed as the elegant solution to this sprawling administrative nightmare.</p>
+                    
+                    <p class="mb-5">Single Sign-On is an authentication scheme that allows a user to log in exactly one time, with one set of credentials, and subsequently gain seamless, frictionless access to multiple independent software systems. With SSO, the user authenticates against a central authority known as the Identity Provider (IdP). Once verified, the IdP generates a secure digital token and passes it to the various Service Providers (the apps) in the background, vouching for the user's identity.</p>
+                    
+                    <p class="mb-5">From the user's perspective, the experience is magical. A student sits down at a school computer and enters their primary password. Instantly, their web browser logs them into their educational email, their cloud document workspace, and their digital classroom portal, all without prompting them to type a password a second time. This drastically improves productivity and reduces help-desk tickets for forgotten passwords.</p>
+                    
+                    <p class="mb-5">For IT administrators, SSO provides immense centralized control. When a new employee is hired, the IT department creates one central identity profile. The SSO system automatically provisions access to all necessary apps based on the employee's role. More importantly, when an employee resigns or is terminated, the administrator simply clicks "Deactivate" on the central profile. The SSO system instantly revokes the token, instantly cutting off the former employee's access to all company platforms simultaneously.</p>
+                    
+                    <p class="mb-5">However, the massive convenience of SSO introduces a severe, concentrated security risk often referred to as the "Master Key Problem." In a traditional setup, if a hacker stole an employee's email password, they only breached the email. But in an SSO environment, if a hacker manages to compromise the user's single set of credentials, they automatically gain unrestricted access to <em>everything</em> connected to the SSO—the email, the confidential HR files, the financial databases, and the communication channels.</p>
+                    
+                    <p class="mb-5">Because the stakes are so incredibly high, an SSO token represents a single point of failure for an organization's entire digital infrastructure. An attacker who breaches the Identity Provider acts with the full authority of the compromised user across the entire network, often moving laterally between applications completely undetected because the SSO system continuously vouches for them.</p>
+                    
+                    <p>To mitigate this massive risk, cybersecurity best practices dictate that Single Sign-On must <em>never</em> be used in isolation. It is an industry standard that the initial login to the SSO Identity Provider must be aggressively protected by strong Multi-Factor Authentication (MFA). By wrapping the convenience of SSO inside the ironclad security of MFA, organizations can achieve a balance of seamless user experience and robust defense against credential theft.</p>
+                `
+            },
+            'sso-usecase': {
+                title: 'Single Sign-On: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-amber-800 mb-2 border-b-2 border-amber-200 pb-1">Case 1: Streamlined Educational Networks</h4>
+                        <p class="mb-2">Schools and universities utilize SSO to allow students to access a massive variety of educational tools without needing to remember dozens of different passwords.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Seamless Access):</strong> Malik sits down in the computer lab. He logs into the main school portal one time using his student ID and password. He then clicks a link for his online math textbook, and the site opens immediately without asking for a login, using his SSO token.</li>
+                            <li><strong>Example 2 (Centralized Control):</strong> At the end of the semester, when Malik graduates, the school's IT admin disables his central account once. This single action automatically revokes his access to the library, the cloud storage, and the grading portal simultaneously.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-amber-800 mb-2 border-b-2 border-amber-200 pb-1">Case 2: The SSO "Master Key" Vulnerability</h4>
+                        <p class="mb-2">While SSO provides convenience, it acts as a skeleton key to an organization's entire suite of applications, demanding that the initial login be heavily guarded.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Compromise):</strong> A corporate employee falls for a phishing email and accidentally types their SSO password into a fake website. The hacker uses that single password to log into the corporate SSO portal. Instantly, the hacker has access to the employee's email, the company financial records, and the internal chat app.</li>
+                            <li><strong>Example 2 (Mitigation with MFA):</strong> To prevent this, the company implements MFA on the SSO portal. Ava types her password (which a hacker might know), but the SSO system pauses and requires her to tap a physical security key on her laptop before generating the master token, successfully stopping the hacker.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: The Master Key</p>
+                            <img src="https://images.unsplash.com/photo-1585807469795-b9b56f2f9db7?auto=format&fit=crop&w=600&h=350" alt="A single master key opening multiple locks" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Accessing Multiple Apps</p>
+                            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&h=350" alt="Person looking at multiple monitors running different software" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        // Modal Control Functions
+        function openBriefing(key) {
+            const modal = document.getElementById('briefing-modal');
+            const data = briefingData[key];
+            if(data) {
+                document.getElementById('briefing-modal-icon').innerHTML = data.icon;
+                document.getElementById('briefing-modal-title').innerText = data.title;
+                document.getElementById('briefing-modal-content').innerHTML = data.html;
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; 
+            }
+        }
+
+        function closeBriefing() {
+            document.getElementById('briefing-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto'; 
+        }
+
+        document.getElementById('briefing-modal').addEventListener('click', function(e) {
+            if(e.target === this) closeBriefing();
+        });
+        
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId + '-section').classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-sky-950'));
+            const activeBtn = document.getElementById('nav-' + tabId);
+            if(activeBtn && tabId !== 'cert') activeBtn.classList.add('bg-sky-950');
+            
+            document.querySelectorAll('.nav-btn-mobile').forEach(btn => btn.classList.remove('bg-sky-950'));
+            const activeMobileBtn = document.getElementById('nav-' + tabId + '-mobile');
+            if(activeMobileBtn && tabId !== 'cert') activeMobileBtn.classList.add('bg-sky-950');
+
+            window.scrollTo(0,0);
+
+            if (tabId === 'game' && !gameRunning) {
+                resetGame();
+                drawGame();
+            }
+        }
+
+        function showModal(title, message, type = 'info') {
+            const modal = document.getElementById('custom-modal');
+            const icon = document.getElementById('modal-icon');
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-msg').innerText = message;
+            
+            if(type === 'success') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-500"></i>';
+            } else if (type === 'error') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500"></i>';
+            } else if (type === 'warning') {
+                icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-amber-500"></i>';
+            } else {
+                icon.innerHTML = '<i class="fa-solid fa-circle-info text-sky-500"></i>';
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        // --- LAB 1: AAA Categorizer ---
+        let draggedAAAItem = null;
+        let lab1Count = 0;
+
+        document.querySelectorAll('#lab1-items .io-item').forEach(item => {
+            item.addEventListener('dragstart', function() {
+                draggedAAAItem = this;
+                setTimeout(() => this.classList.add('opacity-50'), 0);
+            });
+            item.addEventListener('dragend', function() {
+                setTimeout(() => this.classList.remove('opacity-50'), 0);
+                draggedAAAItem = null;
+            });
+        });
+
+        document.querySelectorAll('#activity-section .cat-dropzone').forEach(zone => {
+            // Only apply to lab 1 and lab 5 dropzones
+            if(!zone.parentElement.classList.contains('grid-cols-2') && !zone.parentElement.classList.contains('grid-cols-3')) return;
+            
+            zone.addEventListener('dragover', e => e.preventDefault());
+            zone.addEventListener('dragenter', function(e) { e.preventDefault(); this.classList.add('brightness-95'); });
+            zone.addEventListener('dragleave', function() { this.classList.remove('brightness-95'); });
+            zone.addEventListener('drop', function() {
+                this.classList.remove('brightness-95');
+                if(draggedAAAItem && this.dataset.target) {
+                    // Check if it's Lab 1 or Lab 5
+                    const isLab1 = ['authn', 'authz', 'acc', 'nonrep'].includes(this.dataset.target);
+                    const isLab5 = ['know', 'have', 'are'].includes(this.dataset.target);
+                    
+                    if(draggedAAAItem.dataset.type === this.dataset.target) {
+                        this.appendChild(draggedAAAItem);
+                        draggedAAAItem.classList.remove('bg-slate-100', 'bg-emerald-50', 'cursor-grab');
+                        draggedAAAItem.classList.add('bg-white', 'border-emerald-500', 'text-emerald-800', 'cursor-default', 'mt-1', 'w-[95%]', 'mx-auto');
+                        draggedAAAItem.setAttribute('draggable', 'false');
+                        
+                        if(isLab1) {
+                            lab1Count++;
+                            document.getElementById('lab1-feedback').innerText = "Correct mapping!";
+                            if(lab1Count === 4) setTimeout(() => showModal('Lab 1 Complete', 'You successfully mapped all actions to the AAA Triad!', 'success'), 300);
+                        } else if (isLab5) {
+                            lab5Count++;
+                            document.getElementById('lab5-feedback').innerText = "Correct Factor Category!";
+                            if(lab5Count === 6) setTimeout(() => showModal('Lab 5 Complete', 'You categorized all MFA factors correctly!', 'success'), 300);
+                        }
+                    } else {
+                        if(isLab1) {
+                            document.getElementById('lab1-feedback').innerText = "Incorrect. Try again.";
+                            document.getElementById('lab1-feedback').className = "text-center font-bold mt-2 text-sm h-5 text-red-600";
+                        } else if (isLab5) {
+                            document.getElementById('lab5-feedback').innerText = "Incorrect category.";
+                            document.getElementById('lab5-feedback').className = "text-center font-bold mt-2 text-sm h-5 text-red-600";
+                        }
+                    }
+                }
+            });
+        });
+
+        // --- LAB 2: AAA Flow Sequence ---
+        let lab2Sequence = 1;
+        function checkLab2(btn) {
+            const step = parseInt(btn.dataset.step);
+            if(step === lab2Sequence) {
+                btn.classList.remove('bg-slate-100', 'hover:bg-indigo-100');
+                btn.classList.add('bg-emerald-500', 'text-white', 'border-emerald-600');
+                btn.disabled = true;
+                
+                if(lab2Sequence === 1) document.getElementById('lab2-feedback').innerText = "Identity Confirmed. Step 2: Check permissions.";
+                if(lab2Sequence === 2) document.getElementById('lab2-feedback').innerText = "Access Granted. Step 3: Record the action.";
+                if(lab2Sequence === 3) {
+                    document.getElementById('lab2-feedback').innerText = "Accounting Log Saved. AAA Flow Complete!";
+                    document.getElementById('lab2-feedback').className = "font-bold text-sm h-5 text-emerald-600";
+                    setTimeout(() => showModal('Lab 2 Complete', 'You executed the correct logical flow of the AAA framework.', 'success'), 400);
+                }
+                lab2Sequence++;
+            } else {
+                document.getElementById('lab2-feedback').innerText = "Error: Invalid AAA Sequence.";
+                document.getElementById('lab2-feedback').className = "font-bold text-sm h-5 text-red-600";
+            }
+        }
+        function resetLab2() {
+            lab2Sequence = 1;
+            document.querySelectorAll('.lab2-btn').forEach(btn => {
+                btn.classList.remove('bg-emerald-500', 'text-white', 'border-emerald-600');
+                btn.classList.add('bg-slate-100', 'hover:bg-indigo-100');
+                btn.disabled = false;
+            });
+            document.getElementById('lab2-feedback').innerText = "Step 1: Wait";
+            document.getElementById('lab2-feedback').className = "font-bold text-sm h-5 text-indigo-600";
+        }
+
+        // --- LAB 3: Password Cracker ---
+        function runLab3() {
+            const input = document.getElementById('lab3-input').value;
+            const term = document.getElementById('lab3-terminal');
+            if(!input) return;
+            
+            term.innerHTML = "> Analyzing string: " + "*".repeat(input.length) + "<br>> Beginning brute-force permutations...<br>";
+            
+            // Simple simulation based on length
+            const timeToCrack = input.length <= 5 ? 1000 : (input.length * 400);
+            
+            setTimeout(() => {
+                term.innerHTML += `<span class="text-red-500">> SUCCESS! Password cracked in ${timeToCrack}ms.<br>> Credential compromised: ${input}</span>`;
+                setTimeout(() => {
+                    showModal('Lab 3 Complete', `Because it was Single-Factor Authentication (SFA), the hacker now has full access to the account just by guessing the password.`, 'warning');
+                }, 800);
+            }, timeToCrack);
+        }
+
+        // --- LAB 4: SFA Selector ---
+        const lab4cbs = document.querySelectorAll('.lab4-cb');
+        lab4cbs.forEach(cb => {
+            cb.addEventListener('change', function() {
+                // Keep UI clean, if they select both, it's MFA. We want them to simulate SFA.
+            });
+        });
+
+        function checkLab4() {
+            let checkedCount = 0;
+            lab4cbs.forEach(cb => { if(cb.checked) checkedCount++; });
+            
+            if(checkedCount === 1) {
+                document.getElementById('lab4-feedback').innerText = "Phone Unlocked via SFA (1 Factor).";
+                document.getElementById('lab4-feedback').className = "text-center font-bold mt-4 text-sm h-5 text-emerald-600";
+                setTimeout(() => showModal('Lab 4 Complete', 'You used exactly one factor to authenticate, simulating Single-Factor Authentication.', 'success'), 300);
+            } else if (checkedCount > 1) {
+                document.getElementById('lab4-feedback').innerText = "Error: Using 2 factors simulates MFA, not SFA. Deselect one.";
+                document.getElementById('lab4-feedback').className = "text-center font-bold mt-4 text-sm h-5 text-amber-600";
+            } else {
+                document.getElementById('lab4-feedback').innerText = "Error: You must provide at least one factor.";
+                document.getElementById('lab4-feedback').className = "text-center font-bold mt-4 text-sm h-5 text-red-600";
+            }
+        }
+
+        // --- LAB 5: MFA Categories (Logic handled in Lab 1 drop zone code) ---
+        let lab5Count = 0;
+        document.querySelectorAll('#lab5-items .io-item').forEach(item => {
+            item.addEventListener('dragstart', function() {
+                draggedAAAItem = this;
+                setTimeout(() => this.classList.add('opacity-50'), 0);
+            });
+            item.addEventListener('dragend', function() {
+                setTimeout(() => this.classList.remove('opacity-50'), 0);
+                draggedAAAItem = null;
+            });
+        });
+
+        // --- LAB 6: MFA Vault ---
+        function checkLab6() {
+            const v1 = document.getElementById('lab6-f1').value;
+            const v2 = document.getElementById('lab6-f2').value;
+            const v3 = document.getElementById('lab6-f3').value;
+            
+            if(!v1 || !v2 || !v3) {
+                document.getElementById('lab6-feedback').innerText = "Select all 3 factors.";
+                document.getElementById('lab6-feedback').className = "text-center font-bold mt-2 text-sm h-5 text-red-600";
+                return;
+            }
+            
+            // Check if all 3 categories are different
+            if(v1 !== v2 && v1 !== v3 && v2 !== v3) {
+                document.getElementById('lab6-feedback').innerText = "Vault Unlocked! 3 distinct factors used.";
+                document.getElementById('lab6-feedback').className = "text-center font-bold mt-2 text-sm h-5 text-emerald-600";
+                setTimeout(() => showModal('Lab 6 Complete', 'Outstanding! You correctly utilized Knowledge, Possession, and Inherence factors to create an unbreakable MFA chain.', 'success'), 400);
+            } else {
+                document.getElementById('lab6-feedback').innerText = "Access Denied. You used factors from the same category. MFA requires distinct categories.";
+                document.getElementById('lab6-feedback').className = "text-center font-bold mt-2 text-sm h-5 text-red-600";
+            }
+        }
+
+        // --- LAB 7: SSO Dashboard ---
+        function runLab7() {
+            const btn = document.getElementById('lab7-login');
+            btn.innerText = "Authenticating...";
+            btn.classList.add('opacity-50');
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                btn.innerText = "SSO Token Generated";
+                btn.classList.remove('bg-slate-800', 'opacity-50');
+                btn.classList.add('bg-emerald-600', 'border-emerald-400');
+                
+                // Unlock apps sequentially
+                setTimeout(() => {
+                    document.getElementById('app1').classList.replace('bg-slate-200', 'bg-sky-100');
+                    document.getElementById('app1').classList.replace('text-slate-400', 'text-sky-600');
+                    document.getElementById('app1').classList.replace('border-slate-300', 'border-sky-400');
+                }, 500);
+                setTimeout(() => {
+                    document.getElementById('app2').classList.replace('bg-slate-200', 'bg-sky-100');
+                    document.getElementById('app2').classList.replace('text-slate-400', 'text-sky-600');
+                    document.getElementById('app2').classList.replace('border-slate-300', 'border-sky-400');
+                }, 1000);
+                setTimeout(() => {
+                    document.getElementById('app3').classList.replace('bg-slate-200', 'bg-sky-100');
+                    document.getElementById('app3').classList.replace('text-slate-400', 'text-sky-600');
+                    document.getElementById('app3').classList.replace('border-slate-300', 'border-sky-400');
+                    setTimeout(() => showModal('Lab 7 Complete', 'You logged in once, and the SSO token granted you immediate access to all connected apps without asking for passwords again.', 'success'), 500);
+                }, 1500);
+                
+            }, 800);
+        }
+
+        // --- LAB 8: SSO Risk Mitigation ---
+        let lab8Timer;
+        let lab8Running = false;
+        function startLab8() {
+            if(lab8Running) return;
+            lab8Running = true;
+            document.getElementById('lab8-start-btn').disabled = true;
+            document.getElementById('lab8-stop-btn').disabled = false;
+            document.getElementById('lab8-feedback').innerText = "Hacker is using the Master Token! Revoke it!";
+            document.getElementById('lab8-feedback').className = "text-center font-bold mt-2 text-sm h-5 text-red-600 animate-pulse";
+            
+            const bar = document.getElementById('lab8-bar');
+            bar.classList.add('animate-fill');
+            
+            // Wait for animation end (4s)
+            lab8Timer = setTimeout(() => {
+                lab8Running = false;
+                document.getElementById('lab8-stop-btn').disabled = true;
+                document.getElementById('lab8-feedback').innerText = "SYSTEM COMPROMISED. The hacker accessed everything.";
+                document.getElementById('lab8-feedback').classList.remove('animate-pulse');
+            }, 4000);
+        }
+        
+        function stopLab8() {
+            if(!lab8Running) return;
+            clearTimeout(lab8Timer);
+            lab8Running = false;
+            
+            const bar = document.getElementById('lab8-bar');
+            bar.style.animationPlayState = 'paused'; // Stop animation
+            
+            document.getElementById('lab8-stop-btn').disabled = true;
+            document.getElementById('lab8-feedback').innerText = "SSO Token Revoked. Intruder stopped.";
+            document.getElementById('lab8-feedback').className = "text-center font-bold mt-2 text-sm h-5 text-emerald-600";
+            
+            setTimeout(() => showModal('Lab 8 Complete', 'By revoking the central SSO token, you instantly severed the hacker\'s access to all interconnected apps.', 'success'), 500);
+        }
+
+
+        // --- QUIZ LOGIC (20 Questions) ---
+        const quizData = [
+            // Provided from PDF
+            { q: "Which of the following is the process of proving who you are?", options: ["Authorization", "Authentication", "Accounting", "Access"], answer: 1 },
+            { q: "Which login method is single-factor authentication (SFA)?", options: ["Entering only a password", "Entering a password and a code sent to a phone", "Entering a password and a fingerprint scan", "Entering a password and a smart card"], answer: 0 },
+            { q: "Which method combines two or more different categories of authentication?", options: ["Single sign-on (SSO)", "Authorization", "Multi-factor authentication (MFA)", "Single-factor authentication (SFA)"], answer: 2 },
+            { q: "Why is single-factor authentication (SFA) considered less secure than MFA?", options: ["It requires more devices", "It takes more time to log in", "It removes the need for passwords", "It uses only one category of authentication"], answer: 3 },
+            { q: "Which of the following best represents single sign-on (SSO)?", options: ["Using a fingerprint and a PIN together", "Logging in once to access multiple apps", "Resetting a forgotten password", "Logging into many systems with the same password each time"], answer: 1 },
+            { q: "Which is a benefit of using MFA instead of SFA?", options: ["It is faster", "It requires fewer devices", "It is more secure", "It removes the need for usernames"], answer: 2 },
+            { q: "Which of the following is 'something you know' in authentication factors?", options: ["Face scan", "Fingerprint", "Smart card", "Password"], answer: 3 },
+            { q: "Which of the following is 'something you have' in authentication factors?", options: ["Security token", "Password", "Fingerprint", "Date of birth"], answer: 0 },
+            { q: "Which of the following is 'something you are' in authentication factors?", options: ["PIN code", "Password", "Security question", "Fingerprint"], answer: 3 },
+            { q: "A company requires employees to log in using a password, a smart card, and a fingerprint. What type of authentication is this?", options: ["SFA", "MFA", "SSO", "Authorization"], answer: 1 },
+            // Generated from Briefing
+            { q: "In the AAA Triad, which function dictates exactly what a user is permitted to do once they are logged in?", options: ["Authentication", "Authorization", "Accounting", "Administration"], answer: 1 },
+            { q: "What cybersecurity concept ensures that a user cannot deny they performed a specific digital action?", options: ["Federation", "Single Sign-On", "Non-repudiation", "Biometrics"], answer: 2 },
+            { q: "Which of the following is true regarding how modern systems handle SFA passwords?", options: ["They store them as plain text.", "They hash the text to generate a complex string.", "They encrypt them using biometric data.", "They send them to the user via SMS."], answer: 1 },
+            { q: "If a user unlocks a tablet using ONLY a facial scan, what type of authentication is this?", options: ["MFA", "SSO", "SFA", "Zero-Factor"], answer: 2 },
+            { q: "Why is entering a password and answering a security question NOT considered true Multi-Factor Authentication?", options: ["They are both possession factors.", "They are both from the 'Something you know' category.", "Security questions are too easy.", "Passwords are obsolete."], answer: 1 },
+            { q: "Which of the following represents an 'Inherence' factor?", options: ["A 6-digit SMS code", "A YubiKey USB stick", "A voice-print analysis", "A mother's maiden name"], answer: 2 },
+            { q: "What is the primary risk associated with Single Sign-On (SSO)?", options: ["It requires users to remember too many passwords.", "It slows down network traffic considerably.", "It acts as a 'Master Key'—if compromised, the attacker accesses everything.", "It cannot be combined with MFA."], answer: 2 },
+            { q: "To mitigate the severe risks of SSO, what is the industry standard practice?", options: ["Combine SSO with strong Multi-Factor Authentication (MFA).", "Only allow SSO to use weak passwords.", "Disable accounting logs to save space.", "Use only SFA on the Identity Provider."], answer: 0 },
+            { q: "In the context of SSO, what entity generates a secure digital token and passes it to the various apps?", options: ["The Service Provider (SP)", "The Identity Provider (IdP)", "The Access Control List (ACL)", "The File System"], answer: 1 },
+            { q: "Which pillar of the AAA Triad utilizes logs and audit trails to track a user's behavior during a session?", options: ["Authentication", "Authorization", "Accounting", "Automation"], answer: 2 }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        
+        quizData.forEach((item, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = "bg-slate-50 p-6 rounded-lg border border-slate-200 transition-all";
+            qDiv.id = `q-block-${index}`;
+            
+            const qTitle = document.createElement('h3');
+            qTitle.className = "font-bold text-lg text-slate-800 mb-4";
+            qTitle.innerText = `${index + 1}. ${item.q}`;
+            qDiv.appendChild(qTitle);
+            
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = "space-y-3";
+            
+            item.options.forEach((opt, optIndex) => {
+                const label = document.createElement('label');
+                label.className = "flex items-center space-x-3 p-3 rounded bg-white border border-slate-300 hover:bg-sky-50 cursor-pointer transition";
+                
+                const radio = document.createElement('input');
+                radio.type = "radio";
+                radio.name = `q${index}`;
+                radio.value = optIndex;
+                radio.className = "form-radio h-5 w-5 text-sky-600";
+                
+                const span = document.createElement('span');
+                span.className = "text-slate-700";
+                span.innerText = opt;
+                
+                label.appendChild(radio);
+                label.appendChild(span);
+                optionsDiv.appendChild(label);
+            });
+            
+            qDiv.appendChild(optionsDiv);
+            quizContainer.appendChild(qDiv);
+        });
+
+        function gradeQuiz() {
+            let score = 0;
+            let allAnswered = true;
+
+            for(let i = 0; i < quizData.length; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if(selected) {
+                    if(parseInt(selected.value) === quizData[i].answer) {
+                        score++;
+                    }
+                } else {
+                    allAnswered = false;
+                }
+            }
+            
+            if(!allAnswered) {
+                showModal('Incomplete Quiz', 'Please answer all 20 questions before submitting.', 'warning');
+                return;
+            }
+            
+            const percentage = (score / quizData.length) * 100;
+            
+            if(score >= 18) { 
+                const navGame = document.getElementById('nav-game');
+                const navGameMobile = document.getElementById('nav-game-mobile');
+                
+                navGame.classList.remove('text-gray-400', 'cursor-not-allowed');
+                navGame.classList.add('text-white', 'hover:bg-sky-600');
+                navGame.disabled = false;
+                navGame.innerHTML = '<i class="fa-solid fa-gamepad mr-1"></i>Game';
+                
+                navGameMobile.classList.remove('text-gray-400', 'cursor-not-allowed');
+                navGameMobile.classList.add('text-white', 'hover:bg-sky-600');
+                navGameMobile.disabled = false;
+                navGameMobile.innerHTML = '<i class="fa-solid fa-gamepad"></i> Game';
+
+                document.getElementById('nav-cert').classList.remove('hidden');
+                document.getElementById('nav-cert-mobile').classList.remove('hidden');
+                
+                document.getElementById('proceed-game-btn').classList.remove('hidden');
+                document.getElementById('submit-quiz-btn').classList.add('hidden');
+
+                showModal('Outstanding!', `You scored ${score}/20 (${percentage}%). You have unlocked your Certificate of Mastery AND the Retro Game!`, 'success');
+            } else {
+                quizData.forEach((_, i) => {
+                    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                    if(selected) selected.checked = false;
+                });
+                showModal('Keep Trying!', `You scored ${score}/20 (${percentage}%). You need 90% (18/20) to earn the certificate. Your answers have been reset so you can try again.`, 'error');
+                document.getElementById('quiz-section').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // --- RETRO GAME LOGIC: Server Climber (Platformer) ---
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let score = 0;
+        let lives = 3;
+        let gameRunning = false;
+        let animationId;
+        
+        let keys = { ArrowLeft: false, ArrowRight: false, Space: false };
+        
+        // Mobile Controls
+        document.getElementById('btn-left').addEventListener('touchstart', (e)=>{ e.preventDefault(); keys.ArrowLeft=true; });
+        document.getElementById('btn-left').addEventListener('touchend', (e)=>{ e.preventDefault(); keys.ArrowLeft=false; });
+        document.getElementById('btn-right').addEventListener('touchstart', (e)=>{ e.preventDefault(); keys.ArrowRight=true; });
+        document.getElementById('btn-right').addEventListener('touchend', (e)=>{ e.preventDefault(); keys.ArrowRight=false; });
+        document.getElementById('btn-jump').addEventListener('touchstart', (e)=>{ e.preventDefault(); keys.Space=true; });
+        document.getElementById('btn-jump').addEventListener('touchend', (e)=>{ e.preventDefault(); keys.Space=false; });
+
+        document.addEventListener('keydown', e => {
+            if(e.code === 'ArrowLeft') keys.ArrowLeft = true;
+            if(e.code === 'ArrowRight') keys.ArrowRight = true;
+            if(e.code === 'Space') keys.Space = true;
+        });
+        document.addEventListener('keyup', e => {
+            if(e.code === 'ArrowLeft') keys.ArrowLeft = false;
+            if(e.code === 'ArrowRight') keys.ArrowRight = false;
+            if(e.code === 'Space') keys.Space = false;
+        });
+
+        const overlay = document.getElementById('game-overlay');
+        const startBtn = document.getElementById('start-game-btn');
+        startBtn.addEventListener('click', startGame);
+
+        let platforms = [
+            {x: 0, y: 400, w: 600, h: 20},
+            {x: 0, y: 320, w: 500, h: 20},
+            {x: 100, y: 240, w: 500, h: 20},
+            {x: 0, y: 160, w: 500, h: 20},
+            {x: 100, y: 80, w: 500, h: 20}
+        ];
+        
+        let player = {
+            x: 50, y: 350, w: 20, h: 20, vx: 0, vy: 0, speed: 4, jumpPower: -9, onGround: false
+        };
+        
+        let tokenGoal = { x: 50, y: 35, w: 25, h: 25 };
+        
+        let enemies = [];
+        let enemySpawnTimer = 0;
+        let enemyBaseSpeed = 2;
+
+        function spawnEnemy() {
+            enemies.push({
+                x: 550, y: 50, radius: 10, vx: -enemyBaseSpeed, vy: 0
+            });
+        }
+
+        function resetPlayer() {
+            player.x = 50;
+            player.y = 350;
+            player.vx = 0;
+            player.vy = 0;
+        }
+
+        function resetGame() {
+            resetPlayer();
+            enemies = [];
+            score = 0;
+            lives = 3;
+            enemyBaseSpeed = 2;
+            document.getElementById('game-score').innerText = score;
+            document.getElementById('game-lives').innerText = lives;
+            spawnEnemy();
+        }
+
+        function startGame() {
+            overlay.classList.add('hidden');
+            if(!gameRunning) {
+                resetGame();
+                gameRunning = true;
+                gameLoop();
+            }
+        }
+        
+        // AABB Collision
+        function rectIntersect(r1, r2) {
+            return !(r2.x > r1.x + r1.w || 
+                     r2.x + r2.w < r1.x || 
+                     r2.y > r1.y + r1.h ||
+                     r2.y + r2.h < r1.y);
+        }
+
+        function gameLoop() {
+            if(!gameRunning) return;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw Background Server Grid
+            ctx.strokeStyle = '#1e293b';
+            ctx.lineWidth = 2;
+            for(let i=0; i<600; i+=40) { ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i,450); ctx.stroke(); }
+            for(let i=0; i<450; i+=40) { ctx.beginPath(); ctx.moveTo(0,i); ctx.lineTo(600,i); ctx.stroke(); }
+
+            // Player Physics
+            if(keys.ArrowLeft) player.vx = -player.speed;
+            else if(keys.ArrowRight) player.vx = player.speed;
+            else player.vx = 0;
+            
+            if(keys.Space && player.onGround) {
+                player.vy = player.jumpPower;
+                player.onGround = false;
+                keys.Space = false; // Prevent holding jump
+            }
+            
+            player.vy += 0.4; // Gravity
+            
+            player.x += player.vx;
+            player.y += player.vy;
+            
+            // Screen boundaries
+            if(player.x < 0) player.x = 0;
+            if(player.x + player.w > canvas.width) player.x = canvas.width - player.w;
+            if(player.y > canvas.height) loseLife(); // Fell off
+
+            // Platform Collision (Player)
+            player.onGround = false;
+            for(let p of platforms) {
+                // Falling down onto platform
+                if(player.vy > 0 && 
+                   player.x + player.w > p.x && 
+                   player.x < p.x + p.w && 
+                   player.y + player.h >= p.y && 
+                   player.y + player.h <= p.y + p.h + 10) { // +10 tolerance
+                    
+                    player.y = p.y - player.h;
+                    player.vy = 0;
+                    player.onGround = true;
+                }
+            }
+
+            // Draw Platforms (Server Racks)
+            ctx.fillStyle = '#475569';
+            for(let p of platforms) {
+                ctx.fillRect(p.x, p.y, p.w, p.h);
+                // Server lights
+                ctx.fillStyle = '#10b981';
+                for(let lx = p.x + 10; lx < p.x + p.w; lx += 30) {
+                    if(Math.random() > 0.1) ctx.fillRect(lx, p.y + 5, 4, 4);
+                }
+                ctx.fillStyle = '#475569'; // Reset
+            }
+
+            // Enemies Logic
+            enemySpawnTimer++;
+            if(enemySpawnTimer > 180 - (score/10)) { // Spawn faster as score increases
+                spawnEnemy();
+                enemySpawnTimer = 0;
+            }
+
+            for(let i = enemies.length - 1; i >= 0; i--) {
+                let e = enemies[i];
+                e.vy += 0.4; // Gravity
+                
+                e.x += e.vx;
+                e.y += e.vy;
+                
+                let onPlat = false;
+                for(let p of platforms) {
+                    if(e.vy > 0 && e.x + e.radius > p.x && e.x - e.radius < p.x + p.w && e.y + e.radius >= p.y && e.y + e.radius <= p.y + p.h) {
+                        e.y = p.y - e.radius;
+                        e.vy = 0;
+                        onPlat = true;
+                    }
+                }
+                
+                // If hits edge while on platform, reverse. (Except if falling)
+                if(e.x - e.radius < 0 && e.vx < 0) e.vx *= -1;
+                if(e.x + e.radius > canvas.width && e.vx > 0) e.vx *= -1;
+                
+                // Simple edge detection to fall off ledges
+                if(onPlat) {
+                    let platBelow = false;
+                    for(let p of platforms) {
+                        if(e.x >= p.x && e.x <= p.x + p.w && e.y + e.radius === p.y) platBelow = true;
+                    }
+                    if(!platBelow) {
+                        // Falling, when it lands it should switch directions to follow the zig zag
+                        e.vx *= -1; 
+                        e.x += e.vx * 3; // Push slightly to avoid getting stuck
+                    }
+                }
+
+                // Draw Enemy (Malware)
+                ctx.beginPath();
+                ctx.arc(e.x, e.y, e.radius, 0, Math.PI*2);
+                ctx.fillStyle = '#ef4444';
+                ctx.fill();
+                ctx.strokeStyle = '#7f1d1d';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Collision with player
+                let pRect = {x: player.x, y: player.y, w: player.w, h: player.h};
+                let eRect = {x: e.x - e.radius, y: e.y - e.radius, w: e.radius*2, h: e.radius*2};
+                
+                if(rectIntersect(pRect, eRect)) {
+                    loseLife();
+                }
+                
+                // Remove if off screen bottom
+                if(e.y > canvas.height + 20) {
+                    enemies.splice(i, 1);
+                }
+            }
+
+            // Draw Token (Goal)
+            ctx.fillStyle = '#fbbf24';
+            ctx.shadowColor = '#f59e0b';
+            ctx.shadowBlur = 15;
+            ctx.fillRect(tokenGoal.x, tokenGoal.y, tokenGoal.w, tokenGoal.h);
+            ctx.shadowBlur = 0; // Reset
+            ctx.fillStyle = '#78350f';
+            ctx.font = '10px monospace';
+            ctx.fillText('MFA', tokenGoal.x + 2, tokenGoal.y + 15);
+
+            // Win Condition Check
+            if(rectIntersect(player, tokenGoal)) {
+                score += 100;
+                document.getElementById('game-score').innerText = score;
+                enemyBaseSpeed += 0.2; // increase difficulty
+                resetPlayer();
+            }
+
+            // Draw Player
+            ctx.fillStyle = '#38bdf8';
+            ctx.fillRect(player.x, player.y, player.w, player.h);
+            ctx.strokeStyle = '#0284c7';
+            ctx.strokeRect(player.x, player.y, player.w, player.h);
+
+            animationId = requestAnimationFrame(gameLoop);
+        }
+
+        function loseLife() {
+            lives--;
+            document.getElementById('game-lives').innerText = lives;
+            
+            // Visual red flash
+            ctx.fillStyle = "rgba(255,0,0,0.5)";
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            
+            if(lives <= 0) {
+                gameOver();
+            } else {
+                resetPlayer();
+                // Clear enemies near spawn
+                enemies = enemies.filter(e => e.y < 300);
+            }
+        }
+
+        function gameOver() {
+            gameRunning = false;
+            cancelAnimationFrame(animationId);
+            overlay.classList.remove('hidden');
+            startBtn.innerText = "System Breach! Restart";
+            startBtn.classList.replace('bg-sky-600', 'bg-red-700');
+            startBtn.classList.replace('border-sky-800', 'border-red-900');
+        }
+
+        // --- CERTIFICATE LOGIC ---
+        function updateCertName() {
+            let name = document.getElementById('student-name-input').value.trim();
+            if(name) {
+                if (name.includes(' ')) {
+                    name = name.split(' ')[0];
+                    document.getElementById('student-name-input').value = name;
+                    showModal('Notice', 'Only your first name has been applied to the certificate.', 'info');
+                }
+                document.getElementById('cert-student-name').innerText = name;
+            } else {
+                showModal('Wait!', 'Please enter your first name to update the certificate.', 'warning');
+            }
+        }
+
+        const today = new Date();
+        document.getElementById('cert-date').innerText = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        function downloadCert() {
+            const certEl = document.getElementById('certificate');
+            const name = document.getElementById('cert-student-name').innerText;
+            let filename = 'Certificate.png';
+            if (name && name !== 'Student') {
+                filename = `${name.replace(/\s+/g, '_')}_Certificate.png`;
+            }
+
+            const originalTransform = certEl.style.transform;
+            certEl.style.transform = 'none';
+
+            const btn = document.getElementById('download-btn');
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Generating...';
+            btn.disabled = true;
+
+            html2canvas(certEl, { 
+                scale: 2, 
+                useCORS: true,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+            }).catch(err => {
+                console.error(err);
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                showModal('Error', 'Failed to generate image. Try using a desktop browser.', 'error');
+            });
+        }
+
+        window.onload = () => {
+            // Draw static background for game preview
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle = '#334155';
+            ctx.font = '20px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('SERVER CONNECTION ESTABLISHED', canvas.width/2, canvas.height/2);
+        }
+    </script>
+</body>
+</html>
+```eof

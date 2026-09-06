@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 02 Section 1.2.3 Mastery - Octal</title>
+    
+    <!-- Load Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load HTML2Canvas for Certificate Download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- Load Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Qwitcher+Grypen:wght@700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; 
+            color: #1e293b;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        /* Interactive Elements CSS */
+        .cyber-panel { background: #ffffff; border: 1px solid #e2e8f0; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); border-radius: 12px; }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #e2e8f0; }
+        ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #2563eb; }
+
+        /* Retro Game Canvas */
+        #game-canvas {
+            background-color: #0f172a;
+            border: 4px solid #475569;
+            border-radius: 8px;
+            box-shadow: 0 0 25px rgba(59, 130, 246, 0.4);
+            max-width: 100%;
+            height: auto;
+            touch-action: none;
+            image-rendering: pixelated;
+        }
+
+        /* --- CERTIFICATE STYLES --- */
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .font-body { font-family: 'Lora', serif; }
+        .font-script { font-family: 'Qwitcher Grypen', cursive; }
+        .font-mono { font-family: 'Space Mono', monospace; }
+        
+        .cert-preview-container {
+            width: 100%;
+            overflow: auto;
+            display: flex;
+            justify-content: center;
+            background: #e2e8f0;
+            padding: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        #certificate {
+            width: 1056px !important;
+            height: 816px !important;
+            flex-shrink: 0;
+            background-color: #ffffff;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1056" height="816"><polygon points="0,0 250,0 0,650" fill="%2360a5fa"/><polygon points="0,0 350,0 0,900" fill="%232563eb" opacity="0.8"/><polygon points="0,0 120,0 0,300" fill="%2360a5fa"/><polygon points="0,450 650,816 0,816" fill="%2360a5fa"/><polygon points="0,550 450,816 0,816" fill="%232563eb" opacity="0.8"/><polygon points="800,0 1056,0 1056,256" fill="%23f8fafc"/><polygon points="1056,500 1056,816 750,816" fill="%23f8fafc"/></svg>');
+            background-size: cover;
+            border: 4px solid #cbd5e1;
+        }
+
+        .blue-seal {
+            position: absolute;
+            left: 110px;
+            top: 350px;
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1e3a8a, #60a5fa, #1d4ed8, #93c5fd, #1e40af, #60a5fa);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3), inset 0 0 15px rgba(255,255,255,0.7), inset 0 0 25px rgba(30,58,138,0.9);
+            z-index: 10;
+        }
+        .blue-seal::before {
+            content: '';
+            position: absolute;
+            top: -4px; bottom: -4px; left: -4px; right: -4px;
+            border-radius: 50%;
+            border: 6px dashed #3b82f6;
+        }
+        .blue-seal-inner-1 {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 2px solid rgba(30, 58, 138, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.2), 0 2px 5px rgba(255,255,255,0.7);
+            z-index: 1;
+        }
+        .blue-seal-inner-2 {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: radial-gradient(circle, #93c5fd, #2563eb);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            padding: 10px;
+        }
+        .embossed-text {
+            color: #1e3a8a;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2);
+            font-family: 'Playfair Display', serif;
+            font-weight: 800;
+            line-height: 1.1;
+            text-transform: uppercase;
+        }
+        .embossed-text-large { font-size: 14px; letter-spacing: 1px; }
+        .embossed-text-small { font-size: 11px; letter-spacing: 2px; margin: 2px 0; }
+        .embossed-star { font-size: 12px; color: #1e3a8a; text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2); margin: 2px 0; }
+
+        @media (max-width: 1100px) {
+            #certificate { transform: scale(0.7); transform-origin: top left; margin-bottom: -240px; margin-right: -310px; }
+        }
+        @media (max-width: 768px) {
+            #certificate { transform: scale(0.4); transform-origin: top left; margin-bottom: -490px; margin-right: -630px; }
+        }
+        
+        /* Lab Specific Styles */
+        .toggle-btn { transition: all 0.2s; }
+        .toggle-btn.active { background-color: #3b82f6; color: white; border-color: #1d4ed8; }
+        .binary-switch { cursor: pointer; transition: background-color 0.2s; }
+        .binary-switch.on { background-color: #10b981; color: white; border-color: #059669; }
+        .binary-switch.off { background-color: #f3f4f6; color: #9ca3af; border-color: #d1d5db; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <nav class="bg-blue-800 text-white shadow-lg sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-network-wired text-2xl"></i>
+                    <span class="font-bold text-xl tracking-wider hidden sm:inline-block">Tech+ Unit 02 Section 1.2.3</span>
+                    <span class="font-bold text-xl tracking-wider sm:hidden">1.2.3</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-2">
+                        <button onclick="switchTab('briefing')" class="nav-btn bg-blue-900 px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition" id="nav-briefing"><i class="fa-solid fa-book-open mr-1"></i>Briefing</button>
+                        <button onclick="switchTab('activity')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition" id="nav-activity"><i class="fa-solid fa-flask mr-1"></i>Lab Activity</button>
+                        <button onclick="switchTab('quiz')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition" id="nav-quiz"><i class="fa-solid fa-clipboard-check mr-1"></i>Quiz</button>
+                        <button onclick="switchTab('game')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-blue-400 cursor-not-allowed transition" id="nav-game" disabled><i class="fa-solid fa-lock mr-1"></i>Game</button>
+                        <button onclick="switchTab('cert')" class="nav-btn hidden px-3 py-2 rounded-md text-sm font-medium text-yellow-300 hover:bg-blue-700 transition" id="nav-cert"><i class="fa-solid fa-award mr-1"></i>Certificate</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Nav -->
+        <div class="md:hidden flex flex-wrap justify-center gap-2 py-2 px-2 bg-blue-900">
+            <button onclick="switchTab('briefing')" class="nav-btn-mobile px-3 py-1 text-sm rounded bg-blue-950" id="nav-briefing-mobile">Briefing</button>
+            <button onclick="switchTab('activity')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-activity-mobile">Lab</button>
+            <button onclick="switchTab('quiz')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-quiz-mobile">Quiz</button>
+            <button onclick="switchTab('game')" class="nav-btn-mobile px-3 py-1 text-sm rounded text-blue-400 cursor-not-allowed" id="nav-game-mobile" disabled><i class="fa-solid fa-lock"></i></button>
+            <button onclick="switchTab('cert')" id="nav-cert-mobile" class="hidden px-2 py-1 text-sm text-yellow-300 rounded"><i class="fa-solid fa-award"></i></button>
+        </div>
+    </nav>
+
+    <main class="flex-grow w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <!-- BRIEFING SECTION -->
+        <div id="briefing-section" class="tab-content active no-print">
+            <div class="text-center mb-10">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">Understanding the Octal System</h1>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">Discover how the base-8 numbering system functions and why it remains a critical shorthand tool for managing file permissions in Linux/UNIX environments.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- Tile 1: Octal Conversions -->
+                <div class="cyber-panel overflow-hidden flex flex-col border-t-4 border-indigo-500">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-indigo-700"><i class="fa-solid fa-calculator mr-2"></i>Octal Number System & Conversions</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Base-8 Concept:</strong> A positional numbering system relying entirely on just eight digits (0 through 7).</li>
+                            <li><strong>Binary Shorthand:</strong> Every single octal digit perfectly maps to exactly three binary bits.</li>
+                            <li><strong>Positional Values:</strong> Calculations are based on powers of 8 (1, 8, 64, 512, etc.) rather than 10.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 border-t border-gray-200 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('octal-details')" class="flex-1 bg-white hover:bg-gray-100 border border-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2 text-indigo-500"></i> Details</button>
+                            <button onclick="openBriefing('octal-usecase')" class="flex-1 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 text-indigo-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-500 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 2: Linux File Permissions -->
+                <div class="cyber-panel overflow-hidden flex flex-col border-t-4 border-blue-500">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-blue-700"><i class="fa-brands fa-linux mr-2"></i>Octal in Linux File Permissions</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>User Categories:</strong> Permissions are assigned to the Owner, the Group, and Others.</li>
+                            <li><strong>Access Types:</strong> Users can be granted Read (4), Write (2), and Execute (1) rights.</li>
+                            <li><strong>Security Configuration:</strong> Using commands like <code>chmod 755</code> applies rapid, precise security configurations using octal arithmetic.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-gray-50 border-t border-gray-200 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('linux-details')" class="flex-1 bg-white hover:bg-gray-100 border border-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2 text-blue-500"></i> Details</button>
+                            <button onclick="openBriefing('linux-usecase')" class="flex-1 bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-500 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 flex justify-center">
+                <button onclick="switchTab('activity')" class="bg-blue-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-blue-500 shadow-lg transition transform hover:scale-105">Proceed to Lab Activities <i class="fa-solid fa-arrow-right ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- LAB ACTIVITY SECTION -->
+        <div id="activity-section" class="tab-content no-print">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Interactive Lab Activities</h1>
+                <p class="text-gray-600">Apply your knowledge of the octal numbering system and Linux file permissions.</p>
+            </div>
+
+            <!-- Lab 1: Octal to Decimal Factory -->
+            <div class="cyber-panel p-6 mb-8">
+                <h2 class="text-xl font-bold mb-4 text-indigo-700"><i class="fa-solid fa-industry mr-2"></i>Lab 1: Octal Conversion Factory</h2>
+                <p class="text-sm text-gray-600 mb-4">You are analyzing a data stream that provided the octal number <strong class="text-lg">157<sub>8</sub></strong>. Calculate its decimal equivalent by filling in the correct multiplier digits (0-7) for each positional value block.</p>
+                
+                <div class="bg-slate-100 p-6 rounded-lg border border-slate-300">
+                    <div class="flex flex-col md:flex-row items-center justify-center gap-4 text-lg font-mono">
+                        <div class="text-center">
+                            <input type="number" id="lab1-64" min="0" max="7" class="w-16 text-center border-2 border-indigo-300 rounded p-2 text-xl font-bold" placeholder="0">
+                            <div class="mt-2 text-sm text-gray-500">× 64 (8²)</div>
+                        </div>
+                        <div class="text-2xl text-gray-400">+</div>
+                        <div class="text-center">
+                            <input type="number" id="lab1-8" min="0" max="7" class="w-16 text-center border-2 border-indigo-300 rounded p-2 text-xl font-bold" placeholder="0">
+                            <div class="mt-2 text-sm text-gray-500">× 8 (8¹)</div>
+                        </div>
+                        <div class="text-2xl text-gray-400">+</div>
+                        <div class="text-center">
+                            <input type="number" id="lab1-1" min="0" max="7" class="w-16 text-center border-2 border-indigo-300 rounded p-2 text-xl font-bold" placeholder="0">
+                            <div class="mt-2 text-sm text-gray-500">× 1 (8⁰)</div>
+                        </div>
+                        <div class="text-2xl text-gray-400">=</div>
+                        <div class="text-center bg-white border-2 border-dashed border-gray-400 rounded w-24 p-2 text-xl font-bold" id="lab1-result">
+                            ?
+                        </div>
+                    </div>
+                    <div class="mt-6 text-center">
+                        <button class="bg-indigo-600 text-white px-6 py-2 rounded font-bold hover:bg-indigo-700 transition" onclick="checkLab1()">Process Conversion</button>
+                    </div>
+                    <div id="lab1-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
+                </div>
+            </div>
+
+            <!-- Lab 2: Binary Vault Decoder -->
+            <div class="cyber-panel p-6 mb-8">
+                <h2 class="text-xl font-bold mb-4 text-purple-700"><i class="fa-solid fa-vault mr-2"></i>Lab 2: Binary Vault Decoder</h2>
+                <p class="text-sm text-gray-600 mb-4">The secure vault requires a 9-bit binary sequence. You intercepted the octal shorthand code: <strong class="text-lg text-purple-800">564<sub>8</sub></strong>. Toggle the switches below to convert the octal code into binary and unlock the vault.</p>
+                
+                <div class="bg-slate-800 p-6 rounded-lg text-white">
+                    <div class="flex flex-col md:flex-row justify-center gap-8 mb-6">
+                        <!-- Octal 5 -->
+                        <div class="text-center">
+                            <div class="text-xl font-bold text-purple-400 mb-2">Octal: 5</div>
+                            <div class="flex gap-2">
+                                <button class="binary-switch off w-12 h-12 rounded border-2 text-xl font-bold font-mono" onclick="toggleBinary(this)">0</button>
+                                <button class="binary-switch off w-12 h-12 rounded border-2 text-xl font-bold font-mono" onclick="toggleBinary(this)">0</button>
+                                <button class="binary-switch off w-12 h-12 rounded border-2 text-xl font-bold font-mono" onclick="toggleBinary(this)">0</button>
+                            </div>
+                        </div>
+                        <!-- Octal 6 -->
+                        <div class="text-center">
+                            <div class="text-xl font-bold text-purple-400 mb-2">Octal: 6</div>
+                            <div class="flex gap-2">
+                                <button class="binary-switch off w-12 h-12 rounded border-2 text-xl font-bold font-mono" onclick="toggleBinary(this)">0</button>
+                                <button class="binary-switch off w-12 h-12 rounded border-2 text-xl font-bold font-mono" onclick="toggleBinary(this)">0</button>
+                                <button class="binary-switch off w-12 h-12 rounded border-2 text-xl font-bold font-mono" onclick="toggleBinary(this)">0</button>
+                            </div>
+                        </div>
+                        <!-- Octal 4 -->
+                        <div class="text-center">
+                            <div class="text-xl font-bold text-purple-400 mb-2">Octal: 4</div>
+                            <div class="flex gap-2">
+                                <button class="binary-switch off w-12 h-12 rounded border-2 text-xl font-bold font-mono" onclick="toggleBinary(this)">0</button>
+                                <button class="binary-switch off w-12 h-12 rounded border-2 text-xl font-bold font-mono" onclick="toggleBinary(this)">0</button>
+                                <button class="binary-switch off w-12 h-12 rounded border-2 text-xl font-bold font-mono" onclick="toggleBinary(this)">0</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <button class="bg-yellow-500 text-slate-900 px-8 py-3 rounded font-bold hover:bg-yellow-400 transition shadow-lg" onclick="checkLab2()"><i class="fa-solid fa-key mr-2"></i>Unlock Vault</button>
+                    </div>
+                    <div id="lab2-feedback" class="text-center font-bold mt-4 h-6 text-green-400"></div>
+                </div>
+            </div>
+            
+            <!-- Lab 3: Permission Matrix -->
+            <div class="cyber-panel p-6 mb-8">
+                <h2 class="text-xl font-bold mb-4 text-blue-700"><i class="fa-solid fa-table-cells mr-2"></i>Lab 3: File Permissions Matrix</h2>
+                <p class="text-sm text-gray-600 mb-4">Configure the interactive matrix to generate the specific octal permission: <strong class="text-lg bg-blue-100 px-2 rounded">751</strong>. Select the required Read, Write, and Execute checkboxes for each user category.</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6" id="perm-matrix">
+                    <!-- Owner -->
+                    <div class="border border-gray-300 rounded p-4 bg-gray-50">
+                        <h3 class="font-bold text-gray-800 border-b pb-2 mb-3">Owner (u)</h3>
+                        <div class="space-y-2">
+                            <label class="flex items-center space-x-2 cursor-pointer"><input type="checkbox" class="form-checkbox w-5 h-5 text-blue-600" data-val="4" onchange="updateMatrix()"> <span>Read (4)</span></label>
+                            <label class="flex items-center space-x-2 cursor-pointer"><input type="checkbox" class="form-checkbox w-5 h-5 text-blue-600" data-val="2" onchange="updateMatrix()"> <span>Write (2)</span></label>
+                            <label class="flex items-center space-x-2 cursor-pointer"><input type="checkbox" class="form-checkbox w-5 h-5 text-blue-600" data-val="1" onchange="updateMatrix()"> <span>Execute (1)</span></label>
+                        </div>
+                    </div>
+                    <!-- Group -->
+                    <div class="border border-gray-300 rounded p-4 bg-gray-50">
+                        <h3 class="font-bold text-gray-800 border-b pb-2 mb-3">Group (g)</h3>
+                        <div class="space-y-2">
+                            <label class="flex items-center space-x-2 cursor-pointer"><input type="checkbox" class="form-checkbox w-5 h-5 text-blue-600" data-val="4" onchange="updateMatrix()"> <span>Read (4)</span></label>
+                            <label class="flex items-center space-x-2 cursor-pointer"><input type="checkbox" class="form-checkbox w-5 h-5 text-blue-600" data-val="2" onchange="updateMatrix()"> <span>Write (2)</span></label>
+                            <label class="flex items-center space-x-2 cursor-pointer"><input type="checkbox" class="form-checkbox w-5 h-5 text-blue-600" data-val="1" onchange="updateMatrix()"> <span>Execute (1)</span></label>
+                        </div>
+                    </div>
+                    <!-- Other -->
+                    <div class="border border-gray-300 rounded p-4 bg-gray-50">
+                        <h3 class="font-bold text-gray-800 border-b pb-2 mb-3">Others (o)</h3>
+                        <div class="space-y-2">
+                            <label class="flex items-center space-x-2 cursor-pointer"><input type="checkbox" class="form-checkbox w-5 h-5 text-blue-600" data-val="4" onchange="updateMatrix()"> <span>Read (4)</span></label>
+                            <label class="flex items-center space-x-2 cursor-pointer"><input type="checkbox" class="form-checkbox w-5 h-5 text-blue-600" data-val="2" onchange="updateMatrix()"> <span>Write (2)</span></label>
+                            <label class="flex items-center space-x-2 cursor-pointer"><input type="checkbox" class="form-checkbox w-5 h-5 text-blue-600" data-val="1" onchange="updateMatrix()"> <span>Execute (1)</span></label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-center items-center gap-8 bg-blue-900 text-white p-4 rounded-lg font-mono text-xl mb-4">
+                    <div>Symbolic: <span id="sym-out" class="text-blue-300">---------</span></div>
+                    <div>Octal: <span id="oct-out" class="text-yellow-400 font-bold">000</span></div>
+                </div>
+                
+                <div class="text-center">
+                    <button class="bg-blue-600 text-white px-6 py-2 rounded font-bold hover:bg-blue-700" onclick="checkLab3()">Verify Configuration</button>
+                </div>
+                <div id="lab3-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
+            </div>
+
+            <!-- Lab 4: Cyber Defense / SysAdmin -->
+            <div class="cyber-panel p-6 mb-8">
+                <h2 class="text-xl font-bold mb-4 text-red-700"><i class="fa-solid fa-shield-halved mr-2"></i>Lab 4: SysAdmin Defense Mission</h2>
+                <p class="text-sm text-gray-600 mb-4">A malicious actor altered system files to expose sensitive data. Act as the Blue Team: select the correct octal permissions from the dropdowns to secure the files based on the required access policies.</p>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-100 border-b-2 border-gray-300">
+                                <th class="p-3">File Name</th>
+                                <th class="p-3">Security Policy Required</th>
+                                <th class="p-3">Current Permissions</th>
+                                <th class="p-3">New Octal Command</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b border-gray-200">
+                                <td class="p-3 font-mono text-sm">public_website.html</td>
+                                <td class="p-3 text-sm text-gray-600">Owner can edit/read. Group/Others can ONLY read.</td>
+                                <td class="p-3 font-mono text-red-600 font-bold">777 (-rwxrwxrwx)</td>
+                                <td class="p-3">
+                                    <select id="lab4-sel1" class="border border-gray-300 rounded p-1 w-24">
+                                        <option value="none">Select</option>
+                                        <option value="600">chmod 600</option>
+                                        <option value="644">chmod 644</option>
+                                        <option value="755">chmod 755</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr class="border-b border-gray-200">
+                                <td class="p-3 font-mono text-sm">server_passwords.txt</td>
+                                <td class="p-3 text-sm text-gray-600">Owner has full access (read/write). NO ONE else has access.</td>
+                                <td class="p-3 font-mono text-red-600 font-bold">644 (-rw-r--r--)</td>
+                                <td class="p-3">
+                                    <select id="lab4-sel2" class="border border-gray-300 rounded p-1 w-24">
+                                        <option value="none">Select</option>
+                                        <option value="000">chmod 000</option>
+                                        <option value="600">chmod 600</option>
+                                        <option value="755">chmod 755</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr class="border-b border-gray-200">
+                                <td class="p-3 font-mono text-sm">suspect_malware.sh</td>
+                                <td class="p-3 text-sm text-gray-600">Completely isolate file. NO ONE can read, write, or execute it.</td>
+                                <td class="p-3 font-mono text-red-600 font-bold">755 (-rwxr-xr-x)</td>
+                                <td class="p-3">
+                                    <select id="lab4-sel3" class="border border-gray-300 rounded p-1 w-24">
+                                        <option value="none">Select</option>
+                                        <option value="000">chmod 000</option>
+                                        <option value="644">chmod 644</option>
+                                        <option value="777">chmod 777</option>
+                                    </select>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="text-center mt-6">
+                    <button class="bg-red-600 text-white px-6 py-2 rounded font-bold hover:bg-red-700 transition" onclick="checkLab4()"><i class="fa-solid fa-hammer mr-2"></i>Execute Security Audit</button>
+                </div>
+                <div id="lab4-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
+            </div>
+
+            <div class="text-center mt-10">
+                <button onclick="switchTab('quiz')" class="bg-blue-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-blue-500 shadow-lg transition transform hover:scale-105">Take the Mastery Quiz <i class="fa-solid fa-clipboard-check ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- QUIZ SECTION -->
+        <div id="quiz-section" class="tab-content no-print">
+            <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-xl max-w-4xl mx-auto border border-gray-200">
+                <div class="text-center mb-8 border-b pb-4">
+                    <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Unit 02 Section 1.2.3 Mastery Quiz</h1>
+                    <p class="text-gray-600">Score 90% or higher (18/20) to earn your Certificate of Mastery and unlock the Retro Game!</p>
+                </div>
+
+                <div id="quiz-container" class="space-y-8">
+                    <!-- Questions injected via JS -->
+                </div>
+
+                <div class="mt-10 text-center border-t pt-6 flex flex-col md:flex-row justify-center items-center gap-4">
+                    <button id="submit-quiz-btn" onclick="gradeQuiz()" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">Submit Quiz</button>
+                    <button id="proceed-game-btn" onclick="switchTab('game')" class="hidden bg-purple-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-purple-700 shadow-lg transition w-full md:w-auto">Play Retro Game <i class="fa-solid fa-gamepad ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RETRO GAME SECTION -->
+        <div id="game-section" class="tab-content no-print">
+            <div class="bg-gray-900 p-6 sm:p-8 rounded-2xl shadow-xl max-w-4xl mx-auto border-4 border-gray-700 flex flex-col items-center">
+                <div class="text-center mb-4 w-full">
+                    <h1 class="text-3xl font-extrabold text-blue-400 mb-2 tracking-widest uppercase font-mono">Permission Painter</h1>
+                    <p class="text-gray-300 text-sm">You are the System Administrator (Blue Node). Use Arrow Keys (or swipe on mobile) to move along the grid lines. <strong>Paint all lines blue</strong> to secure the network. Avoid the Rogue Packets (Red Nodes) patrolling the grid!</p>
+                </div>
+                
+                <div class="flex justify-between items-center w-full max-w-[500px] mb-2 px-4 text-white font-mono text-xl">
+                    <div>Lines Painted: <span id="game-score" class="text-green-400 font-bold">0</span>/<span id="game-total">0</span></div>
+                    <div>Lives: <span id="game-lives" class="text-red-400 font-bold">3</span></div>
+                </div>
+
+                <div class="relative flex justify-center w-full">
+                    <!-- Game Canvas -->
+                    <canvas id="game-canvas" width="500" height="500" class="w-full max-w-[500px] bg-black border-2 border-gray-600 rounded shadow-lg"></canvas>
+                    
+                    <!-- Overlay Start Button -->
+                    <div id="game-overlay" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-80 rounded-lg max-w-[500px] mx-auto z-10">
+                        <button id="start-game-btn" class="bg-blue-600 hover:bg-blue-500 text-white font-bold font-mono py-3 px-6 rounded-lg text-xl border-4 border-blue-800 uppercase transform transition hover:scale-105">Initialize Grid (Start)</button>
+                    </div>
+                </div>
+
+                <!-- Mobile Controls (Visible only on small screens) -->
+                <div class="grid grid-cols-3 gap-2 mt-4 sm:hidden w-[200px]">
+                    <div></div>
+                    <button class="bg-gray-700 text-white p-4 rounded active:bg-blue-600" onclick="handleMobileBtn('up')"><i class="fa-solid fa-arrow-up"></i></button>
+                    <div></div>
+                    <button class="bg-gray-700 text-white p-4 rounded active:bg-blue-600" onclick="handleMobileBtn('left')"><i class="fa-solid fa-arrow-left"></i></button>
+                    <button class="bg-gray-700 text-white p-4 rounded active:bg-blue-600" onclick="handleMobileBtn('down')"><i class="fa-solid fa-arrow-down"></i></button>
+                    <button class="bg-gray-700 text-white p-4 rounded active:bg-blue-600" onclick="handleMobileBtn('right')"><i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+
+                <div class="mt-8 text-center w-full border-t border-gray-700 pt-6">
+                    <button onclick="switchTab('cert')" class="bg-indigo-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-indigo-700 shadow-lg transition w-full md:w-auto">View Certificate <i class="fa-solid fa-award ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CERTIFICATE SECTION -->
+        <div id="cert-section" class="tab-content">
+            <div class="max-w-5xl mx-auto">
+                <!-- Controls -->
+                <div class="bg-white p-6 rounded shadow mb-6 no-print text-center border border-gray-200">
+                    <h2 class="text-2xl font-bold text-blue-600 mb-2">🎉 Congratulations! 🎉</h2>
+                    <p class="text-gray-700 mb-4">You have successfully mastered the Octal Number System and Linux File Permissions.</p>
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+                        <input type="text" id="student-name-input" value="Student" placeholder="Enter your first name" class="border-2 border-gray-300 rounded px-4 py-2 w-full md:w-64 focus:border-blue-500 focus:outline-none">
+                        <button onclick="updateCertName()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">Update Name</button>
+                        <button id="download-btn" onclick="downloadCert()" class="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900 transition flex items-center justify-center">
+                            <i class="fa-solid fa-download mr-2"></i>Download PNG
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Certificate Render Container -->
+                <div class="cert-preview-container print:p-0 print:bg-white">
+                    <div id="certificate">
+                        <div class="blue-seal">
+                            <div class="blue-seal-inner-1">
+                                <div class="blue-seal-inner-2">
+                                     <span class="embossed-text embossed-text-large">Certificate</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-small">Of</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-large">Excellence</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="relative z-20 w-full h-full flex flex-col pt-[48px] pl-[380px] pr-[48px]">
+                            <h1 class="text-[#1e3a8a] text-[4.5rem] leading-none font-serif font-bold tracking-wide uppercase mb-2">CERTIFICATE</h1>
+                            <h2 class="text-gray-800 text-3xl font-serif tracking-widest uppercase mb-10">Of Achievement</h2>
+                            
+                            <p class="text-[1.4rem] font-body text-gray-800 mb-4">This is to certify that</p>
+                            
+                            <div class="relative mb-8 w-full">
+                                <h3 id="cert-student-name" class="text-[4rem] text-[#1e3a8a] font-serif italic leading-none pb-2 relative z-10 text-center w-full block">Student</h3>
+                                <div class="w-full border-b-[2px] border-[#1e3a8a] absolute bottom-[4px] left-0 z-0"></div>
+                                <div class="w-full border-b-[2px] border-dotted border-blue-500 absolute bottom-[0px] left-0 z-0"></div>
+                            </div>
+                            
+                            <p class="text-[1.3rem] font-body text-gray-800 leading-relaxed w-full pr-4">
+                                Has successfully completed the assessment for 
+                                <strong class="text-[1.8rem] text-[#1e3a8a] block mt-4 mb-2 font-serif">Tech+ Unit 02 Section 1.2.3</strong>
+                                <strong class="text-[1.5rem] text-black block mb-4 font-serif italic">Octal Number Systems</strong>
+                                <span class="text-[1.1rem] text-gray-700 leading-snug block">Demonstrating proficiency in converting between base-8, binary, and decimal numbering systems, and applying this knowledge to accurately interpret, configure, and secure Linux/UNIX file permissions.</span>
+                            </p>
+                            
+                            <div class="flex justify-end gap-16 items-end mt-auto mb-[60px] w-full pr-8">
+                                <div class="w-64">
+                                    <div class="border-b border-gray-600 mb-2 h-20 flex items-end justify-center relative">
+                                        <span class="font-script text-[5rem] text-[#1e3a8a] absolute bottom-[-10px] transform -rotate-3 opacity-90">Dr. M. S</span>
+                                    </div>
+                                    <p class="font-serif text-xl text-gray-800 text-center">Administration</p>
+                                </div>
+                                
+                                <div class="w-64">
+                                    <div class="border-b border-gray-600 mb-2 text-center h-20 flex items-end justify-center">
+                                        <p id="cert-date" class="font-body text-2xl text-gray-800 pb-1">Date Here</p>
+                                    </div>
+                                    <p class="font-serif text-xl text-gray-800 text-center">Date</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Custom Modal for Alerts -->
+    <div id="custom-modal" class="fixed inset-0 bg-black bg-opacity-50 z-[100] hidden flex justify-center items-center backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all">
+            <div class="text-center">
+                <div id="modal-icon" class="text-5xl mb-4"></div>
+                <h3 id="modal-title" class="text-2xl font-bold mb-2 text-gray-900"></h3>
+                <p id="modal-msg" class="text-gray-600 mb-6"></p>
+                <button onclick="closeModal()" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-700 transition w-full">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Briefing Modal -->
+    <div id="briefing-modal" class="fixed inset-0 bg-black bg-opacity-70 z-[120] hidden flex justify-center items-center backdrop-blur-sm p-4 sm:p-6">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col transform transition-all overflow-hidden border-4 border-blue-800">
+            <div class="p-6 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+                <div class="flex items-center gap-4">
+                    <div id="briefing-modal-icon" class="text-4xl"></div>
+                    <h3 id="briefing-modal-title" class="text-2xl md:text-3xl font-bold text-gray-900"></h3>
+                </div>
+                <button onclick="closeBriefing()" class="text-gray-400 hover:text-red-600 transition text-4xl leading-none">&times;</button>
+            </div>
+            <div id="briefing-modal-content" class="p-6 md:p-10 overflow-y-auto flex-grow text-gray-700 text-lg leading-relaxed bg-white">
+                <!-- Dynamic Content Injected Here -->
+            </div>
+            <div class="p-6 border-t border-gray-200 bg-gray-50 flex justify-end">
+                <button onclick="closeBriefing()" class="bg-blue-800 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-900 transition shadow-md">Acknowledge & Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Extensive Briefing Content Data ---
+        const briefingData = {
+            'octal-details': {
+                title: 'Octal Number System & Conversions',
+                icon: '<i class="fa-solid fa-calculator text-indigo-600"></i>',
+                html: `
+                    <p class="mb-5">In the realm of computer science, data must be represented in ways both machines and humans can process. While humans instinctively use the Decimal system (Base-10) with digits 0 through 9, computer hardware fundamentally operates on electrical states represented by the Binary system (Base-2), using only 1s and 0s. However, binary strings quickly become long and difficult for humans to read. The <strong>Octal number system</strong> provides an elegant mathematical bridge between these two extremes.</p>
+                    
+                    <p class="mb-5">The octal system is a <strong>Base-8 numbering system</strong>. This means it relies entirely on exactly eight distinct symbols to represent all mathematical values: 0, 1, 2, 3, 4, 5, 6, and 7. The digits 8 and 9 do not exist in valid octal notation. Understanding this limitation is crucial. When counting in octal, you proceed normally from 0 to 7. However, the number immediately following 7 is not 8; rather, the ones column resets to 0 and the next column increments, resulting in <strong>10</strong> (pronounced "one-zero"). Therefore, $10_{8}$ is mathematically equivalent to the decimal number 8.</p>
+                    
+                    <p class="mb-5">Like decimal and binary, octal utilizes <strong>Positional Value Notation</strong>. In base-10, place values are powers of 10 (ones, tens, hundreds). In base-8, the place values represent increasing powers of 8. Moving from right to left, the columns represent $8^0$ (ones), $8^1$ (eights), $8^2$ (sixty-fours), $8^3$ (five hundred twelves), and so on. Understanding this positional framework is the key to converting octal numbers back into human-readable decimal formats.</p>
+                    
+                    <p class="mb-5">To <strong>convert an Octal number to Decimal</strong>, you multiply each digit by its corresponding positional weight and add the results together. For example, consider the octal number $157_{8}$. You break it down by place value: $(1 \times 8^2) + (5 \times 8^1) + (7 \times 8^0)$. This mathematically translates to $(1 \times 64) + (5 \times 8) + (7 \times 1)$. Calculating the sum ($64 + 40 + 7$) yields the final decimal equivalent of $111_{10}$.</p>
+                    
+                    <p class="mb-5">Conversely, to <strong>convert a Decimal number to Octal</strong>, you use the method of repeated division by 8. You divide the starting decimal number by 8, record the quotient, and carefully note the remainder. You then take the quotient and divide it by 8 again, repeating the process until the quotient reaches zero. Finally, you read the recorded remainders from bottom to top (last remainder to first remainder) to form the octal number. For instance, converting $94_{10}$ involves $94 \div 8 = 11$ (remainder 6), then $11 \div 8 = 1$ (remainder 3), then $1 \div 8 = 0$ (remainder 1). Reading bottom-up gives $136_{8}$.</p>
+                    
+                    <p class="mb-5">The primary reason the octal system is celebrated in computing is its <strong>direct relationship with Binary</strong>. Because 8 is exactly $2^3$, every single octal digit perfectly maps to a sequence of exactly three binary bits. For example, the binary string for 0 is 000, and the binary string for 7 is 111. This means an incredibly long, error-prone 9-bit binary string like <code>111101101</code> can be instantly split into groups of three (<code>111 101 101</code>) and perfectly translated into a compact 3-digit octal number ($755_{8}$).</p>
+                    
+                    <p>Historically, this shorthand made octal indispensable. Early mainframe systems, such as the PDP-8 and PDP-11 from the 1960s and 70s, were built on 12-bit and 24-bit architectures. Since these word sizes are cleanly divisible by 3, programmers used octal daily to read machine code directly off front-panel blinking lights without having to memorize massive strings of binary. While hexadecimal (Base-16) is more common today for 32-bit and 64-bit systems, octal remains a vital legacy format still heavily utilized in UNIX permissions and specialized low-level device configurations.</p>
+                `
+            },
+            'octal-usecase': {
+                title: 'Octal System: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-indigo-800 mb-2 border-b-2 border-indigo-200 pb-1">Case 1: Interfacing with Legacy & Embedded Hardware</h4>
+                        <p class="mb-2">While modern consumer PCs run on 64-bit architectures, massive portions of the world's industrial infrastructure rely on older, highly reliable legacy hardware where octal was the primary language of the machine.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Mainframe Programming):</strong> A technician repairing a 1970s PDP-11 mainframe must manually flip physical toggle switches grouped in clusters of three on the front panel to input raw boot instructions using octal codes.</li>
+                            <li><strong>Example 2 (Embedded Sensors):</strong> A modern aviation micro-controller processes raw atmospheric data using a 12-bit register. The embedded software engineer reads the diagnostic output using 4-digit octal codes rather than tracking 12 individual binary bits on their debugging screen.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-indigo-800 mb-2 border-b-2 border-indigo-200 pb-1">Case 2: Simplifying Binary for Human Readability</h4>
+                        <p class="mb-2">Humans are notoriously bad at processing long strings of repeating 1s and 0s. Octal acts as an immediate compression algorithm for the human eye, reducing errors when writing low-level code.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Shorthand Translation):</strong> A developer analyzing a 9-bit network flag sequence of <code>110100101</code> mentally groups it into threes (<code>110 100 101</code>) and instantly logs the error code as <code>645</code> in octal, saving time and reducing transcription errors.</li>
+                            <li><strong>Example 2 (File Descriptors):</strong> In C programming, creating system-level files requires setting numeric flags. Developers write these flags using an octal prefix (like <code>0755</code>) because the compiler natively understands that the programmer is trying to set specific individual binary bits in the processor without writing raw binary.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Base-8 Mathematics</p>
+                            <img src="https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&w=600&h=350" alt="Mathematical calculations and numbers" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Embedded Systems</p>
+                            <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&h=350" alt="Microchips and embedded systems" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'linux-details': {
+                title: 'Octal in Linux File Permissions',
+                icon: '<i class="fa-brands fa-linux text-blue-600"></i>',
+                html: `
+                    <p class="mb-5">In the world of computing, an operating system must maintain absolute control over who can access specific data. Linux and UNIX operating systems achieve this through a highly robust, deeply ingrained file permission structure. Every single file and directory on a Linux server possesses a strict access control list that acts as a gatekeeper, determining exactly what actions are permitted and by whom.</p>
+                    
+                    <p class="mb-5">Linux divides the potential users of a file into three distinct categories. The first is the <strong>Owner (u)</strong>, typically the user who created the file. The second is the <strong>Group (g)</strong>, which allows multiple specific users (like a "development team" or "sudoers") to share access rights. Finally, there are the <strong>Others (o)</strong>, which encompasses absolutely anyone else on the system or network who might stumble across the file but does not own it and is not part of the group.</p>
+                    
+                    <p class="mb-5">For each of these three user categories, there are three specific <strong>Access Types</strong> that can be granted. <strong>Read (r)</strong> permission allows a user to open and view the contents of a file (or view the list of files inside a directory). <strong>Write (w)</strong> permission allows a user to edit, modify, or delete the file. <strong>Execute (x)</strong> permission is critical; it allows the user to run the file as a software program or script. Without execute permissions, a program is just dead text on a hard drive.</p>
+                    
+                    <p class="mb-5">When you run the terminal command <code>ls -l</code> to view files, you see permissions represented <strong>Symbolically</strong>, such as <code>-rwxr-xr--</code>. The very first character indicates the file type (a dash <code>-</code> for a file, a <code>d</code> for directory). This is followed by three clusters of letters. In our example, the owner has <code>rwx</code> (read, write, execute), the group has <code>r-x</code> (read and execute, but no write), and others have <code>r--</code> (read-only).</p>
+                    
+                    <p class="mb-5">While the symbolic method is readable, it is slow to type and configure. Because each user category has exactly three possible permissions (Read, Write, Execute), we can treat them as binary switches. Read is the first switch (value 4), Write is the second (value 2), and Execute is the third (value 1). If a permission is granted, the switch is 1. If denied, it is 0. This creates a perfect 3-bit binary string that translates flawlessly into a single <strong>Octal Digit</strong>.</p>
+                    
+                    <p class="mb-5">By adding the values together, we get octal shorthand. If the owner has Read (4), Write (2), and Execute (1), their octal value is $4+2+1 = 7$. If the group has Read (4) and Execute (1), their value is $4+0+1 = 5$. Therefore, the lengthy symbolic string <code>rwxr-xr-x</code> can be written instantly as the octal code <strong>755</strong>. Another common code is <strong>644</strong> (Owner: read/write [6], Group: read [4], Others: read [4]). Conversely, a permission of <strong>777</strong> is highly dangerous, as it grants full Read/Write/Execute power to every single person on the internet. A permission of <strong>000</strong> completely locks down the file so no standard user can even view it.</p>
+                    
+                    <p>To apply these octal codes, administrators use the <strong><code>chmod</code></strong> (change mode) command, such as <code>chmod 755 script.sh</code>. However, standard users can only change files they own. If an employee needs to alter a locked down system file (like one set to 000), they must utilize the <strong><code>sudo</code></strong> command to temporarily elevate their privileges to "root" (the superuser). Even root, however, cannot execute a script if the execute bit (1) has not been explicitly granted by the octal permissions.</p>
+                `
+            },
+            'linux-usecase': {
+                title: 'Linux Permissions: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 1: Web Server Administration</h4>
+                        <p class="mb-2">When deploying a website on a Linux server, a system administrator must ensure the public can view the web pages, but absolutely cannot modify or hack the underlying server scripts.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Static Files):</strong> The admin runs the command <code>chmod 644 index.html</code>. This allows the admin (Owner) to write updates to the homepage (6), while the general internet public (Others) is strictly limited to viewing (Read-only, 4).</li>
+                            <li><strong>Example 2 (Executable Scripts):</strong> The admin uploads a Python script that processes contact forms. They run <code>chmod 755 contact_form.py</code>, ensuring the web server daemon can successfully execute the script (5) without allowing random users to overwrite the code.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 2: Securing Sensitive Data & Threat Mitigation</h4>
+                        <p class="mb-2">In corporate environments, files containing passwords or suspected malware must be aggressively locked down using strict octal permissions to prevent data breaches.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Zero Trust):</strong> A cybersecurity analyst discovers a suspicious file named <code>update_hidden.sh</code>. To neutralize the threat while they investigate, they run <code>chmod 000 update_hidden.sh</code>. This instantly strips all Read, Write, and Execute rights from everyone, ensuring the malware cannot launch itself.</li>
+                            <li><strong>Example 2 (Privilege Limitation):</strong> A server stores an SSH key database file. The admin runs <code>chmod 600 database.key</code>. This ensures that only the explicit creator of the file has read and write access, while other authenticated users on the same server are completely denied access.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Secure Permissions</p>
+                            <img src="https://images.unsplash.com/photo-1563206767-5b18f218e8de?auto=format&fit=crop&w=600&h=350" alt="Cyber security padlocks and digital code" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Server Administration</p>
+                            <img src="https://images.unsplash.com/photo-1629654297299-c8506221ca97?auto=format&fit=crop&w=600&h=350" alt="Linux terminal window running commands" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        // Modal Control Functions
+        function openBriefing(key) {
+            const modal = document.getElementById('briefing-modal');
+            const data = briefingData[key];
+            if(data) {
+                document.getElementById('briefing-modal-icon').innerHTML = data.icon;
+                document.getElementById('briefing-modal-title').innerText = data.title;
+                document.getElementById('briefing-modal-content').innerHTML = data.html;
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; 
+            }
+        }
+
+        function closeBriefing() {
+            document.getElementById('briefing-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto'; 
+        }
+
+        document.getElementById('briefing-modal').addEventListener('click', function(e) {
+            if(e.target === this) closeBriefing();
+        });
+        
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId + '-section').classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-blue-900'));
+            const activeBtn = document.getElementById('nav-' + tabId);
+            if(activeBtn && tabId !== 'cert') activeBtn.classList.add('bg-blue-900');
+            
+            document.querySelectorAll('.nav-btn-mobile').forEach(btn => btn.classList.remove('bg-blue-950'));
+            const activeMobileBtn = document.getElementById('nav-' + tabId + '-mobile');
+            if(activeMobileBtn && tabId !== 'cert') activeMobileBtn.classList.add('bg-blue-950');
+
+            window.scrollTo(0,0);
+
+            if (tabId === 'game' && !gameRunning) {
+                resetGame();
+                drawGame();
+            } else if (tabId !== 'game') {
+                if(gameRunning) {
+                    gameRunning = false;
+                    cancelAnimationFrame(animationId);
+                }
+            }
+        }
+
+        function showModal(title, message, type = 'info') {
+            const modal = document.getElementById('custom-modal');
+            const icon = document.getElementById('modal-icon');
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-msg').innerText = message;
+            
+            if(type === 'success') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-check text-green-500"></i>';
+            } else if (type === 'error') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500"></i>';
+            } else if (type === 'warning') {
+                icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-yellow-500"></i>';
+            } else {
+                icon.innerHTML = '<i class="fa-solid fa-circle-info text-blue-500"></i>';
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        // --- LAB 1: Octal to Decimal Factory ---
+        let lab1Solved = false;
+        function checkLab1() {
+            if(lab1Solved) return;
+            const b64 = document.getElementById('lab1-64').value;
+            const b8 = document.getElementById('lab1-8').value;
+            const b1 = document.getElementById('lab1-1').value;
+            
+            if(b64 === "1" && b8 === "5" && b1 === "7") {
+                lab1Solved = true;
+                const resultBox = document.getElementById('lab1-result');
+                resultBox.innerText = "111";
+                resultBox.classList.remove('border-dashed', 'border-gray-400');
+                resultBox.classList.add('bg-green-100', 'border-green-500', 'text-green-700');
+                
+                document.getElementById('lab1-feedback').innerText = "Correct! (1x64) + (5x8) + (7x1) = 111.";
+                document.getElementById('lab1-feedback').className = "text-center font-bold mt-4 h-6 text-green-600";
+                setTimeout(() => showModal('Lab 1 Complete!', 'You successfully converted Octal 157 to Decimal 111 using positional values.', 'success'), 500);
+            } else {
+                document.getElementById('lab1-feedback').innerText = "Incorrect. Remember the digits are 1, 5, and 7. Input them into the multiplier fields.";
+                document.getElementById('lab1-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
+            }
+        }
+
+        // --- LAB 2: Binary Vault Decoder ---
+        let lab2Solved = false;
+        function toggleBinary(btn) {
+            if(lab2Solved) return;
+            if(btn.innerText === "0") {
+                btn.innerText = "1";
+                btn.classList.replace('off', 'on');
+            } else {
+                btn.innerText = "0";
+                btn.classList.replace('on', 'off');
+            }
+        }
+        function checkLab2() {
+            if(lab2Solved) return;
+            const switches = document.querySelectorAll('.binary-switch');
+            let binaryStr = "";
+            switches.forEach(s => binaryStr += s.innerText);
+            
+            // Octal 564 -> 101 110 100
+            if(binaryStr === "101110100") {
+                lab2Solved = true;
+                document.getElementById('lab2-feedback').innerText = "Access Granted! Binary matches Octal 564.";
+                document.getElementById('lab2-feedback').className = "text-center font-bold mt-4 h-6 text-green-400";
+                setTimeout(() => showModal('Lab 2 Complete!', 'You successfully translated an Octal string directly into a 9-bit Binary string.', 'success'), 500);
+            } else {
+                document.getElementById('lab2-feedback').innerText = "Access Denied. Check your binary conversions for 5, 6, and 4.";
+                document.getElementById('lab2-feedback').className = "text-center font-bold mt-4 h-6 text-red-400";
+            }
+        }
+
+        // --- LAB 3: Permission Matrix ---
+        let lab3Solved = false;
+        function updateMatrix() {
+            if(lab3Solved) return;
+            const ownerBoxes = document.querySelectorAll('#perm-matrix > div:nth-child(1) input');
+            const groupBox = document.querySelectorAll('#perm-matrix > div:nth-child(2) input');
+            const otherBox = document.querySelectorAll('#perm-matrix > div:nth-child(3) input');
+            
+            let symStr = "-";
+            let oVal = 0, gVal = 0, tVal = 0;
+            
+            if(ownerBoxes[0].checked) { symStr += "r"; oVal+=4; } else { symStr += "-"; }
+            if(ownerBoxes[1].checked) { symStr += "w"; oVal+=2; } else { symStr += "-"; }
+            if(ownerBoxes[2].checked) { symStr += "x"; oVal+=1; } else { symStr += "-"; }
+            
+            if(groupBox[0].checked) { symStr += "r"; gVal+=4; } else { symStr += "-"; }
+            if(groupBox[1].checked) { symStr += "w"; gVal+=2; } else { symStr += "-"; }
+            if(groupBox[2].checked) { symStr += "x"; gVal+=1; } else { symStr += "-"; }
+            
+            if(otherBox[0].checked) { symStr += "r"; tVal+=4; } else { symStr += "-"; }
+            if(otherBox[1].checked) { symStr += "w"; tVal+=2; } else { symStr += "-"; }
+            if(otherBox[2].checked) { symStr += "x"; tVal+=1; } else { symStr += "-"; }
+            
+            document.getElementById('sym-out').innerText = symStr;
+            document.getElementById('oct-out').innerText = "" + oVal + gVal + tVal;
+        }
+
+        function checkLab3() {
+            if(lab3Solved) return;
+            const currentOctal = document.getElementById('oct-out').innerText;
+            if(currentOctal === "751") {
+                lab3Solved = true;
+                document.getElementById('lab3-feedback').innerText = "Configuration Validated!";
+                document.getElementById('lab3-feedback').className = "text-center font-bold mt-4 h-6 text-green-600";
+                setTimeout(() => showModal('Lab 3 Complete!', 'You successfully generated the correct Read, Write, and Execute bits for 751 (-rwxr-x--x).', 'success'), 500);
+            } else {
+                document.getElementById('lab3-feedback').innerText = "Incorrect. Target is 751. You are at " + currentOctal;
+                document.getElementById('lab3-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
+            }
+        }
+
+        // --- LAB 4: Security Audit ---
+        let lab4Solved = false;
+        function checkLab4() {
+            if(lab4Solved) return;
+            const sel1 = document.getElementById('lab4-sel1').value;
+            const sel2 = document.getElementById('lab4-sel2').value;
+            const sel3 = document.getElementById('lab4-sel3').value;
+            
+            if(sel1 === "644" && sel2 === "600" && sel3 === "000") {
+                lab4Solved = true;
+                document.getElementById('lab4-sel1').disabled = true;
+                document.getElementById('lab4-sel2').disabled = true;
+                document.getElementById('lab4-sel3').disabled = true;
+                document.getElementById('lab4-feedback').innerText = "Audit Passed: All files secured correctly.";
+                document.getElementById('lab4-feedback').className = "text-center font-bold mt-4 h-6 text-green-600";
+                setTimeout(() => showModal('Lab 4 Complete!', 'You successfully secured the network by applying the correct Octal permission policies.', 'success'), 500);
+            } else {
+                let msg = "Audit Failed. Review policies. ";
+                if(sel1 !== "644") msg += "File 1 needs owner write, others read-only. ";
+                if(sel2 !== "600") msg += "File 2 needs owner-only access. ";
+                if(sel3 !== "000") msg += "File 3 must be completely locked. ";
+                document.getElementById('lab4-feedback').innerText = msg;
+                document.getElementById('lab4-feedback').className = "text-center font-bold mt-4 h-6 text-red-600 text-sm";
+            }
+        }
+
+        // --- QUIZ LOGIC (20 Questions) ---
+        const quizData = [
+            // 10 provided from Document
+            { q: "What is the octal number system based on?", options: ["Base-2", "Base-8", "Base-10", "Base-16"], answer: 1 },
+            { q: "Which of these digits is NOT used in the octal numbering system?", options: ["0", "5", "7", "8"], answer: 3 },
+            { q: "Why might octal be preferred over binary when working with file permissions?", options: ["It allows longer numbers.", "It is simpler because each octal digit represents three binary bits.", "It uses fewer digits than hexadecimal.", "It directly translates to decimal."], answer: 1 },
+            { q: "Convert the octal number 157 to decimal.", options: ["64", "111", "157", "128"], answer: 1 },
+            { q: "Convert the decimal number 94 to octal.", options: ["134", "145", "136", "154"], answer: 2 },
+            { q: "Convert the octal number 56 to binary.", options: ["111000", "110101", "011100", "101110"], answer: 3 },
+            { q: "What is the octal equivalent of file permissions rwxr-xr--?", options: ["754", "755", "764", "644"], answer: 0 },
+            { q: "Which Linux command changes file permissions?", options: ["sudo", "chmod", "ls -l", "nano"], answer: 1 },
+            { q: "Which Linux command would lock down a file completely, removing all permissions?", options: ["chmod 777 filename", "chmod 644 filename", "chmod 555 filename", "chmod 000 filename"], answer: 3 },
+            { q: "What permission set does octal 640 represent?", options: ["Owner: read and write; Group: read; Others: no permissions", "Owner: full access; Group: read and execute; Others: no permissions", "Owner: read and execute; Group: write only; Others: no permissions", "Owner: read and write; Group: execute; Others: no permissions"], answer: 0 },
+            
+            // 10 new questions based on briefing
+            { q: "In the octal counting system, what number immediately follows 7?", options: ["8", "10", "11", "0"], answer: 1 },
+            { q: "What is the positional value of the third digit from the right in an octal number?", options: ["8", "16", "64", "512"], answer: 2 },
+            { q: "When converting a decimal number to octal, what mathematical operation is repeated?", options: ["Multiplying by 8", "Adding 8", "Subtracting 8", "Dividing by 8"], answer: 3 },
+            { q: "In Linux file permissions, which user category does the FIRST octal digit represent?", options: ["Group", "Others", "Owner", "Root"], answer: 2 },
+            { q: "What specific numerical value is assigned to the 'Write' (w) permission?", options: ["1", "2", "4", "7"], answer: 1 },
+            { q: "If an administrator runs `chmod 777 target.sh`, what is the result?", options: ["The file is hidden.", "Only the owner can execute it.", "Everyone has read, write, and execute access.", "The file is deleted."], answer: 2 },
+            { q: "Why is the permission `chmod 644` standard for public HTML web files?", options: ["It allows everyone to edit the file.", "It prevents execution but allows the owner to edit and the public to read.", "It completely hides the file from the public.", "It forces the file to require a password."], answer: 1 },
+            { q: "When running the command `ls -l`, what does a 'd' at the very beginning of the permission string indicate?", options: ["Deleted file", "Executable program", "Directory (Folder)", "Draft document"], answer: 2 },
+            { q: "What Linux command allows a standard user to temporarily elevate their privileges to perform administrative tasks?", options: ["chmod", "su", "ls", "sudo"], answer: 3 },
+            { q: "Why were 12-bit and 24-bit computer architectures in the 1970s particularly well-suited for octal shorthand?", options: ["They used decimal math chips.", "The bit sizes are cleanly divisible by 3, perfectly aligning with octal.", "They could not process hexadecimal codes.", "They only had 8 buttons on the keyboard."], answer: 1 }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        
+        quizData.forEach((item, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = "bg-gray-50 p-6 rounded-lg border border-gray-200 transition-all";
+            qDiv.id = `q-block-${index}`;
+            
+            const qTitle = document.createElement('h3');
+            qTitle.className = "font-bold text-lg text-gray-800 mb-4";
+            qTitle.innerText = `${index + 1}. ${item.q}`;
+            qDiv.appendChild(qTitle);
+            
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = "space-y-3";
+            
+            item.options.forEach((opt, optIndex) => {
+                const label = document.createElement('label');
+                label.className = "flex items-center space-x-3 p-3 rounded bg-white border border-gray-300 hover:bg-blue-50 cursor-pointer transition";
+                
+                const radio = document.createElement('input');
+                radio.type = "radio";
+                radio.name = `q${index}`;
+                radio.value = optIndex;
+                radio.className = "form-radio h-5 w-5 text-blue-600";
+                
+                const span = document.createElement('span');
+                span.className = "text-gray-700";
+                span.innerText = opt;
+                
+                label.appendChild(radio);
+                label.appendChild(span);
+                optionsDiv.appendChild(label);
+            });
+            
+            qDiv.appendChild(optionsDiv);
+            quizContainer.appendChild(qDiv);
+        });
+
+        function gradeQuiz() {
+            let score = 0;
+            let allAnswered = true;
+
+            for(let i = 0; i < quizData.length; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if(selected) {
+                    if(parseInt(selected.value) === quizData[i].answer) {
+                        score++;
+                    }
+                } else {
+                    allAnswered = false;
+                }
+            }
+            
+            if(!allAnswered) {
+                showModal('Incomplete Quiz', 'Please answer all 20 questions before submitting.', 'warning');
+                return;
+            }
+            
+            const percentage = (score / quizData.length) * 100;
+            
+            if(score >= 18) { 
+                const navGame = document.getElementById('nav-game');
+                const navGameMobile = document.getElementById('nav-game-mobile');
+                
+                navGame.classList.remove('text-blue-400', 'cursor-not-allowed');
+                navGame.classList.add('text-white', 'hover:bg-blue-700');
+                navGame.disabled = false;
+                navGame.innerHTML = '<i class="fa-solid fa-gamepad mr-1"></i>Game';
+                
+                navGameMobile.classList.remove('text-blue-400', 'cursor-not-allowed');
+                navGameMobile.classList.add('text-white', 'hover:bg-blue-700');
+                navGameMobile.disabled = false;
+                navGameMobile.innerHTML = '<i class="fa-solid fa-gamepad"></i> Game';
+
+                document.getElementById('nav-cert').classList.remove('hidden');
+                document.getElementById('nav-cert-mobile').classList.remove('hidden');
+                
+                document.getElementById('proceed-game-btn').classList.remove('hidden');
+                document.getElementById('submit-quiz-btn').classList.add('hidden');
+
+                showModal('Outstanding!', `You scored ${score}/20 (${percentage}%). You have unlocked your Certificate of Mastery AND the Retro Game!`, 'success');
+            } else {
+                quizData.forEach((_, i) => {
+                    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                    if(selected) selected.checked = false;
+                });
+                showModal('Keep Trying!', `You scored ${score}/20 (${percentage}%). You need 90% (18/20) to earn the certificate. Your answers have been reset so you can try again.`, 'error');
+                document.getElementById('quiz-section').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // --- RETRO GAME LOGIC: Permission Painter (Grid Painting Game) ---
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let gameRunning = false;
+        let animationId;
+        
+        const COLS = 6;
+        const ROWS = 6;
+        const CELL_SIZE = 75; // 6x75 = 450 + margins
+        const OFFSET_X = 25;
+        const OFFSET_Y = 25;
+        
+        let lines = [];
+        let player = { x: 0, y: 0, targetX: 0, targetY: 0, speed: 2.5, moving: false, dx: 0, dy: 0, nextDir: null };
+        let enemies = [];
+        let paintedCount = 0;
+        let totalLines = 0;
+        let lives = 3;
+
+        const overlay = document.getElementById('game-overlay');
+        const startBtn = document.getElementById('start-game-btn');
+        startBtn.addEventListener('click', startGame);
+
+        // Input handling
+        window.addEventListener('keydown', function(e) {
+            if(!gameRunning) return;
+            if([37, 38, 39, 40].includes(e.keyCode)) e.preventDefault();
+            if(e.keyCode === 37) player.nextDir = 'left';
+            if(e.keyCode === 38) player.nextDir = 'up';
+            if(e.keyCode === 39) player.nextDir = 'right';
+            if(e.keyCode === 40) player.nextDir = 'down';
+        });
+
+        function handleMobileBtn(dir) {
+            if(gameRunning) player.nextDir = dir;
+        }
+
+        // Touch swipe handling
+        let touchStartX = 0;
+        let touchStartY = 0;
+        canvas.addEventListener('touchstart', function(e) {
+            touchStartX = e.changedTouches[0].screenX;
+            touchStartY = e.changedTouches[0].screenY;
+            e.preventDefault();
+        }, {passive: false});
+
+        canvas.addEventListener('touchend', function(e) {
+            if(!gameRunning) return;
+            let touchEndX = e.changedTouches[0].screenX;
+            let touchEndY = e.changedTouches[0].screenY;
+            let dx = touchEndX - touchStartX;
+            let dy = touchEndY - touchStartY;
+            
+            if (Math.abs(dx) > Math.abs(dy)) {
+                if(Math.abs(dx) > 30) player.nextDir = dx > 0 ? 'right' : 'left';
+            } else {
+                if(Math.abs(dy) > 30) player.nextDir = dy > 0 ? 'down' : 'up';
+            }
+            e.preventDefault();
+        }, {passive: false});
+
+        class Line {
+            constructor(x1, y1, x2, y2) {
+                this.x1 = x1; this.y1 = y1;
+                this.x2 = x2; this.y2 = y2;
+                this.painted = false;
+            }
+        }
+        
+        class Enemy {
+            constructor(x, y) {
+                this.x = x; this.y = y;
+                this.targetX = x; this.targetY = y;
+                this.speed = 1.5;
+                this.moving = false;
+                this.dx = 0; this.dy = 0;
+            }
+            
+            update() {
+                if(!this.moving) {
+                    // Pick random valid direction
+                    let dirs = [];
+                    if(this.x > 0) dirs.push({dx: -1, dy: 0});
+                    if(this.x < COLS) dirs.push({dx: 1, dy: 0});
+                    if(this.y > 0) dirs.push({dx: 0, dy: -1});
+                    if(this.y < ROWS) dirs.push({dx: 0, dy: 1});
+                    
+                    let move = dirs[Math.floor(Math.random() * dirs.length)];
+                    this.targetX = this.x + move.dx;
+                    this.targetY = this.y + move.dy;
+                    this.dx = move.dx;
+                    this.dy = move.dy;
+                    this.moving = true;
+                } else {
+                    let pX = this.x * CELL_SIZE + OFFSET_X;
+                    let pY = this.y * CELL_SIZE + OFFSET_Y;
+                    let tX = this.targetX * CELL_SIZE + OFFSET_X;
+                    let tY = this.targetY * CELL_SIZE + OFFSET_Y;
+                    
+                    let currX = pX; let currY = pY;
+                    // We need to track sub-grid pixel position to move smoothly
+                    if(this.pixelX === undefined) { this.pixelX = pX; this.pixelY = pY; }
+                    
+                    this.pixelX += this.dx * this.speed;
+                    this.pixelY += this.dy * this.speed;
+                    
+                    // Check if reached target
+                    if((this.dx > 0 && this.pixelX >= tX) || (this.dx < 0 && this.pixelX <= tX) ||
+                       (this.dy > 0 && this.pixelY >= tY) || (this.dy < 0 && this.pixelY <= tY)) {
+                        this.x = this.targetX;
+                        this.y = this.targetY;
+                        this.pixelX = tX;
+                        this.pixelY = tY;
+                        this.moving = false;
+                    }
+                }
+            }
+            
+            draw(ctx) {
+                let px = this.pixelX !== undefined ? this.pixelX : this.x * CELL_SIZE + OFFSET_X;
+                let py = this.pixelY !== undefined ? this.pixelY : this.y * CELL_SIZE + OFFSET_Y;
+                
+                ctx.fillStyle = '#ef4444'; // Red malware
+                ctx.beginPath();
+                ctx.arc(px, py, 12, 0, Math.PI*2);
+                ctx.fill();
+                
+                // Draw skull eyes
+                ctx.fillStyle = '#000';
+                ctx.fillRect(px - 5, py - 3, 3, 3);
+                ctx.fillRect(px + 2, py - 3, 3, 3);
+                ctx.fillRect(px - 3, py + 3, 6, 2);
+            }
+        }
+
+        function buildGrid() {
+            lines = [];
+            totalLines = 0;
+            // Horizontal lines
+            for(let r=0; r<=ROWS; r++) {
+                for(let c=0; c<COLS; c++) {
+                    lines.push(new Line(c, r, c+1, r));
+                    totalLines++;
+                }
+            }
+            // Vertical lines
+            for(let c=0; c<=COLS; c++) {
+                for(let r=0; r<ROWS; r++) {
+                    lines.push(new Line(c, r, c, r+1));
+                    totalLines++;
+                }
+            }
+            document.getElementById('game-total').innerText = totalLines;
+            paintedCount = 0;
+            updateScore();
+        }
+
+        function updateScore() {
+            document.getElementById('game-score').innerText = paintedCount;
+            if(paintedCount >= totalLines) {
+                winLevel();
+            }
+        }
+
+        function getLine(x1, y1, x2, y2) {
+            return lines.find(l => 
+                (l.x1 === x1 && l.y1 === y1 && l.x2 === x2 && l.y2 === y2) ||
+                (l.x1 === x2 && l.y1 === y2 && l.x2 === x1 && l.y2 === y1)
+            );
+        }
+
+        function resetLevel(fullReset = false) {
+            player.x = 0; player.y = 0;
+            player.targetX = 0; player.targetY = 0;
+            player.pixelX = OFFSET_X; player.pixelY = OFFSET_Y;
+            player.moving = false;
+            player.nextDir = null;
+            
+            if(fullReset) {
+                buildGrid();
+                lives = 3;
+                document.getElementById('game-lives').innerText = lives;
+                enemies = [new Enemy(COLS, ROWS), new Enemy(0, ROWS), new Enemy(COLS, 0)];
+            } else {
+                // Respawn enemies
+                enemies.forEach(e => {
+                    e.x = Math.random() > 0.5 ? COLS : 0;
+                    e.y = Math.random() > 0.5 ? ROWS : 0;
+                    e.targetX = e.x; e.targetY = e.y;
+                    e.moving = false;
+                    e.pixelX = e.x * CELL_SIZE + OFFSET_X;
+                    e.pixelY = e.y * CELL_SIZE + OFFSET_Y;
+                });
+            }
+        }
+
+        function startGame() {
+            overlay.classList.add('hidden');
+            if(!gameRunning) {
+                resetLevel(true);
+                gameRunning = true;
+                drawGame();
+            }
+        }
+
+        function loseLife() {
+            lives--;
+            document.getElementById('game-lives').innerText = lives;
+            ctx.fillStyle = "rgba(255,0,0,0.5)";
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            
+            if(lives <= 0) {
+                gameOver("Security Breach! Access Denied.");
+            } else {
+                resetLevel(false);
+            }
+        }
+        
+        function winLevel() {
+            gameOver("Grid Secured! Access Granted.", true);
+        }
+
+        function gameOver(msg, win = false) {
+            gameRunning = false;
+            cancelAnimationFrame(animationId);
+            overlay.classList.remove('hidden');
+            startBtn.innerText = msg + " (Play Again)";
+            if(win) {
+                startBtn.classList.replace('bg-blue-600', 'bg-green-600');
+                startBtn.classList.replace('border-blue-800', 'border-green-800');
+            } else {
+                startBtn.classList.replace('bg-green-600', 'bg-red-600');
+                startBtn.classList.replace('border-green-800', 'border-red-800');
+            }
+        }
+
+        function drawGame() {
+            if(!gameRunning) return;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw lines
+            ctx.lineWidth = 6;
+            ctx.lineCap = 'round';
+            lines.forEach(l => {
+                ctx.beginPath();
+                ctx.moveTo(l.x1 * CELL_SIZE + OFFSET_X, l.y1 * CELL_SIZE + OFFSET_Y);
+                ctx.lineTo(l.x2 * CELL_SIZE + OFFSET_X, l.y2 * CELL_SIZE + OFFSET_Y);
+                if(l.painted) {
+                    ctx.strokeStyle = '#3b82f6'; // Painted blue
+                    ctx.shadowColor = '#60a5fa';
+                    ctx.shadowBlur = 10;
+                } else {
+                    ctx.strokeStyle = '#334155'; // Unpainted dark gray
+                    ctx.shadowBlur = 0;
+                }
+                ctx.stroke();
+                ctx.shadowBlur = 0;
+            });
+            
+            // Player Logic
+            if(!player.moving && player.nextDir) {
+                let dx = 0; let dy = 0;
+                if(player.nextDir === 'left' && player.x > 0) dx = -1;
+                if(player.nextDir === 'right' && player.x < COLS) dx = 1;
+                if(player.nextDir === 'up' && player.y > 0) dy = -1;
+                if(player.nextDir === 'down' && player.y < ROWS) dy = 1;
+                
+                if(dx !== 0 || dy !== 0) {
+                    player.targetX = player.x + dx;
+                    player.targetY = player.y + dy;
+                    player.dx = dx; player.dy = dy;
+                    player.moving = true;
+                }
+                player.nextDir = null;
+            }
+            
+            if(player.moving) {
+                let tX = player.targetX * CELL_SIZE + OFFSET_X;
+                let tY = player.targetY * CELL_SIZE + OFFSET_Y;
+                
+                player.pixelX += player.dx * player.speed;
+                player.pixelY += player.dy * player.speed;
+                
+                // Paint the line currently being traversed
+                ctx.beginPath();
+                ctx.moveTo(player.x * CELL_SIZE + OFFSET_X, player.y * CELL_SIZE + OFFSET_Y);
+                ctx.lineTo(player.pixelX, player.pixelY);
+                ctx.strokeStyle = '#3b82f6';
+                ctx.lineWidth = 6;
+                ctx.stroke();
+                
+                if((player.dx > 0 && player.pixelX >= tX) || (player.dx < 0 && player.pixelX <= tX) ||
+                   (player.dy > 0 && player.pixelY >= tY) || (player.dy < 0 && player.pixelY <= tY)) {
+                    
+                    let l = getLine(player.x, player.y, player.targetX, player.targetY);
+                    if(l && !l.painted) {
+                        l.painted = true;
+                        paintedCount++;
+                        updateScore();
+                    }
+                    
+                    player.x = player.targetX;
+                    player.y = player.targetY;
+                    player.pixelX = tX;
+                    player.pixelY = tY;
+                    player.moving = false;
+                }
+            }
+            
+            // Draw Player
+            ctx.fillStyle = '#60a5fa';
+            ctx.beginPath();
+            ctx.arc(player.pixelX, player.pixelY, 14, 0, Math.PI*2);
+            ctx.fill();
+            ctx.fillStyle = '#fff';
+            ctx.font = "14px monospace";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText("U", player.pixelX, player.pixelY);
+            
+            // Enemies Logic
+            enemies.forEach(e => {
+                e.update();
+                e.draw(ctx);
+                
+                // Collision Detection
+                let dist = Math.hypot(player.pixelX - e.pixelX, player.pixelY - e.pixelY);
+                if(dist < 20) {
+                    loseLife();
+                }
+            });
+
+            animationId = requestAnimationFrame(drawGame);
+        }
+
+        // --- CERTIFICATE LOGIC ---
+        function updateCertName() {
+            let name = document.getElementById('student-name-input').value.trim();
+            if(name) {
+                if (name.includes(' ')) {
+                    name = name.split(' ')[0];
+                    document.getElementById('student-name-input').value = name;
+                    showModal('Notice', 'Only your first name has been applied to the certificate.', 'info');
+                }
+                document.getElementById('cert-student-name').innerText = name;
+            } else {
+                showModal('Wait!', 'Please enter your first name to update the certificate.', 'warning');
+            }
+        }
+
+        const today = new Date();
+        document.getElementById('cert-date').innerText = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        function downloadCert() {
+            const certEl = document.getElementById('certificate');
+            const name = document.getElementById('cert-student-name').innerText;
+            let filename = 'Certificate.png';
+            if (name && name !== 'Student') {
+                filename = `${name.replace(/\s+/g, '_')}_Certificate.png`;
+            }
+
+            const originalTransform = certEl.style.transform;
+            certEl.style.transform = 'none';
+
+            const btn = document.getElementById('download-btn');
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Generating...';
+            btn.disabled = true;
+
+            html2canvas(certEl, { 
+                scale: 2, 
+                useCORS: true,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+            }).catch(err => {
+                console.error(err);
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                showModal('Error', 'Failed to generate image. Try using a desktop browser.', 'error');
+            });
+        }
+
+        window.onload = () => {
+            // Draw static background for game preview
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle = '#334155';
+            for(let r=0; r<=ROWS; r++) {
+                ctx.fillRect(OFFSET_X, r*CELL_SIZE + OFFSET_Y - 3, COLS*CELL_SIZE, 6);
+            }
+            for(let c=0; c<=COLS; c++) {
+                ctx.fillRect(c*CELL_SIZE + OFFSET_X - 3, OFFSET_Y, 6, ROWS*CELL_SIZE);
+            }
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = '20px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('NETWORK STANDBY', canvas.width/2, canvas.height/2);
+            
+            // Initial render for Lab 3 matrix
+            updateMatrix();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 02 Section 1.1.1 Mastery - Basics of Computing</title>
+    
+    <!-- Load Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load HTML2Canvas for Certificate Download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- Load Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Qwitcher+Grypen:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0fdf4; 
+            color: #1f2937;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        /* Interactive Elements CSS */
+        .io-dropzone { min-height: 70px; min-width: 130px; border: 2px dashed #9ca3af; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: #f9fafb; transition: all 0.2s;}
+        .io-dropzone.drag-over { background: #e5e7eb; border-color: #16a34a; box-shadow: inset 0 0 10px rgba(22, 163, 74, 0.2);}
+        
+        .io-item { cursor: grab; transition: transform 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .io-item:active { cursor: grabbing; transform: scale(0.95); }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #e5e7eb; }
+        ::-webkit-scrollbar-thumb { background: #10b981; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #059669; }
+
+        /* Retro Game Canvas */
+        #game-container {
+            position: relative;
+            background-color: #000;
+            border: 4px solid #374151;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            touch-action: none;
+        }
+        #game-canvas {
+            width: 100%;
+            height: auto;
+            display: block;
+            image-rendering: pixelated;
+        }
+        .dpad-btn { touch-action: manipulation; user-select: none; }
+
+        /* --- CERTIFICATE STYLES --- */
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .font-body { font-family: 'Lora', serif; }
+        .font-script { font-family: 'Qwitcher Grypen', cursive; }
+        
+        .cert-preview-container {
+            width: 100%;
+            overflow: auto;
+            display: flex;
+            justify-content: center;
+            background: #e5e7eb;
+            padding: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        #certificate {
+            width: 1056px !important;
+            height: 816px !important;
+            flex-shrink: 0;
+            background-color: #ffffff;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1056" height="816"><polygon points="0,0 250,0 0,650" fill="%23fcd34d"/><polygon points="0,0 350,0 0,900" fill="%23d97706" opacity="0.8"/><polygon points="0,0 120,0 0,300" fill="%23fcd34d"/><polygon points="0,450 650,816 0,816" fill="%23fcd34d"/><polygon points="0,550 450,816 0,816" fill="%23d97706" opacity="0.8"/><polygon points="800,0 1056,0 1056,256" fill="%23f3f4f6"/><polygon points="1056,500 1056,816 750,816" fill="%23f3f4f6"/></svg>');
+            background-size: cover;
+            border: 4px solid #e5e7eb;
+        }
+
+        .gold-seal {
+            position: absolute;
+            left: 110px;
+            top: 350px;
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c, #fcf6ba);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3), inset 0 0 15px rgba(255,255,255,0.7), inset 0 0 25px rgba(139,105,20,0.9);
+            z-index: 10;
+        }
+        .gold-seal::before {
+            content: '';
+            position: absolute;
+            top: -4px; bottom: -4px; left: -4px; right: -4px;
+            border-radius: 50%;
+            border: 6px dashed #d4af37;
+        }
+        .gold-seal-inner-1 {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 2px solid rgba(139, 105, 20, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #e8c678, #dbab46);
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.2), 0 2px 5px rgba(255,255,255,0.7);
+            z-index: 1;
+        }
+        .gold-seal-inner-2 {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: radial-gradient(circle, #fcf6ba, #d4af37);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            padding: 10px;
+        }
+        .embossed-text {
+            color: #b38728;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2);
+            font-family: 'Playfair Display', serif;
+            font-weight: 800;
+            line-height: 1.1;
+            text-transform: uppercase;
+        }
+        .embossed-text-large { font-size: 14px; letter-spacing: 1px; }
+        .embossed-text-small { font-size: 11px; letter-spacing: 2px; margin: 2px 0; }
+        .embossed-star { font-size: 12px; color: #b38728; text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2); margin: 2px 0; }
+
+        @media (max-width: 1100px) {
+            #certificate { transform: scale(0.7); transform-origin: top left; margin-bottom: -240px; margin-right: -310px; }
+        }
+        @media (max-width: 768px) {
+            #certificate { transform: scale(0.4); transform-origin: top left; margin-bottom: -490px; margin-right: -630px; }
+        }
+
+        /* Specific Lab UI */
+        .terminal-box { background-color: #1e1e1e; color: #00ff00; font-family: monospace; padding: 10px; height: 100px; overflow-y: auto; border-radius: 5px; }
+        .cycle-btn { transition: all 0.2s; }
+        .cycle-btn.active { background-color: #10b981; color: white; border-color: #047857; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
+    <nav class="bg-green-700 text-white shadow-lg sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-microchip text-2xl"></i>
+                    <span class="font-bold text-xl tracking-wider hidden sm:inline-block">Tech+ Unit 02 Section 1.1.1</span>
+                    <span class="font-bold text-xl tracking-wider sm:hidden">1.1.1</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-2">
+                        <button onclick="switchTab('briefing')" class="nav-btn bg-green-900 px-3 py-2 rounded-md text-sm font-medium hover:bg-green-600 transition" id="nav-briefing"><i class="fa-solid fa-book-open mr-1"></i>Briefing</button>
+                        <button onclick="switchTab('activity')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-green-600 transition" id="nav-activity"><i class="fa-solid fa-flask mr-1"></i>Lab Activity</button>
+                        <button onclick="switchTab('quiz')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-green-600 transition" id="nav-quiz"><i class="fa-solid fa-clipboard-check mr-1"></i>Quiz</button>
+                        <button onclick="switchTab('game')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-gray-400 cursor-not-allowed transition" id="nav-game" disabled><i class="fa-solid fa-lock mr-1"></i>Game</button>
+                        <button onclick="switchTab('cert')" class="nav-btn hidden px-3 py-2 rounded-md text-sm font-medium text-yellow-300 hover:bg-green-600 transition" id="nav-cert"><i class="fa-solid fa-award mr-1"></i>Certificate</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Nav -->
+        <div class="md:hidden flex flex-wrap justify-center gap-2 py-2 px-2 bg-green-800">
+            <button onclick="switchTab('briefing')" class="nav-btn-mobile px-3 py-1 text-sm rounded bg-green-900" id="nav-briefing-mobile">Briefing</button>
+            <button onclick="switchTab('activity')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-activity-mobile">Lab</button>
+            <button onclick="switchTab('quiz')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-quiz-mobile">Quiz</button>
+            <button onclick="switchTab('game')" class="nav-btn-mobile px-3 py-1 text-sm rounded text-gray-400 cursor-not-allowed" id="nav-game-mobile" disabled><i class="fa-solid fa-lock"></i></button>
+            <button onclick="switchTab('cert')" id="nav-cert-mobile" class="hidden px-2 py-1 text-sm text-yellow-300 rounded"><i class="fa-solid fa-award"></i></button>
+        </div>
+    </nav>
+
+    <main class="flex-grow w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <!-- BRIEFING SECTION -->
+        <div id="briefing-section" class="tab-content active no-print">
+            <div class="text-center mb-10">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">The Basics of Computing</h1>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">Every time we ask a computer to do something, it goes through the same basic cycle. Discover the foundational operations that make all modern technology possible.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- Tile 1 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-blue-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-blue-700"><i class="fa-solid fa-keyboard mr-2"></i>Input</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Definition:</strong> User actions directed at the computer; providing data or commands.</li>
+                            <li><strong>Direct Input:</strong> The user directly interacts with the data, like touching a screen.</li>
+                            <li><strong>Indirect Input:</strong> Sensors or devices gather and send data, like a mouse or microphone.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('input-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('input-usecase')" class="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 2 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-orange-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-orange-700"><i class="fa-solid fa-microchip mr-2"></i>Processing</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Definition:</strong> Actions performed to manipulate input data and execute instructions.</li>
+                            <li><strong>The Brain:</strong> The Central Processing Unit (CPU) acts as the brain of the computer.</li>
+                            <li><strong>Translation:</strong> Translates user requests into complex binary actions the hardware understands.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('process-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('process-usecase')" class="flex-1 bg-orange-100 hover:bg-orange-200 text-orange-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 3 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-green-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-green-700"><i class="fa-solid fa-hard-drive mr-2"></i>Storage</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Definition:</strong> Mechanisms and devices used to save and retain data for later use.</li>
+                            <li><strong>Short-Term (Volatile):</strong> Random Access Memory (RAM) holds active, running programs.</li>
+                            <li><strong>Long-Term (Persistent):</strong> Hard Disk Drives (HDD) and Solid State Drives (SSD) save files permanently.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('storage-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('storage-usecase')" class="flex-1 bg-green-100 hover:bg-green-200 text-green-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 4 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-purple-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-purple-700"><i class="fa-solid fa-desktop mr-2"></i>Output</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Definition:</strong> Results generated by processing inputs, delivered back to the user.</li>
+                            <li><strong>Visual & Audio:</strong> Displays, monitors, projectors, and speakers.</li>
+                            <li><strong>Physical:</strong> Printers generating hard copies of digital documents.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('output-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('output-usecase')" class="flex-1 bg-purple-100 hover:bg-purple-200 text-purple-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 flex justify-center">
+                <button onclick="switchTab('activity')" class="bg-green-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-green-500 shadow-lg transition transform hover:scale-105">Proceed to Lab Activity <i class="fa-solid fa-arrow-right ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- LAB ACTIVITY SECTION -->
+        <div id="activity-section" class="tab-content no-print">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Interactive Lab Activities</h1>
+                <p class="text-gray-600">Complete these 8 mini-labs (2 for each computing concept) to demonstrate your understanding of the computing cycle.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- LAB 1: Input (Direct vs Indirect) -->
+                <div class="bg-white p-5 rounded-xl shadow border border-blue-200">
+                    <h2 class="text-lg font-bold mb-2 text-blue-700"><i class="fa-solid fa-hand-pointer mr-2"></i>Lab 1: Input Categorization</h2>
+                    <p class="text-sm text-gray-600 mb-3">Drag the input devices into Direct or Indirect categories.</p>
+                    <div class="flex flex-wrap gap-2 mb-4 min-h-[40px]" id="lab1-items">
+                        <div class="io-item px-2 py-1 bg-blue-100 border border-blue-300 rounded text-xs font-bold" draggable="true" data-type="direct">Touchscreen</div>
+                        <div class="io-item px-2 py-1 bg-blue-100 border border-blue-300 rounded text-xs font-bold" draggable="true" data-type="indirect">Keyboard</div>
+                        <div class="io-item px-2 py-1 bg-blue-100 border border-blue-300 rounded text-xs font-bold" draggable="true" data-type="indirect">Microphone</div>
+                        <div class="io-item px-2 py-1 bg-blue-100 border border-blue-300 rounded text-xs font-bold" draggable="true" data-type="direct">Stylus Pen</div>
+                    </div>
+                    <div class="flex gap-2">
+                        <div class="io-dropzone flex-1 flex-col p-2" data-target="direct">
+                            <span class="text-xs text-gray-500 font-bold uppercase mb-1">Direct Input</span>
+                        </div>
+                        <div class="io-dropzone flex-1 flex-col p-2" data-target="indirect">
+                            <span class="text-xs text-gray-500 font-bold uppercase mb-1">Indirect Input</span>
+                        </div>
+                    </div>
+                    <div id="lab1-feedback" class="text-center font-bold mt-2 h-4 text-xs text-green-600"></div>
+                </div>
+
+                <!-- LAB 2: Input (Capture) -->
+                <div class="bg-white p-5 rounded-xl shadow border border-blue-200">
+                    <h2 class="text-lg font-bold mb-2 text-blue-700"><i class="fa-solid fa-keyboard mr-2"></i>Lab 2: Keystroke Input</h2>
+                    <p class="text-sm text-gray-600 mb-3">Click inside the terminal box below and press exactly 5 keys to see how the computer captures input.</p>
+                    <div id="lab2-terminal" class="terminal-box cursor-text" tabindex="0">Waiting for input...</div>
+                    <div id="lab2-feedback" class="text-center font-bold mt-2 h-4 text-xs text-green-600"></div>
+                </div>
+
+                <!-- LAB 3: Processing (Logic) -->
+                <div class="bg-white p-5 rounded-xl shadow border border-orange-200">
+                    <h2 class="text-lg font-bold mb-2 text-orange-700"><i class="fa-solid fa-microchip mr-2"></i>Lab 3: CPU Adder</h2>
+                    <p class="text-sm text-gray-600 mb-3">Input two numbers. Click 'Process' to see the CPU calculate the sum.</p>
+                    <div class="flex items-center gap-2 mb-2">
+                        <input type="number" id="lab3-num1" class="border p-1 w-16 text-center rounded" value="5">
+                        <span>+</span>
+                        <input type="number" id="lab3-num2" class="border p-1 w-16 text-center rounded" value="7">
+                        <button onclick="processLab3()" class="bg-orange-500 text-white px-3 py-1 rounded hover:bg-orange-600 text-sm font-bold">Process</button>
+                    </div>
+                    <div class="bg-gray-100 p-2 rounded text-center font-mono">
+                        Result: <span id="lab3-result" class="font-bold text-orange-600">?</span>
+                    </div>
+                    <div id="lab3-feedback" class="text-center font-bold mt-2 h-4 text-xs text-green-600"></div>
+                </div>
+
+                <!-- LAB 4: Processing (Speed) -->
+                <div class="bg-white p-5 rounded-xl shadow border border-orange-200">
+                    <h2 class="text-lg font-bold mb-2 text-orange-700"><i class="fa-solid fa-gauge mr-2"></i>Lab 4: Clock Speed</h2>
+                    <p class="text-sm text-gray-600 mb-3">Move the slider to increase the CPU Clock Speed (GHz) and observe the processing rate.</p>
+                    <input type="range" id="lab4-slider" min="1" max="5" value="1" class="w-full mb-2" oninput="updateLab4()">
+                    <div class="flex justify-between text-xs font-bold text-gray-500 mb-2">
+                        <span>1 GHz (Slow)</span>
+                        <span id="lab4-ghz" class="text-orange-600 text-sm">1 GHz</span>
+                        <span>5 GHz (Fast)</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-4 overflow-hidden relative">
+                        <div id="lab4-bar" class="bg-orange-500 h-4 w-0 absolute left-0 top-0"></div>
+                    </div>
+                    <div id="lab4-feedback" class="text-center font-bold mt-2 h-4 text-xs text-green-600"></div>
+                </div>
+
+                <!-- LAB 5: Storage (Allocation) -->
+                <div class="bg-white p-5 rounded-xl shadow border border-green-200">
+                    <h2 class="text-lg font-bold mb-2 text-green-700"><i class="fa-solid fa-memory mr-2"></i>Lab 5: Storage Types</h2>
+                    <p class="text-sm text-gray-600 mb-3">Click to allocate 3 blocks to RAM (Short-term) and 2 to SSD (Long-term).</p>
+                    <div class="flex gap-4">
+                        <div class="flex-1">
+                            <p class="text-xs font-bold text-center mb-1">RAM (Need 3)</p>
+                            <div class="flex gap-1 flex-wrap" id="lab5-ram">
+                                <!-- JS -->
+                            </div>
+                        </div>
+                        <div class="flex-1 border-l pl-4">
+                            <p class="text-xs font-bold text-center mb-1">SSD (Need 2)</p>
+                            <div class="flex gap-1 flex-wrap" id="lab5-ssd">
+                                <!-- JS -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-2 text-center">
+                        <button onclick="checkLab5()" class="bg-green-600 text-white px-3 py-1 rounded text-xs font-bold">Verify Allocation</button>
+                    </div>
+                    <div id="lab5-feedback" class="text-center font-bold mt-2 h-4 text-xs text-green-600"></div>
+                </div>
+
+                <!-- LAB 6: Storage (Volatility) -->
+                <div class="bg-white p-5 rounded-xl shadow border border-green-200">
+                    <h2 class="text-lg font-bold mb-2 text-green-700"><i class="fa-solid fa-bolt mr-2"></i>Lab 6: Volatility Test</h2>
+                    <p class="text-sm text-gray-600 mb-3">Type data, click 'Save to RAM', then simulate a power loss.</p>
+                    <input type="text" id="lab6-input" class="border p-1 w-full text-sm rounded mb-2" placeholder="Enter sensitive data...">
+                    <div class="flex gap-2 mb-2">
+                        <button onclick="lab6Save()" class="bg-blue-500 text-white px-2 py-1 rounded text-xs font-bold flex-1">Save to RAM</button>
+                        <button onclick="lab6PowerLoss()" class="bg-red-500 text-white px-2 py-1 rounded text-xs font-bold flex-1"><i class="fa-solid fa-power-off"></i> Power Loss</button>
+                    </div>
+                    <div class="bg-gray-100 p-2 rounded text-xs font-mono">
+                        RAM Contents: <span id="lab6-ram-display" class="font-bold text-green-600">Empty</span>
+                    </div>
+                    <div id="lab6-feedback" class="text-center font-bold mt-2 h-4 text-xs text-green-600"></div>
+                </div>
+
+                <!-- LAB 7: Output (Visual) -->
+                <div class="bg-white p-5 rounded-xl shadow border border-purple-200">
+                    <h2 class="text-lg font-bold mb-2 text-purple-700"><i class="fa-solid fa-tv mr-2"></i>Lab 7: Visual Output</h2>
+                    <p class="text-sm text-gray-600 mb-3">Adjust the RGB signals to output the color <strong>Purple</strong> on the display.</p>
+                    <div class="flex gap-4 items-center">
+                        <div class="flex-1 space-y-2">
+                            <input type="range" id="lab7-r" min="0" max="255" value="0" class="w-full accent-red-500" oninput="updateLab7()">
+                            <input type="range" id="lab7-g" min="0" max="255" value="0" class="w-full accent-green-500" oninput="updateLab7()">
+                            <input type="range" id="lab7-b" min="0" max="255" value="0" class="w-full accent-blue-500" oninput="updateLab7()">
+                        </div>
+                        <div id="lab7-display" class="w-16 h-16 bg-black border-4 border-gray-400 rounded"></div>
+                    </div>
+                    <div id="lab7-feedback" class="text-center font-bold mt-2 h-4 text-xs text-green-600"></div>
+                </div>
+
+                <!-- LAB 8: Output (Cycle) -->
+                <div class="bg-white p-5 rounded-xl shadow border border-purple-200">
+                    <h2 class="text-lg font-bold mb-2 text-purple-700"><i class="fa-solid fa-recycle mr-2"></i>Lab 8: The Cycle</h2>
+                    <p class="text-sm text-gray-600 mb-3">Click the 4 basic computing operations in their correct sequential order.</p>
+                    <div class="flex justify-center gap-2 mb-3">
+                        <button class="cycle-btn px-2 py-1 border-2 border-gray-300 rounded font-bold text-xs text-gray-600" onclick="lab8Click('Storage', this)">Storage</button>
+                        <button class="cycle-btn px-2 py-1 border-2 border-gray-300 rounded font-bold text-xs text-gray-600" onclick="lab8Click('Output', this)">Output</button>
+                        <button class="cycle-btn px-2 py-1 border-2 border-gray-300 rounded font-bold text-xs text-gray-600" onclick="lab8Click('Input', this)">Input</button>
+                        <button class="cycle-btn px-2 py-1 border-2 border-gray-300 rounded font-bold text-xs text-gray-600" onclick="lab8Click('Processing', this)">Processing</button>
+                    </div>
+                    <div class="bg-gray-100 p-1 rounded text-center text-xs font-mono h-6" id="lab8-sequence"></div>
+                    <div id="lab8-feedback" class="text-center font-bold mt-2 h-4 text-xs text-green-600"></div>
+                </div>
+            </div>
+
+            <div class="mt-8 text-center">
+                <button onclick="switchTab('quiz')" class="bg-green-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-green-500 shadow-lg transition transform hover:scale-105">Take the Mastery Quiz <i class="fa-solid fa-clipboard-check ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- QUIZ SECTION -->
+        <div id="quiz-section" class="tab-content no-print">
+            <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-xl max-w-4xl mx-auto">
+                <div class="text-center mb-8 border-b pb-4">
+                    <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Unit 02 Section 1.1.1 Mastery Quiz</h1>
+                    <p class="text-gray-600">Score 90% or higher (18/20) to earn your Certificate of Mastery and unlock the Retro Game!</p>
+                </div>
+
+                <div id="quiz-container" class="space-y-8">
+                    <!-- Questions injected via JS -->
+                </div>
+
+                <div class="mt-10 text-center border-t pt-6 flex flex-col md:flex-row justify-center items-center gap-4">
+                    <button id="submit-quiz-btn" onclick="gradeQuiz()" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">Submit Quiz</button>
+                    <button id="proceed-game-btn" onclick="switchTab('game')" class="hidden bg-purple-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-purple-700 shadow-lg transition w-full md:w-auto">Play Retro Game <i class="fa-solid fa-gamepad ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RETRO GAME SECTION -->
+        <div id="game-section" class="tab-content no-print">
+            <div class="bg-gray-900 p-4 sm:p-8 rounded-2xl shadow-xl max-w-4xl mx-auto border-4 border-gray-700 flex flex-col items-center">
+                <div class="text-center mb-4 w-full">
+                    <h1 class="text-3xl font-extrabold text-blue-400 mb-2 tracking-widest uppercase" style="font-family: monospace;">Data Digger</h1>
+                    <p class="text-gray-300 text-sm mb-2">Use the Arrow Keys (or D-Pad) to dig through the system architecture. Collect all the <span class="text-blue-400 font-bold">Data Packets (Blue)</span> to win. Avoid the falling <span class="text-gray-400 font-bold">Dead Sectors (Gray)</span>!</p>
+                    <div class="flex justify-between items-center w-full max-w-[600px] mx-auto px-4 text-white font-mono text-lg bg-gray-800 p-2 rounded border border-gray-600">
+                        <div>Score: <span id="game-score" class="text-yellow-400 font-bold">0</span></div>
+                        <div>Level: <span id="game-level" class="text-green-400 font-bold">1</span></div>
+                    </div>
+                </div>
+
+                <div id="game-container">
+                    <canvas id="game-canvas" width="600" height="450"></canvas>
+                    
+                    <div id="game-overlay" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-80 z-10 flex-col">
+                        <h2 id="game-msg" class="text-3xl font-bold text-white mb-4 font-mono">System Ready</h2>
+                        <button id="start-game-btn" class="bg-blue-600 hover:bg-blue-500 text-white font-bold font-mono py-3 px-6 rounded-lg text-xl border-4 border-blue-800 uppercase transition">Start Mining</button>
+                    </div>
+                </div>
+                
+                <!-- Mobile Controls -->
+                <div class="mt-4 grid grid-cols-3 gap-2 w-48 sm:hidden">
+                    <div></div>
+                    <button class="dpad-btn bg-gray-700 text-white p-3 rounded active:bg-gray-500" onmousedown="simKey('ArrowUp')" onmouseup="simKeyUp('ArrowUp')" ontouchstart="simKey('ArrowUp')" ontouchend="simKeyUp('ArrowUp')"><i class="fa-solid fa-arrow-up"></i></button>
+                    <div></div>
+                    <button class="dpad-btn bg-gray-700 text-white p-3 rounded active:bg-gray-500" onmousedown="simKey('ArrowLeft')" onmouseup="simKeyUp('ArrowLeft')" ontouchstart="simKey('ArrowLeft')" ontouchend="simKeyUp('ArrowLeft')"><i class="fa-solid fa-arrow-left"></i></button>
+                    <button class="dpad-btn bg-gray-700 text-white p-3 rounded active:bg-gray-500" onmousedown="simKey('ArrowDown')" onmouseup="simKeyUp('ArrowDown')" ontouchstart="simKey('ArrowDown')" ontouchend="simKeyUp('ArrowDown')"><i class="fa-solid fa-arrow-down"></i></button>
+                    <button class="dpad-btn bg-gray-700 text-white p-3 rounded active:bg-gray-500" onmousedown="simKey('ArrowRight')" onmouseup="simKeyUp('ArrowRight')" ontouchstart="simKey('ArrowRight')" ontouchend="simKeyUp('ArrowRight')"><i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+
+                <div class="mt-8 text-center w-full border-t border-gray-700 pt-6">
+                    <button onclick="switchTab('cert')" class="bg-green-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-green-700 shadow-lg transition w-full md:w-auto">View Certificate <i class="fa-solid fa-award ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CERTIFICATE SECTION -->
+        <div id="cert-section" class="tab-content">
+            <div class="max-w-5xl mx-auto">
+                <div class="bg-white p-6 rounded shadow mb-6 no-print text-center border border-gray-200">
+                    <h2 class="text-2xl font-bold text-green-600 mb-2">🎉 Congratulations! 🎉</h2>
+                    <p class="text-gray-700 mb-4">You have achieved mastery of the Basics of Computing.</p>
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+                        <input type="text" id="student-name-input" value="Student" placeholder="Enter your first name" class="border-2 border-gray-300 rounded px-4 py-2 w-full md:w-64 focus:border-green-500 focus:outline-none">
+                        <button onclick="updateCertName()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">Update Name</button>
+                        <button id="download-btn" onclick="downloadCert()" class="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900 transition flex items-center justify-center">
+                            <i class="fa-solid fa-download mr-2"></i>Download PNG
+                        </button>
+                    </div>
+                </div>
+
+                <div class="cert-preview-container print:p-0 print:bg-white">
+                    <div id="certificate">
+                        <div class="gold-seal">
+                            <div class="gold-seal-inner-1">
+                                <div class="gold-seal-inner-2">
+                                     <span class="embossed-text embossed-text-large">Certificate</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-small">Of</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-large">Excellence</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="relative z-20 w-full h-full flex flex-col pt-[48px] pl-[380px] pr-[48px]">
+                            <h1 class="text-[#1e3a8a] text-[4.5rem] leading-none font-serif font-bold tracking-wide uppercase mb-2">CERTIFICATE</h1>
+                            <h2 class="text-gray-800 text-3xl font-serif tracking-widest uppercase mb-10">Of Achievement</h2>
+                            
+                            <p class="text-[1.4rem] font-body text-gray-800 mb-4">This is to certify that</p>
+                            
+                            <div class="relative mb-8 w-full">
+                                <h3 id="cert-student-name" class="text-[4rem] text-[#1e3a8a] font-serif italic leading-none pb-2 relative z-10 text-center w-full block">Student</h3>
+                                <div class="w-full border-b-[2px] border-[#1e3a8a] absolute bottom-[4px] left-0 z-0"></div>
+                                <div class="w-full border-b-[2px] border-dotted border-red-500 absolute bottom-[0px] left-0 z-0"></div>
+                            </div>
+                            
+                            <p class="text-[1.3rem] font-body text-gray-800 leading-relaxed w-full pr-4">
+                                Has successfully completed the assessment for 
+                                <strong class="text-[1.8rem] text-[#1e3a8a] block mt-4 mb-2 font-serif">Cyber.org Tech+ Unit 02 Section 1.1.1</strong>
+                                <strong class="text-[1.5rem] text-black block mb-4 font-serif italic">Basics of Computing</strong>
+                                <span class="text-[1.1rem] text-gray-700 leading-snug block">Demonstrating proficiency in explaining the foundational operations of modern computer systems including Input methods, CPU Processing, Storage retention, and visual/audio Output delivery.</span>
+                            </p>
+                            
+                            <div class="flex justify-end gap-16 items-end mt-auto mb-[60px] w-full pr-8">
+                                <div class="w-64">
+                                    <div class="border-b border-gray-600 mb-2 h-20 flex items-end justify-center relative">
+                                        <span class="font-script text-[5rem] text-[#1e3a8a] absolute bottom-[-10px] transform -rotate-3 opacity-90">Dr. M. S</span>
+                                    </div>
+                                    <p class="font-serif text-xl text-gray-800 text-center">Administration</p>
+                                </div>
+                                
+                                <div class="w-64">
+                                    <div class="border-b border-gray-600 mb-2 text-center h-20 flex items-end justify-center">
+                                        <p id="cert-date" class="font-body text-2xl text-gray-800 pb-1">Date Here</p>
+                                    </div>
+                                    <p class="font-serif text-xl text-gray-800 text-center">Date</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Custom Modal for Alerts -->
+    <div id="custom-modal" class="fixed inset-0 bg-black bg-opacity-50 z-[100] hidden flex justify-center items-center backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all">
+            <div class="text-center">
+                <div id="modal-icon" class="text-5xl mb-4"></div>
+                <h3 id="modal-title" class="text-2xl font-bold mb-2 text-gray-900"></h3>
+                <p id="modal-msg" class="text-gray-600 mb-6"></p>
+                <button onclick="closeModal()" class="bg-green-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-green-700 transition w-full">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Briefing Modal -->
+    <div id="briefing-modal" class="fixed inset-0 bg-black bg-opacity-70 z-[120] hidden flex justify-center items-center backdrop-blur-sm p-4 sm:p-6">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col transform transition-all overflow-hidden border-4 border-green-700">
+            <div class="p-6 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+                <div class="flex items-center gap-4">
+                    <div id="briefing-modal-icon" class="text-4xl"></div>
+                    <h3 id="briefing-modal-title" class="text-2xl md:text-3xl font-bold text-gray-900"></h3>
+                </div>
+                <button onclick="closeBriefing()" class="text-gray-400 hover:text-red-600 transition text-4xl leading-none">&times;</button>
+            </div>
+            <div id="briefing-modal-content" class="p-6 md:p-10 overflow-y-auto flex-grow text-gray-700 text-lg leading-relaxed bg-white">
+                <!-- Dynamic Content Injected Here -->
+            </div>
+            <div class="p-6 border-t border-gray-200 bg-gray-50 flex justify-end">
+                <button onclick="closeBriefing()" class="bg-green-700 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-green-800 transition shadow-md">Acknowledge & Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Extensive Briefing Content Data ---
+        const briefingData = {
+            'input-details': {
+                title: 'Input: Bridging Human and Machine',
+                icon: '<i class="fa-solid fa-keyboard text-blue-600"></i>',
+                html: `
+                    <p class="mb-5">The computing cycle universally begins with <strong>Input</strong>. Without input, a computer is essentially a dormant piece of hardware with no purpose. Input is the critical process of providing data, signals, or commands to a computer system so it can initiate tasks or perform operations. It acts as the bridge connecting human intent to the rigid, binary world of machine execution.</p>
+                    <p class="mb-5">At its core, input is about translation. Humans understand the world through continuous analog signals—images, sounds, and physical pressures. Computers, however, only understand digital data represented by ones and zeros. Input devices are marvels of engineering designed specifically to capture our analog world and immediately digitize it into electrical impulses the processor can comprehend.</p>
+                    <p class="mb-5">We generally categorize input into two distinct methods: <strong>Direct Input</strong> and <strong>Indirect Input</strong>. Direct input occurs when a user interacts explicitly with the physical space where the data is displayed or captured. A touchscreen on a smartphone or a stylus on a tablet are prime examples; your physical touch directly correlates with the digital action on the screen beneath your finger.</p>
+                    <p class="mb-5">Conversely, <strong>Indirect Input</strong> requires an intermediary device where the physical action is separate from the visual result. A traditional mouse and keyboard are indirect. You move a plastic mouse on a desk, and a digital pointer moves on a screen two feet away. This abstraction requires a cognitive mapping that humans learn quickly, allowing for highly precise control over complex software applications.</p>
+                    <p class="mb-5">Beyond standard peripherals, sensory input has revolutionized modern computing, particularly with the rise of the Internet of Things (IoT). Fitness watches constantly capture biometric data (heart rate, step count) without active user commands. Smart thermostats use ambient temperature sensors as continuous, passive input to regulate climate control. These sensors are constantly feeding raw environmental data into the computing cycle.</p>
+                    <p class="mb-5">Voice and audio input represent another massive leap in technology. Microphones capture analog sound waves and convert them into digital audio files. Advanced algorithms in smart speakers (like Alexa or Siri) treat this digital audio not just as a recording, but as a complex linguistic command string, completely bypassing the need for physical keyboards.</p>
+                    <p class="mb-5">Visual inputs, such as cameras and optical scanners, digest immense amounts of data instantly. When a barcode scanner reads a label at a grocery store, or a webcam captures a facial recognition scan to unlock a phone, the input device is providing the necessary starting data required for the computer to process a security check or a financial transaction.</p>
+                `
+            },
+            'input-usecase': {
+                title: 'Input: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 1: Retail Point of Sale (POS) Systems</h4>
+                        <p class="mb-2">Retail environments require rapid, accurate data entry to process customer transactions efficiently.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Indirect Input):</strong> A cashier uses an optical barcode scanner to read a product's UPC code. The scanner sends this numeric data to the computer as a continuous string of text.</li>
+                            <li><strong>Example 2 (Direct Input):</strong> The customer interacts with the credit card terminal's touchscreen, using a stylus to directly sign their name, providing visual authorization input to the system.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 2: Smart Home Automation</h4>
+                        <p class="mb-2">Modern homes rely heavily on continuous, passive inputs to manage lighting, security, and climate.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Voice Input):</strong> A user says, "Turn on the living room lights." The smart speaker's microphone acts as the input device, sending the digitized audio command to the central server.</li>
+                            <li><strong>Example 2 (Sensor Input):</strong> A motion sensor detects movement in the hallway at 2 AM. This physical input triggers a digital command to the security system to begin recording video.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Indirect Input</p>
+                            <img src="https://images.unsplash.com/photo-1595225476474-87563907a212?auto=format&fit=crop&w=600&h=350" alt="Keyboard and mouse on a desk" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Direct Interaction</p>
+                            <img src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=600&h=350" alt="Person touching a smartphone screen" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'process-details': {
+                title: 'Processing: The Brain of the Machine',
+                icon: '<i class="fa-solid fa-microchip text-orange-600"></i>',
+                html: `
+                    <p class="mb-5">Once a computer receives data from an input device, that raw data must be interpreted and manipulated to be useful. <strong>Processing</strong> is the action the computer takes to execute instructions, perform mathematical calculations, and make logical decisions. This phase is the true defining characteristic of a computer, separating it from a simple recording device.</p>
+                    <p class="mb-5">The hardware responsible for this monumental task is the <strong>Central Processing Unit (CPU)</strong>. Often referred to as the "brain" of the computer, the CPU sits on the motherboard and acts as the grand conductor of the entire system. Every mouse click, every keystroke, and every video frame rendered passes through the CPU in the form of billions of microscopic electrical signals.</p>
+                    <p class="mb-5">The CPU operates on a fundamental sequence known as the Fetch-Decode-Execute cycle. First, it fetches the next instruction from the system's memory. Second, it decodes that instruction to understand what specific hardware action is required. Finally, it executes the instruction—perhaps adding two numbers together or telling the graphics card to draw a pixel. This cycle repeats continuously.</p>
+                    <p class="mb-5">Processing power is often measured by <strong>Clock Speed</strong>, typically represented in gigahertz (GHz). A 3.0 GHz processor cycles through the Fetch-Decode-Execute process 3 billion times per second. While clock speed is crucial, modern processing relies heavily on multi-core architecture. Having a "quad-core" processor is akin to having four separate brains working simultaneously on different parts of a complex problem, allowing true multitasking.</p>
+                    <p class="mb-5">Internally, the CPU is divided into critical sub-components. The <strong>Arithmetic Logic Unit (ALU)</strong> is responsible for the heavy mathematical lifting and logical comparisons (e.g., determining if x is greater than y). Meanwhile, the <strong>Control Unit (CU)</strong> acts as the traffic cop, directing the flow of data between the ALU, the memory, and the input/output devices to ensure everything happens in the correct order.</p>
+                    <p class="mb-5">Processing is incredibly demanding. When the CPU is executing intense instructions, such as rendering 3D graphics or encrypting a large file, the millions of microscopic transistors switching on and off generate substantial physical heat. If this heat is not managed through cooling fans, heatsinks, or liquid cooling, the processor will physically destroy itself, highlighting the physical limitations of digital logic.</p>
+                    <p class="mb-5">Ultimately, processing is about transformation. It takes the meaningless string of characters you typed on a keyboard, runs it through a spell-check algorithm, applies formatting rules based on the software's code, and prepares a final, polished document structure ready to be sent to storage or displayed as an output.</p>
+                `
+            },
+            'process-usecase': {
+                title: 'Processing: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-orange-800 mb-2 border-b-2 border-orange-200 pb-1">Case 1: Mathematical Calculation</h4>
+                        <p class="mb-2">Computers excel at performing millions of calculations in fractions of a second, a task that would take humans lifetimes to achieve manually.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (ALU Logic):</strong> A meteorologist runs a climate model. The CPU's Arithmetic Logic Unit processes millions of atmospheric variables, multiplying wind speeds against barometric pressure to predict the path of a hurricane.</li>
+                            <li><strong>Example 2 (Basic Execution):</strong> A student types "=SUM(A1:A50)" in a spreadsheet. The processor decodes this request, fetches the 50 numbers from memory, adds them together instantly, and prepares the final sum for display.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-orange-800 mb-2 border-b-2 border-orange-200 pb-1">Case 2: Digital Media Rendering</h4>
+                        <p class="mb-2">Transforming raw binary data into the rich multimedia experiences we consume daily requires immense processing coordination.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Decoding):</strong> When you stream a movie, the video data arrives heavily compressed. The processor must decode this complex algorithm on the fly, decompressing the data before sending it to the graphics card.</li>
+                            <li><strong>Example 2 (Audio Processing):</strong> A musician records a vocal track. The CPU runs an autotune algorithm, mathematically analyzing the pitch of the input audio wave and altering the frequency structure in real-time to correct flat notes.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: The CPU</p>
+                            <img src="https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?auto=format&fit=crop&w=600&h=350" alt="Close up of a computer processor" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Intense Calculation</p>
+                            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&h=350" alt="Data analysts working with complex graphs and models" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'storage-details': {
+                title: 'Storage: Retaining Information',
+                icon: '<i class="fa-solid fa-hard-drive text-green-600"></i>',
+                html: `
+                    <p class="mb-5">If a computer could only process data but not save it, you would lose all your work the moment you turned the machine off. <strong>Storage</strong> is the foundational computing operation that addresses this limitation. It encompasses all the mechanisms, devices, and architectures designed to save, retain, and retrieve digital information for both immediate use by the processor and long-term archiving.</p>
+                    <p class="mb-5">Computer storage is strictly divided into two distinct categories. The first is Primary Storage, commonly known as <strong>Random Access Memory (RAM)</strong>. RAM is designed for extreme speed. When you open a program, the computer loads it into RAM so the CPU can access the instructions instantly. However, RAM is <em>volatile</em>. This means it requires a constant flow of electricity to hold data; if the power goes out, everything in RAM is instantly erased.</p>
+                    <p class="mb-5">To prevent catastrophic data loss, computers rely on Secondary Storage. This is <strong>Permanent or Persistent</strong> storage. When you click "Save" on a document, the data is moved from the volatile RAM to a secondary storage device. Because these devices use magnetic or flash memory technologies, they retain their data even when the computer is completely unplugged and sitting in a closet for years.</p>
+                    <p class="mb-5">Historically, secondary storage relied on <strong>Hard Disk Drives (HDDs)</strong>. These devices contain actual spinning metal platters and a mechanical read/write arm that magnetically polarizes sectors on the disk to represent 1s and 0s. While they offer massive capacity at a low cost, their mechanical nature makes them relatively slow and susceptible to physical damage if dropped.</p>
+                    <p class="mb-5">Modern computing has largely shifted to <strong>Solid-State Drives (SSDs)</strong>. SSDs contain zero moving parts. Instead, they use arrays of microscopic flash memory chips to trap electrons in specific patterns. Because there is no mechanical arm waiting to find data on a spinning disk, SSDs can retrieve files exponentially faster than HDDs, drastically reducing computer boot times and application loading screens.</p>
+                    <p class="mb-5">Storage capacity is a critical metric in computing. It is measured in Bytes (a single letter of text is roughly one byte). Modern storage devices hold hundreds of Gigabytes (billions of bytes) or Terabytes (trillions of bytes). A single 1TB hard drive can hold hundreds of thousands of high-resolution photos, a testament to the incredible density of modern storage technology.</p>
+                    <p class="mb-5">Finally, the concept of storage has expanded beyond the physical machine sitting on your desk. <strong>Cloud Storage</strong> utilizes the exact same principles of HDD and SSD retention, but the physical drives are located in massive data centers miles away, accessed via network inputs and outputs. This allows data to be persistent, accessible from anywhere, and resilient against local hardware failures.</p>
+                `
+            },
+            'storage-usecase': {
+                title: 'Storage: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-green-800 mb-2 border-b-2 border-green-200 pb-1">Case 1: Daily Computing & Multitasking</h4>
+                        <p class="mb-2">The seamless experience of jumping between different applications relies entirely on the computer's short-term storage capabilities.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (RAM Allocation):</strong> A user opens Google Chrome, Microsoft Word, and Spotify. The OS copies the core files for all three programs from the SSD and places them into the fast, volatile RAM so the CPU can switch between them without stuttering.</li>
+                            <li><strong>Example 2 (Volatility Consequence):</strong> A user types a long essay but forgets to save. A power outage occurs. Because the text only existed in the volatile RAM and was never written to the persistent HDD, the essay is permanently lost.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-green-800 mb-2 border-b-2 border-green-200 pb-1">Case 2: Long-Term Data Archiving</h4>
+                        <p class="mb-2">Businesses and individuals require reliable methods to ensure their digital assets survive for years into the future.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Persistent SSD):</strong> A photographer offloads a massive 50GB file of wedding photos onto a portable Solid-State Drive. They toss the drive into their bag; the data remains perfectly intact for years without needing a power source.</li>
+                            <li><strong>Example 2 (Cloud Expansion):</strong> A company runs out of physical hard drive space on their local server. They configure their software to automatically store old, archived emails in an Amazon Web Services (AWS) Cloud Storage bucket, preserving the data remotely.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Physical Storage (RAM)</p>
+                            <img src="https://images.unsplash.com/photo-1562976540-1502c2145186?auto=format&fit=crop&w=600&h=350" alt="Sticks of RAM memory" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Server Archiving</p>
+                            <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=600&h=350" alt="Massive data center storage racks" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'output-details': {
+                title: 'Output: Delivering Results',
+                icon: '<i class="fa-solid fa-desktop text-purple-600"></i>',
+                html: `
+                    <p class="mb-5">The computing cycle is ultimately meaningless without a conclusion. <strong>Output</strong> is the final phase of the cycle. It is the process where the computer, having received input and processed the data based on its programming, translates the internal digital results back into a form that human beings (or other machines) can understand, consume, and utilize.</p>
+                    <p class="mb-5">The most ubiquitous form of output is visual. <strong>Displays and Monitors</strong> consist of millions of tiny pixels. The computer's graphics processor calculates exactly what color each pixel should be, up to 144 times a second, to create the illusion of smooth motion, text, and vibrant images. Whether it is a massive 4K television or a tiny smartwatch screen, visual output is our primary window into the digital world.</p>
+                    <p class="mb-5">Audio output is equally vital, particularly in an era of multimedia and remote communication. When a computer plays a song or a notification chime, it takes a digital audio file, processes the binary data through a Digital-to-Analog Converter (DAC), and sends fluctuating electrical currents to the magnets inside <strong>Speakers or Headphones</strong>, physically pushing air to create sound waves.</p>
+                    <p class="mb-5">Sometimes, digital data must be brought entirely into the physical world. <strong>Printers</strong> serve this specific output function. Traditional 2D ink and laser printers take a digital document and perfectly replicate its layout onto physical paper. More recently, 3D printers process digital CAD (Computer-Aided Design) files and extrude heated plastic layer by layer, outputting tangible, physical objects.</p>
+                    <p class="mb-5">A less obvious but highly immersive form of output is <strong>Haptic Feedback</strong>. When you type on a smartphone keyboard and feel a slight vibration, or when a video game controller rumbles during an on-screen explosion, the computer is utilizing a small motor to generate physical force as an output, communicating information directly to your sense of touch.</p>
+                    <p class="mb-5">Output devices also play a massive role in technological accessibility. For users who are visually impaired, standard monitors are insufficient. Instead, computers can process text and output it via <strong>Screen Readers</strong> (synthetic audio voice) or dynamic <strong>Braille Displays</strong>, which use motorized pins to physically raise and lower text patterns, allowing users to read the digital output with their fingertips.</p>
+                    <p class="mb-5">It is important to remember that not all output is meant for humans. In complex systems, the output of one computer is often just the input for another. A server might process a database query and output a machine-readable JSON file directly to a web browser, closing the loop of one process only to instantly begin another.</p>
+                `
+            },
+            'output-usecase': {
+                title: 'Output: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Case 1: Content Creation and Design</h4>
+                        <p class="mb-2">Creative professionals require highly accurate output devices to ensure their digital work perfectly matches their vision.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Visual Display):</strong> A graphic designer uses a specialized, color-calibrated 4K monitor. The computer outputs the exact hexadecimal color values of their design, ensuring the digital blue they see matches the intended final product perfectly.</li>
+                            <li><strong>Example 2 (Physical Print):</strong> An architect finishes a digital blueprint and sends the file to a massive plotter printer, which outputs the digital vector lines onto a 3-foot wide physical sheet of paper for the construction crew to reference.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Case 2: Interactive Entertainment</h4>
+                        <p class="mb-2">Video games rely on rapid, multi-sensory output to immerse the player in a simulated digital environment.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Audio Output):</strong> A player's character steps on dry grass. The game engine processes the collision and outputs a specific "crunch" sound effect through the user's surround-sound headphones, providing spatial awareness.</li>
+                            <li><strong>Example 2 (Haptic Output):</strong> A player drives a digital car off a paved track into gravel. The console outputs a command to the controller's internal motors, causing it to aggressively vibrate (rumble) in the player's hands to simulate rough terrain.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Visual Monitor Output</p>
+                            <img src="https://images.unsplash.com/photo-1527443195645-1133f7f28990?auto=format&fit=crop&w=600&h=350" alt="Computer monitors displaying code" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Physical Printing Output</p>
+                            <img src="https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?auto=format&fit=crop&w=600&h=350" alt="Paper coming out of a printer" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        // Modal Control Functions
+        function openBriefing(key) {
+            const modal = document.getElementById('briefing-modal');
+            const data = briefingData[key];
+            if(data) {
+                document.getElementById('briefing-modal-icon').innerHTML = data.icon;
+                document.getElementById('briefing-modal-title').innerText = data.title;
+                document.getElementById('briefing-modal-content').innerHTML = data.html;
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; 
+            }
+        }
+
+        function closeBriefing() {
+            document.getElementById('briefing-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto'; 
+        }
+
+        document.getElementById('briefing-modal').addEventListener('click', function(e) {
+            if(e.target === this) closeBriefing();
+        });
+        
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId + '-section').classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-green-900'));
+            const activeBtn = document.getElementById('nav-' + tabId);
+            if(activeBtn && tabId !== 'cert') activeBtn.classList.add('bg-green-900');
+            
+            document.querySelectorAll('.nav-btn-mobile').forEach(btn => btn.classList.remove('bg-green-900'));
+            const activeMobileBtn = document.getElementById('nav-' + tabId + '-mobile');
+            if(activeMobileBtn && tabId !== 'cert') activeMobileBtn.classList.add('bg-green-900');
+
+            window.scrollTo(0,0);
+
+            // Game specific focus
+            if (tabId === 'game') {
+                document.getElementById('game-canvas').focus();
+            }
+        }
+
+        function showModal(title, message, type = 'info') {
+            const modal = document.getElementById('custom-modal');
+            const icon = document.getElementById('modal-icon');
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-msg').innerText = message;
+            
+            if(type === 'success') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-check text-green-500"></i>';
+            } else if (type === 'error') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500"></i>';
+            } else if (type === 'warning') {
+                icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-yellow-500"></i>';
+            } else {
+                icon.innerHTML = '<i class="fa-solid fa-circle-info text-blue-500"></i>';
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        // --- LAB ACTIVITIES LOGIC ---
+
+        // Lab 1: Input Drag/Drop
+        let draggedCatItem = null;
+        let lab1Count = 0;
+
+        document.querySelectorAll('#lab1-items .io-item').forEach(item => {
+            item.addEventListener('dragstart', function() {
+                draggedCatItem = this;
+                setTimeout(() => this.classList.add('opacity-50'), 0);
+            });
+            item.addEventListener('dragend', function() {
+                setTimeout(() => this.classList.remove('opacity-50'), 0);
+                draggedCatItem = null;
+            });
+        });
+
+        document.querySelectorAll('.io-dropzone').forEach(zone => {
+            zone.addEventListener('dragover', e => e.preventDefault());
+            zone.addEventListener('dragenter', function(e) { e.preventDefault(); this.classList.add('drag-over'); });
+            zone.addEventListener('dragleave', function() { this.classList.remove('drag-over'); });
+            zone.addEventListener('drop', function() {
+                this.classList.remove('drag-over');
+                if(draggedCatItem) {
+                    if(draggedCatItem.dataset.type === this.dataset.target) {
+                        this.appendChild(draggedCatItem);
+                        draggedCatItem.classList.remove('bg-blue-100', 'cursor-grab');
+                        draggedCatItem.classList.add('bg-green-100', 'text-green-800', 'cursor-default', 'my-1', 'w-full', 'text-center');
+                        draggedCatItem.setAttribute('draggable', 'false');
+                        lab1Count++;
+                        document.getElementById('lab1-feedback').innerText = "Correct Classification!";
+                        document.getElementById('lab1-feedback').className = "text-center font-bold mt-2 h-4 text-xs text-green-600";
+                    } else {
+                        document.getElementById('lab1-feedback').innerText = "Incorrect. Think about how the device interfaces with the user.";
+                        document.getElementById('lab1-feedback').className = "text-center font-bold mt-2 h-4 text-xs text-red-600";
+                    }
+                }
+            });
+        });
+
+        // Lab 2: Input Keystroke Capture
+        const term = document.getElementById('lab2-terminal');
+        let keysPressed = 0;
+        term.addEventListener('keydown', function(e) {
+            e.preventDefault();
+            if(keysPressed === 0) term.innerHTML = ""; // Clear waiting text
+            if(keysPressed < 5) {
+                term.innerHTML += `> INPUT DETECTED: [${e.key.toUpperCase()}]<br>`;
+                keysPressed++;
+                term.scrollTop = term.scrollHeight;
+                if(keysPressed === 5) {
+                    document.getElementById('lab2-feedback').innerText = "5 Inputs Successfully Captured by System.";
+                }
+            }
+        });
+
+        // Lab 3: Processing CPU Adder
+        function processLab3() {
+            const n1 = parseInt(document.getElementById('lab3-num1').value);
+            const n2 = parseInt(document.getElementById('lab3-num2').value);
+            const resultSpan = document.getElementById('lab3-result');
+            
+            resultSpan.innerText = "Processing...";
+            resultSpan.classList.add('animate-pulse');
+            
+            setTimeout(() => {
+                resultSpan.classList.remove('animate-pulse');
+                if(isNaN(n1) || isNaN(n2)) {
+                    resultSpan.innerText = "ERR";
+                    document.getElementById('lab3-feedback').innerText = "Invalid data format.";
+                    document.getElementById('lab3-feedback').className = "text-center font-bold mt-2 h-4 text-xs text-red-600";
+                } else {
+                    resultSpan.innerText = n1 + n2;
+                    document.getElementById('lab3-feedback').innerText = "ALU processed calculation successfully.";
+                    document.getElementById('lab3-feedback').className = "text-center font-bold mt-2 h-4 text-xs text-green-600";
+                }
+            }, 800); // Simulate processing time
+        }
+
+        // Lab 4: Processing Clock Speed
+        function updateLab4() {
+            const val = document.getElementById('lab4-slider').value;
+            document.getElementById('lab4-ghz').innerText = val + " GHz";
+            const bar = document.getElementById('lab4-bar');
+            
+            // CSS Animation manipulation
+            bar.style.transition = "none";
+            bar.style.width = "0%";
+            setTimeout(() => {
+                bar.style.transition = `width ${6-val}s linear`;
+                bar.style.width = "100%";
+            }, 50);
+            
+            document.getElementById('lab4-feedback').innerText = `Instruction cycle running at ${val}x simulated speed.`;
+        }
+
+        // Lab 5: Storage Allocation
+        let lab5RamCount = 0;
+        let lab5SsdCount = 0;
+        function setupLab5() {
+            const ramCont = document.getElementById('lab5-ram');
+            const ssdCont = document.getElementById('lab5-ssd');
+            for(let i=0; i<6; i++) {
+                let block = document.createElement('div');
+                block.className = "w-8 h-8 bg-gray-200 border border-gray-400 rounded cursor-pointer transition-colors";
+                block.onclick = function() {
+                    if(this.classList.contains('bg-gray-200')) {
+                        if(this.parentElement.id === 'lab5-ram' && lab5RamCount < 3) {
+                            this.classList.replace('bg-gray-200', 'bg-green-500'); lab5RamCount++;
+                        } else if(this.parentElement.id === 'lab5-ssd' && lab5SsdCount < 2) {
+                            this.classList.replace('bg-gray-200', 'bg-blue-500'); lab5SsdCount++;
+                        }
+                    } else {
+                        if(this.parentElement.id === 'lab5-ram') {
+                            this.classList.replace('bg-green-500', 'bg-gray-200'); lab5RamCount--;
+                        } else {
+                            this.classList.replace('bg-blue-500', 'bg-gray-200'); lab5SsdCount--;
+                        }
+                    }
+                };
+                if(i<3) ramCont.appendChild(block); else {
+                    let b2 = block.cloneNode();
+                    b2.onclick = block.onclick; // Re-bind
+                    ssdCont.appendChild(b2);
+                }
+            }
+        }
+        setupLab5();
+
+        function checkLab5() {
+            if(lab5RamCount === 3 && lab5SsdCount === 2) {
+                document.getElementById('lab5-feedback').innerText = "Storage perfectly allocated!";
+                document.getElementById('lab5-feedback').className = "text-center font-bold mt-2 h-4 text-xs text-green-600";
+            } else {
+                document.getElementById('lab5-feedback').innerText = `Current: ${lab5RamCount} RAM, ${lab5SsdCount} SSD. Adjust blocks.`;
+                document.getElementById('lab5-feedback').className = "text-center font-bold mt-2 h-4 text-xs text-red-600";
+            }
+        }
+
+        // Lab 6: Storage Volatility
+        function lab6Save() {
+            const val = document.getElementById('lab6-input').value;
+            if(val) {
+                document.getElementById('lab6-ram-display').innerText = val;
+                document.getElementById('lab6-feedback').innerText = "Data stored in volatile memory.";
+                document.getElementById('lab6-feedback').className = "text-center font-bold mt-2 h-4 text-xs text-blue-600";
+            }
+        }
+        function lab6PowerLoss() {
+            if(document.getElementById('lab6-ram-display').innerText !== "Empty") {
+                document.getElementById('lab6-ram-display').innerText = "Empty";
+                document.getElementById('lab6-feedback').innerText = "Power Loss! Volatile memory wiped.";
+                document.getElementById('lab6-feedback').className = "text-center font-bold mt-2 h-4 text-xs text-red-600 animate-pulse";
+            }
+        }
+
+        // Lab 7: Output Visual
+        function updateLab7() {
+            const r = document.getElementById('lab7-r').value;
+            const g = document.getElementById('lab7-g').value;
+            const b = document.getElementById('lab7-b').value;
+            document.getElementById('lab7-display').style.backgroundColor = `rgb(${r},${g},${b})`;
+            
+            // Check if purple (High R, Low G, High B)
+            if(r > 150 && g < 100 && b > 150) {
+                document.getElementById('lab7-feedback').innerText = "Success! Display outputting Purple.";
+            } else {
+                document.getElementById('lab7-feedback').innerText = "";
+            }
+        }
+
+        // Lab 8: Cycle Flowchart
+        let lab8Seq = [];
+        const correctSeq = ["Input", "Processing", "Storage", "Output"]; // Note: often listed as IPSO or ISPO. Template says I, P, S, O or I, S, P, O depending on task. Let's accept typical generic model: Input -> Processing -> Storage -> Output (or vice versa). For simplicity, let's enforce standard IPSO model.
+        
+        function lab8Click(op, btn) {
+            if(lab8Seq.length < 4 && !btn.classList.contains('active')) {
+                lab8Seq.push(op);
+                btn.classList.add('active');
+                document.getElementById('lab8-sequence').innerText = lab8Seq.join(" ➔ ");
+                
+                if(lab8Seq.length === 4) {
+                    if(lab8Seq.join(",") === correctSeq.join(",")) {
+                        document.getElementById('lab8-feedback').innerText = "Cycle Complete! The foundational flow of computing.";
+                        document.getElementById('lab8-feedback').className = "text-center font-bold mt-2 h-4 text-xs text-green-600";
+                    } else {
+                        document.getElementById('lab8-feedback').innerText = "Incorrect order. (Hint: I -> P -> S -> O). Click to reset.";
+                        document.getElementById('lab8-feedback').className = "text-center font-bold mt-2 h-4 text-xs text-red-600 cursor-pointer";
+                        document.getElementById('lab8-feedback').onclick = function() {
+                            lab8Seq = [];
+                            document.getElementById('lab8-sequence').innerText = "";
+                            document.querySelectorAll('.cycle-btn').forEach(b => b.classList.remove('active'));
+                            this.innerText = "";
+                            this.onclick = null;
+                        }
+                    }
+                }
+            }
+        }
+
+
+        // --- QUIZ LOGIC (20 Questions) ---
+        const quizData = [
+            // 10 provided from Document
+            { q: "Which of the following is NOT a basic operation in the computing cycle?", options: ["Virtualization", "Processing", "Storage", "Input"], answer: 0 },
+            { q: "Which of the following is an example of a direct input method?", options: ["Mouse", "Keyboard", "Camera", "Stylus"], answer: 3 },
+            { q: "What role does input play in the computing cycle?", options: ["It manipulates information.", "It communicates user requests to the computer.", "It displays manipulated information.", "It retains information."], answer: 1 },
+            { q: "_____ is the basic operation that handles instructions.", options: ["Input", "Processing", "Storage", "Output"], answer: 1 },
+            { q: "The processor is often compared to a human _____.", options: ["Heart", "Ear", "Brain", "Mouth"], answer: 2 },
+            { q: "Which of the following is NOT persistent storage?", options: ["Hard disk drive (HDD)", "Solid-state drive (SSD)", "Flash drive", "Random access memory (RAM)"], answer: 3 },
+            { q: "What role does storage play in the computing cycle?", options: ["It retains information.", "It displays manipulated information.", "It communicates user requests.", "It manipulates information."], answer: 0 },
+            { q: "A baking program converts an existing recipe. What could be an example of an input for the baking program?", options: ["The number of eggs required after scaling the recipe", "A list of steps for baking the cake", "The user enters '12 servings' into the program", "The cake is baked"], answer: 2 },
+            { q: "What could be an example of processing for the baking program?", options: ["The program multiplying all ingredient quantities by 1.5", "Displaying the list of scaled ingredients", "The user selecting a recipe from a dropdown menu", "Printing the shopping list"], answer: 0 },
+            { q: "What could be an example of output for the baking program?", options: ["The program multiplying all ingredient quantities by 1.5", "Displaying the list of scaled ingredients", "The user selecting a recipe from a dropdown menu", "The cake is baked"], answer: 1 },
+            
+            // 10 new questions based on briefing
+            { q: "What is the primary function of an input device regarding real-world data?", options: ["To delete it to save space.", "To translate analog signals into digital binary data.", "To print it out immediately.", "To cool down the processor."], answer: 1 },
+            { q: "A motion sensor turning on a security camera is an example of what kind of input?", options: ["Direct visual input", "Indirect passive/sensory input", "Output feedback loop", "Volatile storage"], answer: 1 },
+            { q: "What does 'GHz' (Gigahertz) typically measure in a computer system?", options: ["The capacity of the hard drive.", "The physical size of the monitor.", "The clock speed of the Central Processing Unit (CPU).", "The volume of the speakers."], answer: 2 },
+            { q: "Inside the CPU, which component is responsible for handling mathematical calculations and logic?", options: ["The Control Unit (CU)", "The Arithmetic Logic Unit (ALU)", "The Solid State Drive (SSD)", "The Haptic Motor"], answer: 1 },
+            { q: "Why is Random Access Memory (RAM) considered 'volatile'?", options: ["It breaks easily if dropped.", "It loses all its stored data the moment electricity is disconnected.", "It changes file formats unpredictably.", "It holds data permanently forever."], answer: 1 },
+            { q: "Which secondary storage device relies on spinning metal platters and a physical magnetic arm?", options: ["Solid-State Drive (SSD)", "Random Access Memory (RAM)", "Cloud Storage Server", "Hard Disk Drive (HDD)"], answer: 3 },
+            { q: "How is cloud storage fundamentally different from local storage for the end user?", 
+              options: ["It doesn't use any physical drives.", "The physical drives are located in remote data centers accessed via a network.", "It uses paper tape instead of silicon.", "It is a form of volatile memory."], answer: 1 },
+            { q: "When a video game controller rumbles in your hands during gameplay, what type of output is this?", options: ["Visual output", "Audio output", "Haptic feedback", "Persistent storage"], answer: 2 },
+            { q: "Which of the following is considered an accessibility output device?", options: ["A Braille display reader", "A 4K television", "A mechanical keyboard", "A barcode scanner"], answer: 0 },
+            { q: "In the basic computing cycle, what immediately follows 'Input'?", options: ["Output", "Cooling", "Processing", "Formatting"], answer: 2 }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        
+        quizData.forEach((item, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = "bg-gray-50 p-6 rounded-lg border border-gray-200 transition-all";
+            qDiv.id = `q-block-${index}`;
+            
+            const qTitle = document.createElement('h3');
+            qTitle.className = "font-bold text-lg text-gray-800 mb-4";
+            qTitle.innerText = `${index + 1}. ${item.q}`;
+            qDiv.appendChild(qTitle);
+            
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = "space-y-3";
+            
+            item.options.forEach((opt, optIndex) => {
+                const label = document.createElement('label');
+                label.className = "flex items-center space-x-3 p-3 rounded bg-white border border-gray-300 hover:bg-green-50 cursor-pointer transition";
+                
+                const radio = document.createElement('input');
+                radio.type = "radio";
+                radio.name = `q${index}`;
+                radio.value = optIndex;
+                radio.className = "form-radio h-5 w-5 text-green-600";
+                
+                const span = document.createElement('span');
+                span.className = "text-gray-700";
+                span.innerText = opt;
+                
+                label.appendChild(radio);
+                label.appendChild(span);
+                optionsDiv.appendChild(label);
+            });
+            
+            qDiv.appendChild(optionsDiv);
+            quizContainer.appendChild(qDiv);
+        });
+
+        function gradeQuiz() {
+            let score = 0;
+            let allAnswered = true;
+
+            for(let i = 0; i < quizData.length; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if(selected) {
+                    if(parseInt(selected.value) === quizData[i].answer) {
+                        score++;
+                    }
+                } else {
+                    allAnswered = false;
+                }
+            }
+            
+            if(!allAnswered) {
+                showModal('Incomplete Quiz', 'Please answer all 20 questions before submitting.', 'warning');
+                return;
+            }
+            
+            const percentage = (score / quizData.length) * 100;
+            
+            if(score >= 18) { 
+                const navGame = document.getElementById('nav-game');
+                const navGameMobile = document.getElementById('nav-game-mobile');
+                
+                navGame.classList.remove('text-gray-400', 'cursor-not-allowed');
+                navGame.classList.add('text-white', 'hover:bg-green-600');
+                navGame.disabled = false;
+                navGame.innerHTML = '<i class="fa-solid fa-gamepad mr-1"></i>Game';
+                
+                navGameMobile.classList.remove('text-gray-400', 'cursor-not-allowed');
+                navGameMobile.classList.add('text-white', 'hover:bg-green-600');
+                navGameMobile.disabled = false;
+                navGameMobile.innerHTML = '<i class="fa-solid fa-gamepad"></i> Game';
+
+                document.getElementById('nav-cert').classList.remove('hidden');
+                document.getElementById('nav-cert-mobile').classList.remove('hidden');
+                
+                document.getElementById('proceed-game-btn').classList.remove('hidden');
+                document.getElementById('submit-quiz-btn').classList.add('hidden');
+
+                showModal('Outstanding!', `You scored ${score}/20 (${percentage}%). You have unlocked your Certificate of Mastery AND the Retro Game!`, 'success');
+            } else {
+                quizData.forEach((_, i) => {
+                    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                    if(selected) selected.checked = false;
+                });
+                showModal('Keep Trying!', `You scored ${score}/20 (${percentage}%). You need 90% (18/20) to earn the certificate. Your answers have been reset so you can try again.`, 'error');
+                document.getElementById('quiz-section').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // --- RETRO GAME LOGIC: Data Digger (Boulder Dash Clone) ---
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        const TILE_SIZE = 30;
+        const COLS = 20;
+        const ROWS = 15;
+        
+        let diggerScore = 0;
+        let diggerLevel = 1;
+        let gameActive = false;
+        let lastTime = 0;
+        let updateTimer = 0;
+        const TICK_RATE = 100; // ms per update (retro 10hz feel)
+        
+        let grid = [];
+        let player = { x: 1, y: 1 };
+        let totalData = 0;
+        
+        const EMPTY = 0;
+        const DIRT = 1;
+        const ROCK = 2;
+        const DATA = 3;
+        const WALL = 4;
+        
+        const startBtn = document.getElementById('start-game-btn');
+        const overlay = document.getElementById('game-overlay');
+        const msgEl = document.getElementById('game-msg');
+
+        // Input state
+        const keys = { ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false };
+
+        window.addEventListener('keydown', e => {
+            if(gameActive && keys.hasOwnProperty(e.code)) {
+                keys[e.code] = true;
+                e.preventDefault(); // Stop scrolling
+            }
+        });
+        window.addEventListener('keyup', e => {
+            if(keys.hasOwnProperty(e.code)) keys[e.code] = false;
+        });
+
+        // Mobile simulation
+        function simKey(code) { keys[code] = true; }
+        function simKeyUp(code) { keys[code] = false; }
+
+        function loadLevel() {
+            grid = [];
+            totalData = 0;
+            player.x = 1; player.y = 1;
+            
+            for(let y = 0; y < ROWS; y++) {
+                grid[y] = [];
+                for(let x = 0; x < COLS; x++) {
+                    if(y === 0 || y === ROWS-1 || x === 0 || x === COLS-1) {
+                        grid[y][x] = WALL;
+                    } else if (x === 1 && y === 1) {
+                        grid[y][x] = EMPTY; // Start zone
+                    } else {
+                        let rand = Math.random();
+                        if(rand < 0.15) { grid[y][x] = ROCK; }
+                        else if(rand < 0.25) { grid[y][x] = DATA; totalData++; }
+                        else { grid[y][x] = DIRT; }
+                    }
+                }
+            }
+            // Ensure at least some data
+            if(totalData === 0) { grid[5][5] = DATA; totalData++; }
+        }
+
+        function startGame() {
+            diggerScore = 0;
+            diggerLevel = 1;
+            document.getElementById('game-score').innerText = diggerScore;
+            document.getElementById('game-level').innerText = diggerLevel;
+            loadLevel();
+            overlay.classList.add('hidden');
+            gameActive = true;
+            lastTime = performance.now();
+            requestAnimationFrame(gameLoop);
+        }
+        startBtn.addEventListener('click', startGame);
+
+        function handlePlayerMovement() {
+            let nx = player.x;
+            let ny = player.y;
+            
+            if(keys.ArrowUp) { ny--; keys.ArrowUp = false; }
+            else if(keys.ArrowDown) { ny++; keys.ArrowDown = false; }
+            else if(keys.ArrowLeft) { nx--; keys.ArrowLeft = false; }
+            else if(keys.ArrowRight) { nx++; keys.ArrowRight = false; }
+            
+            if(nx !== player.x || ny !== player.y) {
+                let target = grid[ny][nx];
+                if(target === EMPTY || target === DIRT || target === DATA) {
+                    if(target === DATA) {
+                        diggerScore += 10;
+                        document.getElementById('game-score').innerText = diggerScore;
+                        totalData--;
+                        if(totalData <= 0) {
+                            levelComplete();
+                            return;
+                        }
+                    }
+                    player.x = nx;
+                    player.y = ny;
+                    grid[ny][nx] = EMPTY; // clear path
+                } 
+                // Push rock horizontally
+                else if (target === ROCK && ny === player.y) {
+                    let dir = nx > player.x ? 1 : -1;
+                    if(grid[ny][nx + dir] === EMPTY) {
+                        grid[ny][nx + dir] = ROCK;
+                        grid[ny][nx] = EMPTY;
+                        player.x = nx;
+                    }
+                }
+            }
+        }
+
+        function handlePhysics() {
+            // Process gravity bottom to top
+            for(let y = ROWS-2; y >= 0; y--) {
+                for(let x = 1; x < COLS-1; x++) {
+                    if(grid[y][x] === ROCK || grid[y][x] === DATA) {
+                        if(grid[y+1][x] === EMPTY) {
+                            // Check if crushing player
+                            if(player.x === x && player.y === y+1) {
+                                gameOver();
+                                return;
+                            }
+                            // Fall
+                            grid[y+1][x] = grid[y][x];
+                            grid[y][x] = EMPTY;
+                        }
+                    }
+                }
+            }
+        }
+
+        function drawGame() {
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            for(let y = 0; y < ROWS; y++) {
+                for(let x = 0; x < COLS; x++) {
+                    let type = grid[y][x];
+                    let px = x * TILE_SIZE;
+                    let py = y * TILE_SIZE;
+                    
+                    if(type === WALL) {
+                        ctx.fillStyle = '#374151'; // gray-700
+                        ctx.fillRect(px, py, TILE_SIZE, TILE_SIZE);
+                    } else if(type === DIRT) {
+                        ctx.fillStyle = '#78350f'; // amber-900 (brown)
+                        ctx.fillRect(px, py, TILE_SIZE, TILE_SIZE);
+                        // Dirt texture dots
+                        ctx.fillStyle = '#92400e';
+                        ctx.fillRect(px+5, py+5, 4, 4);
+                        ctx.fillRect(px+15, py+20, 6, 4);
+                    } else if(type === ROCK) {
+                        ctx.fillStyle = '#9ca3af'; // gray-400
+                        ctx.beginPath();
+                        ctx.arc(px + TILE_SIZE/2, py + TILE_SIZE/2, TILE_SIZE/2.2, 0, Math.PI*2);
+                        ctx.fill();
+                        ctx.fillStyle = '#d1d5db'; // highlight
+                        ctx.beginPath();
+                        ctx.arc(px + TILE_SIZE/3, py + TILE_SIZE/3, TILE_SIZE/6, 0, Math.PI*2);
+                        ctx.fill();
+                    } else if(type === DATA) {
+                        ctx.fillStyle = '#3b82f6'; // blue-500
+                        ctx.beginPath();
+                        ctx.moveTo(px + TILE_SIZE/2, py + 2);
+                        ctx.lineTo(px + TILE_SIZE-2, py + TILE_SIZE/2);
+                        ctx.lineTo(px + TILE_SIZE/2, py + TILE_SIZE-2);
+                        ctx.lineTo(px + 2, py + TILE_SIZE/2);
+                        ctx.fill();
+                        ctx.fillStyle = '#93c5fd'; // blue highlight
+                        ctx.beginPath();
+                        ctx.moveTo(px + TILE_SIZE/2, py + 8);
+                        ctx.lineTo(px + TILE_SIZE/2 + 6, py + TILE_SIZE/2);
+                        ctx.lineTo(px + TILE_SIZE/2, py + TILE_SIZE/2 + 6);
+                        ctx.lineTo(px + TILE_SIZE/2 - 6, py + TILE_SIZE/2);
+                        ctx.fill();
+                    }
+                }
+            }
+            
+            // Draw Player
+            ctx.fillStyle = '#10b981'; // green-500
+            let px = player.x * TILE_SIZE;
+            let py = player.y * TILE_SIZE;
+            ctx.fillRect(px + 2, py + 2, TILE_SIZE - 4, TILE_SIZE - 4);
+            // Player eyes
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(px + 6, py + 6, 6, 6);
+            ctx.fillRect(px + 18, py + 6, 6, 6);
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(px + 8, py + 8, 4, 4);
+            ctx.fillRect(px + 20, py + 8, 4, 4);
+        }
+
+        function gameLoop(time) {
+            if(!gameActive) return;
+            
+            let dt = time - lastTime;
+            lastTime = time;
+            updateTimer += dt;
+            
+            if(updateTimer > TICK_RATE) {
+                handlePlayerMovement();
+                handlePhysics();
+                updateTimer = 0;
+            }
+            
+            drawGame();
+            if(gameActive) requestAnimationFrame(gameLoop);
+        }
+
+        function gameOver() {
+            gameActive = false;
+            msgEl.innerText = "CRUSHED BY DEAD SECTOR!";
+            msgEl.classList.replace('text-white', 'text-red-500');
+            startBtn.innerText = "Reboot System";
+            overlay.classList.remove('hidden');
+        }
+
+        function levelComplete() {
+            gameActive = false;
+            diggerLevel++;
+            document.getElementById('game-level').innerText = diggerLevel;
+            msgEl.innerText = "DATA RETRIEVED! NEXT LAYER.";
+            msgEl.classList.replace('text-white', 'text-green-500');
+            startBtn.innerText = "Proceed";
+            overlay.classList.remove('hidden');
+            
+            // Auto click proceed after 1s for flow
+            setTimeout(() => { if(!gameActive && overlay.classList.contains('hidden') === false) startGame(); }, 1500);
+        }
+
+        // Draw initial blank screen
+        ctx.fillStyle = '#111827';
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+        
+        // --- CERTIFICATE LOGIC ---
+        function updateCertName() {
+            let name = document.getElementById('student-name-input').value.trim();
+            if(name) {
+                if (name.includes(' ')) {
+                    name = name.split(' ')[0];
+                    document.getElementById('student-name-input').value = name;
+                    showModal('Notice', 'Only your first name has been applied to the certificate.', 'info');
+                }
+                document.getElementById('cert-student-name').innerText = name;
+            } else {
+                showModal('Wait!', 'Please enter your first name to update the certificate.', 'warning');
+            }
+        }
+
+        const today = new Date();
+        document.getElementById('cert-date').innerText = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        function downloadCert() {
+            const certEl = document.getElementById('certificate');
+            const name = document.getElementById('cert-student-name').innerText;
+            let filename = 'Certificate.png';
+            if (name && name !== 'Student') {
+                filename = `${name.replace(/\s+/g, '_')}_Certificate.png`;
+            }
+
+            const originalTransform = certEl.style.transform;
+            certEl.style.transform = 'none';
+
+            const btn = document.getElementById('download-btn');
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Generating...';
+            btn.disabled = true;
+
+            html2canvas(certEl, { 
+                scale: 2, 
+                useCORS: true,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+            }).catch(err => {
+                console.error(err);
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                showModal('Error', 'Failed to generate image. Try using a desktop browser.', 'error');
+            });
+        }
+    </script>
+</body>
+</html>
+```eof

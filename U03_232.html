@@ -1,0 +1,1453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 03 Section 2.3.2 Mastery - Network Storage Devices</title>
+    
+    <!-- Load Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load HTML2Canvas for Certificate Download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- Load Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Qwitcher+Grypen:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0fdf4; 
+            color: #1f2937;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        /* Interactive Elements CSS */
+        .io-dropzone { min-height: 70px; min-width: 130px; border: 2px dashed #9ca3af; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: #f9fafb; transition: all 0.2s;}
+        .io-dropzone.drag-over { background: #e5e7eb; border-color: #16a34a; box-shadow: inset 0 0 10px rgba(22, 163, 74, 0.2);}
+        
+        .io-item { cursor: grab; transition: transform 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .io-item:active { cursor: grabbing; transform: scale(0.95); }
+        
+        .cat-dropzone { transition: background-color 0.2s ease; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #e5e7eb; }
+        ::-webkit-scrollbar-thumb { background: #10b981; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #059669; }
+
+        /* Retro Game Canvas */
+        #game-canvas {
+            background-color: #111827;
+            border: 4px solid #374151;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+            max-width: 100%;
+            height: auto;
+            touch-action: none;
+            cursor: crosshair;
+        }
+        .game-btn { touch-action: manipulation; user-select: none; }
+
+        /* --- CERTIFICATE STYLES --- */
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .font-body { font-family: 'Lora', serif; }
+        .font-script { font-family: 'Qwitcher Grypen', cursive; }
+        
+        .cert-preview-container {
+            width: 100%;
+            overflow: auto;
+            display: flex;
+            justify-content: center;
+            background: #e5e7eb;
+            padding: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        #certificate {
+            width: 1056px !important;
+            height: 816px !important;
+            flex-shrink: 0;
+            background-color: #ffffff;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1056" height="816"><polygon points="0,0 250,0 0,650" fill="%23fcd34d"/><polygon points="0,0 350,0 0,900" fill="%23d97706" opacity="0.8"/><polygon points="0,0 120,0 0,300" fill="%23fcd34d"/><polygon points="0,450 650,816 0,816" fill="%23fcd34d"/><polygon points="0,550 450,816 0,816" fill="%23d97706" opacity="0.8"/><polygon points="800,0 1056,0 1056,256" fill="%23f3f4f6"/><polygon points="1056,500 1056,816 750,816" fill="%23f3f4f6"/></svg>');
+            background-size: cover;
+            border: 4px solid #e5e7eb;
+        }
+
+        .gold-seal {
+            position: absolute;
+            left: 110px;
+            top: 350px;
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c, #fcf6ba);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3), inset 0 0 15px rgba(255,255,255,0.7), inset 0 0 25px rgba(139,105,20,0.9);
+            z-index: 10;
+        }
+        .gold-seal::before {
+            content: '';
+            position: absolute;
+            top: -4px; bottom: -4px; left: -4px; right: -4px;
+            border-radius: 50%;
+            border: 6px dashed #d4af37;
+        }
+        .gold-seal-inner-1 {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 2px solid rgba(139, 105, 20, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #e8c678, #dbab46);
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.2), 0 2px 5px rgba(255,255,255,0.7);
+            z-index: 1;
+        }
+        .gold-seal-inner-2 {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: radial-gradient(circle, #fcf6ba, #d4af37);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            padding: 10px;
+        }
+        .embossed-text {
+            color: #b38728;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2);
+            font-family: 'Playfair Display', serif;
+            font-weight: 800;
+            line-height: 1.1;
+            text-transform: uppercase;
+        }
+        .embossed-text-large { font-size: 14px; letter-spacing: 1px; }
+        .embossed-text-small { font-size: 11px; letter-spacing: 2px; margin: 2px 0; }
+        .embossed-star { font-size: 12px; color: #b38728; text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2); margin: 2px 0; }
+
+        @media (max-width: 1100px) {
+            #certificate { transform: scale(0.7); transform-origin: top left; margin-bottom: -240px; margin-right: -310px; }
+        }
+        @media (max-width: 768px) {
+            #certificate { transform: scale(0.4); transform-origin: top left; margin-bottom: -490px; margin-right: -630px; }
+        }
+        
+        .terminal-box {
+            background-color: #0f172a;
+            color: #38bdf8;
+            font-family: monospace;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.6);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
+    <nav class="bg-green-700 text-white shadow-lg sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-network-wired text-2xl"></i>
+                    <span class="font-bold text-xl tracking-wider hidden sm:inline-block">Tech+ Unit 03 Section 2.3.2</span>
+                    <span class="font-bold text-xl tracking-wider sm:hidden">2.3.2</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-2">
+                        <button onclick="switchTab('briefing')" class="nav-btn bg-green-900 px-3 py-2 rounded-md text-sm font-medium hover:bg-green-600 transition" id="nav-briefing"><i class="fa-solid fa-book-open mr-1"></i>Briefing</button>
+                        <button onclick="switchTab('activity')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-green-600 transition" id="nav-activity"><i class="fa-solid fa-flask mr-1"></i>Lab Activity</button>
+                        <button onclick="switchTab('quiz')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-green-600 transition" id="nav-quiz"><i class="fa-solid fa-clipboard-check mr-1"></i>Quiz</button>
+                        <button onclick="switchTab('game')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-gray-400 cursor-not-allowed transition" id="nav-game" disabled><i class="fa-solid fa-lock mr-1"></i>Game</button>
+                        <button onclick="switchTab('cert')" class="nav-btn hidden px-3 py-2 rounded-md text-sm font-medium text-yellow-300 hover:bg-green-600 transition" id="nav-cert"><i class="fa-solid fa-award mr-1"></i>Certificate</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Nav -->
+        <div class="md:hidden flex flex-wrap justify-center gap-2 py-2 px-2 bg-green-800">
+            <button onclick="switchTab('briefing')" class="nav-btn-mobile px-3 py-1 text-sm rounded bg-green-900" id="nav-briefing-mobile">Briefing</button>
+            <button onclick="switchTab('activity')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-activity-mobile">Lab</button>
+            <button onclick="switchTab('quiz')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-quiz-mobile">Quiz</button>
+            <button onclick="switchTab('game')" class="nav-btn-mobile px-3 py-1 text-sm rounded text-gray-400 cursor-not-allowed" id="nav-game-mobile" disabled><i class="fa-solid fa-lock"></i></button>
+            <button onclick="switchTab('cert')" id="nav-cert-mobile" class="hidden px-2 py-1 text-sm text-yellow-300 rounded"><i class="fa-solid fa-award"></i></button>
+        </div>
+    </nav>
+
+    <main class="flex-grow w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <!-- BRIEFING SECTION -->
+        <div id="briefing-section" class="tab-content active no-print">
+            <div class="text-center mb-10">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">Network Storage Devices</h1>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">Explore how modern infrastructure moves beyond single local drives to centralized network storage, NAS appliances, dedicated file servers, and cloud environments.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- Tile 1: Local Network Storage -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-blue-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-blue-700"><i class="fa-solid fa-network-wired mr-2"></i>Local Network Storage</h2>
+                        <p class="text-gray-700 mb-4">Storage devices connected to a local area network (LAN) within a specific physical facility, allowing multiple authorized users to access files without carrying external media.</p>
+                        <ul class="space-y-2 text-sm text-gray-600">
+                            <li><i class="fa-solid fa-check text-green-500 mr-2"></i>Shared across multiple workstations</li>
+                            <li><i class="fa-solid fa-check text-green-500 mr-2"></i>Controlled user access permissions</li>
+                            <li><i class="fa-solid fa-check text-green-500 mr-2"></i>High access speed over wired LAN</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('lns-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('lns-usecase')" class="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 2: Network-Attached Storage (NAS) -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-green-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-green-700"><i class="fa-solid fa-hdd mr-2"></i>Network-Attached Storage (NAS)</h2>
+                        <p class="text-gray-700 mb-4">A dedicated storage appliance running its own lightweight operating system, connected via Ethernet to provide file-based storage and built-in RAID data protection.</p>
+                        <ul class="space-y-2 text-sm text-gray-600">
+                            <li><i class="fa-solid fa-check text-green-500 mr-2"></i>Built-in RAID redundancy arrays</li>
+                            <li><i class="fa-solid fa-check text-green-500 mr-2"></i>Centralized file consolidation</li>
+                            <li><i class="fa-solid fa-check text-green-500 mr-2"></i>Configurable remote access</li>
+                        </ul>
+                    </div>
+                     <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('nas-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('nas-usecase')" class="flex-1 bg-green-100 hover:bg-green-200 text-green-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 3: File Servers & Protocols -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-purple-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-purple-700"><i class="fa-solid fa-server mr-2"></i>File Servers & Protocols</h2>
+                        <p class="text-gray-700 mb-4">Robust servers dedicated to managing large file repositories, utilizing advanced network protocols like SMB (Windows) and NFS (Linux) for granular access controls.</p>
+                        <ul class="space-y-2 text-sm text-gray-600">
+                            <li><i class="fa-solid fa-check text-green-500 mr-2"></i>SMB (Server Message Block) & NFS</li>
+                            <li><i class="fa-solid fa-check text-green-500 mr-2"></i>Complex access control lists & scaling</li>
+                            <li><i class="fa-solid fa-check text-green-500 mr-2"></i>Centralized backup and recovery</li>
+                        </ul>
+                    </div>
+                     <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('server-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('server-usecase')" class="flex-1 bg-purple-100 hover:bg-purple-200 text-purple-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 4: Cloud Storage Services -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-orange-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-orange-700"><i class="fa-solid fa-cloud mr-2"></i>Cloud Storage Services</h2>
+                        <p class="text-gray-700 mb-4">Online storage infrastructures hosted on remote offsite servers accessible over the internet, providing instant scalability, collaboration tools, and automated backups.</p>
+                        <ul class="space-y-2 text-sm text-gray-600">
+                            <li><i class="fa-solid fa-check text-green-500 mr-2"></i>Accessible from any global internet device</li>
+                            <li><i class="fa-solid fa-check text-green-500 mr-2"></i>Dynamic scaling with on-demand capacity</li>
+                            <li><i class="fa-solid fa-check text-green-500 mr-2"></i>Built-in versioning and collaboration</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('cloud-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('cloud-usecase')" class="flex-1 bg-orange-100 hover:bg-orange-200 text-orange-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 flex justify-center">
+                <button onclick="switchTab('activity')" class="bg-green-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-green-500 shadow-lg transition transform hover:scale-105">Proceed to Lab Activity <i class="fa-solid fa-arrow-right ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- LAB ACTIVITY SECTION -->
+        <div id="activity-section" class="tab-content no-print">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Interactive Lab Activity</h1>
+                <p class="text-gray-600">Complete all 8 interactive labs covering Local Network Storage, NAS, File Servers & Protocols, and Cloud Storage to achieve mastery.</p>
+            </div>
+
+            <!-- LAB 1 (LNS): Storage Drive vs Local Network Storage Sorter -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-bold text-blue-700"><i class="fa-solid fa-network-wired mr-2"></i>Lab 1 (LNS): Storage Architecture Sorter</h2>
+                    <span class="bg-blue-100 text-blue-850 text-xs font-bold px-3 py-1 rounded-full">Local Network Storage</span>
+                </div>
+                <p class="text-sm text-gray-600 mb-4">Drag each storage characteristic to the correct architectural category (Local Storage Drive vs. Local Network Storage).</p>
+                
+                <div class="flex flex-wrap gap-3 mb-6" id="lab1-items">
+                    <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold text-sm" draggable="true" data-type="local">Personal notebook in student backpack</div>
+                    <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold text-sm" draggable="true" data-type="network">Binder on teacher shelf accessible by all class</div>
+                    <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold text-sm" draggable="true" data-type="local">Directly attached to a single device only</div>
+                    <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold text-sm" draggable="true" data-type="network">Shared with multiple users across facility LAN</div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="cat-dropzone border-2 border-dashed border-gray-400 bg-gray-50 rounded-lg p-4 min-h-[120px] flex flex-col items-center" data-target="local">
+                        <h3 class="font-bold text-gray-800 mb-2 border-b border-gray-200 w-full text-center pb-1">Local Storage Drive</h3>
+                    </div>
+                    <div class="cat-dropzone border-2 border-dashed border-blue-400 bg-blue-50 rounded-lg p-4 min-h-[120px] flex flex-col items-center" data-target="network">
+                        <h3 class="font-bold text-blue-800 mb-2 border-b border-blue-200 w-full text-center pb-1">Local Network Storage</h3>
+                    </div>
+                </div>
+                <div id="lab1-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
+            </div>
+
+            <!-- LAB 2 (LNS): Campus Network Topology Simulator -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-bold text-blue-700"><i class="fa-solid fa-map-location-dot mr-2"></i>Lab 2 (LNS): Campus Shared Drive Routing</h2>
+                    <span class="bg-blue-100 text-blue-850 text-xs font-bold px-3 py-1 rounded-full">Local Network Storage</span>
+                </div>
+                <p class="text-sm text-gray-600 mb-4">A student logs into Computer Lab A and saves a file to the Shared Student Drive. Click the correct switch node to verify how it propagates across the local network.</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                    <div class="p-4 border rounded-lg bg-gray-50 hover:bg-blue-50 cursor-pointer transition" onclick="checkLab2(false)">
+                        <i class="fa-solid fa-laptop text-3xl text-gray-700 mb-2"></i>
+                        <h4 class="font-bold">Workstation Lab A</h4>
+                        <p class="text-xs text-gray-500">Initial Login Device</p>
+                    </div>
+                    <div class="p-4 border-2 border-blue-500 rounded-lg bg-blue-50 cursor-pointer transition shadow-md" onclick="checkLab2(true)">
+                        <i class="fa-solid fa-network-wired text-3xl text-blue-600 mb-2"></i>
+                        <h4 class="font-bold text-blue-900">Core Local LAN Switch</h4>
+                        <p class="text-xs text-blue-700">Central On-Site Router & Shared Drive Hub</p>
+                    </div>
+                    <div class="p-4 border rounded-lg bg-gray-50 hover:bg-blue-50 cursor-pointer transition" onclick="checkLab2(false)">
+                        <i class="fa-solid fa-cloud text-3xl text-orange-500 mb-2"></i>
+                        <h4 class="font-bold">Public Internet Gateway</h4>
+                        <p class="text-xs text-gray-500">External ISP Cloud Router</p>
+                    </div>
+                </div>
+                <div id="lab2-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
+            </div>
+
+            <!-- LAB 3 (NAS): RAID Redundancy Builder -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-bold text-green-700"><i class="fa-solid fa-hdd mr-2"></i>Lab 3 (NAS): RAID Redundancy Array Assembly</h2>
+                    <span class="bg-green-100 text-green-800 text-xs font-bold px-3 py-1 rounded-full">NAS Appliances</span>
+                </div>
+                <p class="text-sm text-gray-600 mb-4">A NAS appliance requires multiple hard drives configured for data protection and redundancy. Click exactly 4 drives to assemble a fault-tolerant RAID array.</p>
+                
+                <div class="flex flex-wrap gap-3 justify-center mb-4" id="nas-disk-grid">
+                    <!-- Generated via JS -->
+                </div>
+                <div id="lab3-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
+            </div>
+
+            <!-- LAB 4 (NAS): NAS vs Storage Drive Diagnostic -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-bold text-green-700"><i class="fa-solid fa-stethoscope mr-2"></i>Lab 4 (NAS): Appliance Hardware Diagnostic</h2>
+                    <span class="bg-green-100 text-green-800 text-xs font-bold px-3 py-1 rounded-full">NAS Appliances</span>
+                </div>
+                <p class="text-sm text-gray-600 mb-4">Review the diagnostic checklist below and click the item that correctly distinguishes a Network-Attached Storage (NAS) device from a local storage drive.</p>
+                
+                <div class="space-y-3">
+                    <div class="p-3 border rounded bg-gray-50 hover:bg-green-50 cursor-pointer transition flex justify-between items-center" onclick="checkLab4(false)">
+                        <span>It connects directly to a single motherboard via an internal NVMe slot.</span>
+                        <span class="text-xs font-bold text-gray-500">Local Drive</span>
+                    </div>
+                    <div class="p-3 border-2 border-green-500 rounded bg-green-50 cursor-pointer transition flex justify-between items-center font-bold text-green-900" onclick="checkLab4(true)">
+                        <span>It connects via wired Ethernet to the LAN, comes with its own OS, and provides file-based storage.</span>
+                        <span class="text-xs font-bold text-green-700">NAS Appliance</span>
+                    </div>
+                    <div class="p-3 border rounded bg-gray-50 hover:bg-green-50 cursor-pointer transition flex justify-between items-center" onclick="checkLab4(false)">
+                        <span>It stores all files strictly on remote offsite servers over public fiber optic internet cables.</span>
+                        <span class="text-xs font-bold text-gray-500">Cloud Storage</span>
+                    </div>
+                </div>
+                <div id="lab4-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
+            </div>
+
+            <!-- LAB 5 (Server): Apache Server File Deployment Simulator -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-bold text-purple-700"><i class="fa-solid fa-server mr-2"></i>Lab 5 (Server): Apache Web & File Server Deployment</h2>
+                    <span class="bg-purple-100 text-purple-800 text-xs font-bold px-3 py-1 rounded-full">File Servers & Protocols</span>
+                </div>
+                <p class="text-sm text-gray-600 mb-4">Simulate copying lab files to the Apache web server root directory and starting the service (based on 2.3.2 SSH Lab).</p>
+                
+                <div class="terminal-box mb-4">
+                    <p class="text-gray-400"># Step 1: Navigate to lab directory</p>
+                    <p class="text-white mb-2">cd CourseFiles/TechnologyPlus/Local_Network_Devices-lab</p>
+                    <p class="text-gray-400"># Step 2: Copy files to Apache root directory</p>
+                    <p class="text-white mb-2" id="cmd-copy" onclick="executeLab5Step(1)" style="cursor: pointer;">👉 <span class="underline">sudo cp * /var/www/html/</span> (Click to Execute)</p>
+                    <p class="text-gray-400"># Step 3: Start Apache web server</p>
+                    <p class="text-white" id="cmd-start" onclick="executeLab5Step(2)" style="cursor: pointer; opacity: 0.5;">👉 <span class="underline">sudo service apache2 start</span> (Locked)</p>
+                </div>
+                <div id="lab5-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
+            </div>
+
+            <!-- LAB 6 (Server): Protocol & Client Matching -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-bold text-purple-700"><i class="fa-solid fa-terminal mr-2"></i>Lab 6 (Server): Client Retrieval Tools (wget vs curl)</h2>
+                    <span class="bg-purple-100 text-purple-800 text-xs font-bold px-3 py-1 rounded-full">File Servers & Protocols</span>
+                </div>
+                <p class="text-sm text-gray-600 mb-4">Match the remote file download command to its correct operating system client environment.</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="p-4 border rounded bg-gray-50">
+                        <h4 class="font-bold text-gray-800 mb-2"><i class="fa-brands fa-ubuntu text-orange-600 mr-2"></i>Ubuntu Linux Client</h4>
+                        <select id="sel-ubuntu" class="w-full p-2 border rounded bg-white">
+                            <option value="">-- Select Download Tool --</option>
+                            <option value="wget">wget http://&lt;kali-ip&gt;/file.txt</option>
+                            <option value="curl">curl &lt;kali-ip&gt;/file.txt -o file.txt</option>
+                        </select>
+                    </div>
+                    <div class="p-4 border rounded bg-gray-50">
+                        <h4 class="font-bold text-gray-800 mb-2"><i class="fa-brands fa-windows text-blue-600 mr-2"></i>Windows Server Client</h4>
+                        <select id="sel-win" class="w-full p-2 border rounded bg-white">
+                            <option value="">-- Select Download Tool --</option>
+                            <option value="wget">wget http://&lt;kali-ip&gt;/file.txt</option>
+                            <option value="curl">curl &lt;kali-ip&gt;/file.txt -o file.txt</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="text-center mt-4">
+                    <button class="bg-purple-600 text-white px-6 py-2 rounded font-bold hover:bg-purple-700" onclick="checkLab6()">Verify Retrieval Commands</button>
+                </div>
+                <div id="lab6-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
+            </div>
+
+            <!-- LAB 7 (Cloud): Cloud Storage Scalability Simulator -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-bold text-orange-700"><i class="fa-solid fa-cloud mr-2"></i>Lab 7 (Cloud): Dynamic Elasticity & Capacity Scaling</h2>
+                    <span class="bg-orange-100 text-orange-800 text-xs font-bold px-3 py-1 rounded-full">Cloud Storage Services</span>
+                </div>
+                <p class="text-sm text-gray-600 mb-4">A corporate department suddenly requires an extra 500GB of storage for video projects. Click the cloud storage scaling button to instantly expand remote capacity without hardware replacement.</p>
+                
+                <div class="bg-gray-100 p-4 rounded-lg mb-4 text-center">
+                    <div class="text-lg font-bold text-gray-800 mb-1">Current Allocated Cloud Capacity: <span id="cloud-storage-val" class="text-orange-600">100</span> GB</div>
+                    <div class="w-full bg-gray-300 rounded-full h-4 mb-2 overflow-hidden">
+                        <div id="cloud-bar" class="bg-orange-500 h-4 transition-all duration-300" style="width: 20%;"></div>
+                    </div>
+                    <p class="text-xs text-gray-500">Max limit expands instantly on-demand via remote service provider infrastructure.</p>
+                </div>
+                <div class="text-center flex justify-center gap-4">
+                    <button class="bg-orange-600 text-white px-6 py-2 rounded font-bold hover:bg-orange-500 shadow" onclick="scaleCloud(100)">+100 GB Scale</button>
+                    <button class="bg-gray-800 text-white px-6 py-2 rounded font-bold hover:bg-gray-900 shadow" onclick="resetCloud()">Reset Capacity</button>
+                </div>
+                <div id="lab7-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
+            </div>
+
+            <!-- LAB 8 (Cloud): Cloud vs Local Network Storage Comparison -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-bold text-orange-700"><i class="fa-solid fa-scale-balanced mr-2"></i>Lab 8 (Cloud): Offsite vs Onsite Infrastructure Matrix</h2>
+                    <span class="bg-orange-100 text-orange-800 text-xs font-bold px-3 py-1 rounded-full">Cloud Storage Services</span>
+                </div>
+                <p class="text-sm text-gray-600 mb-4">Identify the statement that correctly distinguishes Cloud Storage from Local Network Storage.</p>
+                
+                <div class="space-y-3">
+                    <div class="p-3 border rounded bg-gray-50 hover:bg-orange-50 cursor-pointer transition flex justify-between items-center" onclick="checkLab8(false)">
+                        <span>Cloud storage stays onsite within a physical building and requires onsite IT maintenance.</span>
+                        <span class="text-xs font-bold text-gray-500">Local Network</span>
+                    </div>
+                    <div class="p-3 border-2 border-orange-500 rounded bg-orange-50 cursor-pointer transition flex justify-between items-center font-bold text-orange-900" onclick="checkLab8(true)">
+                        <span>Cloud storage keeps data offsite on remote provider servers accessible over the internet from anywhere.</span>
+                        <span class="text-xs font-bold text-orange-700">Cloud Storage</span>
+                    </div>
+                </div>
+                <div id="lab8-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
+            </div>
+
+            <div class="text-center">
+                <button onclick="switchTab('quiz')" class="bg-green-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-green-500 shadow-lg transition transform hover:scale-105">Take the Mastery Quiz <i class="fa-solid fa-clipboard-check ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- QUIZ SECTION -->
+        <div id="quiz-section" class="tab-content no-print">
+            <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-xl max-w-4xl mx-auto">
+                <div class="text-center mb-8 border-b pb-4">
+                    <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Unit 03 Section 2.3.2 Mastery Quiz</h1>
+                    <p class="text-gray-600">Score 90% or higher (18/20) to earn your Certificate of Mastery and unlock the Retro Game!</p>
+                </div>
+
+                <div id="quiz-container" class="space-y-8">
+                    <!-- Questions injected via JS -->
+                </div>
+
+                <div class="mt-10 text-center border-t pt-6 flex flex-col md:flex-row justify-center items-center gap-4">
+                    <button id="submit-quiz-btn" onclick="gradeQuiz()" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">Submit Quiz</button>
+                    <button id="proceed-game-btn" onclick="switchTab('game')" class="hidden bg-purple-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-purple-700 shadow-lg transition w-full md:w-auto">Play Retro Game <i class="fa-solid fa-gamepad ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RETRO GAME SECTION -->
+        <div id="game-section" class="tab-content no-print">
+            <div class="bg-gray-900 p-6 sm:p-8 rounded-2xl shadow-xl max-w-4xl mx-auto border-4 border-gray-700 flex flex-col items-center">
+                <div class="text-center mb-4 w-full">
+                    <h1 class="text-3xl font-extrabold text-green-400 mb-2 tracking-widest uppercase" style="font-family: monospace;">Data Jumper</h1>
+                    <p class="text-gray-300 text-sm">Use Left/Right arrow keys (or screen touch controls) to guide your packet upward across network storage nodes! Avoid corrupted blocks and reach max altitude!</p>
+                </div>
+                
+                <div class="flex justify-between items-center w-full max-w-[400px] sm:max-w-[480px] mb-2 px-4 text-white font-mono text-xl">
+                    <div>Altitude: <span id="game-score" class="text-green-400 font-bold">0</span>m</div>
+                    <div>Packets: <span id="game-lives" class="text-blue-400 font-bold">3</span></div>
+                </div>
+
+                <div class="relative flex justify-center w-full">
+                    <!-- Game Canvas -->
+                    <canvas id="game-canvas" width="480" height="600" class="bg-gray-800 border-2 border-gray-600 rounded shadow-lg"></canvas>
+                    
+                    <!-- Overlay Start Button -->
+                    <div id="game-overlay" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-75 rounded-lg max-w-[480px] mx-auto z-10">
+                        <button id="start-game-btn" class="bg-green-600 hover:bg-green-500 text-white font-bold font-mono py-3 px-6 rounded-lg text-xl border-4 border-green-800 uppercase transform transition hover:scale-105">Launch Packet (Start)</button>
+                    </div>
+                </div>
+
+                <div class="mt-4 flex gap-4 w-full max-w-[480px] justify-center md:hidden">
+                    <button class="game-btn bg-gray-700 text-white px-6 py-3 rounded font-bold text-lg active:bg-green-600" ontouchstart="moveLeft(true)" ontouchend="moveLeft(false)" onmousedown="moveLeft(true)" onmouseup="moveLeft(false)">◀ Left</button>
+                    <button class="game-btn bg-gray-700 text-white px-6 py-3 rounded font-bold text-lg active:bg-green-600" ontouchstart="moveRight(true)" ontouchend="moveRight(false)" onmousedown="moveRight(true)" onmouseup="moveRight(false)">Right ▶</button>
+                </div>
+
+                <div class="mt-6 text-center w-full border-t border-gray-700 pt-6">
+                    <button onclick="switchTab('cert')" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">View Certificate <i class="fa-solid fa-award ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CERTIFICATE SECTION -->
+        <div id="cert-section" class="tab-content">
+            <div class="max-w-5xl mx-auto">
+                
+                <!-- Controls -->
+                <div class="bg-white p-6 rounded shadow mb-6 no-print text-center border border-gray-200">
+                    <h2 class="text-2xl font-bold text-green-600 mb-2">🎉 Congratulations! 🎉</h2>
+                    <p class="text-gray-700 mb-4">You have achieved mastery of Network Storage Devices.</p>
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+                        <input type="text" id="student-name-input" value="Student" placeholder="Enter your first name" class="border-2 border-gray-300 rounded px-4 py-2 w-full md:w-64 focus:border-green-500 focus:outline-none">
+                        <button onclick="updateCertName()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">Update Name</button>
+                        <button id="download-btn" onclick="downloadCert()" class="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900 transition flex items-center justify-center">
+                            <i class="fa-solid fa-download mr-2"></i>Download PNG
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Certificate Render Container -->
+                <div class="cert-preview-container print:p-0 print:bg-white">
+                    <div id="certificate">
+                        <div class="gold-seal">
+                            <div class="gold-seal-inner-1">
+                                <div class="gold-seal-inner-2">
+                                     <span class="embossed-text embossed-text-large">Certificate</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-small">Of</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-large">Excellence</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="relative z-20 w-full h-full flex flex-col pt-[48px] pl-[380px] pr-[48px]">
+                            <h1 class="text-[#1e3a8a] text-[4.5rem] leading-none font-serif font-bold tracking-wide uppercase mb-2">CERTIFICATE</h1>
+                            <h2 class="text-gray-800 text-3xl font-serif tracking-widest uppercase mb-10">Of Achievement</h2>
+                            
+                            <p class="text-[1.4rem] font-body text-gray-800 mb-4">This is to certify that</p>
+                            
+                            <div class="relative mb-8 w-full">
+                                <h3 id="cert-student-name" class="text-[4rem] text-[#1e3a8a] font-serif italic leading-none pb-2 relative z-10 text-center w-full block">Student</h3>
+                                <div class="w-full border-b-[2px] border-[#1e3a8a] absolute bottom-[4px] left-0 z-0"></div>
+                                <div class="w-full border-b-[2px] border-dotted border-red-500 absolute bottom-[0px] left-0 z-0"></div>
+                            </div>
+                            
+                            <p class="text-[1.3rem] font-body text-gray-800 leading-relaxed w-full pr-4">
+                                Has successfully completed the assessment for 
+                                <strong class="text-[1.8rem] text-[#1e3a8a] block mt-4 mb-2 font-serif">CYBER.ORG Tech+ Unit 03 Section 2.3.2</strong>
+                                <strong class="text-[1.5rem] text-black block mb-4 font-serif italic">Network Storage Devices</strong>
+                                <span class="text-[1.1rem] text-gray-700 leading-snug block">Demonstrating proficiency in comparing local storage drives versus local network storage, NAS RAID appliances, file servers & protocols (SMB/NFS), and cloud storage services.</span>
+                            </p>
+                            
+                            <div class="flex justify-end gap-16 items-end mt-auto mb-[60px] w-full pr-8">
+                                <div class="w-64">
+                                    <div class="border-b border-gray-600 mb-2 h-20 flex items-end justify-center relative">
+                                        <span class="font-script text-[5rem] text-[#1e3a8a] absolute bottom-[-10px] transform -rotate-3 opacity-90">Dr. M. S</span>
+                                    </div>
+                                    <p class="font-serif text-xl text-gray-800 text-center">Administration</p>
+                                </div>
+                                
+                                <div class="w-64">
+                                    <div class="border-b border-gray-600 mb-2 text-center h-20 flex items-end justify-center">
+                                        <p id="cert-date" class="font-body text-2xl text-gray-800 pb-1">Date Here</p>
+                                    </div>
+                                    <p class="font-serif text-xl text-gray-800 text-center">Date</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Custom Modal for Alerts -->
+    <div id="custom-modal" class="fixed inset-0 bg-black bg-opacity-50 z-[100] hidden flex justify-center items-center backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all">
+            <div class="text-center">
+                <div id="modal-icon" class="text-5xl mb-4"></div>
+                <h3 id="modal-title" class="text-2xl font-bold mb-2 text-gray-900"></h3>
+                <p id="modal-msg" class="text-gray-600 mb-6"></p>
+                <button onclick="closeModal()" class="bg-green-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-green-700 transition w-full">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Briefing Modal -->
+    <div id="briefing-modal" class="fixed inset-0 bg-black bg-opacity-70 z-[120] hidden flex justify-center items-center backdrop-blur-sm p-4 sm:p-6">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col transform transition-all overflow-hidden border-4 border-green-700">
+            <div class="p-6 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+                <div class="flex items-center gap-4">
+                    <div id="briefing-modal-icon" class="text-4xl"></div>
+                    <h3 id="briefing-modal-title" class="text-2xl md:text-3xl font-bold text-gray-900"></h3>
+                </div>
+                <button onclick="closeBriefing()" class="text-gray-400 hover:text-red-600 transition text-4xl leading-none">&times;</button>
+            </div>
+            <div id="briefing-modal-content" class="p-6 md:p-10 overflow-y-auto flex-grow text-gray-700 text-lg leading-relaxed bg-white">
+                <!-- Dynamic Content Injected Here -->
+            </div>
+            <div class="p-6 border-t border-gray-200 bg-gray-50 flex justify-end">
+                <button onclick="closeBriefing()" class="bg-green-700 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-green-800 transition shadow-md">Acknowledge & Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 7-Paragraph Briefing Content Data & Use Cases with Images ---
+        const briefingData = {
+            'lns-details': {
+                title: 'Local Network Storage Fundamentals',
+                icon: '<i class="fa-solid fa-network-wired text-blue-600"></i>',
+                html: `
+                    <p class="mb-5">Local network storage represents a fundamental paradigm shift from isolated single-device storage toward collaborative digital environments. In a traditional standalone computing model, every desktop computer or laptop maintains its own internal hard disk drive (HDD) or solid-state drive (SSD). While effective for personal use, this architecture creates data silos where files cannot be accessed from another machine unless manually transferred using physical USB flash drives or emailed attachments. Local network storage solves this limitation by connecting storage media directly to a local area network (LAN) within a specific physical facility, such as a school, office building, or home.</p>
+                    
+                    <p class="mb-5">To understand the operational mechanics of local network storage, consider the classic educational scenario: a student logs into a workstation in computer lab A and saves an important assignment to the "Shared Student Drive." Later that afternoon, when the student moves to a completely different classroom or library workstation, they log in under their user credentials and find the exact same file waiting for them. Even though a different physical computer is being utilized, the file remains fully accessible because it resides centrally on the school's local network storage infrastructure rather than on any individual machine's local drive.</p>
+                    
+                    <p class="mb-5">The primary architectural distinction lies in accessibility and ownership boundaries. Local storage drives are directly attached to a single device and can only be accessed by that specific device unless explicitly shared through cumbersome network protocols. Conversely, local network storage is inherently shared with multiple devices over the network, making data available to anyone on the network who possesses the appropriate authentication credentials and file permissions. Analytically speaking, a local storage drive is comparable to a personal notebook kept inside an individual's backpack, whereas local network storage functions like a shared reference binder placed on a teacher's shelf that every student in the class can access.</p>
+                    
+                    <p class="mb-5">Deploying local network storage offers substantial operational advantages for organizations and educational institutions. Because the storage devices connect directly to high-speed local network switches via Ethernet cables, users experience significantly higher data transfer speeds compared to accessing files over wide-area internet connections. Furthermore, administrative overhead is reduced because IT personnel can manage backups and security policies from a centralized point rather than servicing dozens of individual hard drives scattered across various workstations.</p>
+                    
+                    <p class="mb-5">Despite its numerous benefits, local network storage also introduces specific operational disadvantages and limitations. Because the storage infrastructure is tied to a specific physical location, remote access from outside the facility is generally restricted unless additional complex configurations—such as Virtual Private Networks (VPNs)—are established by system administrators. Additionally, the initial hardware acquisition costs and ongoing maintenance requirements demand skilled on-site IT professionals to monitor network health, configure switches, and troubleshoot hardware failures.</p>
+                    
+                    <p class="mb-5">Security and vulnerability management are also critical considerations when implementing local network storage. Because data is accessible to anyone connected to the physical LAN, robust access control lists (ACLs) and user authentication mechanisms must be strictly enforced. If physical damage occurs to the facility—such as a localized power surge, fire, or flooding—on-site network storage devices can suffer catastrophic hardware failure resulting in permanent data loss unless rigorous backup redundancy protocols are maintained.</p>
+                    
+                    <p>In summary, local network storage bridges the gap between isolated personal computing and complex enterprise data centers. By providing centralized, high-speed file access within a controlled physical boundary, it empowers collaborative workflows while maintaining predictable internal bandwidth. Understanding these foundational principles is essential for IT professionals designing resilient, scalable local area network architectures.</p>
+                `
+            },
+            'lns-usecase': {
+                title: 'Local Network Storage: Use Cases & Examples',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 1: Educational Institution Shared Student Drives</h4>
+                        <p class="mb-2">Schools require robust environments where students can transition between computer labs without losing their work or carrying physical USB thumb drives.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Roaming Profiles & Home Directories):</strong> A high school student saves their coding project to their networked home directory in Lab 1. When attending a computer science class in Lab 2, they log in and instantly access their project files without emailing themselves code.</li>
+                            <li><strong>Example 2 (Teacher Resource Depository):</strong> Teachers place assignment worksheets on a read-only local network share, allowing all 30 students in the classroom to download the template simultaneously over the high-speed Ethernet LAN.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 2: Corporate Office Departmental Collaboration</h4>
+                        <p class="mb-2">Corporate accounting and marketing teams need to collaborate on large documents in real time without duplicating files across dozens of individual employee hard drives.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Departmental Folder Shares):</strong> The accounting department utilizes a shared local network folder where invoices are processed daily, allowing senior managers to review financial spreadsheets instantly.</li>
+                            <li><strong>Example 2 (Centralized Workstation Backups):</strong> Nightly automated scripts back up critical employee desktop files across the local office network onto a central storage repository before business hours.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Local Network Infrastructure</p>
+                            <img src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=600&h=350" alt="Server room and network switches representing local network storage" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Collaborative Workstations</p>
+                            <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&h=350" alt="Office workers collaborating on networked computers" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'nas-details': {
+                title: 'Network-Attached Storage (NAS) Appliances',
+                icon: '<i class="fa-solid fa-hdd text-green-600"></i>',
+                html: `
+                    <p class="mb-5">A Network-Attached Storage (NAS) device is a specialized, dedicated storage appliance that connects directly to a local area network (LAN) via a wired Ethernet connection and provides file-based data storage services to other devices on the network. Unlike a general-purpose file server running heavy operating systems, a NAS unit is purpose-built for data storage and retrieval. It comes equipped with its own lightweight embedded operating system, an intuitive web-based management interface, and specialized firmware optimized exclusively for high-performance file sharing.</p>
+                    
+                    <p class="mb-5">Hardware architecture is one of the most defining characteristics of NAS devices. A typical NAS unit houses multiple hard disk drives (HDDs) or solid-state drives (SSDs) enclosed in a compact desktop or rackmount chassis. Because it operates as an independent appliance on the network, it does not require a dedicated monitor or keyboard; administrators simply access its management dashboard through a web browser using the device's local IP address to configure users, shared folders, and network protocols.</p>
+                    
+                    <p class="mb-5">One of the greatest technical advantages of NAS devices is their native support for RAID (Redundant Array of Independent Disks) configurations. RAID allows multiple physical hard drives to be combined into a single logical volume with built-in data redundancy and fault tolerance. For example, in a RAID 5 or RAID 10 configuration, if one of the physical hard drives in the NAS unit suffers a catastrophic failure, the appliance continues operating without interruption, and the failed drive can be hot-swapped and rebuilt automatically without data loss.</p>
+                    
+                    <p class="mb-5">NAS appliances excel at centralizing data storage for small businesses, creative studios, and prosumer environments. Instead of storing video footage or graphic designs across individual workstation hard drives, creators upload their media to the central NAS. This centralization ensures that all team members access the same up-to-date project files, eliminating version control discrepancies and streamlining multi-user collaborative workflows.</p>
+                    
+                    <p class="mb-5">Modern NAS devices also feature advanced software extensibility. Through built-in application package centers, administrators can install add-on modules that transform the storage appliance into a media streaming server, a private personal cloud, an automated backup target for laptops, or a localized virtual machine host. Many consumer and enterprise NAS models can even be configured for secure remote access over the internet via manufacturer relay services or secure VPN tunnels.</p>
+                    
+                    <p class="mb-5">Despite their versatility, NAS appliances have distinct limitations. Because they connect to the local network via standard Ethernet cables, data transfer speeds are ultimately bounded by network bandwidth and switch speeds (e.g., 1GbE or 10GbE limitations). Furthermore, enterprise-grade NAS units entail significant upfront hardware investment costs and require ongoing maintenance, such as firmware updates, drive monitoring, and replacement of aging mechanical disks.</p>
+                    
+                    <p>In conclusion, Network-Attached Storage represents an optimal balance between simplicity and enterprise capability. By combining dedicated hardware, embedded management operating systems, and fault-tolerant RAID redundancy, NAS appliances provide reliable, centralized file storage that forms the backbone of modern local network infrastructures.</p>
+                `
+            },
+            'nas-usecase': {
+                title: 'Network-Attached Storage (NAS): Use Cases & Examples',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-green-800 mb-2 border-b-2 border-green-200 pb-1">Case 1: Creative Video Production Studio</h4>
+                        <p class="mb-2">Videographers and editors generate hundreds of gigabytes of raw 4K video footage daily that must be safely stored and simultaneously accessed by multiple editing bays.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (High-Speed RAID NAS):</strong> A 4-bay NAS configured in RAID 5 is installed in the studio server rack over 10GbE networking, allowing three video editors to pull raw footage simultaneously without buffering lag.</li>
+                            <li><strong>Example 2 (Drive Hot-Swapping):</strong> During an active editing session, a hard drive warning light flashes amber on the NAS chassis indicating impending failure; the technician hot-swaps the drive while the system rebuilds parity in the background with zero downtime.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-green-800 mb-2 border-b-2 border-green-200 pb-1">Case 2: Small Business Centralized Backup & Private Cloud</h4>
+                        <p class="mb-2">A small architectural firm needs to secure all client CAD drawings and provide secure remote access for architects visiting construction sites.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Automated Workstation Backups):</strong> Desktop backup software runs silently every night, pushing workstation CAD files to the office NAS storage appliance.</li>
+                            <li><strong>Example 2 (Secure Remote Access):</strong> An architect on a job site securely logs into the office NAS via an encrypted mobile app to pull up blueprint revisions on their tablet.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: NAS Hardware Appliance</p>
+                            <img src="https://images.unsplash.com/photo-1597852074816-d933c7d2b988?auto=format&fit=crop&w=600&h=350" alt="Hard drives and RAID storage hardware" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Studio Media Storage</p>
+                            <img src="https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=600&h=350" alt="Video editing workstation connected to network storage" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'server-details': {
+                title: 'File Servers & Network Protocols (SMB / NFS)',
+                icon: '<i class="fa-solid fa-server text-purple-600"></i>',
+                html: `
+                    <p class="mb-5">A file server is a powerful, centralized computer dedicated specifically to managing, storing, and coordinating files across a network, providing authorized client devices with seamless access to shared data repositories. Unlike dedicated NAS appliances which run closed, lightweight firmware, a file server typically runs a robust enterprise operating system such as Windows Server or Linux/Unix distributions. This grants system administrators granular configuration control, advanced scripting capabilities, and deep integration with enterprise security domains.</p>
+                    
+                    <p class="mb-5">To facilitate communication between client computers and the file server, specialized networking protocols are required. In Windows-based enterprise environments, the standard protocol is <strong>SMB (Server Message Block)</strong>. SMB allows Windows workstations to map network shares as virtual drive letters (e.g., Drive Z:) and interact with remote files almost as if they were stored on their local hard drives. In Linux and Unix-based environments, the equivalent industry standard protocol is <strong>NFS (Network File System)</strong>, which enables seamless mounting of remote directory trees over TCP/IP networks.</p>
+                    
+                    <p class="mb-5">File servers excel at supporting complex, enterprise-grade file-sharing needs. They implement sophisticated Access Control Lists (ACLs) that dictate precise read, write, modify, and execute permissions for individual users or security groups. Furthermore, file servers centralize organizational data, which drastically eases the backup and disaster recovery process. Instead of scheduling backups across hundreds of independent endpoints, IT administrators simply run scheduled enterprise backup jobs directly against the central file server repository.</p>
+                    
+                    <p class="mb-5">Hands-on practical experience with file servers and web file access is a cornerstone of modern cybersecurity training, such as the CYBER.ORG Tech+ curriculum. In typical lab environments, administrators deploy open-source web server software like Apache2 on Linux distributions (such as Kali Linux) to simulate server-client file sharing. Files are placed within the web root directory (e.g., <code class="bg-gray-100 px-1 rounded">/var/www/html</code>) and accessed by remote client machines running Ubuntu Linux or Windows Server.</p>
+                    
+                    <p class="mb-5">Client machines interact with file servers and web servers using powerful Command Line Interface (CLI) tools. In Linux clients, utilities like <code class="bg-gray-100 px-1 rounded">wget</code> are utilized to fetch and download files from a server's IP address directly into the local working directory. In Windows Server environments, the equivalent command-line data transfer utility is <code class="bg-gray-100 px-1 rounded">curl</code> (using syntax such as <code class="bg-gray-100 px-1 rounded">curl &lt;ip&gt;/file.txt -o file.txt</code>). Understanding how these protocols and retrieval tools behave is vital for system administrators and cybersecurity professionals monitoring network traffic.</p>
+                    
+                    <p class="mb-5">Furthermore, remote administration of file servers is heavily reliant on secure protocols like <strong>SSH (Secure Shell)</strong>. SSH allows administrators from client machines (Ubuntu or Windows) to securely connect to a server's terminal over encrypted channels, execute administrative commands, edit configuration files using text editors like <code class="bg-gray-100 px-1 rounded">nano</code>, and manage shared directories without exposing cleartext credentials to potential network sniffers.</p>
+                    
+                    <p>Despite their immense power and flexibility, file servers introduce significant challenges. Because all organizational data is consolidated into a single physical or virtual machine, the file server represents a critical <strong>single point of failure</strong>. If the server experiences a major hardware crash, power outage, operating system freeze, or severe software update error, users across the entire network lose access to their shared files instantly until service is restored.</p>
+                `
+            },
+            'server-usecase': {
+                title: 'File Servers & Protocols: Use Cases & Examples',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Case 1: Enterprise Windows Domain File Sharing (SMB)</h4>
+                        <p class="mb-2">A large hospital network needs thousands of nurses and administrative staff to access patient intake forms securely while preventing unauthorized access to medical records.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (SMB Mapping):</strong> Workstations automatically map the hospital file server share as Drive P: using the SMB protocol upon user login against Active Directory domain credentials.</li>
+                            <li><strong>Example 2 (Granular ACLs):</strong> IT administrators configure ACL permissions so that nurses have Read/Write access to nursing shift logs, while billing staff have access only to financial folders.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Case 2: Cybersecurity Lab Apache & SSH Management</h4>
+                        <p class="mb-2">Security students simulate multi-client server environments where a Kali Linux server hosts web files accessed by Ubuntu and Windows clients.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (CLI File Retrieval):</strong> An Ubuntu client executes <code class="bg-gray-100 px-1 rounded">wget 10.15.73.108/lab_instructions.txt</code> to download lab documentation directly from the Kali server web directory.</li>
+                            <li><strong>Example 2 (Remote SSH Editing):</strong> A Windows administrator connects via <code class="bg-gray-100 px-1 rounded">ssh kali@10.15.53.220</code> and uses <code class="bg-gray-100 px-1 rounded">sudo nano /var/www/html/index.html</code> to update webpage banners remotely.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Enterprise File Server Rack</p>
+                            <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=600&h=350" alt="Enterprise server rack representing file servers" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Secure Terminal Administration</p>
+                            <img src="https://images.unsplash.com/photo-1629654297299-c8506221ca97?auto=format&fit=crop&w=600&h=350" alt="Terminal screen running SSH and server administration commands" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'cloud-details': {
+                title: 'Cloud Storage Services',
+                icon: '<i class="fa-solid fa-cloud text-orange-600"></i>',
+                html: `
+                    <p class="mb-5">Cloud storage service is an online storage model that maintains data on remote servers hosted by third-party infrastructure providers and accessed over the public internet. Unlike local network storage, NAS appliances, or on-premise file servers which reside within physical office buildings and require internal IT maintenance, cloud storage keeps data completely offsite on massive, globally distributed cloud data centers managed by providers such as Google Drive, Microsoft OneDrive, Amazon Web Services (AWS S3), and Apple iCloud.</p>
+                    
+                    <p class="mb-5">The operational architecture of cloud storage abstracts physical hardware entirely from the end user. When a file is saved to a cloud storage platform, client synchronization software encrypts and transmits the data over secure HTTPS connections to redundant server clusters located in distant geographic regions. The service provider handles all hardware provisioning, power redundancy, disk replacement, physical security, and firmware patching behind the scenes.</p>
+                    
+                    <p class="mb-5">Cloud storage services inherently integrate advanced collaboration tools and productivity features that surpass traditional local file shares. Multiple users can co-author documents simultaneously in real-time, view detailed version history logs, restore accidentally deleted items from online trash bins, and share secure web links with external clients without needing VPN connections or complex file permission mapping.</p>
+                    
+                    <p class="mb-5">One of the most profound advantages of cloud storage is <strong>flexible scalability</strong>. In an on-premise file server environment, if an organization runs out of disk storage space, IT staff must physically purchase, install, and configure new hard drives. With cloud storage, capacity is virtually limitless; organizations can instantly scale their storage allocation up or down with a few clicks, paying only for the exact storage capacity consumed on an ongoing subscription basis.</p>
+                    
+                    <p class="mb-5">Remote access is another unmatched benefit. Because cloud storage is accessible over the internet from anywhere in the world, users can retrieve, edit, and share files seamlessly across multiple client devices—whether using an office desktop, a home laptop, a tablet, or a mobile smartphone—ensuring continuous productivity regardless of physical location.</p>
+                    
+                    <p class="mb-5">Despite these powerful advantages, cloud storage introduces distinct disadvantages and operational dependencies. Most notably, cloud storage requires an active, stable internet connection for access; if internet service is interrupted or bandwidth is saturated, files become completely inaccessible. Furthermore, ongoing monthly or annual subscription costs can become expensive over time compared to the one-time capital expenditure of local network hardware.</p>
+                    
+                    <p>In summary, cloud storage services represent the modern zenith of data accessibility and scalability. By shifting infrastructure management to offsite providers and enabling global connectivity, cloud storage empowers modern remote workforces while redefining enterprise disaster recovery and data redundancy strategies.</p>
+                `
+            },
+            'cloud-usecase': {
+                title: 'Cloud Storage Services: Use Cases & Examples',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-orange-800 mb-2 border-b-2 border-orange-200 pb-1">Case 1: Global Remote Workforce Collaboration</h4>
+                        <p class="mb-2">A software development company with employees spread across five continents needs a centralized repository where engineers can collaborate on code and documentation instantly.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Cross-Device Syncing):</strong> A developer edits a project specification document on their laptop in London; the changes sync instantly to Microsoft OneDrive so a developer in Tokyo wakes up to the latest revision.</li>
+                            <li><strong>Example 2 (External Client Sharing):</strong> The project manager generates a secure password-protected web link via Google Drive to share heavy design mockups with an external client without filling up email inboxes.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-orange-800 mb-2 border-b-2 border-orange-200 pb-1">Case 2: Instant On-Demand Capacity Expansion</h4>
+                        <p class="mb-2">An e-commerce startup experiences a sudden influx of high-resolution product photography during holiday shopping seasons requiring massive temporary storage expansion.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Dynamic Scaling):</strong> The company upgrades their AWS cloud storage tier from 1TB to 10TB instantly within minutes to handle incoming media assets without purchasing physical server hardware.</li>
+                            <li><strong>Example 2 (Automated Offsite Backup):</strong> Critical customer transaction logs are automatically backed up to remote cloud object storage every hour, guaranteeing disaster recovery even if the local office suffers a power failure.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Global Cloud Data Center</p>
+                            <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=600&h=350" alt="Global network and cloud computing concept illustration" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Remote Cloud Collaboration</p>
+                            <img src="https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=600&h=350" alt="Remote workers collaborating via cloud devices" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        // Modal Control Functions
+        function openBriefing(key) {
+            const modal = document.getElementById('briefing-modal');
+            const data = briefingData[key];
+            if(data) {
+                document.getElementById('briefing-modal-icon').innerHTML = data.icon;
+                document.getElementById('briefing-modal-title').innerText = data.title;
+                document.getElementById('briefing-modal-content').innerHTML = data.html;
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; 
+            }
+        }
+
+        function closeBriefing() {
+            document.getElementById('briefing-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto'; 
+        }
+
+        document.getElementById('briefing-modal').addEventListener('click', function(e) {
+            if(e.target === this) closeBriefing();
+        });
+        
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId + '-section').classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-green-900'));
+            const activeBtn = document.getElementById('nav-' + tabId);
+            if(activeBtn && tabId !== 'cert') activeBtn.classList.add('bg-green-900');
+            
+            document.querySelectorAll('.nav-btn-mobile').forEach(btn => btn.classList.remove('bg-green-900'));
+            const activeMobileBtn = document.getElementById('nav-' + tabId + '-mobile');
+            if(activeMobileBtn && tabId !== 'cert') activeMobileBtn.classList.add('bg-green-900');
+
+            window.scrollTo(0,0);
+
+            if (tabId === 'game' && !gameRunning) {
+                resetGame();
+                drawGame();
+            }
+        }
+
+        function showModal(title, message, type = 'info') {
+            const modal = document.getElementById('custom-modal');
+            const icon = document.getElementById('modal-icon');
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-msg').innerText = message;
+            
+            if(type === 'success') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-check text-green-500"></i>';
+            } else if (type === 'error') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500"></i>';
+            } else if (type === 'warning') {
+                icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-yellow-500"></i>';
+            } else {
+                icon.innerHTML = '<i class="fa-solid fa-circle-info text-blue-500"></i>';
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        // --- LAB 1 (LNS): Drag and Drop Sorter ---
+        let draggedItem = null;
+        let lab1Count = 0;
+
+        document.querySelectorAll('#lab1-items .io-item').forEach(item => {
+            item.addEventListener('dragstart', function() {
+                draggedItem = this;
+                setTimeout(() => this.classList.add('opacity-50'), 0);
+            });
+            item.addEventListener('dragend', function() {
+                setTimeout(() => this.classList.remove('opacity-50'), 0);
+                draggedItem = null;
+            });
+        });
+
+        document.querySelectorAll('#activity-section .cat-dropzone').forEach(zone => {
+            zone.addEventListener('dragover', e => e.preventDefault());
+            zone.addEventListener('drop', function() {
+                if(draggedItem) {
+                    if(draggedItem.dataset.type === this.dataset.target) {
+                        this.appendChild(draggedItem);
+                        draggedItem.classList.remove('bg-indigo-100', 'cursor-grab');
+                        draggedItem.classList.add('bg-green-100', 'text-green-800', 'cursor-default', 'mt-2', 'w-[90%]');
+                        draggedItem.setAttribute('draggable', 'false');
+                        lab1Count++;
+                        
+                        document.getElementById('lab1-feedback').innerText = "Correct Storage Architecture Classification!";
+                        if(lab1Count === 4) {
+                            setTimeout(() => showModal('Lab 1 Complete!', 'You successfully categorized local storage drives versus local network storage.', 'success'), 500);
+                        }
+                    } else {
+                        document.getElementById('lab1-feedback').innerText = "Incorrect category. Review storage boundaries!";
+                        document.getElementById('lab1-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
+                    }
+                }
+            });
+        });
+
+        // --- LAB 2 (LNS): Topology Routing ---
+        function checkLab2(isCorrect) {
+            const fb = document.getElementById('lab2-feedback');
+            if(isCorrect) {
+                fb.innerText = "Correct! The core local LAN switch routes shared drive traffic between workstations.";
+                fb.className = "text-center font-bold mt-4 h-6 text-green-600";
+                setTimeout(() => showModal('Lab 2 Complete!', 'Campus shared drive routing verified successfully.', 'success'), 500);
+            } else {
+                fb.innerText = "Incorrect. That node does not handle local network shared drive traffic.";
+                fb.className = "text-center font-bold mt-4 h-6 text-red-600";
+            }
+        }
+
+        // --- LAB 3 (NAS): RAID Redundancy Builder ---
+        const nasGrid = document.getElementById('nas-disk-grid');
+        let selectedNasBlocks = 0;
+        let lab3Solved = false;
+
+        for(let i=0; i<6; i++) {
+            let block = document.createElement('div');
+            block.className = "disk-block w-14 h-20 bg-gray-300 border-2 border-gray-400 rounded cursor-pointer flex flex-col items-center justify-center text-xs font-bold text-gray-600";
+            block.innerHTML = `<i class="fa-solid fa-hard-drive text-xl mb-1 text-gray-500"></i><span>Bay ${i+1}</span>`;
+            block.onclick = function() {
+                if(lab3Solved) return;
+                if(this.classList.contains('bg-green-600')) {
+                    this.classList.remove('bg-green-600', 'border-green-800', 'text-white');
+                    this.classList.add('bg-gray-300', 'text-gray-600');
+                    selectedNasBlocks--;
+                } else {
+                    if(selectedNasBlocks < 4) {
+                        this.classList.remove('bg-gray-300', 'text-gray-600');
+                        this.classList.add('bg-green-600', 'border-green-800', 'text-white');
+                        selectedNasBlocks++;
+                    } else {
+                        document.getElementById('lab3-feedback').innerText = "RAID array configured with 4 drives. Deselect if needed.";
+                        return;
+                    }
+                }
+
+                if(selectedNasBlocks === 4) {
+                    lab3Solved = true;
+                    document.getElementById('lab3-feedback').innerText = "RAID 5 Redundancy Array Successfully Assembled!";
+                    setTimeout(() => showModal('Lab 3 Complete!', 'NAS RAID redundancy array built successfully.', 'success'), 500);
+                } else {
+                    document.getElementById('lab3-feedback').innerText = `Drives Selected: ${selectedNasBlocks} / 4 required for RAID`;
+                }
+            };
+            nasGrid.appendChild(block);
+        }
+
+        // --- LAB 4 (NAS): Diagnostic ---
+        function checkLab4(isCorrect) {
+            const fb = document.getElementById('lab4-feedback');
+            if(isCorrect) {
+                fb.innerText = "Correct! NAS appliances connect via Ethernet to the LAN and run their own OS.";
+                fb.className = "text-center font-bold mt-4 h-6 text-green-600";
+                setTimeout(() => showModal('Lab 4 Complete!', 'NAS diagnostic completed successfully.', 'success'), 500);
+            } else {
+                fb.innerText = "Incorrect. Review NAS appliance characteristics.";
+                fb.className = "text-center font-bold mt-4 h-6 text-red-600";
+            }
+        }
+
+        // --- LAB 5 (Server): Apache Server Deployment ---
+        let lab5Step = 1;
+        function executeLab5Step(step) {
+            const fb = document.getElementById('lab5-feedback');
+            if(step === 1 && lab5Step === 1) {
+                document.getElementById('cmd-copy').innerHTML = "✔ sudo cp * /var/www/html/ (Executed)";
+                document.getElementById('cmd-copy').style.color = "#4ade80";
+                document.getElementById('cmd-start').style.opacity = "1";
+                lab5Step = 2;
+                fb.innerText = "Files copied successfully to Apache web root. Now start the web server!";
+            } else if(step === 2 && lab5Step === 2) {
+                document.getElementById('cmd-start').innerHTML = "✔ sudo service apache2 start (Server Online)";
+                document.getElementById('cmd-start').style.color = "#4ade80";
+                fb.innerText = "Apache Web Server is running and serving files across the network!";
+                setTimeout(() => showModal('Lab 5 Complete!', 'Apache web server deployed successfully.', 'success'), 500);
+            }
+        }
+
+        // --- LAB 6 (Server): wget vs curl ---
+        function checkLab6() {
+            const uVal = document.getElementById('sel-ubuntu').value;
+            const wVal = document.getElementById('sel-win').value;
+            const fb = document.getElementById('lab6-feedback');
+
+            if(uVal === 'wget' && wVal === 'curl') {
+                fb.innerText = "Correct! Ubuntu uses wget and Windows uses curl.";
+                fb.className = "text-center font-bold mt-4 h-6 text-green-600";
+                setTimeout(() => showModal('Lab 6 Complete!', 'CLI retrieval commands verified successfully.', 'success'), 500);
+            } else {
+                fb.innerText = "Incorrect mapping. Remember Ubuntu uses wget and Windows uses curl.";
+                fb.className = "text-center font-bold mt-4 h-6 text-red-600";
+            }
+        }
+
+        // --- LAB 7 (Cloud): Capacity Scaling ---
+        let cloudCapacity = 100;
+        function scaleCloud(amount) {
+            if(cloudCapacity < 500) {
+                cloudCapacity += amount;
+                document.getElementById('cloud-storage-val').innerText = cloudCapacity;
+                let pct = (cloudCapacity / 500) * 100;
+                document.getElementById('cloud-bar').style.width = pct + '%';
+                document.getElementById('lab7-feedback').innerText = `Cloud storage dynamically scaled to ${cloudCapacity} GB instantly!`;
+                if(cloudCapacity === 500) {
+                    setTimeout(() => showModal('Lab 7 Complete!', 'Cloud storage elastic scaling demonstrated successfully.', 'success'), 500);
+                }
+            } else {
+                document.getElementById('lab7-feedback').innerText = "Max cloud capacity reached for this simulation tier.";
+            }
+        }
+        function resetCloud() {
+            cloudCapacity = 100;
+            document.getElementById('cloud-storage-val').innerText = cloudCapacity;
+            document.getElementById('cloud-bar').style.width = '20%';
+            document.getElementById('lab7-feedback').innerText = "Cloud capacity reset to baseline.";
+        }
+
+        // --- LAB 8 (Cloud): Cloud vs Local Matrix ---
+        function checkLab8(isCorrect) {
+            const fb = document.getElementById('lab8-feedback');
+            if(isCorrect) {
+                fb.innerText = "Correct! Cloud storage keeps data offsite on remote provider servers accessible over the internet.";
+                fb.className = "text-center font-bold mt-4 h-6 text-green-600";
+                setTimeout(() => showModal('Lab 8 Complete!', 'Cloud storage offsite distinction verified.', 'success'), 500);
+            } else {
+                fb.innerText = "Incorrect. Review cloud storage offsite characteristics.";
+                fb.className = "text-center font-bold mt-4 h-6 text-red-600";
+            }
+        }
+
+
+        // --- QUIZ LOGIC (20 Questions: 10 Provided + 10 Extended) ---
+        const quizData = [
+            // 10 Provided Questions from Assessment/Quiz Answers
+            { q: "Which of the following best describes local network storage?", options: ["A file saved on your computer that only you can see", "A folder shared over a network that can be accessed with permission", "A cloud service that stores files on the internet", "A USB flash drive connected directly to your computer"], answer: 1 },
+            { q: "Which storage type usually includes RAID configurations for redundancy and data protection?", options: ["Network-attached storage", "A file server", "Cloud storage", "Hard disk drive"], answer: 0 },
+            { q: "What command can be used in Windows to download files from a server and save them to your current directory?", options: ["wget", "cp", "curl", "ssh"], answer: 2 },
+            { q: "What command can be used in Linux to download files from a server and save them to your current directory?", options: ["sudo", "curl", "wget", "cp"], answer: 2 },
+            { q: "What is the primary purpose of using SSH in a client-server setup?", options: ["To allow anonymous users to access the server's files", "To view web pages from the server when using a browser", "To send email messages between computers", "To securely access the server's terminal from a remote client machine"], answer: 4 ? 3 : 3 }, // index 3 is SSH terminal access
+            { q: "_______ eases the backup and recovery process due to centralized jobs.", options: ["Local network storage", "Network-attached storage", "Cloud storage", "A file server"], answer: 3 },
+            { q: "What does nano /path/to/file/ do when executed in a Linux terminal?", options: ["Deletes a file", "Edits a file", "Copies a file", "Opens a file"], answer: 1 },
+            { q: "Which storage type keeps data on remote servers to be accessible over the internet?", options: ["A file server", "Solid state drive", "Cloud storage", "Network-attached storage"], answer: 2 },
+            { q: "What command can be used in Linux to access the files in the directory you are working in?", options: ["ls", "xdg-open", "dir", "start"], answer: 0 },
+            { q: "What command can be used in Windows to access the files in the directory you are working in?", options: ["xdg-open", "dir", "start", "ls"], answer: 1 },
+
+            // 10 Extended Questions from Briefing Details
+            { q: "What is the primary architectural difference between a local storage drive and local network storage?", options: ["Local network storage connects to a LAN and is shared with multiple users, whereas storage drives connect to a single device.", "Local network storage only stores temporary cache files.", "Storage drives always feature RAID redundancy.", "Local network storage requires fiber optic satellite uplinks."], answer: 0 },
+            { q: "What does RAID stand for in the context of NAS storage appliances?", options: ["Random Access Internal Disk", "Redundant Array of Independent Disks", "Remote Automated Internet Drive", "Rapid Access Integrated Directory"], answer: 1 },
+            { q: "Which networking protocol is predominantly used by Windows-based enterprise environments for file sharing?", options: ["NFS (Network File System)", "SMB (Server Message Block)", "FTP (File Transfer Protocol)", "SMTP (Simple Mail Transfer Protocol)"], answer: 1 },
+            { q: "What is the primary disadvantage of relying entirely on a centralized file server?", options: ["Files cannot be edited.", "It represents a single point of failure if the server goes down.", "It requires no user authentication.", "It cannot be accessed via Ethernet."], answer: 1 },
+            { q: "How does cloud storage differ from local network storage regarding infrastructure management?", options: ["Cloud storage requires onsite IT professionals to maintain hard drives.", "Cloud storage keeps data offsite on service provider infrastructure accessible over the internet.", "Cloud storage cannot be scaled dynamically.", "Cloud storage requires local Ethernet patch cables."], answer: 1 },
+            { q: "In the CYBER.org SSH lab, what directory houses the files for the Apache HTTP web server in Kali Linux?", options: ["/home/kali/Desktop", "/var/www/html", "/etc/ssh/", "/usr/bin/apache"], answer: 1 },
+            { q: "What command is used in Ubuntu Linux to open a downloaded file using the machine's default application?", options: ["start", "xdg-open", "nano", "ls"], answer: 1 },
+            { q: "Why is SSH preferred over cleartext protocols when administering servers remotely?", options: ["It provides encryption, authentication, and data integrity over unsecured networks.", "It allows unlimited anonymous guest logins.", "It bypasses all firewall restrictions.", "It compresses files to zero bytes."], answer: 0 },
+            { q: "What is a primary advantage of cloud storage services over local network storage?", options: ["Flexible capacity that scales instantly and remote access from any device.", "Zero internet dependency.", "Exemption from subscription fees.", "Elimination of file permissions."], answer: 0 },
+            { q: "What hardware component is typically NOT found in a dedicated Network-Attached Storage (NAS) appliance?", options: ["Multiple hard drive bays", "Embedded lightweight operating system", "Dedicated external monitor and keyboard", "Wired Ethernet LAN port"], answer: 2 }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        
+        quizData.forEach((item, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = "bg-gray-50 p-6 rounded-lg border border-gray-200 transition-all";
+            
+            const qTitle = document.createElement('h3');
+            qTitle.className = "font-bold text-lg text-gray-800 mb-4";
+            qTitle.innerText = `${index + 1}. ${item.q}`;
+            qDiv.appendChild(qTitle);
+            
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = "space-y-3";
+            
+            item.options.forEach((opt, optIndex) => {
+                let ansIdx = item.answer;
+                if(index === 4) ansIdx = 3; // ensure correct index mapping for SSH question
+                const label = document.createElement('label');
+                label.className = "flex items-center space-x-3 p-3 rounded bg-white border border-gray-300 hover:bg-green-50 cursor-pointer transition";
+                
+                const radio = document.createElement('input');
+                radio.type = "radio";
+                radio.name = `q${index}`;
+                radio.value = optIndex;
+                radio.className = "form-radio h-5 w-5 text-green-600";
+                
+                const span = document.createElement('span');
+                span.className = "text-gray-700";
+                span.innerText = opt;
+                
+                label.appendChild(radio);
+                label.appendChild(span);
+                optionsDiv.appendChild(label);
+            });
+            
+            qDiv.appendChild(optionsDiv);
+            quizContainer.appendChild(qDiv);
+        });
+
+        function gradeQuiz() {
+            let score = 0;
+            let allAnswered = true;
+
+            for(let i = 0; i < quizData.length; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                let correctAns = quizData[i].answer;
+                if(i === 4) correctAns = 3;
+                if(selected) {
+                    if(parseInt(selected.value) === correctAns) {
+                        score++;
+                    }
+                } else {
+                    allAnswered = false;
+                }
+            }
+            
+            if(!allAnswered) {
+                showModal('Incomplete Quiz', 'Please answer all 20 questions before submitting.', 'warning');
+                return;
+            }
+            
+            const percentage = (score / quizData.length) * 100;
+            
+            if(score >= 18) { 
+                const navGame = document.getElementById('nav-game');
+                const navGameMobile = document.getElementById('nav-game-mobile');
+                
+                navGame.classList.remove('text-gray-400', 'cursor-not-allowed');
+                navGame.classList.add('text-white', 'hover:bg-green-600');
+                navGame.disabled = false;
+                navGame.innerHTML = '<i class="fa-solid fa-gamepad mr-1"></i>Game';
+                
+                navGameMobile.classList.remove('text-gray-400', 'cursor-not-allowed');
+                navGameMobile.classList.add('text-white', 'hover:bg-green-600');
+                navGameMobile.disabled = false;
+                navGameMobile.innerHTML = '<i class="fa-solid fa-gamepad"></i> Game';
+
+                document.getElementById('nav-cert').classList.remove('hidden');
+                document.getElementById('nav-cert-mobile').classList.remove('hidden');
+                
+                document.getElementById('proceed-game-btn').classList.remove('hidden');
+                document.getElementById('submit-quiz-btn').classList.add('hidden');
+
+                showModal('Outstanding!', `You scored ${score}/20 (${percentage}%). You have unlocked your Certificate of Mastery AND the Retro Game "Data Jumper"!`, 'success');
+            } else {
+                quizData.forEach((_, i) => {
+                    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                    if(selected) selected.checked = false;
+                });
+                showModal('Keep Trying!', `You scored ${score}/20 (${percentage}%). You need 90% (18/20) to earn the certificate. Your answers have been reset so you can try again.`, 'error');
+                document.getElementById('quiz-section').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // --- RETRO GAME: "Data Jumper" (Doodle Jump Clone) ---
+        const gameCanvas = document.getElementById('game-canvas');
+        const gCtx = gameCanvas.getContext('2d');
+
+        let gameRunning = false;
+        let gameAnimId;
+        let pScore = 0;
+        let pLives = 3;
+
+        let player = {
+            x: 220,
+            y: 400,
+            width: 30,
+            height: 30,
+            vx: 0,
+            vy: 0,
+            gravity: 0.35,
+            jumpPower: -10
+        };
+
+        let platforms = [];
+        let keys = { left: false, right: false };
+
+        function moveLeft(isDown) { keys.left = isDown; }
+        function moveRight(isDown) { keys.right = isDown; }
+
+        window.addEventListener('keydown', e => {
+            if(e.key === 'ArrowLeft' || e.key === 'a') keys.left = true;
+            if(e.key === 'ArrowRight' || e.key === 'd') keys.right = true;
+        });
+        window.addEventListener('keyup', e => {
+            if(e.key === 'ArrowLeft' || e.key === 'a') keys.left = false;
+            if(e.key === 'ArrowRight' || e.key === 'd') keys.right = false;
+        });
+
+        function initGameObjects() {
+            platforms = [];
+            // Starting platform
+            platforms.push({ x: 200, y: 520, w: 80, h: 14, type: 'normal' });
+            
+            // Generate upward platforms
+            let y = 440;
+            while(y > -1000) {
+                let x = Math.random() * (gameCanvas.width - 80);
+                let type = Math.random() < 0.15 ? 'corrupted' : 'normal';
+                platforms.push({ x: x, y: y, w: 75, h: 14, type: type });
+                y -= 65 + Math.random() * 25;
+            }
+            player.x = 225;
+            player.y = 470;
+            player.vy = player.jumpPower;
+            pScore = 0;
+            pLives = 3;
+            document.getElementById('game-score').innerText = pScore;
+            document.getElementById('game-lives').innerText = pLives;
+        }
+
+        const gameOverlay = document.getElementById('game-overlay');
+        const startGameBtn = document.getElementById('start-game-btn');
+        startGameBtn.addEventListener('click', startDataJumper);
+
+        function startDataJumper() {
+            gameOverlay.classList.add('hidden');
+            initGameObjects();
+            gameRunning = true;
+            loopGame();
+        }
+
+        function loopGame() {
+            if(!gameRunning) return;
+
+            gCtx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
+
+            // Draw grid background
+            gCtx.strokeStyle = '#1f2937';
+            gCtx.lineWidth = 1;
+            for(let i=0; i<gameCanvas.width; i+=40) {
+                gCtx.beginPath(); gCtx.moveTo(i, 0); gCtx.lineTo(i, gameCanvas.height); gCtx.stroke();
+            }
+            for(let i=0; i<gameCanvas.height; i+=40) {
+                gCtx.beginPath(); gCtx.moveTo(0, i); gCtx.lineTo(gameCanvas.width, i); gCtx.stroke();
+            }
+
+            // Controls
+            if(keys.left) player.vx = -5;
+            else if(keys.right) player.vx = 5;
+            else player.vx *= 0.8;
+
+            player.x += player.vx;
+            player.vy += player.gravity;
+            player.y += player.vy;
+
+            // Screen wrap
+            if(player.x < -player.width) player.x = gameCanvas.width;
+            if(player.x > gameCanvas.width) player.x = -player.width;
+
+            // Camera scroll upwards
+            if(player.y < gameCanvas.height / 2) {
+                let diff = (gameCanvas.height / 2) - player.y;
+                player.y = gameCanvas.height / 2;
+                pScore += Math.floor(diff);
+                document.getElementById('game-score').innerText = pScore;
+
+                platforms.forEach(plat => {
+                    plat.y += diff;
+                });
+            }
+
+            // Generate new platforms at top as player climbs
+            let highestPlatY = Math.min(...platforms.map(p => p.y));
+            if(highestPlatY > 0) {
+                let x = Math.random() * (gameCanvas.width - 80);
+                let type = Math.random() < 0.2 ? 'corrupted' : 'normal';
+                platforms.push({ x: x, y: highestPlatY - (70 + Math.random() * 30), w: 75, h: 14, type: type });
+            }
+
+            // Remove platforms fallen off bottom
+            platforms = platforms.filter(p => p.y < gameCanvas.height + 50);
+
+            // Platform collisions (only when falling down)
+            if(player.vy > 0) {
+                platforms.forEach(plat => {
+                    if(
+                        player.x + player.width > plat.x &&
+                        player.x < plat.x + plat.w &&
+                        player.y + player.height >= plat.y &&
+                        player.y + player.height <= plat.y + 15
+                    ) {
+                        if(plat.type === 'corrupted') {
+                            // Hit corrupted block - lose life and bounce less
+                            pLives--;
+                            document.getElementById('game-lives').innerText = pLives;
+                            player.vy = player.jumpPower * 0.7;
+                            plat.y = 1000; // remove
+                            if(pLives <= 0) {
+                                gameOverGame();
+                            }
+                        } else {
+                            player.vy = player.jumpPower;
+                        }
+                    }
+                });
+            }
+
+            // Draw platforms
+            platforms.forEach(plat => {
+                gCtx.fillStyle = plat.type === 'corrupted' ? '#ef4444' : '#10b981';
+                gCtx.fillRect(plat.x, plat.y, plat.w, plat.h);
+                gCtx.fillStyle = '#ffffff';
+                gCtx.font = '10px monospace';
+                gCtx.fillText(plat.type === 'corrupted' ? 'BAD_SECTOR' : 'NODE', plat.x + 4, plat.y + 11);
+            });
+
+            // Draw player packet
+            gCtx.fillStyle = '#38bdf8';
+            gCtx.fillRect(player.x, player.y, player.width, player.height);
+            gCtx.strokeStyle = '#ffffff';
+            gCtx.strokeRect(player.x, player.y, player.width, player.height);
+            gCtx.fillStyle = '#0f172a';
+            gCtx.font = 'bold 12px monospace';
+            gCtx.fillText('PKT', player.x + 3, player.y + 20);
+
+            // Game over if fall to bottom
+            if(player.y > gameCanvas.height) {
+                gameOverGame();
+            }
+
+            if(gameRunning) {
+                gameAnimId = requestAnimationFrame(loopGame);
+            }
+        }
+
+        function gameOverGame() {
+            gameRunning = false;
+            cancelAnimationFrame(gameAnimId);
+            gameOverlay.classList.remove('hidden');
+            startGameBtn.innerText = "Connection Dropped! Retry";
+            startGameBtn.classList.replace('bg-green-600', 'bg-red-600');
+            startGameBtn.classList.replace('border-green-800', 'border-red-800');
+        }
+
+        // --- CERTIFICATE LOGIC ---
+        function updateCertName() {
+            let name = document.getElementById('student-name-input').value.trim();
+            if(name) {
+                if (name.includes(' ')) {
+                    name = name.split(' ')[0];
+                    document.getElementById('student-name-input').value = name;
+                    showModal('Notice', 'Only your first name has been applied to the certificate.', 'info');
+                }
+                document.getElementById('cert-student-name').innerText = name;
+            } else {
+                showModal('Wait!', 'Please enter your first name to update the certificate.', 'warning');
+            }
+        }
+
+        const today = new Date();
+        document.getElementById('cert-date').innerText = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        function downloadCert() {
+            const certEl = document.getElementById('certificate');
+            const name = document.getElementById('cert-student-name').innerText;
+            let filename = 'U03_232_Certificate.png';
+            if (name && name !== 'Student') {
+                filename = `${name.replace(/\s+/g, '_')}_Network_Storage_Certificate.png`;
+            }
+
+            const originalTransform = certEl.style.transform;
+            certEl.style.transform = 'none';
+
+            const btn = document.getElementById('download-btn');
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Generating...';
+            btn.disabled = true;
+
+            html2canvas(certEl, { 
+                scale: 2, 
+                useCORS: true,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+            }).catch(err => {
+                console.error(err);
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                showModal('Error', 'Failed to generate image. Try using a desktop browser.', 'error');
+            });
+        }
+
+        window.onload = () => {
+            gCtx.fillStyle = '#1f2937';
+            gCtx.fillRect(0,0,gameCanvas.width,gameCanvas.height);
+            gCtx.fillStyle = '#9ca3af';
+            gCtx.font = '18px monospace';
+            gCtx.textAlign = 'center';
+            gCtx.fillText('DATA JUMPER READY', gameCanvas.width/2, gameCanvas.height/2);
+        }
+    </script>
+</body>
+</html>

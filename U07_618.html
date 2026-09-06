@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 07 Section 6.1.8 Mastery - Non-Repudiation</title>
+    
+    <!-- Load Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load HTML2Canvas for Certificate Download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- Load Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Qwitcher+Grypen:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0fdf4; 
+            color: #1f2937;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        /* Interactive Elements CSS */
+        .io-dropzone { min-height: 80px; min-width: 140px; border: 2px dashed #9ca3af; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: #f9fafb; transition: all 0.2s; padding: 0.5rem; text-align: center;}
+        .io-dropzone.drag-over { background: #e5e7eb; border-color: #16a34a; box-shadow: inset 0 0 10px rgba(22, 163, 74, 0.2);}
+        
+        .io-item { cursor: grab; transition: transform 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .io-item:active { cursor: grabbing; transform: scale(0.95); }
+        
+        .cat-dropzone { transition: background-color 0.2s ease; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #e5e7eb; }
+        ::-webkit-scrollbar-thumb { background: #10b981; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #059669; }
+
+        /* Retro Game Canvas */
+        #game-canvas {
+            background-color: #0f172a;
+            border: 4px solid #334155;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+            max-width: 100%;
+            height: auto;
+            touch-action: none;
+            cursor: crosshair;
+        }
+
+        /* --- CERTIFICATE STYLES --- */
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .font-body { font-family: 'Lora', serif; }
+        .font-script { font-family: 'Qwitcher Grypen', cursive; }
+        
+        .cert-preview-container {
+            width: 100%;
+            overflow: auto;
+            display: flex;
+            justify-content: center;
+            background: #e5e7eb;
+            padding: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        #certificate {
+            width: 1056px !important;
+            height: 816px !important;
+            flex-shrink: 0;
+            background-color: #ffffff;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1056" height="816"><polygon points="0,0 250,0 0,650" fill="%23fcd34d"/><polygon points="0,0 350,0 0,900" fill="%23d97706" opacity="0.8"/><polygon points="0,0 120,0 0,300" fill="%23fcd34d"/><polygon points="0,450 650,816 0,816" fill="%23fcd34d"/><polygon points="0,550 450,816 0,816" fill="%23d97706" opacity="0.8"/><polygon points="800,0 1056,0 1056,256" fill="%23f3f4f6"/><polygon points="1056,500 1056,816 750,816" fill="%23f3f4f6"/></svg>');
+            background-size: cover;
+            border: 4px solid #e5e7eb;
+        }
+
+        .gold-seal {
+            position: absolute;
+            left: 110px;
+            top: 350px;
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c, #fcf6ba);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3), inset 0 0 15px rgba(255,255,255,0.7), inset 0 0 25px rgba(139,105,20,0.9);
+            z-index: 10;
+        }
+        .gold-seal::before {
+            content: '';
+            position: absolute;
+            top: -4px; bottom: -4px; left: -4px; right: -4px;
+            border-radius: 50%;
+            border: 6px dashed #d4af37;
+        }
+        .gold-seal-inner-1 {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 2px solid rgba(139, 105, 20, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #e8c678, #dbab46);
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.2), 0 2px 5px rgba(255,255,255,0.7);
+            z-index: 1;
+        }
+        .gold-seal-inner-2 {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: radial-gradient(circle, #fcf6ba, #d4af37);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            padding: 10px;
+        }
+        .embossed-text {
+            color: #b38728;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2);
+            font-family: 'Playfair Display', serif;
+            font-weight: 800;
+            line-height: 1.1;
+            text-transform: uppercase;
+        }
+        .embossed-text-large { font-size: 14px; letter-spacing: 1px; }
+        .embossed-text-small { font-size: 11px; letter-spacing: 2px; margin: 2px 0; }
+        .embossed-star { font-size: 12px; color: #b38728; text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2); margin: 2px 0; }
+
+        @media (max-width: 1100px) {
+            #certificate { transform: scale(0.7); transform-origin: top left; margin-bottom: -240px; margin-right: -310px; }
+        }
+        @media (max-width: 768px) {
+            #certificate { transform: scale(0.4); transform-origin: top left; margin-bottom: -490px; margin-right: -630px; }
+        }
+        
+        /* Lab Specific Styles */
+        .log-row { transition: background-color 0.2s; }
+        .log-row:hover { background-color: #fef08a; cursor: pointer;}
+        .log-row.correct { background-color: #bbf7d0 !important; color: #166534; font-weight: bold;}
+        
+        .pipeline-btn { transition: all 0.2s; }
+        .pipeline-btn.active { background-color: #10b981; color: white; border-color: #047857; }
+        
+        .sig-step { transition: opacity 0.3s ease; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
+    <nav class="bg-green-700 text-white shadow-lg sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-fingerprint text-2xl"></i>
+                    <span class="font-bold text-xl tracking-wider hidden sm:inline-block">Tech+ Unit 07 Section 6.1.8</span>
+                    <span class="font-bold text-xl tracking-wider sm:hidden">6.1.8</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-2">
+                        <button onclick="switchTab('briefing')" class="nav-btn bg-green-900 px-3 py-2 rounded-md text-sm font-medium hover:bg-green-600 transition" id="nav-briefing"><i class="fa-solid fa-book-open mr-1"></i>Briefing</button>
+                        <button onclick="switchTab('activity')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-green-600 transition" id="nav-activity"><i class="fa-solid fa-flask mr-1"></i>Lab Activity</button>
+                        <button onclick="switchTab('quiz')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-green-600 transition" id="nav-quiz"><i class="fa-solid fa-clipboard-check mr-1"></i>Quiz</button>
+                        <button onclick="switchTab('game')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-gray-400 cursor-not-allowed transition" id="nav-game" disabled><i class="fa-solid fa-lock mr-1"></i>Game</button>
+                        <button onclick="switchTab('cert')" class="nav-btn hidden px-3 py-2 rounded-md text-sm font-medium text-yellow-300 hover:bg-green-600 transition" id="nav-cert"><i class="fa-solid fa-award mr-1"></i>Certificate</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Nav -->
+        <div class="md:hidden flex flex-wrap justify-center gap-2 py-2 px-2 bg-green-800">
+            <button onclick="switchTab('briefing')" class="nav-btn-mobile px-3 py-1 text-sm rounded bg-green-900" id="nav-briefing-mobile">Briefing</button>
+            <button onclick="switchTab('activity')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-activity-mobile">Lab</button>
+            <button onclick="switchTab('quiz')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-quiz-mobile">Quiz</button>
+            <button onclick="switchTab('game')" class="nav-btn-mobile px-3 py-1 text-sm rounded text-gray-400 cursor-not-allowed" id="nav-game-mobile" disabled><i class="fa-solid fa-lock"></i></button>
+            <button onclick="switchTab('cert')" id="nav-cert-mobile" class="hidden px-2 py-1 text-sm text-yellow-300 rounded"><i class="fa-solid fa-award"></i></button>
+        </div>
+    </nav>
+
+    <main class="flex-grow w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <!-- BRIEFING SECTION -->
+        <div id="briefing-section" class="tab-content active no-print">
+            <div class="text-center mb-10">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">Non-Repudiation</h1>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">Discover how cybersecurity ensures accountability. Learn how systems create undeniable proof of identity and actions, guaranteeing that a user cannot falsely deny their digital footprint.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                
+                <!-- Tile 1 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-blue-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-blue-700"><i class="fa-solid fa-file-contract mr-2"></i>Non-Repudiation Fundamentals</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4 text-sm">
+                            <li><strong>The Core Concept:</strong> Ensuring a user cannot deny having performed a specific action or transaction.</li>
+                            <li><strong>Building Trust:</strong> Crucial for accountability, legal protection, and preventing fraud or disputes.</li>
+                            <li><strong>Digital Receipts:</strong> Functions as irrefutable evidence of an event, such as a signed document or a sent email.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('fundamentals-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('fundamentals-usecase')" class="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 2 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-purple-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-purple-700"><i class="fa-solid fa-shield-halved mr-2"></i>The AAA Triad</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4 text-sm">
+                            <li><strong>Authentication:</strong> Proving the identity of the user (e.g., passwords, biometrics, MFA).</li>
+                            <li><strong>Authorization:</strong> Defining and enforcing what the authenticated user is allowed to do.</li>
+                            <li><strong>Accounting:</strong> Tracking and logging exactly what the user did and when they did it.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('aaa-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('aaa-usecase')" class="flex-1 bg-purple-100 hover:bg-purple-200 text-purple-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 3 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-red-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-red-700"><i class="fa-solid fa-server mr-2"></i>Digital Evidence & Logs</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4 text-sm">
+                            <li><strong>Timestamps & IPs:</strong> Crucial metadata that places an action at a specific time and physical location.</li>
+                            <li><strong>Digital Signatures:</strong> Cryptographic math that binds a user's identity to a specific file or message.</li>
+                            <li><strong>Log Integrity:</strong> Ensuring logs cannot be tampered with, often using hashing and WORM storage.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('evidence-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('evidence-usecase')" class="flex-1 bg-red-100 hover:bg-red-200 text-red-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            
+            <div class="mt-10 flex justify-center">
+                <button onclick="switchTab('activity')" class="bg-green-600 text-white px-10 py-4 rounded-full font-bold text-xl hover:bg-green-500 shadow-xl transition transform hover:scale-105">Proceed to Lab Activity <i class="fa-solid fa-arrow-right ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- LAB ACTIVITY SECTION -->
+        <div id="activity-section" class="tab-content no-print">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Interactive Lab Activity</h1>
+                <p class="text-gray-600">Complete these 6 simulations to master Non-Repudiation, the AAA Triad, and Digital Evidence.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Lab 1: Scenario Matcher (Non-Repudiation) -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                    <h2 class="text-xl font-bold mb-4 text-blue-700"><i class="fa-solid fa-link mr-2"></i>Lab 1: The Evidence Matcher</h2>
+                    <p class="text-sm text-gray-600 mb-4">Drag the specific user denial scenario and drop it onto the piece of digital evidence that would prove non-repudiation.</p>
+                    
+                    <div class="flex flex-col gap-2 mb-6" id="lab1-items">
+                        <div class="io-item px-3 py-2 bg-blue-100 border border-blue-300 rounded font-bold text-sm text-center" draggable="true" data-type="email" id="l1-i1">"I never sent that insulting email to the boss!"</div>
+                        <div class="io-item px-3 py-2 bg-blue-100 border border-blue-300 rounded font-bold text-sm text-center" draggable="true" data-type="lms" id="l1-i2">"I submitted my quiz on time, the system lost it!"</div>
+                        <div class="io-item px-3 py-2 bg-blue-100 border border-blue-300 rounded font-bold text-sm text-center" draggable="true" data-type="bank" id="l1-i3">"I didn't transfer $500 out of my account!"</div>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-2">
+                        <div class="cat-dropzone border-2 border-dashed border-gray-400 bg-gray-50 rounded-lg p-2 min-h-[100px] flex flex-col items-center justify-center text-center" data-target="bank">
+                            <h3 class="font-bold text-gray-700 text-xs mb-2">Financial Transaction Log & MFA Token</h3>
+                        </div>
+                        <div class="cat-dropzone border-2 border-dashed border-gray-400 bg-gray-50 rounded-lg p-2 min-h-[100px] flex flex-col items-center justify-center text-center" data-target="email">
+                            <h3 class="font-bold text-gray-700 text-xs mb-2">SMTP Server Sent Mail Log & IP Address</h3>
+                        </div>
+                        <div class="cat-dropzone border-2 border-dashed border-gray-400 bg-gray-50 rounded-lg p-2 min-h-[100px] flex flex-col items-center justify-center text-center" data-target="lms">
+                            <h3 class="font-bold text-gray-700 text-xs mb-2">LMS Assignment Submission Timestamp</h3>
+                        </div>
+                    </div>
+                    <div id="lab1-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
+                </div>
+
+                <!-- Lab 2: Alibi Interrogator (Non-Repudiation) -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 flex flex-col">
+                    <h2 class="text-xl font-bold mb-4 text-blue-700"><i class="fa-solid fa-gavel mr-2"></i>Lab 2: The Alibi Interrogator</h2>
+                    <p class="text-sm text-gray-600 mb-4">A user claims they did not download the confidential "ProjectX.zip" file. As the auditor, select the exact piece of evidence needed to defeat their denial.</p>
+                    
+                    <div class="bg-gray-800 text-green-400 p-4 rounded font-mono text-sm mb-4 flex-grow border-l-4 border-green-500">
+                        > SUSPECT: "I wasn't even at my computer! I didn't download anything."<br>
+                        > AUDITOR: "We have proof. Let me show you the..."
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <button onclick="checkLab2(false, this)" class="bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded text-sm font-bold transition border border-gray-300">Antivirus Scan Report</button>
+                        <button onclick="checkLab2(false, this)" class="bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded text-sm font-bold transition border border-gray-300">Browser History (Local)</button>
+                        <button onclick="checkLab2(true, this)" class="bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded text-sm font-bold transition border border-gray-300">Server Audit Log (User/IP/Time)</button>
+                        <button onclick="checkLab2(false, this)" class="bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded text-sm font-bold transition border border-gray-300">System Uptime Report</button>
+                    </div>
+                    <div id="lab2-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
+                </div>
+
+                <!-- Lab 3: AAA Sorter -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                    <h2 class="text-xl font-bold mb-4 text-purple-700"><i class="fa-solid fa-layer-group mr-2"></i>Lab 3: The AAA Sorter</h2>
+                    <p class="text-sm text-gray-600 mb-4">Sort the security controls into the correct pillar of the AAA Triad.</p>
+                    
+                    <div class="flex flex-wrap gap-2 mb-6 justify-center" id="lab3-items">
+                        <div class="io-item px-3 py-1 bg-purple-100 border border-purple-300 rounded font-bold text-xs" draggable="true" data-type="authn" id="l3-i1">Biometric Fingerprint</div>
+                        <div class="io-item px-3 py-1 bg-purple-100 border border-purple-300 rounded font-bold text-xs" draggable="true" data-type="authz" id="l3-i2">Read-Only File Permission</div>
+                        <div class="io-item px-3 py-1 bg-purple-100 border border-purple-300 rounded font-bold text-xs" draggable="true" data-type="accnt" id="l3-i3">Login Timestamp Log</div>
+                        <div class="io-item px-3 py-1 bg-purple-100 border border-purple-300 rounded font-bold text-xs" draggable="true" data-type="authn" id="l3-i4">Complex Password</div>
+                        <div class="io-item px-3 py-1 bg-purple-100 border border-purple-300 rounded font-bold text-xs" draggable="true" data-type="accnt" id="l3-i5">Web Access History</div>
+                        <div class="io-item px-3 py-1 bg-purple-100 border border-purple-300 rounded font-bold text-xs" draggable="true" data-type="authz" id="l3-i6">Administrator Account</div>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-2">
+                        <div class="cat-dropzone border-2 border-dashed border-indigo-400 bg-indigo-50 rounded-lg p-2 min-h-[120px] flex flex-col items-center" data-target="authn">
+                            <h3 class="font-bold text-indigo-800 text-xs mb-2 border-b border-indigo-200 w-full text-center pb-1">Authentication</h3>
+                        </div>
+                        <div class="cat-dropzone border-2 border-dashed border-pink-400 bg-pink-50 rounded-lg p-2 min-h-[120px] flex flex-col items-center" data-target="authz">
+                            <h3 class="font-bold text-pink-800 text-xs mb-2 border-b border-pink-200 w-full text-center pb-1">Authorization</h3>
+                        </div>
+                        <div class="cat-dropzone border-2 border-dashed border-teal-400 bg-teal-50 rounded-lg p-2 min-h-[120px] flex flex-col items-center" data-target="accnt">
+                            <h3 class="font-bold text-teal-800 text-xs mb-2 border-b border-teal-200 w-full text-center pb-1">Accounting</h3>
+                        </div>
+                    </div>
+                    <div id="lab3-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
+                </div>
+
+                <!-- Lab 4: Access Pipeline -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 flex flex-col">
+                    <h2 class="text-xl font-bold mb-4 text-purple-700"><i class="fa-solid fa-toggle-on mr-2"></i>Lab 4: The AAA Pipeline</h2>
+                    <p class="text-sm text-gray-600 mb-4">You are configuring a secure transaction. Click the correct sequence to satisfy the AAA Triad in order, achieving Non-Repudiation.</p>
+                    
+                    <div class="flex flex-col gap-3 flex-grow justify-center">
+                        <div class="flex items-center gap-4">
+                            <span class="font-bold text-gray-500 w-8">1.</span>
+                            <button id="pipe-authn" onclick="advancePipeline(1)" class="pipeline-btn flex-grow py-2 border-2 border-gray-300 rounded font-bold text-gray-600 bg-gray-50">Authenticate User (MFA)</button>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <span class="font-bold text-gray-500 w-8">2.</span>
+                            <button id="pipe-authz" onclick="advancePipeline(2)" class="pipeline-btn flex-grow py-2 border-2 border-gray-300 rounded font-bold text-gray-400 bg-gray-100 cursor-not-allowed" disabled>Check Authorization (Permissions)</button>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <span class="font-bold text-gray-500 w-8">3.</span>
+                            <button id="pipe-accnt" onclick="advancePipeline(3)" class="pipeline-btn flex-grow py-2 border-2 border-gray-300 rounded font-bold text-gray-400 bg-gray-100 cursor-not-allowed" disabled>Execute & Record (Accounting)</button>
+                        </div>
+                    </div>
+                    <div id="lab4-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
+                </div>
+
+                <!-- Lab 5: Log Analyzer -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 lg:col-span-2">
+                    <h2 class="text-xl font-bold mb-2 text-red-700"><i class="fa-solid fa-magnifying-glass mr-2"></i>Lab 5: Log Analyzer</h2>
+                    <p class="text-sm text-gray-600 mb-4"><strong>Scenario:</strong> A student claims they did not access a blocked website (<code>cheat-site.com</code>). Review the network proxy logs below and click the row that proves they did, establishing non-repudiation.</p>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white border border-gray-300 text-sm text-left">
+                            <thead class="bg-gray-100 border-b border-gray-300">
+                                <tr>
+                                    <th class="py-2 px-4 font-bold text-gray-700">Timestamp</th>
+                                    <th class="py-2 px-4 font-bold text-gray-700">User ID</th>
+                                    <th class="py-2 px-4 font-bold text-gray-700">IP Address</th>
+                                    <th class="py-2 px-4 font-bold text-gray-700">Action</th>
+                                    <th class="py-2 px-4 font-bold text-gray-700">Target URL</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="log-row border-b border-gray-200" onclick="checkLab5(false, this)">
+                                    <td class="py-2 px-4 text-gray-600">08:14:22 AM</td>
+                                    <td class="py-2 px-4 font-mono text-blue-600">Student_J</td>
+                                    <td class="py-2 px-4 text-gray-500">192.168.1.45</td>
+                                    <td class="py-2 px-4 text-green-600">ALLOWED</td>
+                                    <td class="py-2 px-4">google.com</td>
+                                </tr>
+                                <tr class="log-row border-b border-gray-200" onclick="checkLab5(false, this)">
+                                    <td class="py-2 px-4 text-gray-600">08:15:10 AM</td>
+                                    <td class="py-2 px-4 font-mono text-blue-600">Student_N</td>
+                                    <td class="py-2 px-4 text-gray-500">192.168.1.12</td>
+                                    <td class="py-2 px-4 text-green-600">ALLOWED</td>
+                                    <td class="py-2 px-4">math-help.org</td>
+                                </tr>
+                                <tr class="log-row border-b border-gray-200 bg-red-50" onclick="checkLab5(true, this)">
+                                    <td class="py-2 px-4 text-gray-600">08:17:45 AM</td>
+                                    <td class="py-2 px-4 font-mono text-blue-600 font-bold">Student_N</td>
+                                    <td class="py-2 px-4 text-gray-500">192.168.1.12</td>
+                                    <td class="py-2 px-4 text-red-600 font-bold">BLOCKED</td>
+                                    <td class="py-2 px-4 font-bold text-red-800">cheat-site.com</td>
+                                </tr>
+                                <tr class="log-row" onclick="checkLab5(false, this)">
+                                    <td class="py-2 px-4 text-gray-600">08:20:01 AM</td>
+                                    <td class="py-2 px-4 font-mono text-blue-600">Student_A</td>
+                                    <td class="py-2 px-4 text-gray-500">192.168.1.99</td>
+                                    <td class="py-2 px-4 text-green-600">ALLOWED</td>
+                                    <td class="py-2 px-4">school-portal.edu</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="lab5-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
+                </div>
+
+                <!-- Lab 6: Digital Signature Builder -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 lg:col-span-2">
+                    <h2 class="text-xl font-bold mb-4 text-red-700"><i class="fa-solid fa-pen-nib mr-2"></i>Lab 6: Digital Signature Constructor</h2>
+                    <p class="text-sm text-gray-600 mb-6">Digital Signatures provide the strongest form of non-repudiation. Construct a valid digital signature by completing the cryptographic steps in order.</p>
+                    
+                    <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                        
+                        <!-- Step 1 -->
+                        <div class="flex-1 flex flex-col items-center">
+                            <button id="sig-btn-1" onclick="advanceSig(1)" class="w-full bg-blue-100 border-2 border-blue-400 text-blue-800 font-bold py-3 px-4 rounded-lg hover:bg-blue-200 transition shadow-sm mb-2">1. Hash the Document</button>
+                            <div id="sig-icon-1" class="sig-step opacity-0 text-3xl text-blue-500"><i class="fa-solid fa-hashtag"></i></div>
+                        </div>
+                        
+                        <div class="hidden md:block text-gray-400 text-2xl"><i class="fa-solid fa-arrow-right"></i></div>
+                        <div class="md:hidden text-gray-400 text-2xl"><i class="fa-solid fa-arrow-down"></i></div>
+
+                        <!-- Step 2 -->
+                        <div class="flex-1 flex flex-col items-center">
+                            <button id="sig-btn-2" onclick="advanceSig(2)" class="w-full bg-gray-100 border-2 border-gray-300 text-gray-400 font-bold py-3 px-4 rounded-lg cursor-not-allowed transition shadow-sm mb-2" disabled>2. Encrypt with Private Key</button>
+                            <div id="sig-icon-2" class="sig-step opacity-0 text-3xl text-purple-500"><i class="fa-solid fa-key"></i></div>
+                        </div>
+
+                        <div class="hidden md:block text-gray-400 text-2xl"><i class="fa-solid fa-arrow-right"></i></div>
+                        <div class="md:hidden text-gray-400 text-2xl"><i class="fa-solid fa-arrow-down"></i></div>
+
+                        <!-- Step 3 -->
+                        <div class="flex-1 flex flex-col items-center">
+                            <button id="sig-btn-3" onclick="advanceSig(3)" class="w-full bg-gray-100 border-2 border-gray-300 text-gray-400 font-bold py-3 px-4 rounded-lg cursor-not-allowed transition shadow-sm mb-2" disabled>3. Attach Digital Certificate</button>
+                            <div id="sig-icon-3" class="sig-step opacity-0 text-3xl text-green-500"><i class="fa-solid fa-certificate"></i></div>
+                        </div>
+
+                    </div>
+                    <div id="lab6-feedback" class="text-center font-bold mt-6 h-6 text-green-600"></div>
+                </div>
+            </div>
+
+            <div class="text-center mt-10">
+                <button onclick="switchTab('quiz')" class="bg-green-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-green-500 shadow-lg transition transform hover:scale-105">Take the Mastery Quiz <i class="fa-solid fa-clipboard-check ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- QUIZ SECTION -->
+        <div id="quiz-section" class="tab-content no-print">
+            <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-xl max-w-4xl mx-auto">
+                <div class="text-center mb-8 border-b pb-4">
+                    <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Mastery Quiz: Non-Repudiation</h1>
+                    <p class="text-gray-600">Score 90% or higher (18/20) to earn your Certificate of Mastery and unlock the Retro Game!</p>
+                </div>
+
+                <div id="quiz-container" class="space-y-8">
+                    <!-- Questions injected via JS -->
+                </div>
+
+                <div class="mt-10 text-center border-t pt-6 flex flex-col md:flex-row justify-center items-center gap-4">
+                    <button id="submit-quiz-btn" onclick="gradeQuiz()" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">Submit Quiz</button>
+                    <button id="proceed-game-btn" onclick="switchTab('game')" class="hidden bg-purple-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-purple-700 shadow-lg transition w-full md:w-auto">Play Retro Game <i class="fa-solid fa-gamepad ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RETRO GAME SECTION -->
+        <div id="game-section" class="tab-content no-print">
+            <div class="bg-gray-900 p-6 sm:p-8 rounded-2xl shadow-xl max-w-4xl mx-auto border-4 border-gray-700 flex flex-col items-center">
+                <div class="text-center mb-4 w-full">
+                    <h1 class="text-3xl font-extrabold text-green-400 mb-2 tracking-widest uppercase" style="font-family: monospace;">Audit Defender</h1>
+                    <p class="text-gray-300 text-sm">You are the System Authenticator! Defend the Audit Logs at the bottom of the screen from falling "Repudiation" attacks. Move with your mouse or finger, click/tap to shoot validation packets!</p>
+                </div>
+                
+                <div class="flex justify-between items-center w-full max-w-[400px] sm:max-w-[600px] mb-2 px-4 text-white font-mono text-xl">
+                    <div>Logs Secured: <span id="game-score" class="text-blue-400 font-bold">0</span></div>
+                    <div>System Integrity: <span id="game-lives" class="text-red-400 font-bold">3</span></div>
+                </div>
+
+                <div class="relative flex justify-center w-full">
+                    <!-- Game Canvas -->
+                    <canvas id="game-canvas" width="600" height="450" class="w-full max-w-[400px] sm:max-w-[600px] bg-slate-900 border-2 border-slate-700 rounded shadow-lg"></canvas>
+                    
+                    <!-- Overlay Start Button -->
+                    <div id="game-overlay" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-70 rounded-lg max-w-[400px] sm:max-w-[600px] mx-auto z-10">
+                        <button id="start-game-btn" class="bg-green-600 hover:bg-green-500 text-white font-bold font-mono py-3 px-6 rounded-lg text-xl border-4 border-green-800 uppercase transform transition hover:scale-105">Initialize Defense (Start)</button>
+                    </div>
+                </div>
+
+                <div class="mt-8 text-center w-full border-t border-gray-700 pt-6">
+                    <button onclick="switchTab('cert')" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">View Certificate <i class="fa-solid fa-award ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CERTIFICATE SECTION -->
+        <div id="cert-section" class="tab-content">
+            <div class="max-w-5xl mx-auto">
+                
+                <!-- Controls -->
+                <div class="bg-white p-6 rounded shadow mb-6 no-print text-center border border-gray-200">
+                    <h2 class="text-2xl font-bold text-green-600 mb-2">🎉 Congratulations! 🎉</h2>
+                    <p class="text-gray-700 mb-4">You have achieved mastery of Non-Repudiation and the AAA Triad.</p>
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+                        <input type="text" id="student-name-input" value="Student" placeholder="Enter your first name" class="border-2 border-gray-300 rounded px-4 py-2 w-full md:w-64 focus:border-green-500 focus:outline-none">
+                        <button onclick="updateCertName()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">Update Name</button>
+                        <button id="download-btn" onclick="downloadCert()" class="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900 transition flex items-center justify-center">
+                            <i class="fa-solid fa-download mr-2"></i>Download PNG
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Certificate Render Container -->
+                <div class="cert-preview-container print:p-0 print:bg-white">
+                    <div id="certificate">
+                        <div class="gold-seal">
+                            <div class="gold-seal-inner-1">
+                                <div class="gold-seal-inner-2">
+                                     <span class="embossed-text embossed-text-large">Certificate</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-small">Of</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-large">Excellence</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="relative z-20 w-full h-full flex flex-col pt-[48px] pl-[380px] pr-[48px]">
+                            <h1 class="text-[#1e3a8a] text-[4.5rem] leading-none font-serif font-bold tracking-wide uppercase mb-2">CERTIFICATE</h1>
+                            <h2 class="text-gray-800 text-3xl font-serif tracking-widest uppercase mb-10">Of Achievement</h2>
+                            
+                            <p class="text-[1.4rem] font-body text-gray-800 mb-4">This is to certify that</p>
+                            
+                            <div class="relative mb-8 w-full">
+                                <h3 id="cert-student-name" class="text-[4rem] text-[#1e3a8a] font-serif italic leading-none pb-2 relative z-10 text-center w-full block">Student</h3>
+                                <div class="w-full border-b-[2px] border-[#1e3a8a] absolute bottom-[4px] left-0 z-0"></div>
+                                <div class="w-full border-b-[2px] border-dotted border-red-500 absolute bottom-[0px] left-0 z-0"></div>
+                            </div>
+                            
+                            <p class="text-[1.3rem] font-body text-gray-800 leading-relaxed w-full pr-4">
+                                Has successfully completed the assessment for 
+                                <strong class="text-[1.8rem] text-[#1e3a8a] block mt-4 mb-2 font-serif">Cyber.org Tech+ Unit 07 Section 6.1.8</strong>
+                                <strong class="text-[1.5rem] text-black block mb-4 font-serif italic">Non-Repudiation</strong>
+                                <span class="text-[1.1rem] text-gray-700 leading-snug block">Demonstrating proficiency in explaining the foundational role of the AAA Triad, the mechanisms of digital evidence and logging, and the application of non-repudiation in cybersecurity scenarios.</span>
+                            </p>
+                            
+                            <div class="flex justify-end gap-16 items-end mt-auto mb-[60px] w-full pr-8">
+                                <div class="w-64">
+                                    <div class="border-b border-gray-600 mb-2 h-20 flex items-end justify-center relative">
+                                        <span class="font-script text-[5rem] text-[#1e3a8a] absolute bottom-[-10px] transform -rotate-3 opacity-90">Dr. M. S</span>
+                                    </div>
+                                    <p class="font-serif text-xl text-gray-800 text-center">Administration</p>
+                                </div>
+                                
+                                <div class="w-64">
+                                    <div class="border-b border-gray-600 mb-2 text-center h-20 flex items-end justify-center">
+                                        <p id="cert-date" class="font-body text-2xl text-gray-800 pb-1">Date Here</p>
+                                    </div>
+                                    <p class="font-serif text-xl text-gray-800 text-center">Date</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Custom Modal for Alerts -->
+    <div id="custom-modal" class="fixed inset-0 bg-black bg-opacity-50 z-[100] hidden flex justify-center items-center backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all">
+            <div class="text-center">
+                <div id="modal-icon" class="text-5xl mb-4"></div>
+                <h3 id="modal-title" class="text-2xl font-bold mb-2 text-gray-900"></h3>
+                <p id="modal-msg" class="text-gray-600 mb-6"></p>
+                <button onclick="closeModal()" class="bg-green-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-green-700 transition w-full">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Briefing Modal -->
+    <div id="briefing-modal" class="fixed inset-0 bg-black bg-opacity-70 z-[120] hidden flex justify-center items-center backdrop-blur-sm p-4 sm:p-6">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col transform transition-all overflow-hidden border-4 border-green-700">
+            <div class="p-6 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+                <div class="flex items-center gap-4">
+                    <div id="briefing-modal-icon" class="text-4xl"></div>
+                    <h3 id="briefing-modal-title" class="text-2xl md:text-3xl font-bold text-gray-900"></h3>
+                </div>
+                <button onclick="closeBriefing()" class="text-gray-400 hover:text-red-600 transition text-4xl leading-none">&times;</button>
+            </div>
+            <div id="briefing-modal-content" class="p-6 md:p-10 overflow-y-auto flex-grow text-gray-700 text-lg leading-relaxed bg-white">
+                <!-- Dynamic Content Injected Here -->
+            </div>
+            <div class="p-6 border-t border-gray-200 bg-gray-50 flex justify-end">
+                <button onclick="closeBriefing()" class="bg-green-700 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-green-800 transition shadow-md">Acknowledge & Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Extensive Briefing Content Data (Min 7 Paragraphs per detail, specific structure for Use Cases) ---
+        const briefingData = {
+            'fundamentals-details': {
+                title: 'Non-Repudiation Fundamentals',
+                icon: '<i class="fa-solid fa-file-contract text-blue-600"></i>',
+                html: `
+                    <p class="mb-5">In the physical world, proving that someone performed an action is relatively straightforward. We use handwritten signatures, surveillance cameras, and eyewitnesses. However, in the vast, anonymous expanse of the digital realm, traditional proof falls short. Anyone can type a name at the bottom of an email. <strong>Non-repudiation</strong> is the critical cybersecurity concept that bridges this gap. It ensures that a user cannot falsely deny having performed an action, sent a message, or completed a transaction within a digital system.</p>
+                    
+                    <p class="mb-5">The core problem non-repudiation solves is "deniability." When a digital system lacks proper security controls, users can engage in "blame-shifting." An employee might accidentally delete a vital database and claim, "I wasn't at my desk; someone else must have done it." A customer might transfer money and later tell the bank, "I never authorized that." Without technical proof, organizations are left vulnerable to fraud, disputes, and massive financial liabilities.</p>
+                    
+                    <p class="mb-5">To prevent this, non-repudiation acts as an unbreakable digital receipt. It provides undeniable, verifiable evidence that proves exactly who did what, when they did it, and from where. This evidence must be so robust that it can hold up not just to internal IT audits, but in a court of law. When non-repudiation is successfully implemented, the system's logs become the ultimate arbiter of truth.</p>
+                    
+                    <p class="mb-5">There are two primary flavors of this concept: Non-repudiation of Origin and Non-repudiation of Delivery (or Receipt). <strong>Non-repudiation of Origin</strong> proves that a specific person created or sent a specific message. If a manager sends an email authorizing a pay raise, they cannot later deny sending it. The system proves the email originated from their authenticated account and specific device.</p>
+                    
+                    <p class="mb-5">Conversely, <strong>Non-repudiation of Delivery</strong> proves that a recipient actually received the data. Imagine a scenario where a company sends a termination notice or a legal subpoena via email. The recipient might try to claim, "It went to my spam folder, I never saw it!" Delivery receipts, read-tracking pixels, and certified digital delivery systems strip away this defense, proving the message was delivered and opened.</p>
+                    
+                    <p class="mb-5">Implementing these measures provides immense benefits to an organization. The most immediate benefit is <strong>Accountability</strong>. When users know their actions are permanently and undeniably tied to their identity, they behave more responsibly. It severely deters insider threats and casual negligence. Furthermore, it builds <strong>Trust</strong>. E-commerce and modern banking rely entirely on the fact that millions of digital transactions can be processed daily without massive, paralyzing disputes over who bought what.</p>
+                    
+                    <p>Finally, non-repudiation is often mandated by <strong>Legal Protection and Compliance</strong> frameworks. Laws like HIPAA (healthcare) and Sarbanes-Oxley (finance) strictly require organizations to maintain undeniable logs of who accesses sensitive data. If a data breach occurs, the organization must be able to present forensic evidence proving exactly whose account was compromised. Without non-repudiation, a company cannot legally defend its digital borders.</p>
+                `
+            },
+            'fundamentals-usecase': {
+                title: 'Non-Repudiation: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 1: E-Commerce and Online Banking</h4>
+                        <p class="mb-2">Financial institutions process billions of dollars digitally. They require absolute certainty that transactions are legitimate to prevent staggering financial losses from fraud.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Banking):</strong> A user transfers $5,000 to an overseas account and later calls the bank to claim they were hacked. The bank uses non-repudiation (MFA logs, IP matching the user's home, and device fingerprinting) to prove the user willingly made the transfer, denying the fraud claim.</li>
+                            <li><strong>Example 2 (E-Commerce):</strong> A customer purchases a high-end laptop online. When it arrives, they initiate a chargeback claiming they never bought it. The retailer provides the digital transaction receipt, timestamp, and shipping delivery confirmation to the credit card company to prove the purchase occurred.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 2: Corporate Communications & HR</h4>
+                        <p class="mb-2">Internal company disputes often rely on digital evidence. Human Resources and Legal teams use non-repudiation to resolve conflicts and enforce company policy.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Policy Enforcement):</strong> An employee sends a highly inappropriate message in a company group chat, then quickly deletes it and claims a coworker framed them. IT recovers the server-side chat logs, tying the exact message submission to the employee's authenticated session.</li>
+                            <li><strong>Example 2 (Contracts):</strong> A vendor emails a signed PDF agreeing to new pricing terms. Months later, they try to raise prices, claiming they never agreed. The company produces the email with the vendor's digital signature, proving non-repudiation of origin and holding them to the contract.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: E-Commerce Trust</p>
+                            <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=600&h=350" alt="Person using a credit card online" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Corporate Communications</p>
+                            <img src="https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&w=600&h=350" alt="Professionals reviewing digital documents" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'aaa-details': {
+                title: 'The AAA Triad',
+                icon: '<i class="fa-solid fa-shield-halved text-purple-600"></i>',
+                html: `
+                    <p class="mb-5">Non-repudiation does not happen by magic; it is the final, ultimate result of a strictly controlled security pipeline. The foundation of this pipeline is known as the <strong>AAA Triad</strong>: Authentication, Authorization, and Accounting. These three pillars work in sequential harmony to ensure that every action on a network is tied to a specific, verified human being, creating the undeniable proof required for non-repudiation.</p>
+                    
+                    <p class="mb-5">The first step is <strong>Authentication</strong>. Before a system allows you to do anything, it must answer the question: <em>"Who are you?"</em> You claim an identity (by typing a username), but the system demands proof. This proof comes in factors: something you know (a password or PIN), something you have (a smartphone app generating a token, or a smart card), or something you are (a fingerprint or facial scan).</p>
+                    
+                    <p class="mb-5">In modern cybersecurity, single-factor authentication (just a password) is no longer sufficient to guarantee non-repudiation. Passwords can be stolen, guessed, or shared. If a password is stolen, the attacker can impersonate the user, and the real user can plausibly deny the actions. By enforcing <strong>Multi-Factor Authentication (MFA)</strong>, the system dramatically strengthens the claim of identity. It becomes mathematically highly improbable for an attacker to steal both a user's password and their physical phone simultaneously.</p>
+                    
+                    <p class="mb-5">Once the system trusts who you are, it moves to the second step: <strong>Authorization</strong>. This answers the question: <em>"What are you allowed to do?"</em> Just because you successfully authenticated into the school network does not mean you are authorized to change your grades. The system checks your verified identity against access control lists (ACLs) and permissions.</p>
+                    
+                    <p class="mb-5">Authorization is heavily guided by the <strong>Principle of Least Privilege</strong>. A user should only be given the absolute minimum permissions necessary to perform their job. By strictly limiting what a user can do, you limit the scope of what they can deny doing later. If a standard user account attempts to format a hard drive, the authorization system blocks it outright, preventing a catastrophic event that would later require a forensic investigation.</p>
+                    
+                    <p class="mb-5">The third and final step is <strong>Accounting</strong>. This answers the question: <em>"What did you actually do, and when?"</em> Accounting is the meticulous, silent tracking of every action the authenticated and authorized user performs. Every time a file is opened, an email is sent, or a setting is changed, the system generates a detailed log entry.</p>
+                    
+                    <p>It is the combination of these three steps that generates <strong>Non-repudiation</strong>. Because Authentication proved it was definitively you (via MFA), and Authorization proved you had the specific rights to click the button, the Accounting logs showing you clicked the button at 10:14 AM become an irrefutable chain of evidence. If any single pillar of the AAA Triad fails—for example, if users share generic "Admin" accounts so authentication cannot pin down a specific human—non-repudiation completely collapses.</p>
+                `
+            },
+            'aaa-usecase': {
+                title: 'The AAA Triad: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Case 1: Education and Learning Management Systems (LMS)</h4>
+                        <p class="mb-2">Schools rely on the AAA Triad to maintain the integrity of grades, assignments, and student records, preventing academic dishonesty and administrative errors.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Student Submission):</strong> A student claims they turned in an essay on Friday, but the teacher says it's missing. The IT department checks the LMS. <em>Authentication</em> proves the student logged in, <em>Authorization</em> allowed them to view the drop-box, but the <em>Accounting</em> logs show they never clicked "Submit". The denial is disproven.</li>
+                            <li><strong>Example 2 (Grade Tampering):</strong> A student's failing grade suddenly changes to an A. The system <em>Accounting</em> logs show the change was made by an account. <em>Authentication</em> reveals it was the Principal's account. However, further investigation shows the Principal's account lacked MFA, and their password was compromised, showing a failure in the first 'A' that ruined non-repudiation.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Case 2: Hospital Data Access (HIPAA)</h4>
+                        <p class="mb-2">Healthcare organizations are legally mandated to protect patient privacy. The AAA Triad ensures that only authorized medical professionals view sensitive data, and every access is tracked.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Unauthorized Access):</strong> A nurse attempts to view the medical file of a celebrity patient who they are not treating. The system's <em>Authorization</em> rules immediately block the access because the nurse lacks the specific "attending" permission.</li>
+                            <li><strong>Example 2 (Auditing):</strong> During a privacy audit, a hospital uses <em>Accounting</em> logs to show that Dr. Smith accessed a patient's file at 2:00 PM. Because Dr. Smith used a biometric fingerprint scan (<em>Authentication</em>), he cannot claim someone else used his computer, ensuring strict non-repudiation for HIPAA compliance.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Authentication (MFA)</p>
+                            <img src="https://images.unsplash.com/photo-1614064641936-3899897fa7bc?auto=format&fit=crop&w=600&h=350" alt="Person holding phone for multi factor authentication" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Healthcare Authorization</p>
+                            <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=600&h=350" alt="Doctor looking at digital tablet" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'evidence-details': {
+                title: 'Digital Evidence & Logs',
+                icon: '<i class="fa-solid fa-server text-red-600"></i>',
+                html: `
+                    <p class="mb-5">If a user denies an action, the system must produce evidence. However, digital evidence is inherently fragile. Unlike a physical signature in ink, digital text logs can be easily opened in a text editor and altered by a malicious administrator. Therefore, for accounting logs to truly provide non-repudiation, the <strong>Integrity of the Digital Evidence</strong> must be mathematically guaranteed.</p>
+                    
+                    <p class="mb-5">The most fundamental piece of digital evidence is the <strong>Timestamp</strong>. A log entry is useless if we don't know exactly when it happened. To ensure accuracy, network devices do not rely on their own internal clocks, which can drift or be manually changed. Instead, they sync with global atomic clocks using the Network Time Protocol (NTP). This ensures that when a log says a file was downloaded at exactly 14:32:05 UTC, that time is universally undeniable.</p>
+                    
+                    <p class="mb-5">Alongside time, the system logs the <strong>IP Address and Device Metadata</strong>. If "User_Bob" logs in, the system records that the login originated from a specific IP address in New York, using a specific Windows 10 laptop. If Bob later denies deleting a file, and the logs show the deletion command came from his exact authenticated session, his exact IP, and his exact machine, his denial falls apart under the weight of contextual evidence.</p>
+                    
+                    <p class="mb-5">To prevent these text logs from being altered after the fact, systems use <strong>Hashing Algorithms</strong> (like SHA-256). A hash is a cryptographic mathematical function that takes a block of log data and generates a unique, fixed-size string of characters—a digital fingerprint. If a malicious insider tries to delete a single line from the log file to cover their tracks, the hash of the file will completely change, immediately alerting auditors that the evidence was tampered with.</p>
+                    
+                    <p class="mb-5">For the ultimate level of non-repudiation, especially regarding documents and contracts, we use <strong>Digital Signatures</strong>. A digital signature is not a picture of a handwritten signature. It is a cryptographic process. When you "digitally sign" a PDF, the software hashes the document, and then encrypts that hash using your secret Private Key. Anyone can use your Public Key to decrypt it and verify the hash. This mathematically proves two things: the document hasn't been altered (integrity), and only YOU could have signed it (non-repudiation of origin).</p>
+                    
+                    <p class="mb-5">To securely store these logs over long periods, organizations often utilize <strong>WORM Storage</strong> (Write-Once-Read-Many). WORM drives are specialized hardware or cloud configurations that physically or logically prevent data from being modified or deleted once it is written. Even an administrator with the highest level of system privileges cannot erase WORM logs, preserving the chain of evidence perfectly.</p>
+                    
+                    <p>When an incident escalates to a legal battle, cybersecurity professionals must maintain a strict <strong>Chain of Custody</strong>. They must document exactly how the logs were extracted, who handled them, and prove via hashes that the logs presented in court are mathematically identical to the logs generated by the server on the day of the incident. This rigorous standard transforms simple computer data into undeniable legal proof.</p>
+                `
+            },
+            'evidence-usecase': {
+                title: 'Digital Evidence & Logs: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-red-800 mb-2 border-b-2 border-red-200 pb-1">Case 1: Insider Threat Investigation</h4>
+                        <p class="mb-2">When a company suspects an employee of stealing intellectual property, digital evidence is the only way to prove the theft without a doubt.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (IP Tracking):</strong> A highly confidential design file is leaked to a competitor. The server logs show the file was downloaded by the CEO's account. However, the <em>IP Address</em> logged belongs to a VPN service in another country, while the CEO's badge swipes show they were in the physical office. The evidence proves the CEO's account was compromised, exonerating them.</li>
+                            <li><strong>Example 2 (Log Integrity):</strong> A rogue IT administrator tries to delete the server logs that show they granted themselves unauthorized permissions. However, the company uses a centralized SIEM that streams WORM (Write-Once-Read-Many) logs to an immutable cloud vault. The admin cannot alter the backup evidence, ensuring non-repudiation.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-red-800 mb-2 border-b-2 border-red-200 pb-1">Case 2: Legal E-Discovery and Contracts</h4>
+                        <p class="mb-2">In modern legal proceedings, digital documents and communications are the primary forms of evidence presented in court.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Digital Signatures):</strong> A client attempts to sue a consulting firm, claiming they never approved a costly project phase. The firm produces a PDF of the Statement of Work containing the client's cryptographic <em>Digital Signature</em>. The math proves the client's private key signed the exact document, immediately dismissing the lawsuit.</li>
+                            <li><strong>Example 2 (Chain of Custody):</strong> During a harassment lawsuit, chat logs are submitted as evidence. The defense claims the logs were fabricated. The IT forensic expert provides the <em>Hash</em> values of the server logs taken on the day of the incident, proving the text hasn't been altered by a single character since it was generated by the server.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Server Logs & IP</p>
+                            <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=600&h=350" alt="Matrix style computer code and logs" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Digital Forensics</p>
+                            <img src="https://images.unsplash.com/photo-1589254065878-42c9da997008?auto=format&fit=crop&w=600&h=350" alt="Gavel on a laptop representing digital law" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        function openBriefing(key) {
+            const modal = document.getElementById('briefing-modal');
+            const data = briefingData[key];
+            if(data) {
+                document.getElementById('briefing-modal-icon').innerHTML = data.icon;
+                document.getElementById('briefing-modal-title').innerText = data.title;
+                document.getElementById('briefing-modal-content').innerHTML = data.html;
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; 
+            }
+        }
+
+        function closeBriefing() {
+            document.getElementById('briefing-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto'; 
+        }
+
+        document.getElementById('briefing-modal').addEventListener('click', function(e) {
+            if(e.target === this) closeBriefing();
+        });
+        
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId + '-section').classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-green-900'));
+            const activeBtn = document.getElementById('nav-' + tabId);
+            if(activeBtn && tabId !== 'cert') activeBtn.classList.add('bg-green-900');
+            
+            document.querySelectorAll('.nav-btn-mobile').forEach(btn => btn.classList.remove('bg-green-900'));
+            const activeMobileBtn = document.getElementById('nav-' + tabId + '-mobile');
+            if(activeMobileBtn && tabId !== 'cert') activeMobileBtn.classList.add('bg-green-900');
+
+            window.scrollTo(0,0);
+
+            if (tabId === 'game' && !gameRunning) {
+                resetGame();
+                drawGame();
+            }
+        }
+
+        function showModal(title, message, type = 'info') {
+            const modal = document.getElementById('custom-modal');
+            const icon = document.getElementById('modal-icon');
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-msg').innerText = message;
+            
+            if(type === 'success') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-check text-green-500"></i>';
+            } else if (type === 'error') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500"></i>';
+            } else if (type === 'warning') {
+                icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-yellow-500"></i>';
+            } else {
+                icon.innerHTML = '<i class="fa-solid fa-circle-info text-blue-500"></i>';
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        // --- LAB 1 & 3: Drag and Drop Logic ---
+        function setupDragAndDrop(itemSelector, dropzoneSelector, feedbackId, requiredCount, modalTitle, modalMsg) {
+            let draggedItem = null;
+            let successCount = 0;
+
+            document.querySelectorAll(itemSelector).forEach(item => {
+                item.addEventListener('dragstart', function() {
+                    draggedItem = this;
+                    setTimeout(() => this.classList.add('opacity-50'), 0);
+                });
+                item.addEventListener('dragend', function() {
+                    setTimeout(() => this.classList.remove('opacity-50'), 0);
+                    draggedItem = null;
+                });
+            });
+
+            document.querySelectorAll(dropzoneSelector).forEach(zone => {
+                zone.addEventListener('dragover', e => e.preventDefault());
+                zone.addEventListener('dragenter', function(e) { e.preventDefault(); this.classList.add('brightness-95'); });
+                zone.addEventListener('dragleave', function() { this.classList.remove('brightness-95'); });
+                zone.addEventListener('drop', function() {
+                    this.classList.remove('brightness-95');
+                    if(draggedItem && draggedItem.dataset.type === this.dataset.target) {
+                        this.appendChild(draggedItem);
+                        draggedItem.classList.remove('cursor-grab', 'bg-blue-100', 'border-blue-300', 'bg-purple-100', 'border-purple-300');
+                        draggedItem.classList.add('bg-green-100', 'text-green-800', 'border-green-400', 'cursor-default', 'mt-2', 'w-[90%]');
+                        draggedItem.setAttribute('draggable', 'false');
+                        successCount++;
+                        
+                        document.getElementById(feedbackId).innerText = "Correct Match!";
+                        document.getElementById(feedbackId).className = "text-center font-bold mt-4 h-6 text-green-600";
+                        
+                        if(successCount === requiredCount) {
+                            setTimeout(() => showModal(modalTitle, modalMsg, 'success'), 500);
+                        }
+                    } else if (draggedItem) {
+                        document.getElementById(feedbackId).innerText = "Incorrect Match. Try again.";
+                        document.getElementById(feedbackId).className = "text-center font-bold mt-4 h-6 text-red-600";
+                    }
+                });
+            });
+        }
+
+        // Initialize Drag and Drops
+        setupDragAndDrop('#lab1-items .io-item', '#activity-section .cat-dropzone[data-target="email"], #activity-section .cat-dropzone[data-target="lms"], #activity-section .cat-dropzone[data-target="bank"]', 'lab1-feedback', 3, 'Lab 1 Complete!', 'You successfully matched the repudiation scenarios to their undeniable evidence.');
+        
+        setupDragAndDrop('#lab3-items .io-item', '#activity-section .cat-dropzone[data-target="authn"], #activity-section .cat-dropzone[data-target="authz"], #activity-section .cat-dropzone[data-target="accnt"]', 'lab3-feedback', 6, 'Lab 3 Complete!', 'You successfully sorted the controls into the AAA Triad.');
+
+
+        // --- LAB 2: Alibi Interrogator ---
+        let lab2Solved = false;
+        function checkLab2(isCorrect, btn) {
+            if(lab2Solved) return;
+            if(isCorrect) {
+                lab2Solved = true;
+                btn.classList.replace('bg-gray-200', 'bg-green-500');
+                btn.classList.replace('text-gray-800', 'text-white');
+                document.getElementById('lab2-feedback').innerText = "Evidence Accepted: The Audit Log proves identity, location, and action.";
+                document.getElementById('lab2-feedback').className = "text-center font-bold mt-4 h-6 text-green-600";
+                setTimeout(() => showModal('Lab 2 Complete!', 'You successfully used Server Audit Logs to establish Non-Repudiation and defeat the suspect\'s claim.', 'success'), 500);
+            } else {
+                btn.classList.replace('bg-gray-200', 'bg-red-400');
+                btn.classList.replace('text-gray-800', 'text-white');
+                document.getElementById('lab2-feedback').innerText = "Evidence Rejected: That does not prove the specific user performed the action.";
+                document.getElementById('lab2-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
+                setTimeout(() => {
+                    btn.classList.replace('bg-red-400', 'bg-gray-200');
+                    btn.classList.replace('text-white', 'text-gray-800');
+                    document.getElementById('lab2-feedback').innerText = "";
+                }, 1500);
+            }
+        }
+
+        // --- LAB 4: Access Pipeline ---
+        let pipelineStep = 1;
+        function advancePipeline(stepClicked) {
+            if (stepClicked === pipelineStep) {
+                const btn = document.getElementById(`pipe-${['', 'authn', 'authz', 'accnt'][stepClicked]}`);
+                btn.classList.add('active');
+                
+                if (stepClicked < 3) {
+                    pipelineStep++;
+                    const nextBtn = document.getElementById(`pipe-${['', 'authn', 'authz', 'accnt'][pipelineStep]}`);
+                    nextBtn.classList.remove('bg-gray-100', 'text-gray-400', 'cursor-not-allowed');
+                    nextBtn.classList.add('bg-gray-50', 'text-gray-600');
+                    nextBtn.disabled = false;
+                    document.getElementById('lab4-feedback').innerText = "Step Complete. Proceed to next phase.";
+                    document.getElementById('lab4-feedback').className = "text-center font-bold mt-4 h-6 text-blue-600";
+                } else {
+                    document.getElementById('lab4-feedback').innerText = "Pipeline Secure: Non-Repudiation Achieved!";
+                    document.getElementById('lab4-feedback').className = "text-center font-bold mt-4 h-6 text-green-600";
+                    setTimeout(() => showModal('Lab 4 Complete!', 'You successfully executed the AAA Triad in sequence: Authenticate -> Authorize -> Accounting.', 'success'), 500);
+                }
+            }
+        }
+
+        // --- LAB 5: Log Analyzer ---
+        let lab5Solved = false;
+        function checkLab5(isCorrect, row) {
+            if(lab5Solved) return;
+            if(isCorrect) {
+                lab5Solved = true;
+                row.classList.add('correct');
+                document.getElementById('lab5-feedback').innerText = "Correct Log Found! Non-repudiation established against Student_N.";
+                document.getElementById('lab5-feedback').className = "text-center font-bold mt-4 h-6 text-green-600";
+                setTimeout(() => showModal('Lab 5 Complete!', 'You successfully analyzed the logs to find the irrefutable evidence of the blocked access attempt.', 'success'), 500);
+            } else {
+                document.getElementById('lab5-feedback').innerText = "Incorrect. Look for the 'BLOCKED' action to cheat-site.com.";
+                document.getElementById('lab5-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
+            }
+        }
+
+        // --- LAB 6: Digital Signature Builder ---
+        let sigStep = 1;
+        function advanceSig(stepClicked) {
+            if (stepClicked === sigStep) {
+                const btn = document.getElementById(`sig-btn-${stepClicked}`);
+                const icon = document.getElementById(`sig-icon-${stepClicked}`);
+                
+                btn.classList.replace('bg-blue-100', 'bg-green-100');
+                btn.classList.replace('border-blue-400', 'border-green-500');
+                btn.classList.replace('text-blue-800', 'text-green-800');
+                if(btn.classList.contains('bg-gray-100')) {
+                    btn.classList.replace('bg-gray-100', 'bg-green-100');
+                    btn.classList.replace('border-gray-300', 'border-green-500');
+                    btn.classList.replace('text-gray-400', 'text-green-800');
+                }
+                icon.classList.remove('opacity-0');
+                
+                if (stepClicked < 3) {
+                    sigStep++;
+                    const nextBtn = document.getElementById(`sig-btn-${sigStep}`);
+                    nextBtn.classList.remove('bg-gray-100', 'text-gray-400', 'cursor-not-allowed');
+                    nextBtn.classList.add('bg-blue-100', 'border-blue-400', 'text-blue-800');
+                    nextBtn.disabled = false;
+                    document.getElementById('lab6-feedback').innerText = "Cryptographic step applied.";
+                    document.getElementById('lab6-feedback').className = "text-center font-bold mt-6 h-6 text-blue-600";
+                } else {
+                    document.getElementById('lab6-feedback').innerText = "Digital Signature Complete: Non-Repudiation of Origin achieved!";
+                    document.getElementById('lab6-feedback').className = "text-center font-bold mt-6 h-6 text-green-600";
+                    setTimeout(() => showModal('Lab 6 Complete!', 'You successfully constructed a digital signature by hashing, encrypting, and attaching a certificate.', 'success'), 500);
+                }
+            }
+        }
+
+
+        // --- QUIZ LOGIC (20 Questions) ---
+        const quizData = [
+            // 10 provided from Document
+            { q: "Which best defines non-repudiation?", options: ["Preventing unauthorized access to a system", "Verifying a user's identity", "Ensuring users cannot deny their actions in a system", "Limiting what a user can access"], answer: 2 },
+            { q: "If a user denies sending an email, which evidence BEST supports non-repudiation?", options: ["The user's password", "Email server logs with timestamps", "The system uptime report", "The email's subject line"], answer: 1 },
+            { q: "Authentication contributes to non-repudiation by:", options: ["Proving who the user is", "Recording what the user did", "Granting user permissions", "Blocking external attacks"], answer: 0 },
+            { q: "Which of the following weakens non-repudiation the most?", options: ["Using strong passwords", "Enabling MFA", "Sharing accounts among multiple users", "Logging all system activity"], answer: 2 },
+            { q: "Authorization helps non-repudiation because it:", options: ["Confirms who is logged in", "Tracks user actions with timestamps", "Encrypts user data", "Restricts actions users are allowed to take"], answer: 3 },
+            { q: "Why is accounting critical for non-repudiation?", options: ["It encrypts messages", "It ensures users can only access what they are authorized for", "It records actions with proof they occurred", "It verifies the system's uptime"], answer: 2 },
+            { q: "Which situation BEST shows non-repudiation in action?", options: ["A user is denied access to a restricted file", "Security logs prove a user downloaded a file at a specific time", "An antivirus program blocks a virus", "A server rejects weak passwords"], answer: 1 },
+            { q: "Which technology strengthens non-repudiation?", options: ["Digital signatures", "Ad blockers", "Cloud storage", "USB drives"], answer: 0 },
+            { q: "A company requires employees to log in with unique accounts before accessing shared files. What risk of denial are they reducing?", options: ["Denial-of-service attacks", "Data encryption failure", "Data redundancy", "Repudiation"], answer: 3 },
+            { q: "Why is non-repudiation important in online banking?", options: ["It encrypts all banking data", "It ensures customers can't deny making transactions", "It prevents phishing attacks", "It blocks viruses from reaching the bank's servers"], answer: 1 },
+            
+            // 10 new questions based on briefing
+            { q: "Which of the following best describes 'Non-repudiation of Delivery'?", options: ["Proving a user created a document", "Proving a recipient actually received a message", "Proving a user has administrator rights", "Proving a password is secure"], answer: 1 },
+            { q: "What problem does non-repudiation primarily solve in a corporate environment?", options: ["Slow network speeds", "Hardware failure", "Blame-shifting and deniability", "Software bugs"], answer: 2 },
+            { q: "Why is single-factor authentication (just a password) insufficient for strong non-repudiation?", options: ["Passwords take too long to type.", "Passwords do not generate logs.", "Passwords can be stolen, allowing an attacker to impersonate the user.", "Passwords are not compatible with digital signatures."], answer: 2 },
+            { q: "Which principle dictates that a user should only have the absolute minimum permissions necessary, limiting the scope of what they can deny later?", options: ["Principle of WORM Storage", "Principle of Least Privilege", "Principle of Hashing", "Principle of Non-repudiation"], answer: 1 },
+            { q: "To ensure timestamps on accounting logs are accurate and undeniable across a network, what protocol is commonly used?", options: ["SMTP (Simple Mail Transfer Protocol)", "HTTP (Hypertext Transfer Protocol)", "NTP (Network Time Protocol)", "FTP (File Transfer Protocol)"], answer: 2 },
+            { q: "What cryptographic process generates a unique 'digital fingerprint' of a log file to prove it hasn't been tampered with?", options: ["Hashing (e.g., SHA-256)", "Firewalling", "Biometric Scanning", "Routing"], answer: 0 },
+            { q: "In the creation of a Digital Signature to prove non-repudiation of origin, what does the user encrypt the hash with?", options: ["Their Public Key", "Their Private Key", "The recipient's password", "The server's IP address"], answer: 1 },
+            { q: "What type of specialized storage physically or logically prevents log data from being modified or deleted once written?", options: ["RAM (Random Access Memory)", "Flash Drives", "WORM (Write-Once-Read-Many) Storage", "Magnetic Tape"], answer: 2 },
+            { q: "When digital logs are used in a court of law, what strict documentation process must be maintained to prove who handled the evidence?", options: ["Chain of Custody", "Access Control List", "Multi-Factor Authentication", "Service Level Agreement"], answer: 0 },
+            { q: "In the AAA Triad, which pillar is responsible for the silent, continuous generation of detailed log entries?", options: ["Authentication", "Authorization", "Accounting", "Auditing"], answer: 2 }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        
+        quizData.forEach((item, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = "bg-gray-50 p-6 rounded-lg border border-gray-200 transition-all";
+            qDiv.id = `q-block-${index}`;
+            
+            const qTitle = document.createElement('h3');
+            qTitle.className = "font-bold text-lg text-gray-800 mb-4";
+            qTitle.innerText = `${index + 1}. ${item.q}`;
+            qDiv.appendChild(qTitle);
+            
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = "space-y-3";
+            
+            item.options.forEach((opt, optIndex) => {
+                const label = document.createElement('label');
+                label.className = "flex items-center space-x-3 p-3 rounded bg-white border border-gray-300 hover:bg-green-50 cursor-pointer transition";
+                
+                const radio = document.createElement('input');
+                radio.type = "radio";
+                radio.name = `q${index}`;
+                radio.value = optIndex;
+                radio.className = "form-radio h-5 w-5 text-green-600";
+                
+                const span = document.createElement('span');
+                span.className = "text-gray-700";
+                span.innerText = opt;
+                
+                label.appendChild(radio);
+                label.appendChild(span);
+                optionsDiv.appendChild(label);
+            });
+            
+            qDiv.appendChild(optionsDiv);
+            quizContainer.appendChild(qDiv);
+        });
+
+        function gradeQuiz() {
+            let score = 0;
+            let allAnswered = true;
+
+            for(let i = 0; i < quizData.length; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if(selected) {
+                    if(parseInt(selected.value) === quizData[i].answer) {
+                        score++;
+                    }
+                } else {
+                    allAnswered = false;
+                }
+            }
+            
+            if(!allAnswered) {
+                showModal('Incomplete Quiz', 'Please answer all 20 questions before submitting.', 'warning');
+                return;
+            }
+            
+            const percentage = (score / quizData.length) * 100;
+            
+            if(score >= 18) { 
+                const navGame = document.getElementById('nav-game');
+                const navGameMobile = document.getElementById('nav-game-mobile');
+                
+                navGame.classList.remove('text-gray-400', 'cursor-not-allowed');
+                navGame.classList.add('text-white', 'hover:bg-green-600');
+                navGame.disabled = false;
+                navGame.innerHTML = '<i class="fa-solid fa-gamepad mr-1"></i>Game';
+                
+                navGameMobile.classList.remove('text-gray-400', 'cursor-not-allowed');
+                navGameMobile.classList.add('text-white', 'hover:bg-green-600');
+                navGameMobile.disabled = false;
+                navGameMobile.innerHTML = '<i class="fa-solid fa-gamepad"></i> Game';
+
+                document.getElementById('nav-cert').classList.remove('hidden');
+                document.getElementById('nav-cert-mobile').classList.remove('hidden');
+                
+                document.getElementById('proceed-game-btn').classList.remove('hidden');
+                document.getElementById('submit-quiz-btn').classList.add('hidden');
+
+                showModal('Outstanding!', `You scored ${score}/20 (${percentage}%). You have unlocked your Certificate of Mastery AND the Retro Game!`, 'success');
+            } else {
+                quizData.forEach((_, i) => {
+                    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                    if(selected) selected.checked = false;
+                });
+                showModal('Keep Trying!', `You scored ${score}/20 (${percentage}%). You need 90% (18/20) to earn the certificate. Your answers have been reset so you can try again.`, 'error');
+                document.getElementById('quiz-section').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // --- RETRO GAME LOGIC: Audit Defender (Base Defender / Paratrooper style) ---
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let score = 0;
+        let lives = 3;
+        let gameRunning = false;
+        let animationId;
+        
+        let player = { x: canvas.width / 2, y: canvas.height - 40, width: 50, height: 20, color: '#22c55e' };
+        let bullets = [];
+        let enemies = [];
+        let lastTime = 0;
+        let spawnTimer = 0;
+        
+        const overlay = document.getElementById('game-overlay');
+        const startBtn = document.getElementById('start-game-btn');
+        startBtn.addEventListener('click', startGame);
+
+        // Input handling
+        canvas.addEventListener('mousemove', (e) => {
+            if(!gameRunning) return;
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            let mouseX = (e.clientX - rect.left) * scaleX;
+            player.x = Math.max(player.width/2, Math.min(canvas.width - player.width/2, mouseX));
+        });
+        
+        canvas.addEventListener('touchmove', (e) => {
+            if(!gameRunning) return;
+            e.preventDefault();
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            let touchX = (e.touches[0].clientX - rect.left) * scaleX;
+            player.x = Math.max(player.width/2, Math.min(canvas.width - player.width/2, touchX));
+        }, {passive: false});
+
+        function fireBullet() {
+            if(!gameRunning) return;
+            bullets.push({
+                x: player.x,
+                y: player.y - 10,
+                width: 6,
+                height: 15,
+                speed: 8,
+                color: '#38bdf8'
+            });
+        }
+
+        canvas.addEventListener('mousedown', fireBullet);
+        canvas.addEventListener('touchstart', (e) => { e.preventDefault(); fireBullet(); }, {passive: false});
+
+        class Enemy {
+            constructor() {
+                this.width = 30;
+                this.height = 30;
+                this.x = Math.random() * (canvas.width - this.width) + this.width/2;
+                this.y = -30;
+                this.speed = Math.random() * 1.5 + 1.0 + (score * 0.05); // Speed increases with score
+                this.color = '#ef4444';
+                this.label = 'DENY';
+            }
+            
+            update() {
+                this.y += this.speed;
+            }
+            
+            draw(ctx) {
+                ctx.fillStyle = this.color;
+                ctx.fillRect(this.x - this.width/2, this.y - this.height/2, this.width, this.height);
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '10px monospace';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(this.label, this.x, this.y);
+            }
+        }
+
+        function checkCollisions() {
+            // Bullets hitting enemies
+            for(let i = bullets.length - 1; i >= 0; i--) {
+                let b = bullets[i];
+                let hit = false;
+                for(let j = enemies.length - 1; j >= 0; j--) {
+                    let e = enemies[j];
+                    // AABB Collision
+                    if (b.x > e.x - e.width/2 && b.x < e.x + e.width/2 &&
+                        b.y > e.y - e.height/2 && b.y < e.y + e.height/2) {
+                        enemies.splice(j, 1);
+                        hit = true;
+                        score++;
+                        document.getElementById('game-score').innerText = score;
+                        
+                        // Explosion effect simple
+                        ctx.fillStyle = '#facc15';
+                        ctx.beginPath(); ctx.arc(e.x, e.y, 25, 0, Math.PI*2); ctx.fill();
+                        
+                        break;
+                    }
+                }
+                if(hit) bullets.splice(i, 1);
+            }
+            
+            // Enemies hitting bottom
+            for(let j = enemies.length - 1; j >= 0; j--) {
+                let e = enemies[j];
+                if (e.y + e.height/2 > canvas.height - 20) { // Hit the log bank at bottom
+                    enemies.splice(j, 1);
+                    loseLife();
+                }
+            }
+        }
+
+        function loseLife() {
+            lives--;
+            document.getElementById('game-lives').innerText = lives;
+            
+            // Visual red flash
+            ctx.fillStyle = "rgba(239,68,68,0.4)";
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            
+            if(lives <= 0) {
+                gameOver();
+            }
+        }
+
+        function resetGame() {
+            enemies = [];
+            bullets = [];
+            score = 0;
+            lives = 3;
+            player.x = canvas.width / 2;
+            document.getElementById('game-score').innerText = score;
+            document.getElementById('game-lives').innerText = lives;
+            lastTime = Date.now();
+        }
+
+        function startGame() {
+            overlay.classList.add('hidden');
+            if(!gameRunning) {
+                resetGame();
+                gameRunning = true;
+                drawGame();
+            }
+        }
+
+        function drawGame() {
+            if(!gameRunning) return;
+            
+            let now = Date.now();
+            let dt = now - lastTime;
+            lastTime = now;
+            
+            // Background
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw "Audit Logs" Safe Zone at bottom
+            ctx.fillStyle = '#1e293b';
+            ctx.fillRect(0, canvas.height - 30, canvas.width, 30);
+            ctx.fillStyle = '#475569';
+            ctx.font = '14px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('SECURE AUDIT LOG VAULT (WORM)', canvas.width/2, canvas.height - 10);
+            
+            // Spawn logic
+            spawnTimer += dt;
+            let spawnRate = Math.max(400, 1500 - (score * 20)); // Gets faster
+            if(spawnTimer > spawnRate) {
+                enemies.push(new Enemy());
+                spawnTimer = 0;
+            }
+            
+            // Update and draw bullets
+            ctx.fillStyle = '#38bdf8';
+            for(let i = bullets.length - 1; i >= 0; i--) {
+                let b = bullets[i];
+                b.y -= b.speed;
+                ctx.fillRect(b.x - b.width/2, b.y - b.height/2, b.width, b.height);
+                if(b.y < 0) bullets.splice(i, 1);
+            }
+            
+            // Update and draw enemies
+            for(let i = enemies.length - 1; i >= 0; i--) {
+                enemies[i].update();
+                enemies[i].draw(ctx);
+            }
+            
+            checkCollisions();
+            
+            // Draw Player (Authenticator Turret)
+            ctx.fillStyle = player.color;
+            // Base
+            ctx.fillRect(player.x - player.width/2, player.y, player.width, player.height);
+            // Barrel
+            ctx.fillRect(player.x - 5, player.y - 15, 10, 15);
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '10px monospace';
+            ctx.fillText('AUTH', player.x, player.y + 12);
+
+            animationId = requestAnimationFrame(drawGame);
+        }
+
+        function gameOver() {
+            gameRunning = false;
+            cancelAnimationFrame(animationId);
+            overlay.classList.remove('hidden');
+            startBtn.innerText = "Logs Corrupted! Reboot";
+            startBtn.classList.replace('bg-green-600', 'bg-gray-700');
+            startBtn.classList.replace('border-green-800', 'border-gray-900');
+            startBtn.classList.replace('hover:bg-green-500', 'hover:bg-gray-600');
+        }
+
+        // --- CERTIFICATE LOGIC ---
+        function updateCertName() {
+            let name = document.getElementById('student-name-input').value.trim();
+            if(name) {
+                if (name.includes(' ')) {
+                    name = name.split(' ')[0];
+                    document.getElementById('student-name-input').value = name;
+                    showModal('Notice', 'Only your first name has been applied to the certificate.', 'info');
+                }
+                document.getElementById('cert-student-name').innerText = name;
+            } else {
+                showModal('Wait!', 'Please enter your first name to update the certificate.', 'warning');
+            }
+        }
+
+        const today = new Date();
+        document.getElementById('cert-date').innerText = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        function downloadCert() {
+            const certEl = document.getElementById('certificate');
+            const name = document.getElementById('cert-student-name').innerText;
+            let filename = 'Certificate.png';
+            if (name && name !== 'Student') {
+                filename = `${name.replace(/\s+/g, '_')}_Certificate.png`;
+            }
+
+            const originalTransform = certEl.style.transform;
+            certEl.style.transform = 'none';
+
+            const btn = document.getElementById('download-btn');
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Generating...';
+            btn.disabled = true;
+
+            html2canvas(certEl, { 
+                scale: 2, 
+                useCORS: true,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+            }).catch(err => {
+                console.error(err);
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                showModal('Error', 'Failed to generate image. Try using a desktop browser.', 'error');
+            });
+        }
+
+        window.onload = () => {
+            // Draw static background for game preview
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle = '#64748b';
+            ctx.font = '20px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('SYSTEM READY: AWAITING START', canvas.width/2, canvas.height/2);
+        }
+    </script>
+</body>
+</html>
+```eof
+
+I have generated the interactive, self-contained HTML page focusing on Unit 07 Section 6.1.8 - Non-repudiation. 
+
+It includes the deep-dive briefing tabs containing over 7 paragraphs of technical detail and real-world image use cases for each section. The Lab Activity tab features 6 distinct, interactive activities spanning drag-and-drop matching, interrogation scenarios, and log analysis. 
+
+The Quiz has been populated with the 10 provided questions and 10 custom questions testing the briefing details. Lastly, scoring 90%+ unlocks the certificate and the brand-new retro game, "Audit Defender", a vertical base-defense shooter where you defend the system's log files from falling repudiation attacks!

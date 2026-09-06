@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 05 Section 3.1.2 Mastery - File System Management</title>
+    
+    <!-- Load Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load HTML2Canvas for Certificate Download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- Load Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Qwitcher+Grypen:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; 
+            color: #1e293b;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        /* Interactive Elements CSS */
+        .drag-item { cursor: grab; transition: transform 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .drag-item:active { cursor: grabbing; transform: scale(0.95); }
+        .dropzone { transition: background-color 0.2s ease; border: 2px dashed #cbd5e1; min-height: 80px; }
+        .dropzone.drag-over { background: #e2e8f0; border-color: #0284c7; }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #e2e8f0; }
+        ::-webkit-scrollbar-thumb { background: #0ea5e9; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #0284c7; }
+
+        /* Game Sweeper Grid */
+        #sweeper-grid {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 2px;
+            background-color: #64748b;
+            padding: 4px;
+            border-radius: 4px;
+            user-select: none;
+        }
+        .sweeper-cell {
+            width: 30px;
+            height: 30px;
+            background-color: #cbd5e1;
+            border: 2px outset #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            box-sizing: border-box;
+        }
+        .sweeper-cell:active { border-style: inset; }
+        .sweeper-cell.revealed {
+            background-color: #e2e8f0;
+            border: 1px solid #94a3b8;
+            cursor: default;
+        }
+        .cell-1 { color: #2563eb; }
+        .cell-2 { color: #16a34a; }
+        .cell-3 { color: #dc2626; }
+        .cell-4 { color: #9333ea; }
+        
+        @media (max-width: 400px) {
+            .sweeper-cell { width: 25px; height: 25px; font-size: 12px; }
+        }
+
+        /* --- CERTIFICATE STYLES --- */
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .font-body { font-family: 'Lora', serif; }
+        .font-script { font-family: 'Qwitcher Grypen', cursive; }
+        
+        .cert-preview-container {
+            width: 100%;
+            overflow: auto;
+            display: flex;
+            justify-content: center;
+            background: #e2e8f0;
+            padding: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        #certificate {
+            width: 1056px !important;
+            height: 816px !important;
+            flex-shrink: 0;
+            background-color: #ffffff;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1056" height="816"><polygon points="0,0 250,0 0,650" fill="%237dd3fc"/><polygon points="0,0 350,0 0,900" fill="%230284c7" opacity="0.8"/><polygon points="0,0 120,0 0,300" fill="%237dd3fc"/><polygon points="0,450 650,816 0,816" fill="%237dd3fc"/><polygon points="0,550 450,816 0,816" fill="%230284c7" opacity="0.8"/><polygon points="800,0 1056,0 1056,256" fill="%23f1f5f9"/><polygon points="1056,500 1056,816 750,816" fill="%23f1f5f9"/></svg>');
+            background-size: cover;
+            border: 4px solid #cbd5e1;
+        }
+
+        .gold-seal {
+            position: absolute;
+            left: 110px;
+            top: 350px;
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0284c7, #7dd3fc, #0369a1, #bae6fd, #0c4a6e, #7dd3fc);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3), inset 0 0 15px rgba(255,255,255,0.7);
+            z-index: 10;
+        }
+        .gold-seal::before {
+            content: '';
+            position: absolute;
+            top: -4px; bottom: -4px; left: -4px; right: -4px;
+            border-radius: 50%;
+            border: 6px dashed #0284c7;
+        }
+        .gold-seal-inner-1 {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 2px solid rgba(2, 132, 199, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #38bdf8, #0284c7);
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.2), 0 2px 5px rgba(255,255,255,0.7);
+            z-index: 1;
+        }
+        .gold-seal-inner-2 {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: radial-gradient(circle, #e0f2fe, #0ea5e9);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            padding: 10px;
+        }
+        .embossed-text {
+            color: #0c4a6e;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2);
+            font-family: 'Playfair Display', serif;
+            font-weight: 800;
+            line-height: 1.1;
+            text-transform: uppercase;
+        }
+        .embossed-text-large { font-size: 14px; letter-spacing: 1px; }
+        .embossed-text-small { font-size: 11px; letter-spacing: 2px; margin: 2px 0; }
+
+        @media (max-width: 1100px) {
+            #certificate { transform: scale(0.7); transform-origin: top left; margin-bottom: -240px; margin-right: -310px; }
+        }
+        @media (max-width: 768px) {
+            #certificate { transform: scale(0.4); transform-origin: top left; margin-bottom: -490px; margin-right: -630px; }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Navigation -->
+    <nav class="bg-sky-800 text-white shadow-lg sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-folder-tree text-2xl"></i>
+                    <span class="font-bold text-xl tracking-wider hidden sm:inline-block">Tech+ Unit 05 Section 3.1.2</span>
+                    <span class="font-bold text-xl tracking-wider sm:hidden">3.1.2</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-2">
+                        <button onclick="switchTab('briefing')" class="nav-btn bg-sky-900 px-3 py-2 rounded-md text-sm font-medium hover:bg-sky-600 transition" id="nav-briefing"><i class="fa-solid fa-book-open mr-1"></i>Briefing</button>
+                        <button onclick="switchTab('activity')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-sky-600 transition" id="nav-activity"><i class="fa-solid fa-flask mr-1"></i>Lab Activity</button>
+                        <button onclick="switchTab('quiz')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-sky-600 transition" id="nav-quiz"><i class="fa-solid fa-clipboard-check mr-1"></i>Quiz</button>
+                        <button onclick="switchTab('game')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-slate-400 cursor-not-allowed transition" id="nav-game" disabled><i class="fa-solid fa-lock mr-1"></i>Game</button>
+                        <button onclick="switchTab('cert')" class="nav-btn hidden px-3 py-2 rounded-md text-sm font-medium text-yellow-300 hover:bg-sky-600 transition" id="nav-cert"><i class="fa-solid fa-award mr-1"></i>Certificate</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Nav -->
+        <div class="md:hidden flex flex-wrap justify-center gap-2 py-2 px-2 bg-sky-900">
+            <button onclick="switchTab('briefing')" class="nav-btn-mobile px-3 py-1 text-sm rounded bg-sky-950" id="nav-briefing-mobile">Briefing</button>
+            <button onclick="switchTab('activity')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-activity-mobile">Lab</button>
+            <button onclick="switchTab('quiz')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-quiz-mobile">Quiz</button>
+            <button onclick="switchTab('game')" class="nav-btn-mobile px-3 py-1 text-sm rounded text-slate-400 cursor-not-allowed" id="nav-game-mobile" disabled><i class="fa-solid fa-lock"></i></button>
+            <button onclick="switchTab('cert')" id="nav-cert-mobile" class="hidden px-2 py-1 text-sm text-yellow-300 rounded"><i class="fa-solid fa-award"></i></button>
+        </div>
+    </nav>
+
+    <main class="flex-grow w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <!-- BRIEFING SECTION -->
+        <div id="briefing-section" class="tab-content active no-print">
+            <div class="text-center mb-10">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4">File System Management</h1>
+                <p class="text-lg text-slate-600 max-w-3xl mx-auto">Discover how files and folders are organized, named, secured, and detailed with metadata to maintain order and security within an operating system.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- Tile 1 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-sky-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-sky-700"><i class="fa-solid fa-folder-tree mr-2"></i>Hierarchy & Organization</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>Files vs. Folders:</strong> Files hold raw data; folders (directories) organize files.</li>
+                            <li><strong>Hierarchical Structure:</strong> Data is organized in a branching, tree-like structure stemming from a single base.</li>
+                            <li><strong>Root Directory:</strong> The topmost directory (e.g., `C:\` in Windows, `/` in Linux).</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('hierarchy-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('hierarchy-usecase')" class="flex-1 bg-sky-100 hover:bg-sky-200 text-sky-900 py-3 rounded text-sm font-bold transition shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 2 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-green-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-green-700"><i class="fa-solid fa-user-lock mr-2"></i>File Permissions</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>Purpose:</strong> Regulates exactly who can read, modify, or run specific files.</li>
+                            <li><strong>Windows (NTFS):</strong> Uses explicit rules like Read, Write, Modify, and Full Control.</li>
+                            <li><strong>Linux/macOS (Unix):</strong> Uses a compact `rwx` (read, write, execute) model for Owner, Group, and Others.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('perms-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('perms-usecase')" class="flex-1 bg-green-100 hover:bg-green-200 text-green-900 py-3 rounded text-sm font-bold transition shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 3 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-amber-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-amber-700"><i class="fa-solid fa-font mr-2"></i>Naming Restrictions</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>Forbidden Characters:</strong> Prevents system confusion (e.g., Windows bans `\/:*?"<>|`).</li>
+                            <li><strong>Reserved Names:</strong> System keywords that cannot be used (e.g., `CON`, `PRN`).</li>
+                            <li><strong>Case Sensitivity:</strong> Windows treats `File.txt` and `file.txt` equally; Linux sees them as distinct.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('naming-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('naming-usecase')" class="flex-1 bg-amber-100 hover:bg-amber-200 text-amber-900 py-3 rounded text-sm font-bold transition shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 4 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-indigo-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-indigo-700"><i class="fa-solid fa-tags mr-2"></i>Metadata & Attributes</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>Metadata:</strong> Contextual "data about data" (dates, owner, size).</li>
+                            <li><strong>Properties:</strong> Informational details to help the user manage files (File size, Date created).</li>
+                            <li><strong>Attributes:</strong> System instructions dictating how a file is handled (Hidden, Immutable, Read-only).</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('meta-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('meta-usecase')" class="flex-1 bg-indigo-100 hover:bg-indigo-200 text-indigo-900 py-3 rounded text-sm font-bold transition shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 flex justify-center">
+                <button onclick="switchTab('activity')" class="bg-sky-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-sky-500 shadow-lg transition transform hover:scale-105">Proceed to Lab Activity <i class="fa-solid fa-arrow-right ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- LAB ACTIVITY SECTION -->
+        <div id="activity-section" class="tab-content no-print">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-extrabold text-slate-900 mb-2">Interactive Lab Activities</h1>
+                <p class="text-slate-600">Complete these 8 mini-labs to demonstrate your mastery of File System Management.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Concept 1: Lab 1 -->
+                <div class="bg-white p-5 rounded-xl shadow-md border-l-4 border-sky-500">
+                    <h2 class="text-lg font-bold text-sky-700 mb-2">Lab 1: Path Builder</h2>
+                    <p class="text-sm text-slate-600 mb-3">Click the buttons in the correct sequence to build the absolute Windows path: <strong>C:\Users\Admin\file.txt</strong></p>
+                    <div class="flex flex-wrap gap-2 mb-3" id="path-btns">
+                        <button class="bg-slate-200 px-3 py-1 rounded shadow text-sm hover:bg-sky-100" onclick="appendPath('Admin\\')">Admin\</button>
+                        <button class="bg-slate-200 px-3 py-1 rounded shadow text-sm hover:bg-sky-100" onclick="appendPath('C:\\')">C:\</button>
+                        <button class="bg-slate-200 px-3 py-1 rounded shadow text-sm hover:bg-sky-100" onclick="appendPath('file.txt')">file.txt</button>
+                        <button class="bg-slate-200 px-3 py-1 rounded shadow text-sm hover:bg-sky-100" onclick="appendPath('Users\\')">Users\</button>
+                        <button class="bg-red-100 text-red-700 px-3 py-1 rounded shadow text-sm font-bold" onclick="resetPath()">Clear</button>
+                    </div>
+                    <div class="bg-slate-800 text-green-400 font-mono p-2 rounded min-h-[40px] text-sm" id="path-output"></div>
+                    <div id="lab1-feedback" class="text-sm font-bold mt-2 h-5 text-sky-600"></div>
+                </div>
+
+                <!-- Concept 1: Lab 2 -->
+                <div class="bg-white p-5 rounded-xl shadow-md border-l-4 border-sky-500">
+                    <h2 class="text-lg font-bold text-sky-700 mb-2">Lab 2: Root Identification</h2>
+                    <p class="text-sm text-slate-600 mb-3">Identify the correct symbol used to represent the root directory in a <strong>Linux</strong> operating system.</p>
+                    <div class="flex flex-wrap gap-4 justify-center">
+                        <button class="w-24 h-16 bg-slate-100 hover:bg-sky-100 border-2 border-slate-300 rounded font-mono text-xl" onclick="checkLab2('C:\\')">C:\</button>
+                        <button class="w-24 h-16 bg-slate-100 hover:bg-sky-100 border-2 border-slate-300 rounded font-mono text-xl" onclick="checkLab2('/')">/</button>
+                        <button class="w-24 h-16 bg-slate-100 hover:bg-sky-100 border-2 border-slate-300 rounded font-mono text-xl" onclick="checkLab2('root:')">root:</button>
+                    </div>
+                    <div id="lab2-feedback" class="text-center text-sm font-bold mt-3 h-5 text-sky-600"></div>
+                </div>
+
+                <!-- Concept 2: Lab 3 -->
+                <div class="bg-white p-5 rounded-xl shadow-md border-l-4 border-green-500">
+                    <h2 class="text-lg font-bold text-green-700 mb-2">Lab 3: Linux Permissions</h2>
+                    <p class="text-sm text-slate-600 mb-3">Check the boxes to create the exact string: <strong class="font-mono bg-slate-100 px-1">rw-r--r--</strong></p>
+                    <div class="grid grid-cols-3 gap-2 text-center text-sm font-bold bg-slate-50 p-2 rounded border">
+                        <div>Owner</div><div>Group</div><div>Other</div>
+                        <div class="flex justify-center gap-1"><input type="checkbox" onchange="updateLinuxPerms()" id="u-r" class="h-4 w-4"><label>R</label></div>
+                        <div class="flex justify-center gap-1"><input type="checkbox" onchange="updateLinuxPerms()" id="g-r" class="h-4 w-4"><label>R</label></div>
+                        <div class="flex justify-center gap-1"><input type="checkbox" onchange="updateLinuxPerms()" id="o-r" class="h-4 w-4"><label>R</label></div>
+                        <div class="flex justify-center gap-1"><input type="checkbox" onchange="updateLinuxPerms()" id="u-w" class="h-4 w-4"><label>W</label></div>
+                        <div class="flex justify-center gap-1"><input type="checkbox" onchange="updateLinuxPerms()" id="g-w" class="h-4 w-4"><label>W</label></div>
+                        <div class="flex justify-center gap-1"><input type="checkbox" onchange="updateLinuxPerms()" id="o-w" class="h-4 w-4"><label>W</label></div>
+                        <div class="flex justify-center gap-1"><input type="checkbox" onchange="updateLinuxPerms()" id="u-x" class="h-4 w-4"><label>X</label></div>
+                        <div class="flex justify-center gap-1"><input type="checkbox" onchange="updateLinuxPerms()" id="g-x" class="h-4 w-4"><label>X</label></div>
+                        <div class="flex justify-center gap-1"><input type="checkbox" onchange="updateLinuxPerms()" id="o-x" class="h-4 w-4"><label>X</label></div>
+                    </div>
+                    <div class="bg-slate-800 text-green-400 font-mono p-2 mt-2 rounded text-center text-lg tracking-widest" id="linux-output">---------</div>
+                    <div id="lab3-feedback" class="text-center text-sm font-bold mt-2 h-5 text-green-600"></div>
+                </div>
+
+                <!-- Concept 2: Lab 4 -->
+                <div class="bg-white p-5 rounded-xl shadow-md border-l-4 border-green-500">
+                    <h2 class="text-lg font-bold text-green-700 mb-2">Lab 4: NTFS Assignment</h2>
+                    <p class="text-sm text-slate-600 mb-3">Drag the Windows NTFS permission to its correct definition.</p>
+                    <div class="flex gap-2 mb-4 justify-center">
+                        <div class="drag-item bg-green-100 text-green-800 font-bold px-3 py-1 rounded text-sm border border-green-300" draggable="true" id="drag-full">Full Control</div>
+                        <div class="drag-item bg-green-100 text-green-800 font-bold px-3 py-1 rounded text-sm border border-green-300" draggable="true" id="drag-modify">Modify</div>
+                    </div>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex gap-2 items-center">
+                            <div class="dropzone w-24 h-8 bg-slate-50 border rounded flex items-center justify-center text-xs text-slate-400" data-target="modify">Drop Here</div>
+                            <span class="flex-1">Read, write, and delete files.</span>
+                        </div>
+                        <div class="flex gap-2 items-center">
+                            <div class="dropzone w-24 h-8 bg-slate-50 border rounded flex items-center justify-center text-xs text-slate-400" data-target="full">Drop Here</div>
+                            <span class="flex-1">Do anything, including changing permissions.</span>
+                        </div>
+                    </div>
+                    <div id="lab4-feedback" class="text-center text-sm font-bold mt-3 h-5 text-green-600"></div>
+                </div>
+
+                <!-- Concept 3: Lab 5 -->
+                <div class="bg-white p-5 rounded-xl shadow-md border-l-4 border-amber-500">
+                    <h2 class="text-lg font-bold text-amber-700 mb-2">Lab 5: Naming Validator</h2>
+                    <p class="text-sm text-slate-600 mb-3">Evaluate the filename below. Is it a valid name on a standard Windows OS?</p>
+                    <div class="flex flex-col items-center">
+                        <div class="text-xl font-mono bg-slate-100 border p-3 rounded mb-4 shadow-inner" id="filename-display">PRN.docx</div>
+                        <div class="flex gap-4">
+                            <button class="bg-green-600 text-white px-4 py-2 rounded font-bold hover:bg-green-700" onclick="checkLab5(true)">Valid Name</button>
+                            <button class="bg-red-600 text-white px-4 py-2 rounded font-bold hover:bg-red-700" onclick="checkLab5(false)">Invalid Name</button>
+                        </div>
+                    </div>
+                    <div id="lab5-feedback" class="text-center text-sm font-bold mt-3 h-5 text-amber-600"></div>
+                </div>
+
+                <!-- Concept 3: Lab 6 -->
+                <div class="bg-white p-5 rounded-xl shadow-md border-l-4 border-amber-500">
+                    <h2 class="text-lg font-bold text-amber-700 mb-2">Lab 6: Case Sensitivity</h2>
+                    <p class="text-sm text-slate-600 mb-3">You attempt to save a file named <code class="bg-slate-200 px-1">data.txt</code> into a folder that already contains <code class="bg-slate-200 px-1">Data.txt</code>. What happens?</p>
+                    <div class="space-y-2">
+                        <button class="w-full text-left p-2 text-sm bg-slate-50 border rounded hover:bg-amber-50" onclick="checkLab6('win')"><strong>Windows:</strong> It saves as a completely separate file.</button>
+                        <button class="w-full text-left p-2 text-sm bg-slate-50 border rounded hover:bg-amber-50" onclick="checkLab6('lin')"><strong>Linux:</strong> It saves as a completely separate file.</button>
+                        <button class="w-full text-left p-2 text-sm bg-slate-50 border rounded hover:bg-amber-50" onclick="checkLab6('both')"><strong>Both:</strong> It asks to overwrite the original.</button>
+                    </div>
+                    <div id="lab6-feedback" class="text-center text-sm font-bold mt-3 h-5 text-amber-600"></div>
+                </div>
+
+                <!-- Concept 4: Lab 7 -->
+                <div class="bg-white p-5 rounded-xl shadow-md border-l-4 border-indigo-500">
+                    <h2 class="text-lg font-bold text-indigo-700 mb-2">Lab 7: Properties vs Attributes</h2>
+                    <p class="text-sm text-slate-600 mb-3">Categorize the metadata type into its correct classification.</p>
+                    <div class="flex flex-wrap gap-2 mb-4 justify-center">
+                        <div class="drag-item2 bg-indigo-100 text-indigo-800 font-bold px-2 py-1 rounded text-xs border border-indigo-300" draggable="true" id="meta-size" data-type="prop">File Size</div>
+                        <div class="drag-item2 bg-indigo-100 text-indigo-800 font-bold px-2 py-1 rounded text-xs border border-indigo-300" draggable="true" id="meta-hide" data-type="attr">Hidden</div>
+                        <div class="drag-item2 bg-indigo-100 text-indigo-800 font-bold px-2 py-1 rounded text-xs border border-indigo-300" draggable="true" id="meta-date" data-type="prop">Creation Date</div>
+                        <div class="drag-item2 bg-indigo-100 text-indigo-800 font-bold px-2 py-1 rounded text-xs border border-indigo-300" draggable="true" id="meta-imm" data-type="attr">Immutable</div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="dropzone2 bg-slate-50 border border-slate-300 rounded p-2 text-center flex flex-col min-h-[100px]" data-target="attr">
+                            <span class="font-bold text-sm mb-1 text-slate-500 border-b pb-1">Attributes</span>
+                        </div>
+                        <div class="dropzone2 bg-slate-50 border border-slate-300 rounded p-2 text-center flex flex-col min-h-[100px]" data-target="prop">
+                            <span class="font-bold text-sm mb-1 text-slate-500 border-b pb-1">Properties</span>
+                        </div>
+                    </div>
+                    <div id="lab7-feedback" class="text-center text-sm font-bold mt-2 h-5 text-indigo-600"></div>
+                </div>
+
+                <!-- Concept 4: Lab 8 -->
+                <div class="bg-white p-5 rounded-xl shadow-md border-l-4 border-indigo-500">
+                    <h2 class="text-lg font-bold text-indigo-700 mb-2">Lab 8: Hidden Files</h2>
+                    <p class="text-sm text-slate-600 mb-3">A crucial system file is missing from this Linux directory view. Expose the hidden files to find the missing <code class="bg-slate-200 px-1">.bashrc</code> file, then click it.</p>
+                    
+                    <div class="flex items-center gap-2 mb-3 bg-slate-100 p-2 rounded border">
+                        <input type="checkbox" id="toggle-hidden" onchange="toggleHiddenFiles()" class="w-4 h-4 cursor-pointer">
+                        <label for="toggle-hidden" class="text-sm font-bold cursor-pointer">Show Hidden Files</label>
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-2 text-center text-xs" id="file-explorer">
+                        <div class="p-2 border rounded bg-white"><i class="fa-solid fa-folder text-yellow-400 text-2xl block mb-1"></i>Downloads</div>
+                        <div class="p-2 border rounded bg-white"><i class="fa-solid fa-file-lines text-blue-400 text-2xl block mb-1"></i>report.txt</div>
+                        <div class="p-2 border rounded bg-slate-200 opacity-50 hidden hidden-file cursor-pointer hover:bg-slate-300" onclick="checkLab8()"><i class="fa-solid fa-file-code text-slate-500 text-2xl block mb-1"></i>.bashrc</div>
+                        <div class="p-2 border rounded bg-slate-200 opacity-50 hidden hidden-file"><i class="fa-solid fa-folder text-yellow-600 text-2xl block mb-1"></i>.cache</div>
+                    </div>
+                    
+                    <div id="lab8-feedback" class="text-center text-sm font-bold mt-3 h-5 text-indigo-600"></div>
+                </div>
+            </div>
+
+            <div class="text-center mt-10">
+                <button onclick="switchTab('quiz')" class="bg-sky-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-sky-500 shadow-lg transition transform hover:scale-105">Take the Mastery Quiz <i class="fa-solid fa-clipboard-check ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- QUIZ SECTION -->
+        <div id="quiz-section" class="tab-content no-print">
+            <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-xl max-w-4xl mx-auto">
+                <div class="text-center mb-8 border-b pb-4">
+                    <h1 class="text-3xl font-extrabold text-slate-900 mb-2">Unit 05 Section 3.1.2 Mastery Quiz</h1>
+                    <p class="text-slate-600">Score 90% or higher (18/20) to earn your Certificate of Mastery and unlock the Retro Sweeper Game!</p>
+                </div>
+
+                <div id="quiz-container" class="space-y-8">
+                    <!-- Questions injected via JS -->
+                </div>
+
+                <div class="mt-10 text-center border-t pt-6 flex flex-col md:flex-row justify-center items-center gap-4">
+                    <button id="submit-quiz-btn" onclick="gradeQuiz()" class="bg-sky-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-sky-700 shadow-lg transition w-full md:w-auto">Submit Quiz</button>
+                    <button id="proceed-game-btn" onclick="switchTab('game')" class="hidden bg-emerald-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-emerald-700 shadow-lg transition w-full md:w-auto">Play System Sweeper <i class="fa-solid fa-gamepad ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RETRO GAME SECTION (Minesweeper Clone) -->
+        <div id="game-section" class="tab-content no-print">
+            <div class="bg-slate-800 p-6 sm:p-8 rounded-2xl shadow-xl max-w-2xl mx-auto border-4 border-slate-600 flex flex-col items-center">
+                <div class="text-center mb-6 w-full">
+                    <h1 class="text-3xl font-extrabold text-cyan-400 mb-2 tracking-widest uppercase" style="font-family: monospace;">System Sweeper</h1>
+                    <p class="text-slate-300 text-sm">Scan the drive for corrupted sectors (mines). Click to scan a sector. Use the Flag mode to quarantine suspected corruption without scanning it. Clear the drive without detonating a bad sector!</p>
+                </div>
+                
+                <div class="flex justify-between items-center w-full mb-4 px-4 text-white font-mono text-lg bg-slate-900 p-3 rounded">
+                    <div>Quarantined: <span id="game-flags" class="text-red-400 font-bold">10</span></div>
+                    <button id="mode-toggle" class="bg-cyan-600 hover:bg-cyan-500 px-4 py-1 rounded font-bold" onclick="toggleGameMode()">Mode: SCAN <i class="fa-solid fa-magnifying-glass ml-1"></i></button>
+                </div>
+
+                <div class="relative flex justify-center w-full bg-slate-700 p-2 rounded shadow-inner" id="grid-container">
+                    <!-- Game Grid injected via JS -->
+                    <div id="sweeper-grid"></div>
+                    
+                    <!-- Overlay Start Button -->
+                    <div id="game-overlay" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-80 rounded z-10">
+                        <div class="text-center">
+                            <h2 id="game-msg" class="text-2xl font-bold text-white mb-4 uppercase font-mono">Format Drive?</h2>
+                            <button id="start-game-btn" onclick="initSweeper()" class="bg-cyan-600 hover:bg-cyan-500 text-white font-bold font-mono py-2 px-6 rounded text-xl uppercase border-2 border-cyan-300">Run Scan</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 text-center w-full border-t border-slate-600 pt-6">
+                    <button onclick="switchTab('cert')" class="bg-sky-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-sky-700 shadow-lg transition w-full md:w-auto">View Certificate <i class="fa-solid fa-award ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CERTIFICATE SECTION -->
+        <div id="cert-section" class="tab-content">
+            <div class="max-w-5xl mx-auto">
+                
+                <!-- Controls -->
+                <div class="bg-white p-6 rounded shadow mb-6 no-print text-center border border-slate-200">
+                    <h2 class="text-2xl font-bold text-sky-600 mb-2">🎉 Congratulations! 🎉</h2>
+                    <p class="text-slate-700 mb-4">You have achieved mastery of File System Management.</p>
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+                        <input type="text" id="student-name-input" value="Student" placeholder="Enter your first name" class="border-2 border-slate-300 rounded px-4 py-2 w-full md:w-64 focus:border-sky-500 focus:outline-none">
+                        <button onclick="updateCertName()" class="bg-sky-600 text-white px-4 py-2 rounded hover:bg-sky-700 transition">Update Name</button>
+                        <button id="download-btn" onclick="downloadCert()" class="bg-slate-800 text-white px-4 py-2 rounded hover:bg-slate-900 transition flex items-center justify-center">
+                            <i class="fa-solid fa-download mr-2"></i>Download PNG
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Certificate Render Container -->
+                <div class="cert-preview-container print:p-0 print:bg-white">
+                    <div id="certificate">
+                        <div class="gold-seal">
+                            <div class="gold-seal-inner-1">
+                                <div class="gold-seal-inner-2">
+                                     <span class="embossed-text embossed-text-large">Certificate</span>
+                                     <span class="embossed-text embossed-text-small">Of</span>
+                                     <span class="embossed-text embossed-text-large">Excellence</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="relative z-20 w-full h-full flex flex-col pt-[48px] pl-[380px] pr-[48px]">
+                            <h1 class="text-[#0c4a6e] text-[4.5rem] leading-none font-serif font-bold tracking-wide uppercase mb-2">CERTIFICATE</h1>
+                            <h2 class="text-slate-800 text-3xl font-serif tracking-widest uppercase mb-10">Of Achievement</h2>
+                            
+                            <p class="text-[1.4rem] font-body text-slate-800 mb-4">This is to certify that</p>
+                            
+                            <div class="relative mb-8 w-full">
+                                <h3 id="cert-student-name" class="text-[4rem] text-[#0ea5e9] font-serif italic leading-none pb-2 relative z-10 text-center w-full block">Student</h3>
+                                <div class="w-full border-b-[2px] border-[#0c4a6e] absolute bottom-[4px] left-0 z-0"></div>
+                                <div class="w-full border-b-[2px] border-dotted border-sky-400 absolute bottom-[0px] left-0 z-0"></div>
+                            </div>
+                            
+                            <p class="text-[1.3rem] font-body text-slate-800 leading-relaxed w-full pr-4">
+                                Has successfully completed the assessment for 
+                                <strong class="text-[1.8rem] text-[#0c4a6e] block mt-4 mb-2 font-serif">Cyber.org Tech+ Unit 05 Section 3.1.2</strong>
+                                <strong class="text-[1.5rem] text-black block mb-4 font-serif italic">File System Management</strong>
+                                <span class="text-[1.1rem] text-slate-700 leading-snug block">Demonstrating proficiency in explaining the foundational role of file hierarchies, access permissions across operating systems, naming constraints, and defining file attributes and properties.</span>
+                            </p>
+                            
+                            <div class="flex justify-end gap-16 items-end mt-auto mb-[60px] w-full pr-8">
+                                <div class="w-64">
+                                    <div class="border-b border-slate-600 mb-2 h-20 flex items-end justify-center relative">
+                                        <span class="font-script text-[5rem] text-[#0c4a6e] absolute bottom-[-10px] transform -rotate-3 opacity-90">Dr. M. S</span>
+                                    </div>
+                                    <p class="font-serif text-xl text-slate-800 text-center">Administration</p>
+                                </div>
+                                
+                                <div class="w-64">
+                                    <div class="border-b border-slate-600 mb-2 text-center h-20 flex items-end justify-center">
+                                        <p id="cert-date" class="font-body text-2xl text-slate-800 pb-1">Date Here</p>
+                                    </div>
+                                    <p class="font-serif text-xl text-slate-800 text-center">Date</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Custom Modal for Alerts -->
+    <div id="custom-modal" class="fixed inset-0 bg-black bg-opacity-50 z-[100] hidden flex justify-center items-center backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all">
+            <div class="text-center">
+                <div id="modal-icon" class="text-5xl mb-4"></div>
+                <h3 id="modal-title" class="text-2xl font-bold mb-2 text-slate-900"></h3>
+                <p id="modal-msg" class="text-slate-600 mb-6"></p>
+                <button onclick="closeModal()" class="bg-sky-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-sky-700 transition w-full">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Briefing Modal -->
+    <div id="briefing-modal" class="fixed inset-0 bg-black bg-opacity-70 z-[120] hidden flex justify-center items-center backdrop-blur-sm p-4 sm:p-6">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col transform transition-all overflow-hidden border-4 border-sky-700">
+            <div class="p-6 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+                <div class="flex items-center gap-4">
+                    <div id="briefing-modal-icon" class="text-4xl"></div>
+                    <h3 id="briefing-modal-title" class="text-2xl md:text-3xl font-bold text-slate-900"></h3>
+                </div>
+                <button onclick="closeBriefing()" class="text-slate-400 hover:text-red-600 transition text-4xl leading-none">&times;</button>
+            </div>
+            <div id="briefing-modal-content" class="p-6 md:p-10 overflow-y-auto flex-grow text-slate-700 text-lg leading-relaxed bg-white">
+                <!-- Dynamic Content Injected Here -->
+            </div>
+            <div class="p-6 border-t border-slate-200 bg-slate-50 flex justify-end">
+                <button onclick="closeBriefing()" class="bg-sky-700 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-sky-800 transition shadow-md">Acknowledge & Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Briefing Content Data (Min 7 Paragraphs per detail, 2 Use Cases, 2 images) ---
+        const briefingData = {
+            'hierarchy-details': {
+                title: 'Hierarchy & Organization',
+                icon: '<i class="fa-solid fa-folder-tree text-sky-600"></i>',
+                html: `
+                    <p class="mb-5">At the core of any computing system, data must be stored logically so that both users and software applications can retrieve it efficiently. The most fundamental unit of this storage system is the <strong>file</strong>. A file serves as a logical container for the raw data required by an item to function, whether that item is a simple text document, a high-resolution photograph, or complex compiled software code. Without files, data would merely be a disorganized stream of endless binary zeros and ones scattered across the hard drive.</p>
+                    
+                    <p class="mb-5">Because a modern operating system (OS) like a fresh installation of Windows 11 can contain over 250,000 files before a user even opens an application, a massive organizational challenge arises. This challenge is solved by the concept of <strong>folders</strong> (frequently referred to as <strong>directories</strong>). A directory does not store raw user data itself; instead, it acts as a catalog or a bin that stores files or, crucially, other sub-directories, allowing for deep, logical organization.</p>
+                    
+                    <p class="mb-5">This system of placing folders inside of folders creates what is known as a <strong>hierarchical file structure</strong>. The term "hierarchical" simply means that items are arranged in an order of rank or branching paths. In computer science, this is almost always conceptualized as an inverted tree, where the base represents the entire storage drive, branching out into broad category folders, which branch further into specific sub-folders, and ultimately terminate at individual files—the "leaves" of the tree.</p>
+                    
+                    <p class="mb-5">The absolute base or starting point of this hierarchical tree structure is called the <strong>root directory</strong>. The root directory is the topmost folder from which all other folders on that specific drive descend. The way this root directory is visually represented to the user is one of the most visible differences between competing operating systems.</p>
+                    
+                    <p class="mb-5">In the Microsoft Windows environment, the root directory is traditionally tied directly to the physical or logical drive partition. The primary system drive root is represented by a drive letter followed by a colon and a backslash, almost universally defaulting to <strong><code>C:\\</code></strong>. All system files, user profiles, and program installations must exist somewhere on a path that originates from <code>C:\\</code>.</p>
+                    
+                    <p class="mb-5">Conversely, Unix-based operating systems—which include all distributions of <strong>Linux</strong> as well as Apple's <strong>macOS</strong>—use a unified file system hierarchy. In these systems, there are no drive letters. The root directory is simply represented by a single forward slash: <strong><code>/</code></strong>. Even if a Linux system has five different physical hard drives plugged into it, they do not appear as D:, E:, or F: drives; instead, they are mounted as folders existing somewhere beneath the single, unified <code>/</code> root directory.</p>
+                    
+                    <p>Understanding this structure is vital for IT professionals. A major part of system administration involves navigating this hierarchy via Absolute and Relative file paths. Furthermore, understanding the difference between critical system directories (like <code>C:\\Windows\\System32</code> or <code>/bin</code>) and standard user directories (like <code>C:\\Users\\Public</code> or <code>/home/user</code>) is essential to avoid accidentally breaking the operating system while attempting to organize or clean up disk space.</p>
+                `
+            },
+            'hierarchy-usecase': {
+                title: 'Hierarchy & Organization: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-sky-800 mb-2 border-b-2 border-sky-200 pb-1">Case 1: Large Scale Project Organization</h4>
+                        <p class="mb-2">A professional graphic design agency handles hundreds of clients, each with dozens of projects. A flat file system (all files in one place) would make finding a specific logo impossible. They must use hierarchical directories.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1:</strong> The agency creates a master <code>Clients</code> directory. Inside, they create a subfolder for <code>Acme_Corp</code>. Inside that, folders for <code>2025_Q1</code> and <code>2025_Q2</code>, terminating in specific image files. The path becomes <code>/Clients/Acme_Corp/2025_Q1/logo_final.png</code>.</li>
+                            <li><strong>Example 2:</strong> When a designer leaves the company, the IT team can easily archive all their work by simply moving the single high-level directory <code>/Users/Designer_Name/Projects/</code> to a backup drive, rather than hunting for thousands of individual files.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-sky-800 mb-2 border-b-2 border-sky-200 pb-1">Case 2: Operating System Architecture</h4>
+                        <p class="mb-2">Operating systems must strictly separate the delicate files required to boot the machine from the files the user interacts with daily to prevent accidental system crashes.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Windows):</strong> The OS isolates user files in <code>C:\\Users\\[Name]\\Documents</code>, keeping them far away from the system-critical kernel files located deep inside <code>C:\\Windows\\System32\\</code>.</li>
+                            <li><strong>Example 2 (Linux):</strong> The Linux OS places all user-installed executable programs inside the <code>/usr/bin/</code> directory, while all temporary files generated during a session are routed to the <code>/tmp/</code> directory, which is programmed to automatically empty itself upon reboot to save space.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Folder Hierarchies</p>
+                            <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=600&h=350" alt="Retro filing cabinets representing hierarchical physical folders" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Server Directories</p>
+                            <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=600&h=350" alt="Server racks where massive hierarchical databases are stored" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'perms-details': {
+                title: 'File Permissions',
+                icon: '<i class="fa-solid fa-user-lock text-green-600"></i>',
+                html: `
+                    <p class="mb-5">In modern computing environments, devices are rarely used by a single isolated individual. Computers are connected to global networks and are frequently shared among dozens of employees in a corporate setting. Therefore, a system must exist to regulate access. <strong>File Permissions</strong> are the core security mechanism used by an operating system to define exactly who is allowed to view, modify, or execute files and folders.</p>
+                    
+                    <p class="mb-5">If permissions are not strictly enforced, any user could accidentally (or maliciously) delete another user's work, alter financial records, or corrupt the operating system files, rendering the machine unbootable. Permissions form the foundation of the <em>Principle of Least Privilege</em>, which states that a user should only be granted the minimum access level necessary to perform their specific job.</p>
+                    
+                    <p class="mb-5">In Microsoft Windows, this security is handled by the New Technology File System (<strong>NTFS</strong>). NTFS permissions are highly granular and apply to both files and folders. The most basic NTFS permissions include <strong>Read</strong> (the ability to open and view the file's contents) and <strong>Write</strong> (the ability to add to or alter the file's contents).</p>
+                    
+                    <p class="mb-5">Beyond the basics, Windows NTFS utilizes more complex permission states. <strong>Read and Execute</strong> allows a user to view a file and, crucially, run it if it is a software program (.exe). The <strong>Modify</strong> permission grants the user the ability to read, write, and delete the file. Finally, <strong>Full Control</strong> grants ultimate power over the file, allowing the user to do anything, including changing the file's permissions to lock out other users.</p>
+                    
+                    <p class="mb-5">Linux and macOS (which are Unix-based systems) approach permissions differently, relying on a highly efficient, compact model known as the <strong>rwx</strong> system. Every file and directory has three simple permissions: <strong>r</strong> (read), <strong>w</strong> (write), and <strong>x</strong> (execute). The system does not use terms like "Modify" or "Full Control"; instead, complex access is granted by combining these three basic letters.</p>
+                    
+                    <p class="mb-5">In Linux, these <code>rwx</code> permissions are assigned across three distinct scopes: the <strong>Owner</strong> (the specific user who created the file), the <strong>Group</strong> (a defined collection of users, like "Accountants" or "Students"), and <strong>Others</strong> (everyone else on the system). This is why a Linux file permission often looks like a 9-character string: <code>rwxr-xr--</code>.</p>
+                    
+                    <p>In the example string <code>rwxr-xr--</code>, the Owner has full read/write/execute rights (<code>rwx</code>). The Group has read and execute rights but cannot write/edit (<code>r-x</code>). Finally, Others only have read rights, meaning they can only view the file (<code>r--</code>). Understanding how to read and modify both NTFS and Unix permission strings is a fundamental daily task for any IT support technician or network administrator.</p>
+                `
+            },
+            'perms-usecase': {
+                title: 'File Permissions: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-green-800 mb-2 border-b-2 border-green-200 pb-1">Case 1: Corporate Shared Network Drives</h4>
+                        <p class="mb-2">A company utilizes a central Windows server to store files. The IT department must use NTFS permissions to ensure departments cannot interfere with each other's work.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1:</strong> The <code>Payroll_2025.xlsx</code> file has its permissions set so that the Human Resources group has "Modify" access (they can edit pay rates), but the General Staff group only has "Read" access (they can view the document but cannot change their own salary).</li>
+                            <li><strong>Example 2:</strong> A temporary intern is hired. IT sets their folder permissions to deny "Write" access on the main server templates, ensuring the intern cannot accidentally delete or overwrite the company's master letterhead documents.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-green-800 mb-2 border-b-2 border-green-200 pb-1">Case 2: Linux Web Server Security</h4>
+                        <p class="mb-2">A Linux server is hosting a public website. The administrator must use the <code>rwx</code> permission system to prevent hackers from destroying the site.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1:</strong> The main <code>index.html</code> webpage file is set to <code>rw-r--r--</code>. This means the Administrator (Owner) can read and write updates to the code, but public internet visitors (Others) only have <code>r--</code> (Read-only) access, so they can view the webpage but cannot deface the code.</li>
+                            <li><strong>Example 2:</strong> The server contains a powerful backend script file used for deleting old database records. The admin removes the <code>x</code> (execute) permission from the "Others" group, guaranteeing that even if a hacker finds the script, the OS will block them from running it.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Access Control</p>
+                            <img src="https://images.unsplash.com/photo-1614064641936-732a68c09673?auto=format&fit=crop&w=600&h=350" alt="Padlock representing restricted access" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Server Administration</p>
+                            <img src="https://images.unsplash.com/photo-1563206767-5b18f218e8de?auto=format&fit=crop&w=600&h=350" alt="Hacker or Admin typing on terminal adjusting permissions" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'naming-details': {
+                title: 'Naming Restrictions',
+                icon: '<i class="fa-solid fa-font text-amber-600"></i>',
+                html: `
+                    <p class="mb-5">When a user creates a new document and attempts to save it, they must provide a filename. While it might seem like a user should be able to name a file whatever they wish, operating systems enforce strict <strong>Naming Restrictions</strong>. These rules exist to prevent severe system confusion, as the operating system uses certain characters and names for its own internal programming and routing functions.</p>
+                    
+                    <p class="mb-5">Microsoft Windows enforces some of the most rigid naming restrictions in computing. Windows strictly forbids the use of specific special characters in any file or folder name: <code>\\ / : * ? " < > |</code>. These characters are forbidden because they have specific meanings to the OS. For instance, the backslash (<code>\\</code>) is used to separate directories in a file path (e.g., <code>C:\\Users</code>), while the asterisk (<code>*</code>) is used as a wildcard character in search commands. Using them in a name would break the system's ability to locate the file.</p>
+                    
+                    <p class="mb-5">Beyond special characters, Windows also blocks specific <strong>Reserved Names</strong>. You cannot name a file <code>CON</code>, <code>PRN</code>, <code>AUX</code>, or <code>NUL</code>. This restriction dates back to the 1980s and the MS-DOS operating system. In MS-DOS, these words were hardcoded to represent physical hardware ports (e.g., <code>PRN</code> represented the physical Printer port). Decades later, modern Windows still reserves these names to maintain backwards compatibility with legacy software.</p>
+                    
+                    <p class="mb-5">Windows also historically enforces a <strong>Path Length Limit</strong>. In standard configurations, the entire absolute path of a file (the drive letter, all folder names, the filename, and the extension) cannot exceed 260 characters. If a user creates extremely long, descriptive folder names nested deeply inside each other, they will eventually hit this limit, and Windows will throw an error preventing them from saving or moving the file.</p>
+                    
+                    <p class="mb-5">Linux and macOS have far fewer naming restrictions. In fact, Linux forbids only a single character: the forward slash (<code>/</code>), because it is used to represent the root directory and folder separations. While Linux allows you to use spaces, asterisks, and question marks in file names, it is highly discouraged. Doing so forces the user to use cumbersome escape characters or quotation marks when trying to interact with the file via the command line terminal.</p>
+                    
+                    <p class="mb-5">A critical difference between operating systems is <strong>Case Sensitivity</strong>. Microsoft Windows is case-insensitive. To Windows, the files <code>Report.txt</code>, <code>report.txt</code>, and <code>REPORT.TXT</code> are considered identical. If you try to save a new <code>report.txt</code> in a folder that already contains <code>Report.txt</code>, Windows will warn you that you are about to overwrite the existing file.</p>
+                    
+                    <p>Conversely, Linux is strictly case-sensitive. It views uppercase and lowercase letters as completely different characters. In Linux, you can perfectly save <code>Report.txt</code> and <code>report.txt</code> in the exact same folder side-by-side, and the OS will treat them as two completely separate files. This difference frequently causes major errors when developers transfer files from a Windows workstation to a Linux web server, making consistent naming conventions critical in IT.</p>
+                `
+            },
+            'naming-usecase': {
+                title: 'Naming Restrictions: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-amber-800 mb-2 border-b-2 border-amber-200 pb-1">Case 1: Cross-Platform File Sharing</h4>
+                        <p class="mb-2">A creative team uses Apple MacBooks (Unix-based) to create marketing videos, but they must upload them to a corporate Windows Server for the finance department to view.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1:</strong> A Mac user saves a video file named <code>Final_Review?.mp4</code>. While the Mac allows the question mark, when they try to drag it to the Windows network drive, the transfer immediately fails because Windows rejects the <code>?</code> character. The user must rename it to <code>Final_Review.mp4</code>.</li>
+                            <li><strong>Example 2:</strong> A Mac user creates two draft documents: <code>budget.docx</code> and <code>Budget.docx</code> in the same folder. When transferred to the Windows server, Windows cannot handle both files in the same folder due to its case-insensitivity, resulting in one file overwriting the other and causing data loss.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-amber-800 mb-2 border-b-2 border-amber-200 pb-1">Case 2: Command Line Automation</h4>
+                        <p class="mb-2">A system administrator writes a script in the Linux terminal to automate the daily backup of log files, but runs into issues based on how files were named by standard users.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Avoiding Spaces):</strong> A user named a folder <code>My Important Logs</code>. The administrator's script fails because the terminal interprets the spaces as the end of a command. The admin establishes a policy forcing users to use underscores or camelCase, like <code>My_Important_Logs</code>, to ensure terminal scripts run flawlessly.</li>
+                            <li><strong>Example 2 (Path Limits):</strong> An automated backup script on a Windows machine crashes because a user nested a file 30 folders deep (e.g., <code>C:\\Company\\Dept\\Team\\...\\file.txt</code>). The total path exceeded the legacy 260-character limit, requiring the admin to flatten the directory structure.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Forbidden Characters</p>
+                            <img src="https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?auto=format&fit=crop&w=600&h=350" alt="Computer keyboard focusing on special character symbols" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Scripting and Automation</p>
+                            <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=600&h=350" alt="Code on a screen showing automation scripting" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'meta-details': {
+                title: 'Metadata, Attributes & Properties',
+                icon: '<i class="fa-solid fa-tags text-indigo-600"></i>',
+                html: `
+                    <p class="mb-5">If a file is a container of raw data, how does the operating system or the user know anything about that file without opening and reading every line of it? The answer is <strong>Metadata</strong>. Simply defined, metadata is "data about data." It is a bundle of invisible tags attached to every file and folder that describes its contents, history, and system requirements. This metadata is broadly divided into two categories: Properties and Attributes.</p>
+                    
+                    <p class="mb-5"><strong>Properties</strong> are the descriptive metadata elements that are primarily designed to help the human user manage, sort, and organize their files. When you view a folder in a "Details" list, you are looking at file properties. The most common properties include the File Size (how many kilobytes or gigabytes it consumes), the File Type (e.g., .pdf, .docx, .jpeg), and the Ownership data (who created the file).</p>
+                    
+                    <p class="mb-5">Crucial to forensics and management are the temporal properties: <strong>Creation Date</strong>, <strong>Modification Date</strong>, and <strong>Access Date</strong>. The system records exactly when a file was born, the precise second it was last edited, and even the last time it was opened to be viewed. This allows users to easily sort thousands of files to find "the document I worked on yesterday."</p>
+                    
+                    <p class="mb-5">While Properties describe the file for the user, <strong>Attributes</strong> are specific metadata flags that give strict instructions to the Operating System on how to treat the file. For example, the <strong>Read-only</strong> attribute tells the OS that the file can be opened and viewed, but the OS must block any attempt to save changes to it, protecting it from accidental alteration.</p>
+                    
+                    <p class="mb-5">The <strong>Hidden</strong> attribute is heavily used by operating systems to protect themselves. By flagging critical system files as Hidden, the OS ensures they do not appear in the standard graphical file explorer view. This prevents untrained users from seeing them, getting confused, and accidentally deleting files that are required for the computer to boot. Users must deliberately change a view setting to expose these hidden files.</p>
+                    
+                    <p class="mb-5">Windows utilizes specific attributes like the <strong>System</strong> attribute (which marks a file as a core component of the Windows OS, applying extreme protections) and the <strong>Archive</strong> attribute (which backup software uses as a flag to determine if a file has been modified since the last system backup, speeding up the backup process).</p>
+                    
+                    <p>Linux utilizes its own advanced attributes, most notably the <strong>Immutable</strong> attribute. When an administrator applies the immutable flag to a file (using the <code>chattr +i</code> command), the file becomes completely locked in stone. It cannot be modified, it cannot be renamed, and it cannot be deleted—even by the ultimate "root" administrator account—until the attribute is explicitly removed. This is the ultimate defense against accidental deletion or malware tampering.</p>
+                `
+            },
+            'meta-usecase': {
+                title: 'Metadata & Attributes: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-indigo-800 mb-2 border-b-2 border-indigo-200 pb-1">Case 1: Digital Forensics and Auditing</h4>
+                        <p class="mb-2">A corporate security team suspects an employee is leaking confidential financial data. They use file Properties (metadata) to reconstruct the timeline of events.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1:</strong> The security team examines the <code>Q4_Earnings.xlsx</code> file. Even though the employee claims they never touched it, the "Last Accessed Date" property shows the file was opened on the employee's machine at 11:45 PM on a Saturday, proving unauthorized access.</li>
+                            <li><strong>Example 2:</strong> A student claims they finished an essay weeks ago but the computer glitched. The teacher checks the file Properties and sees the "Creation Date" was actually 2 hours before the assignment was due, disproving the student's claim.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-indigo-800 mb-2 border-b-2 border-indigo-200 pb-1">Case 2: Protecting System Configuration</h4>
+                        <p class="mb-2">IT Administrators must ensure that critical configuration files that determine how applications run are protected from both users and malware using Attributes.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Hidden Attribute):</strong> A Linux administrator hides the terminal configuration file by naming it <code>.bashrc</code> (in Linux, prefixing a file with a period automatically applies the Hidden attribute). This prevents standard users from seeing it and accidentally deleting it while cleaning up their home folder.</li>
+                            <li><strong>Example 2 (Immutable Attribute):</strong> To defend a web server against ransomware that attempts to encrypt database files, the Linux admin applies the <code>Immutable</code> attribute to the core database configuration file. When the ransomware script attempts to overwrite it, the OS forcefully rejects the command, stopping the attack on that file.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Metadata Tags</p>
+                            <img src="https://images.unsplash.com/photo-1586281380349-632531db7ed4?auto=format&fit=crop&w=600&h=350" alt="Tag hanging on a string representing metadata properties" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Digital Forensics</p>
+                            <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=600&h=350" alt="Cybersecurity lock representing auditing and forensic tracking" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        // Modal Control Functions
+        function openBriefing(key) {
+            const modal = document.getElementById('briefing-modal');
+            const data = briefingData[key];
+            if(data) {
+                document.getElementById('briefing-modal-icon').innerHTML = data.icon;
+                document.getElementById('briefing-modal-title').innerText = data.title;
+                document.getElementById('briefing-modal-content').innerHTML = data.html;
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; 
+            }
+        }
+
+        function closeBriefing() {
+            document.getElementById('briefing-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto'; 
+        }
+
+        document.getElementById('briefing-modal').addEventListener('click', function(e) {
+            if(e.target === this) closeBriefing();
+        });
+
+        function showModal(title, message, type = 'info') {
+            const modal = document.getElementById('custom-modal');
+            const icon = document.getElementById('modal-icon');
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-msg').innerText = message;
+            
+            if(type === 'success') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-check text-green-500"></i>';
+            } else if (type === 'error') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500"></i>';
+            } else if (type === 'warning') {
+                icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-yellow-500"></i>';
+            } else {
+                icon.innerHTML = '<i class="fa-solid fa-circle-info text-blue-500"></i>';
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+        
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId + '-section').classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-sky-900'));
+            const activeBtn = document.getElementById('nav-' + tabId);
+            if(activeBtn && tabId !== 'cert') activeBtn.classList.add('bg-sky-900');
+            
+            document.querySelectorAll('.nav-btn-mobile').forEach(btn => btn.classList.remove('bg-sky-950'));
+            const activeMobileBtn = document.getElementById('nav-' + tabId + '-mobile');
+            if(activeMobileBtn && tabId !== 'cert') activeMobileBtn.classList.add('bg-sky-950');
+
+            window.scrollTo(0,0);
+        }
+
+        // --- LAB 1: Path Builder ---
+        let currentPath = "";
+        let lab1Solved = false;
+        function appendPath(part) {
+            if(lab1Solved) return;
+            currentPath += part;
+            document.getElementById('path-output').innerText = currentPath;
+            if(currentPath === "C:\\Users\\Admin\\file.txt") {
+                lab1Solved = true;
+                document.getElementById('lab1-feedback').innerText = "Correct! You built an absolute Windows path.";
+                document.getElementById('lab1-feedback').className = "text-sm font-bold mt-2 h-5 text-green-600";
+            }
+        }
+        function resetPath() {
+            if(lab1Solved) return;
+            currentPath = "";
+            document.getElementById('path-output').innerText = "";
+            document.getElementById('lab1-feedback').innerText = "";
+        }
+
+        // --- LAB 2: Root Identification ---
+        function checkLab2(val) {
+            if(val === '/') {
+                document.getElementById('lab2-feedback').innerText = "Correct! Linux uses the forward slash for the root directory.";
+                document.getElementById('lab2-feedback').className = "text-center text-sm font-bold mt-3 h-5 text-green-600";
+            } else {
+                document.getElementById('lab2-feedback').innerText = "Incorrect. That is closer to a Windows format.";
+                document.getElementById('lab2-feedback').className = "text-center text-sm font-bold mt-3 h-5 text-red-600";
+            }
+        }
+
+        // --- LAB 3: Linux Permissions ---
+        let lab3Solved = false;
+        function updateLinuxPerms() {
+            if(lab3Solved) return;
+            let str = "";
+            str += document.getElementById('u-r').checked ? "r" : "-";
+            str += document.getElementById('u-w').checked ? "w" : "-";
+            str += document.getElementById('u-x').checked ? "x" : "-";
+            str += document.getElementById('g-r').checked ? "r" : "-";
+            str += document.getElementById('g-w').checked ? "w" : "-";
+            str += document.getElementById('g-x').checked ? "x" : "-";
+            str += document.getElementById('o-r').checked ? "r" : "-";
+            str += document.getElementById('o-w').checked ? "w" : "-";
+            str += document.getElementById('o-x').checked ? "x" : "-";
+            
+            document.getElementById('linux-output').innerText = str;
+            
+            if(str === "rw-r--r--") {
+                lab3Solved = true;
+                document.getElementById('lab3-feedback').innerText = "Success! Owner can R/W, Group and Others can only Read.";
+                document.getElementById('lab3-feedback').className = "text-center text-sm font-bold mt-2 h-5 text-green-600";
+            } else {
+                document.getElementById('lab3-feedback').innerText = "";
+            }
+        }
+
+        // --- LAB 4: NTFS Drag and Drop ---
+        let draggedItem = null;
+        let lab4Count = 0;
+        document.querySelectorAll('.drag-item').forEach(item => {
+            item.addEventListener('dragstart', function() {
+                draggedItem = this;
+                setTimeout(() => this.classList.add('opacity-50'), 0);
+            });
+            item.addEventListener('dragend', function() {
+                setTimeout(() => this.classList.remove('opacity-50'), 0);
+                draggedItem = null;
+            });
+        });
+        document.querySelectorAll('.dropzone').forEach(zone => {
+            zone.addEventListener('dragover', e => e.preventDefault());
+            zone.addEventListener('dragenter', function(e) { e.preventDefault(); this.classList.add('drag-over'); });
+            zone.addEventListener('dragleave', function() { this.classList.remove('drag-over'); });
+            zone.addEventListener('drop', function() {
+                this.classList.remove('drag-over');
+                if(draggedItem && draggedItem.id.replace('drag-', '') === this.dataset.target) {
+                    this.innerHTML = '';
+                    this.appendChild(draggedItem);
+                    draggedItem.classList.remove('cursor-grab', 'border');
+                    draggedItem.classList.add('cursor-default', 'w-full', 'h-full', 'flex', 'items-center', 'justify-center');
+                    draggedItem.setAttribute('draggable', 'false');
+                    lab4Count++;
+                    if(lab4Count === 2) {
+                        document.getElementById('lab4-feedback').innerText = "Correct! NTFS Permissions matched.";
+                    }
+                } else {
+                    document.getElementById('lab4-feedback').innerText = "Incorrect match. Try again.";
+                    document.getElementById('lab4-feedback').className = "text-center text-sm font-bold mt-3 h-5 text-red-600";
+                    setTimeout(() => document.getElementById('lab4-feedback').innerText = "", 2000);
+                }
+            });
+        });
+
+        // --- LAB 5: Naming Validator ---
+        const filenames = ["PRN.docx", "report/2025.pdf", "My Document.txt", "budget<final>.xlsx"];
+        const valid = [false, false, true, false];
+        let lab5Index = 0;
+        function checkLab5(userAnswer) {
+            if(lab5Index >= filenames.length) return;
+            let isCorrect = userAnswer === valid[lab5Index];
+            
+            if(isCorrect) {
+                document.getElementById('lab5-feedback').innerText = "Correct!";
+                document.getElementById('lab5-feedback').className = "text-center text-sm font-bold mt-3 h-5 text-green-600";
+            } else {
+                document.getElementById('lab5-feedback').innerText = "Incorrect. Think about reserved names and special characters.";
+                document.getElementById('lab5-feedback').className = "text-center text-sm font-bold mt-3 h-5 text-red-600";
+            }
+            
+            lab5Index++;
+            if(lab5Index < filenames.length) {
+                setTimeout(() => {
+                    document.getElementById('filename-display').innerText = filenames[lab5Index];
+                    document.getElementById('lab5-feedback').innerText = "";
+                }, 1000);
+            } else {
+                setTimeout(() => {
+                    document.getElementById('filename-display').innerText = "Lab Complete!";
+                }, 1000);
+            }
+        }
+
+        // --- LAB 6: Case Sensitivity ---
+        function checkLab6(val) {
+            if(val === 'win') {
+                document.getElementById('lab6-feedback').innerText = "Correct. Windows is case-insensitive, so it sees them as the same file and will ask to overwrite.";
+                document.getElementById('lab6-feedback').className = "text-center text-sm font-bold mt-3 h-5 text-amber-600";
+            } else {
+                document.getElementById('lab6-feedback').innerText = "Incorrect. Think about which OS is case-insensitive.";
+                document.getElementById('lab6-feedback').className = "text-center text-sm font-bold mt-3 h-5 text-red-600";
+            }
+        }
+
+        // --- LAB 7: Attributes vs Properties ---
+        let draggedMeta = null;
+        let lab7Count = 0;
+        document.querySelectorAll('.drag-item2').forEach(item => {
+            item.addEventListener('dragstart', function() {
+                draggedMeta = this;
+                setTimeout(() => this.classList.add('opacity-50'), 0);
+            });
+            item.addEventListener('dragend', function() {
+                setTimeout(() => this.classList.remove('opacity-50'), 0);
+                draggedMeta = null;
+            });
+        });
+        document.querySelectorAll('.dropzone2').forEach(zone => {
+            zone.addEventListener('dragover', e => e.preventDefault());
+            zone.addEventListener('dragenter', function(e) { e.preventDefault(); this.classList.add('bg-slate-200'); });
+            zone.addEventListener('dragleave', function() { this.classList.remove('bg-slate-200'); });
+            zone.addEventListener('drop', function() {
+                this.classList.remove('bg-slate-200');
+                if(draggedMeta && draggedMeta.dataset.type === this.dataset.target) {
+                    this.appendChild(draggedMeta);
+                    draggedMeta.classList.remove('cursor-grab');
+                    draggedMeta.classList.add('cursor-default', 'mt-1');
+                    draggedMeta.setAttribute('draggable', 'false');
+                    lab7Count++;
+                    if(lab7Count === 4) {
+                        document.getElementById('lab7-feedback').innerText = "All metadata categorized correctly!";
+                        document.getElementById('lab7-feedback').className = "text-center text-sm font-bold mt-2 h-5 text-green-600";
+                    }
+                } else {
+                    document.getElementById('lab7-feedback').innerText = "Incorrect classification.";
+                    document.getElementById('lab7-feedback').className = "text-center text-sm font-bold mt-2 h-5 text-red-600";
+                    setTimeout(() => document.getElementById('lab7-feedback').innerText = "", 2000);
+                }
+            });
+        });
+
+        // --- LAB 8: Hidden Files ---
+        function toggleHiddenFiles() {
+            const isChecked = document.getElementById('toggle-hidden').checked;
+            document.querySelectorAll('.hidden-file').forEach(el => {
+                if(isChecked) el.classList.remove('hidden');
+                else el.classList.add('hidden');
+            });
+        }
+        function checkLab8() {
+            document.getElementById('lab8-feedback').innerText = "Correct! In Linux, files starting with a period (.) are hidden attributes.";
+            document.getElementById('lab8-feedback').className = "text-center text-sm font-bold mt-3 h-5 text-green-600";
+        }
+
+
+        // --- QUIZ LOGIC (20 Questions) ---
+        const quizData = [
+            // Original 10
+            { q: "What is the main purpose of a folder in a file system?", options: ["To create new files", "To store and organize files or other folders", "To delete files automatically", "To execute system commands"], answer: 1 },
+            { q: "Which structure do most operating systems use to organize files?", options: ["Linear", "Circular", "Hierarchical", "Encrypted"], answer: 2 },
+            { q: "In Windows, what symbol is used to represent the root directory?", options: ["/", "Root:/", "Drive:/", "C:\\"], answer: 3 },
+            { q: "Which of the following is NOT a valid NTFS permission in Windows?", options: ["Read", "Modify", "Copy", "Full Control"], answer: 2 },
+            { q: "What do the letters rwx represent in Linux and macOS file systems?", options: ["File attributes", "Network permissions", "Read, Write, Execute permissions", "File types"], answer: 2 },
+            { q: "Which of the following file names would be invalid on a Windows system?", options: ["myFile.txt", "AUX.docx", "Project_Report.pdf", "Notes(1).md?"], answer: 3 }, // Fixed answer based on '?' in option D
+            { q: "On Linux and macOS, which character is NOT allowed in file names?", options: ["/", "\\", "|", "*"], answer: 0 },
+            { q: "What is metadata?", options: ["A type of encryption", "A virus that infects file names", "Data that describes other data", "A user permission type"], answer: 2 },
+            { q: "Which of the following is an example of a file attribute?", options: ["Archived", "Creation date", "File size", "File name"], answer: 0 },
+            { q: "What might happen if file permissions are not properly set on a shared computer?", options: ["The system will shut down", "Files may become corrupted", "Unauthorized users may access or modify sensitive files", "Files will be deleted automatically"], answer: 2 },
+            // New 10 derived from briefing
+            { q: "What is the maximum absolute path length historically enforced in standard Windows configurations?", options: ["128 characters", "255 characters", "260 characters", "Unlimited"], answer: 2 },
+            { q: "Which of the following is considered a reserved legacy name in Windows due to old hardware ports?", options: ["DOC", "SYS", "CON", "TMP"], answer: 2 },
+            { q: "In a Linux file system, the highest level of the directory tree is denoted by a single:", options: ["Backslash (\\)", "Forward slash (/)", "Colon (:)", "Asterisk (*)"], answer: 1 },
+            { q: "Which Linux permission group applies to users who are neither the owner nor part of the primary group?", options: ["Admin", "Guest", "Root", "Others"], answer: 3 },
+            { q: "What advanced attribute in Linux completely locks a file, preventing it from being edited or deleted even by the root user?", options: ["Immutable", "Hidden", "Archive", "System"], answer: 0 },
+            { q: "Which Windows NTFS permission grants a user the ability to delete a file but does NOT let them change its security permissions?", options: ["Read", "Modify", "Full Control", "List"], answer: 1 },
+            { q: "Information such as 'Date Created', 'Last Accessed', and 'File Size' are specifically classified as:", options: ["Properties", "Attributes", "Hierarchies", "Permissions"], answer: 0 },
+            { q: "If you save a file named 'Report.txt' and then try to save 'report.txt' in the same folder on Windows, what happens?", options: ["They exist side-by-side perfectly", "Windows crashes", "Windows warns you about overwriting the file", "Windows automatically renames it to report(1).txt"], answer: 2 },
+            { q: "Which technique is commonly used to hide configuration files like 'bashrc' in Linux?", options: ["Clicking 'Hidden' in properties", "Prefixing the file name with a period (.)", "Encrypting the file", "Moving it to the root directory"], answer: 1 },
+            { q: "The security concept stating a user should only be granted the minimum access level necessary to perform their job is the:", options: ["Rule of File Abstraction", "Principle of Least Privilege", "Hierarchical Defense Model", "Metadata Protection Protocol"], answer: 1 }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        
+        quizData.forEach((item, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = "bg-slate-50 p-6 rounded-lg border border-slate-200 transition-all";
+            
+            const qTitle = document.createElement('h3');
+            qTitle.className = "font-bold text-lg text-slate-800 mb-4";
+            qTitle.innerText = `${index + 1}. ${item.q}`;
+            qDiv.appendChild(qTitle);
+            
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = "space-y-3";
+            
+            item.options.forEach((opt, optIndex) => {
+                const label = document.createElement('label');
+                label.className = "flex items-center space-x-3 p-3 rounded bg-white border border-slate-300 hover:bg-sky-50 cursor-pointer transition";
+                
+                const radio = document.createElement('input');
+                radio.type = "radio";
+                radio.name = `q${index}`;
+                radio.value = optIndex;
+                radio.className = "form-radio h-5 w-5 text-sky-600";
+                
+                const span = document.createElement('span');
+                span.className = "text-slate-700";
+                span.innerText = opt;
+                
+                label.appendChild(radio);
+                label.appendChild(span);
+                optionsDiv.appendChild(label);
+            });
+            
+            qDiv.appendChild(optionsDiv);
+            quizContainer.appendChild(qDiv);
+        });
+
+        function gradeQuiz() {
+            let score = 0;
+            let allAnswered = true;
+
+            for(let i = 0; i < quizData.length; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if(selected) {
+                    if(parseInt(selected.value) === quizData[i].answer) {
+                        score++;
+                    }
+                } else {
+                    allAnswered = false;
+                }
+            }
+            
+            if(!allAnswered) {
+                showModal('Incomplete Quiz', 'Please answer all 20 questions before submitting.', 'warning');
+                return;
+            }
+            
+            const percentage = (score / quizData.length) * 100;
+            
+            if(score >= 18) { 
+                const navGame = document.getElementById('nav-game');
+                const navGameMobile = document.getElementById('nav-game-mobile');
+                
+                navGame.classList.remove('text-slate-400', 'cursor-not-allowed');
+                navGame.classList.add('text-white', 'hover:bg-sky-600');
+                navGame.disabled = false;
+                navGame.innerHTML = '<i class="fa-solid fa-gamepad mr-1"></i>Game';
+                
+                navGameMobile.classList.remove('text-slate-400', 'cursor-not-allowed');
+                navGameMobile.classList.add('text-white', 'hover:bg-sky-600');
+                navGameMobile.disabled = false;
+                navGameMobile.innerHTML = '<i class="fa-solid fa-gamepad"></i> Game';
+
+                document.getElementById('nav-cert').classList.remove('hidden');
+                document.getElementById('nav-cert-mobile').classList.remove('hidden');
+                
+                document.getElementById('proceed-game-btn').classList.remove('hidden');
+                document.getElementById('submit-quiz-btn').classList.add('hidden');
+
+                showModal('Outstanding!', `You scored ${score}/20 (${percentage}%). You have unlocked your Certificate of Mastery AND the System Sweeper Game!`, 'success');
+            } else {
+                quizData.forEach((_, i) => {
+                    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                    if(selected) selected.checked = false;
+                });
+                showModal('Keep Trying!', `You scored ${score}/20 (${percentage}%). You need 90% (18/20) to earn the certificate. Your answers have been reset so you can try again.`, 'error');
+                document.getElementById('quiz-section').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // --- RETRO GAME LOGIC: System Sweeper (Minesweeper) ---
+        const gridEl = document.getElementById('sweeper-grid');
+        const rows = 10;
+        const cols = 10;
+        const mineCount = 10;
+        let grid = [];
+        let sweepMode = 'SCAN'; // 'SCAN' or 'FLAG'
+        let flagsLeft = mineCount;
+        let gameActive = false;
+        let revealedCount = 0;
+
+        function toggleGameMode() {
+            const btn = document.getElementById('mode-toggle');
+            if(sweepMode === 'SCAN') {
+                sweepMode = 'FLAG';
+                btn.innerHTML = 'Mode: FLAG <i class="fa-solid fa-flag ml-1"></i>';
+                btn.classList.replace('bg-cyan-600', 'bg-red-500');
+                btn.classList.replace('hover:bg-cyan-500', 'hover:bg-red-400');
+            } else {
+                sweepMode = 'SCAN';
+                btn.innerHTML = 'Mode: SCAN <i class="fa-solid fa-magnifying-glass ml-1"></i>';
+                btn.classList.replace('bg-red-500', 'bg-cyan-600');
+                btn.classList.replace('hover:bg-red-400', 'hover:bg-cyan-500');
+            }
+        }
+
+        function initSweeper() {
+            document.getElementById('game-overlay').classList.add('hidden');
+            gridEl.innerHTML = '';
+            grid = [];
+            flagsLeft = mineCount;
+            revealedCount = 0;
+            gameActive = true;
+            document.getElementById('game-flags').innerText = flagsLeft;
+            
+            // Init empty grid
+            for(let r=0; r<rows; r++) {
+                let row = [];
+                for(let c=0; c<cols; c++) {
+                    row.push({ isMine: false, revealed: false, flagged: false, neighborMines: 0 });
+                    
+                    let cell = document.createElement('div');
+                    cell.className = 'sweeper-cell';
+                    cell.dataset.r = r;
+                    cell.dataset.c = c;
+                    
+                    cell.addEventListener('click', () => handleCellClick(r, c));
+                    cell.addEventListener('contextmenu', (e) => { e.preventDefault(); flagCell(r, c); });
+                    
+                    gridEl.appendChild(cell);
+                }
+                grid.push(row);
+            }
+            
+            // Place mines randomly
+            let placed = 0;
+            while(placed < mineCount) {
+                let r = Math.floor(Math.random() * rows);
+                let c = Math.floor(Math.random() * cols);
+                if(!grid[r][c].isMine) {
+                    grid[r][c].isMine = true;
+                    placed++;
+                }
+            }
+            
+            // Calc neighbors
+            for(let r=0; r<rows; r++) {
+                for(let c=0; c<cols; c++) {
+                    if(!grid[r][c].isMine) {
+                        let count = 0;
+                        for(let rr = r-1; rr <= r+1; rr++) {
+                            for(let cc = c-1; cc <= c+1; cc++) {
+                                if(rr>=0 && rr<rows && cc>=0 && cc<cols && grid[rr][cc].isMine) count++;
+                            }
+                        }
+                        grid[r][c].neighborMines = count;
+                    }
+                }
+            }
+        }
+
+        function handleCellClick(r, c) {
+            if(!gameActive) return;
+            let cellData = grid[r][c];
+            if(cellData.revealed) return;
+            
+            if(sweepMode === 'FLAG') {
+                flagCell(r, c);
+                return;
+            }
+            
+            if(cellData.flagged) return; // Can't scan flagged cell
+            
+            if(cellData.isMine) {
+                gameOver(false);
+            } else {
+                revealCell(r, c);
+                checkWin();
+            }
+        }
+
+        function flagCell(r, c) {
+            if(!gameActive) return;
+            let cellData = grid[r][c];
+            if(cellData.revealed) return;
+            
+            let cellEl = gridEl.children[r * cols + c];
+            
+            if(cellData.flagged) {
+                cellData.flagged = false;
+                cellEl.innerHTML = '';
+                flagsLeft++;
+            } else {
+                if(flagsLeft > 0) {
+                    cellData.flagged = true;
+                    cellEl.innerHTML = '<i class="fa-solid fa-flag text-red-600"></i>';
+                    flagsLeft--;
+                }
+            }
+            document.getElementById('game-flags').innerText = flagsLeft;
+        }
+
+        function revealCell(r, c) {
+            let cellData = grid[r][c];
+            if(cellData.revealed || cellData.flagged) return;
+            
+            cellData.revealed = true;
+            revealedCount++;
+            let cellEl = gridEl.children[r * cols + c];
+            cellEl.classList.add('revealed');
+            
+            if(cellData.neighborMines > 0) {
+                cellEl.innerText = cellData.neighborMines;
+                cellEl.classList.add('cell-' + cellData.neighborMines);
+            } else {
+                // Flood fill
+                for(let rr = r-1; rr <= r+1; rr++) {
+                    for(let cc = c-1; cc <= c+1; cc++) {
+                        if(rr>=0 && rr<rows && cc>=0 && cc<cols) {
+                            revealCell(rr, cc);
+                        }
+                    }
+                }
+            }
+        }
+
+        function checkWin() {
+            if(revealedCount === (rows * cols) - mineCount) {
+                gameOver(true);
+            }
+        }
+
+        function gameOver(win) {
+            gameActive = false;
+            
+            // Reveal all mines
+            for(let r=0; r<rows; r++) {
+                for(let c=0; c<cols; c++) {
+                    if(grid[r][c].isMine) {
+                        let cellEl = gridEl.children[r * cols + c];
+                        cellEl.classList.add('revealed');
+                        if(win) {
+                            cellEl.innerHTML = '<i class="fa-solid fa-shield-halved text-green-600"></i>';
+                        } else {
+                            if(grid[r][c].flagged) {
+                                cellEl.innerHTML = '<i class="fa-solid fa-check text-green-600"></i>'; // correctly flagged
+                            } else {
+                                cellEl.innerHTML = '<i class="fa-solid fa-bug text-red-600"></i>';
+                                cellEl.style.backgroundColor = '#fca5a5';
+                            }
+                        }
+                    }
+                }
+            }
+            
+            const overlay = document.getElementById('game-overlay');
+            const msg = document.getElementById('game-msg');
+            const btn = document.getElementById('start-game-btn');
+            
+            overlay.classList.remove('hidden');
+            if(win) {
+                msg.innerText = "System Cleaned!";
+                msg.className = "text-2xl font-bold text-green-400 mb-4 uppercase font-mono";
+                btn.innerText = "Re-Scan";
+            } else {
+                msg.innerText = "Fatal Corruption (Boom)";
+                msg.className = "text-2xl font-bold text-red-500 mb-4 uppercase font-mono";
+                btn.innerText = "Reboot Scan";
+            }
+        }
+
+        // --- CERTIFICATE LOGIC ---
+        function updateCertName() {
+            let name = document.getElementById('student-name-input').value.trim();
+            if(name) {
+                if (name.includes(' ')) {
+                    name = name.split(' ')[0];
+                    document.getElementById('student-name-input').value = name;
+                    showModal('Notice', 'Only your first name has been applied to the certificate.', 'info');
+                }
+                document.getElementById('cert-student-name').innerText = name;
+            } else {
+                showModal('Wait!', 'Please enter your first name to update the certificate.', 'warning');
+            }
+        }
+
+        const today = new Date();
+        document.getElementById('cert-date').innerText = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        function downloadCert() {
+            const certEl = document.getElementById('certificate');
+            const name = document.getElementById('cert-student-name').innerText;
+            let filename = 'Certificate.png';
+            if (name && name !== 'Student') {
+                filename = `${name.replace(/\s+/g, '_')}_Certificate.png`;
+            }
+
+            const originalTransform = certEl.style.transform;
+            certEl.style.transform = 'none';
+
+            const btn = document.getElementById('download-btn');
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Generating...';
+            btn.disabled = true;
+
+            html2canvas(certEl, { 
+                scale: 2, 
+                useCORS: true,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+            }).catch(err => {
+                console.error(err);
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                showModal('Error', 'Failed to generate image. Try using a desktop browser.', 'error');
+            });
+        }
+        
+        // Initializer for empty board visualization
+        window.onload = () => {
+            initSweeper(); 
+            document.getElementById('game-overlay').classList.remove('hidden'); // keep overlay initially
+        }
+    </script>
+</body>
+</html>

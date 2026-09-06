@@ -1,0 +1,1440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 02 Section 1.2.1 Mastery - Binary</title>
+    
+    <!-- Load Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load HTML2Canvas for Certificate Download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- Load Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Qwitcher+Grypen:wght@700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f6f8; 
+            color: #1f2937;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        /* Interactive Elements CSS */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 100px;
+            background-color: #374151;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: inset 0 0 10px #000;
+            transition: 0.3s;
+        }
+        .switch .toggle {
+            position: absolute;
+            bottom: 5px;
+            left: 5px;
+            width: 50px;
+            height: 45px;
+            background: linear-gradient(to bottom, #ef4444, #991b1b);
+            border-radius: 5px;
+            transition: 0.3s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+        }
+        .switch.on .toggle {
+            bottom: 50px;
+            background: linear-gradient(to bottom, #22c55e, #166534);
+        }
+        .switch-label { font-family: 'Share Tech Mono', monospace; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #e5e7eb; }
+        ::-webkit-scrollbar-thumb { background: #4f46e5; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #3730a3; }
+
+        /* Retro Game Canvas */
+        #game-canvas {
+            background-color: #0f172a;
+            border: 4px solid #334155;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+            max-width: 100%;
+            height: auto;
+            touch-action: none;
+        }
+        input[type=range] {
+            accent-color: #4f46e5;
+        }
+
+        /* --- CERTIFICATE STYLES --- */
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .font-body { font-family: 'Lora', serif; }
+        .font-script { font-family: 'Qwitcher Grypen', cursive; }
+        
+        .cert-preview-container {
+            width: 100%;
+            overflow: auto;
+            display: flex;
+            justify-content: center;
+            background: #e5e7eb;
+            padding: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        #certificate {
+            width: 1056px !important;
+            height: 816px !important;
+            flex-shrink: 0;
+            background-color: #ffffff;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1056" height="816"><polygon points="0,0 250,0 0,650" fill="%23c7d2fe"/><polygon points="0,0 350,0 0,900" fill="%23818cf8" opacity="0.8"/><polygon points="0,0 120,0 0,300" fill="%234f46e5"/><polygon points="0,450 650,816 0,816" fill="%23c7d2fe"/><polygon points="0,550 450,816 0,816" fill="%23818cf8" opacity="0.8"/><polygon points="800,0 1056,0 1056,256" fill="%23f3f4f6"/><polygon points="1056,500 1056,816 750,816" fill="%23f3f4f6"/></svg>');
+            background-size: cover;
+            border: 4px solid #e5e7eb;
+        }
+
+        .gold-seal {
+            position: absolute;
+            left: 110px;
+            top: 350px;
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c, #fcf6ba);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3), inset 0 0 15px rgba(255,255,255,0.7), inset 0 0 25px rgba(139,105,20,0.9);
+            z-index: 10;
+        }
+        .gold-seal::before {
+            content: '';
+            position: absolute;
+            top: -4px; bottom: -4px; left: -4px; right: -4px;
+            border-radius: 50%;
+            border: 6px dashed #d4af37;
+        }
+        .gold-seal-inner-1 {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 2px solid rgba(139, 105, 20, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #e8c678, #dbab46);
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.2), 0 2px 5px rgba(255,255,255,0.7);
+            z-index: 1;
+        }
+        .gold-seal-inner-2 {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: radial-gradient(circle, #fcf6ba, #d4af37);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            padding: 10px;
+        }
+        .embossed-text {
+            color: #b38728;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2);
+            font-family: 'Playfair Display', serif;
+            font-weight: 800;
+            line-height: 1.1;
+            text-transform: uppercase;
+        }
+        .embossed-text-large { font-size: 14px; letter-spacing: 1px; }
+        .embossed-text-small { font-size: 11px; letter-spacing: 2px; margin: 2px 0; }
+        .embossed-star { font-size: 12px; color: #b38728; text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2); margin: 2px 0; }
+
+        @media (max-width: 1100px) {
+            #certificate { transform: scale(0.7); transform-origin: top left; margin-bottom: -240px; margin-right: -310px; }
+        }
+        @media (max-width: 768px) {
+            #certificate { transform: scale(0.4); transform-origin: top left; margin-bottom: -490px; margin-right: -630px; }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <nav class="bg-indigo-800 text-white shadow-lg sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-network-wired text-2xl"></i>
+                    <span class="font-bold text-xl tracking-wider hidden sm:inline-block">Tech+ Unit 02 Section 1.2.1</span>
+                    <span class="font-bold text-xl tracking-wider sm:hidden">1.2.1</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-2">
+                        <button onclick="switchTab('briefing')" class="nav-btn bg-indigo-950 px-3 py-2 rounded-md text-sm font-medium hover:bg-indigo-600 transition" id="nav-briefing"><i class="fa-solid fa-book-open mr-1"></i>Briefing</button>
+                        <button onclick="switchTab('activity')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-indigo-600 transition" id="nav-activity"><i class="fa-solid fa-flask mr-1"></i>Lab Activity</button>
+                        <button onclick="switchTab('quiz')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-indigo-600 transition" id="nav-quiz"><i class="fa-solid fa-clipboard-check mr-1"></i>Quiz</button>
+                        <button onclick="switchTab('game')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-gray-400 cursor-not-allowed transition" id="nav-game" disabled><i class="fa-solid fa-lock mr-1"></i>Game</button>
+                        <button onclick="switchTab('cert')" class="nav-btn hidden px-3 py-2 rounded-md text-sm font-medium text-yellow-300 hover:bg-indigo-600 transition" id="nav-cert"><i class="fa-solid fa-award mr-1"></i>Certificate</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Nav -->
+        <div class="md:hidden flex flex-wrap justify-center gap-2 py-2 px-2 bg-indigo-900">
+            <button onclick="switchTab('briefing')" class="nav-btn-mobile px-3 py-1 text-sm rounded bg-indigo-950" id="nav-briefing-mobile">Briefing</button>
+            <button onclick="switchTab('activity')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-activity-mobile">Lab</button>
+            <button onclick="switchTab('quiz')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-quiz-mobile">Quiz</button>
+            <button onclick="switchTab('game')" class="nav-btn-mobile px-3 py-1 text-sm rounded text-gray-400 cursor-not-allowed" id="nav-game-mobile" disabled><i class="fa-solid fa-lock"></i></button>
+            <button onclick="switchTab('cert')" id="nav-cert-mobile" class="hidden px-2 py-1 text-sm text-yellow-300 rounded"><i class="fa-solid fa-award"></i></button>
+        </div>
+    </nav>
+
+    <main class="flex-grow w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <!-- BRIEFING SECTION -->
+        <div id="briefing-section" class="tab-content active no-print">
+            <div class="text-center mb-10">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">The Binary Number System</h1>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">Why do computers only speak in 1s and 0s, and how can we learn their language? Explore the fundamental logic that powers all modern digital technology.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- Tile 1 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-indigo-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-indigo-800"><i class="fa-solid fa-microchip mr-2"></i>Binary & Hardware</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Base-2 System:</strong> A mathematical system utilizing only two digits: 0 and 1.</li>
+                            <li><strong>Transistors:</strong> Microscopic electronic switches that represent physical states of On (1) or Off (0).</li>
+                            <li><strong>Logic Gates:</strong> Circuits that use binary inputs to perform logical operations (AND, OR, NOT).</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('hardware-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('hardware-usecase')" class="flex-1 bg-indigo-100 hover:bg-indigo-200 text-indigo-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 2 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-cyan-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-cyan-700"><i class="fa-solid fa-database mr-2"></i>Bits, Bytes, & Storage</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>The Bit:</strong> Short for "binary digit," the absolute smallest unit of digital data.</li>
+                            <li><strong>The Byte:</strong> A collection of 8 bits, capable of representing 256 unique combinations.</li>
+                            <li><strong>Scaling Up:</strong> Storage multiplies rapidly into Kilobytes (KB), Megabytes (MB), and Gigabytes (GB).</li>
+                        </ul>
+                    </div>
+                     <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('storage-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('storage-usecase')" class="flex-1 bg-cyan-100 hover:bg-cyan-200 text-cyan-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 3 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-emerald-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-emerald-700"><i class="fa-solid fa-calculator mr-2"></i>Binary Conversions</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Powers of 2:</strong> Binary place values double as you move left: 1, 2, 4, 8, 16, 32, 64, 128...</li>
+                            <li><strong>Binary to Decimal:</strong> Achieved by multiplying set bits by their place value and adding them together.</li>
+                            <li><strong>Decimal to Binary:</strong> Achieved by dividing the decimal by 2 and recording the remainders.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('conversion-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('conversion-usecase')" class="flex-1 bg-emerald-100 hover:bg-emerald-200 text-emerald-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 4 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-fuchsia-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-fuchsia-700"><i class="fa-solid fa-language mr-2"></i>Information Coding</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>ASCII:</strong> American Standard Code for Information Interchange; maps text characters to binary numbers.</li>
+                            <li><strong>Case Sensitivity:</strong> Capital 'A' (01000001) and lowercase 'a' (01100001) possess entirely distinct binary values.</li>
+                            <li><strong>Unicode:</strong> A global expansion of ASCII designed to support characters from every language, plus emojis.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('coding-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('coding-usecase')" class="flex-1 bg-fuchsia-100 hover:bg-fuchsia-200 text-fuchsia-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 flex justify-center">
+                <button onclick="switchTab('activity')" class="bg-indigo-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-indigo-500 shadow-lg transition transform hover:scale-105">Proceed to Lab Activities <i class="fa-solid fa-arrow-right ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- LAB ACTIVITY SECTION -->
+        <div id="activity-section" class="tab-content no-print">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Interactive Binary Labs</h1>
+                <p class="text-gray-600">Apply your knowledge of Base-2 mathematics and ASCII encoding in these hands-on simulations.</p>
+            </div>
+
+            <!-- Lab 1: Hardware Switchboard (Binary to Decimal) -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-2 text-indigo-700"><i class="fa-solid fa-toggle-on mr-2"></i>Lab 1: Hardware Power Routing</h2>
+                <p class="text-sm text-gray-600 mb-6">The main generator requires exactly <strong id="target-decimal" class="text-xl text-red-600 border px-2 py-1 rounded bg-red-50">0</strong> volts to stabilize. Flip the binary switches (0 or 1) below to combine powers of 2 until your current output matches the target requirement.</p>
+                
+                <div class="flex flex-col items-center">
+                    <!-- Score Board -->
+                    <div class="bg-gray-900 text-green-400 font-mono text-3xl px-6 py-3 rounded-lg mb-8 shadow-inner w-64 text-center border-4 border-gray-700">
+                        OUTPUT: <span id="current-decimal">0</span>
+                    </div>
+
+                    <!-- Switches -->
+                    <div class="flex flex-wrap justify-center gap-2 sm:gap-6 mb-8">
+                        <div class="flex flex-col items-center">
+                            <span class="switch-label text-gray-500 mb-2 font-bold">128</span>
+                            <div class="switch" onclick="toggleSwitch(this, 128)">
+                                <div class="toggle"></div>
+                            </div>
+                            <span class="switch-label font-mono mt-2 text-lg bit-val">0</span>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <span class="switch-label text-gray-500 mb-2 font-bold">64</span>
+                            <div class="switch" onclick="toggleSwitch(this, 64)">
+                                <div class="toggle"></div>
+                            </div>
+                            <span class="switch-label font-mono mt-2 text-lg bit-val">0</span>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <span class="switch-label text-gray-500 mb-2 font-bold">32</span>
+                            <div class="switch" onclick="toggleSwitch(this, 32)">
+                                <div class="toggle"></div>
+                            </div>
+                            <span class="switch-label font-mono mt-2 text-lg bit-val">0</span>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <span class="switch-label text-gray-500 mb-2 font-bold">16</span>
+                            <div class="switch" onclick="toggleSwitch(this, 16)">
+                                <div class="toggle"></div>
+                            </div>
+                            <span class="switch-label font-mono mt-2 text-lg bit-val">0</span>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <span class="switch-label text-gray-500 mb-2 font-bold">8</span>
+                            <div class="switch" onclick="toggleSwitch(this, 8)">
+                                <div class="toggle"></div>
+                            </div>
+                            <span class="switch-label font-mono mt-2 text-lg bit-val">0</span>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <span class="switch-label text-gray-500 mb-2 font-bold">4</span>
+                            <div class="switch" onclick="toggleSwitch(this, 4)">
+                                <div class="toggle"></div>
+                            </div>
+                            <span class="switch-label font-mono mt-2 text-lg bit-val">0</span>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <span class="switch-label text-gray-500 mb-2 font-bold">2</span>
+                            <div class="switch" onclick="toggleSwitch(this, 2)">
+                                <div class="toggle"></div>
+                            </div>
+                            <span class="switch-label font-mono mt-2 text-lg bit-val">0</span>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <span class="switch-label text-gray-500 mb-2 font-bold">1</span>
+                            <div class="switch" onclick="toggleSwitch(this, 1)">
+                                <div class="toggle"></div>
+                            </div>
+                            <span class="switch-label font-mono mt-2 text-lg bit-val">0</span>
+                        </div>
+                    </div>
+                    
+                    <button onclick="newTarget()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded text-sm transition">Generate New Target</button>
+                </div>
+            </div>
+
+            <!-- Lab 2: ASCII Decryption -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-2 text-fuchsia-700"><i class="fa-solid fa-satellite-dish mr-2"></i>Lab 2: Signal Intercept (ASCII Decoder)</h2>
+                <p class="text-sm text-gray-600 mb-4">We have intercepted a 4-byte binary signal. Use your knowledge of the ASCII standard to decode the hidden text message. Note: 0100 indicates an uppercase letter, while 0110 indicates a lowercase letter.</p>
+                
+                <div class="flex flex-col md:flex-row gap-6">
+                    <!-- Reference Table -->
+                    <div class="md:w-1/3 bg-gray-50 border border-gray-200 rounded p-4 h-64 overflow-y-auto text-sm font-mono">
+                        <h3 class="font-bold border-b border-gray-300 pb-1 mb-2">ASCII Reference</h3>
+                        <div class="grid grid-cols-2 gap-2 text-xs">
+                            <div>0100 0011 : C</div>
+                            <div>0110 0011 : c</div>
+                            <div>0100 1000 : H</div>
+                            <div>0110 1000 : h</div>
+                            <div>0101 1001 : Y</div>
+                            <div>0111 1001 : y</div>
+                            <div>0100 0010 : B</div>
+                            <div>0110 0010 : b</div>
+                            <div>0100 0101 : E</div>
+                            <div>0110 0101 : e</div>
+                            <div>0101 0010 : R</div>
+                            <div>0111 0010 : r</div>
+                            <div>0100 0001 : A</div>
+                            <div>0110 0001 : a</div>
+                            <div>0101 0100 : T</div>
+                            <div>0111 0100 : t</div>
+                            <div>0010 0001 : !</div>
+                            <div>0011 1111 : ?</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Intercept UI -->
+                    <div class="md:w-2/3 flex flex-col justify-center items-center bg-gray-900 rounded-lg p-6 border-2 border-gray-700">
+                        <p class="text-gray-400 font-mono text-sm mb-2">INCOMING SIGNAL...</p>
+                        <div id="intercept-binary" class="text-green-400 font-mono text-lg md:text-2xl tracking-widest mb-6 text-center">
+                            01000011 01111001 01100010 01100101
+                        </div>
+                        
+                        <div class="flex items-center gap-2">
+                            <input type="text" id="ascii-input" maxlength="4" placeholder="Type 4 chars" class="bg-gray-800 text-white font-mono text-center border-2 border-gray-600 rounded px-4 py-2 w-40 focus:border-green-500 focus:outline-none uppercase">
+                            <button onclick="checkDecryption()" class="bg-fuchsia-700 hover:bg-fuchsia-600 text-white px-6 py-2 rounded font-bold transition">DECRYPT</button>
+                        </div>
+                        <div id="decrypt-feedback" class="mt-4 h-6 text-sm font-bold font-mono"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center">
+                <button onclick="switchTab('quiz')" class="bg-indigo-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-indigo-500 shadow-lg transition transform hover:scale-105">Take the Mastery Quiz <i class="fa-solid fa-clipboard-check ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- QUIZ SECTION -->
+        <div id="quiz-section" class="tab-content no-print">
+            <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-xl max-w-4xl mx-auto">
+                <div class="text-center mb-8 border-b pb-4">
+                    <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Unit 02 Section 1.2.1 Mastery Quiz</h1>
+                    <p class="text-gray-600">Score 90% or higher (18/20) to earn your Certificate of Mastery and unlock the Retro Game!</p>
+                </div>
+
+                <div id="quiz-container" class="space-y-8">
+                    <!-- Questions injected via JS -->
+                </div>
+
+                <div class="mt-10 text-center border-t pt-6 flex flex-col md:flex-row justify-center items-center gap-4">
+                    <button id="submit-quiz-btn" onclick="gradeQuiz()" class="bg-indigo-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-indigo-700 shadow-lg transition w-full md:w-auto">Submit Quiz</button>
+                    <button id="proceed-game-btn" onclick="switchTab('game')" class="hidden bg-emerald-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-emerald-700 shadow-lg transition w-full md:w-auto">Play Retro Game <i class="fa-solid fa-gamepad ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RETRO GAME SECTION -->
+        <div id="game-section" class="tab-content no-print">
+            <div class="bg-gray-800 p-6 sm:p-8 rounded-2xl shadow-xl max-w-4xl mx-auto border-4 border-gray-600 flex flex-col items-center">
+                <div class="text-center mb-4 w-full">
+                    <h1 class="text-3xl font-extrabold text-yellow-400 mb-2 tracking-widest uppercase" style="font-family: 'Share Tech Mono', monospace;">Scorched Artillery</h1>
+                    <p class="text-gray-300 text-sm">You must calculate the correct trajectory to transmit the data payload over the firewall mountain to the target server. Adjust your angle and transmission power, then FIRE! You have 10 packets (shots).</p>
+                </div>
+                
+                <div class="flex justify-between items-center w-full max-w-[600px] mb-2 px-4 text-white font-mono text-lg">
+                    <div>Hits: <span id="game-score" class="text-green-400 font-bold">0</span></div>
+                    <div>Packets: <span id="game-ammo" class="text-red-400 font-bold">10</span></div>
+                </div>
+
+                <div class="relative flex justify-center w-full mb-6">
+                    <!-- Game Canvas -->
+                    <canvas id="game-canvas" width="600" height="400" class="w-full max-w-[600px] bg-slate-900 border-2 border-slate-700 rounded shadow-lg"></canvas>
+                    
+                    <!-- Overlay Start Button -->
+                    <div id="game-overlay" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-70 rounded-lg max-w-[600px] mx-auto z-10">
+                        <button id="start-game-btn" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold font-mono py-3 px-6 rounded-lg text-xl border-4 border-indigo-800 uppercase transform transition hover:scale-105">Initiate Link (Start)</button>
+                    </div>
+                </div>
+
+                <!-- Controls -->
+                <div class="w-full max-w-[600px] bg-gray-900 p-4 rounded-lg border border-gray-700 flex flex-col sm:flex-row items-center gap-6">
+                    <div class="flex-1 w-full">
+                        <label class="block text-gray-400 font-mono text-sm mb-1">Angle: <span id="angle-val" class="text-white">45</span>°</label>
+                        <input type="range" id="angle-input" min="0" max="90" value="45" class="w-full">
+                    </div>
+                    <div class="flex-1 w-full">
+                        <label class="block text-gray-400 font-mono text-sm mb-1">Power: <span id="power-val" class="text-white">50</span>%</label>
+                        <input type="range" id="power-input" min="10" max="100" value="50" class="w-full">
+                    </div>
+                    <div class="flex-none w-full sm:w-auto">
+                        <button id="fire-btn" onclick="fireArtillery()" class="w-full sm:w-auto bg-red-600 hover:bg-red-500 text-white font-black font-mono py-4 px-8 rounded shadow-lg transition active:transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">FIRE</button>
+                    </div>
+                </div>
+
+                <div class="mt-8 text-center w-full border-t border-gray-700 pt-6">
+                    <button onclick="switchTab('cert')" class="bg-indigo-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-indigo-700 shadow-lg transition w-full md:w-auto">View Certificate <i class="fa-solid fa-award ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CERTIFICATE SECTION -->
+        <div id="cert-section" class="tab-content">
+            <div class="max-w-5xl mx-auto">
+                
+                <!-- Controls -->
+                <div class="bg-white p-6 rounded shadow mb-6 no-print text-center border border-gray-200">
+                    <h2 class="text-2xl font-bold text-indigo-700 mb-2">🎉 Congratulations! 🎉</h2>
+                    <p class="text-gray-700 mb-4">You have achieved mastery of the Binary Number System and Information Coding.</p>
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+                        <input type="text" id="student-name-input" value="Student" placeholder="Enter your first name" class="border-2 border-gray-300 rounded px-4 py-2 w-full md:w-64 focus:border-indigo-500 focus:outline-none">
+                        <button onclick="updateCertName()" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition">Update Name</button>
+                        <button id="download-btn" onclick="downloadCert()" class="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900 transition flex items-center justify-center">
+                            <i class="fa-solid fa-download mr-2"></i>Download PNG
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Certificate Render Container -->
+                <div class="cert-preview-container print:p-0 print:bg-white">
+                    <div id="certificate">
+                        <div class="gold-seal">
+                            <div class="gold-seal-inner-1">
+                                <div class="gold-seal-inner-2">
+                                     <span class="embossed-text embossed-text-large">Certificate</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-small">Of</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-large">Excellence</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="relative z-20 w-full h-full flex flex-col pt-[48px] pl-[380px] pr-[48px]">
+                            <h1 class="text-[#312e81] text-[4.5rem] leading-none font-serif font-bold tracking-wide uppercase mb-2">CERTIFICATE</h1>
+                            <h2 class="text-gray-800 text-3xl font-serif tracking-widest uppercase mb-10">Of Achievement</h2>
+                            
+                            <p class="text-[1.4rem] font-body text-gray-800 mb-4">This is to certify that</p>
+                            
+                            <div class="relative mb-8 w-full">
+                                <h3 id="cert-student-name" class="text-[4rem] text-[#312e81] font-serif italic leading-none pb-2 relative z-10 text-center w-full block">Student</h3>
+                                <div class="w-full border-b-[2px] border-[#312e81] absolute bottom-[4px] left-0 z-0"></div>
+                                <div class="w-full border-b-[2px] border-dotted border-indigo-400 absolute bottom-[0px] left-0 z-0"></div>
+                            </div>
+                            
+                            <p class="text-[1.3rem] font-body text-gray-800 leading-relaxed w-full pr-4">
+                                Has successfully completed the assessment for 
+                                <strong class="text-[1.8rem] text-[#312e81] block mt-4 mb-2 font-serif">Tech+ Unit 02 Section 1.2.1</strong>
+                                <strong class="text-[1.5rem] text-black block mb-4 font-serif italic">Binary and Notational Systems</strong>
+                                <span class="text-[1.1rem] text-gray-700 leading-snug block">Demonstrating comprehensive proficiency in base-2 mathematics, hardware abstraction via logic gates, storage units, data conversion, and ASCII/Unicode character encoding.</span>
+                            </p>
+                            
+                            <div class="flex justify-end gap-16 items-end mt-auto mb-[60px] w-full pr-8">
+                                <div class="w-64">
+                                    <div class="border-b border-gray-600 mb-2 h-20 flex items-end justify-center relative">
+                                        <span class="font-script text-[5rem] text-[#312e81] absolute bottom-[-10px] transform -rotate-3 opacity-90">Dr. M. S</span>
+                                    </div>
+                                    <p class="font-serif text-xl text-gray-800 text-center">Administration</p>
+                                </div>
+                                
+                                <div class="w-64">
+                                    <div class="border-b border-gray-600 mb-2 text-center h-20 flex items-end justify-center">
+                                        <p id="cert-date" class="font-body text-2xl text-gray-800 pb-1">Date Here</p>
+                                    </div>
+                                    <p class="font-serif text-xl text-gray-800 text-center">Date</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Custom Modal for Alerts -->
+    <div id="custom-modal" class="fixed inset-0 bg-black bg-opacity-50 z-[100] hidden flex justify-center items-center backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all">
+            <div class="text-center">
+                <div id="modal-icon" class="text-5xl mb-4"></div>
+                <h3 id="modal-title" class="text-2xl font-bold mb-2 text-gray-900"></h3>
+                <p id="modal-msg" class="text-gray-600 mb-6"></p>
+                <button onclick="closeModal()" class="bg-indigo-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-indigo-700 transition w-full">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Briefing Modal -->
+    <div id="briefing-modal" class="fixed inset-0 bg-black bg-opacity-70 z-[120] hidden flex justify-center items-center backdrop-blur-sm p-4 sm:p-6">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col transform transition-all overflow-hidden border-4 border-indigo-700">
+            <div class="p-6 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+                <div class="flex items-center gap-4">
+                    <div id="briefing-modal-icon" class="text-4xl"></div>
+                    <h3 id="briefing-modal-title" class="text-2xl md:text-3xl font-bold text-gray-900"></h3>
+                </div>
+                <button onclick="closeBriefing()" class="text-gray-400 hover:text-red-600 transition text-4xl leading-none">&times;</button>
+            </div>
+            <div id="briefing-modal-content" class="p-6 md:p-10 overflow-y-auto flex-grow text-gray-700 text-lg leading-relaxed bg-white">
+                <!-- Dynamic Content Injected Here -->
+            </div>
+            <div class="p-6 border-t border-gray-200 bg-gray-50 flex justify-end">
+                <button onclick="closeBriefing()" class="bg-indigo-700 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-indigo-800 transition shadow-md">Acknowledge & Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Extensive Briefing Content Data (Min 7 Paragraphs per detail, specific structure for Use Cases) ---
+        const briefingData = {
+            'hardware-details': {
+                title: 'Binary & Hardware Abstraction',
+                icon: '<i class="fa-solid fa-microchip text-indigo-600"></i>',
+                html: `
+                    <p class="mb-5">At the most fundamental level, humans use the decimal number system, known as base-10, because we have ten fingers. We count using the digits zero through nine. However, computers are not biological; they are electronic. It is extraordinarily difficult to engineer an electronic component that can reliably hold ten distinct levels of voltage to represent numbers 0 through 9. Instead, engineers developed the binary number system, or base-2, which relies entirely on just two digits: 0 and 1.</p>
+                    
+                    <p class="mb-5">This binary mathematical system directly corresponds to the physical hardware of a computer. Inside the central processing unit (CPU) and memory chips are billions of microscopic electronic switches known as transistors. A transistor essentially operates like a highly advanced light switch. It can either allow electricity to flow through it, or it can block electricity from flowing. Because there are only two physical states, the binary system is the perfect language to describe them.</p>
+                    
+                    <p class="mb-5">When a transistor is switched "On" and electricity is flowing at a specific voltage threshold (often historically around 5 volts, though much lower in modern chips), the computer interprets this state as a binary '1'. Conversely, when the transistor is switched "Off" and the voltage drops to near 0 volts, the computer interprets this state as a binary '0'. Everything a computer does is built upon rapidly manipulating these high and low voltage states.</p>
+                    
+                    <p class="mb-5">To do meaningful work, these transistors are wired together in specific configurations to create what are known as Logic Gates. Logic gates are the fundamental building blocks of digital circuits. They take one or more binary inputs (1s and 0s) and produce a single binary output based on a specific rule of Boolean logic. The most common logic gates are AND, OR, and NOT gates.</p>
+                    
+                    <p class="mb-5">For example, an AND gate requires both of its inputs to be a '1' in order to output a '1'. If either input is a '0', the output is '0'. An OR gate outputs a '1' if either or both of its inputs are a '1'. A NOT gate is a simple inverter; if you input a '1', it outputs a '0'. By stringing millions of these simple logic gates together in incredibly complex patterns, a processor can add numbers, compare values, and execute software code.</p>
+                    
+                    <p class="mb-5">This direct relationship between software (binary code) and hardware (transistors) is why we say computers "only speak in 1s and 0s." No matter how advanced a modern software application appears—whether it is a photorealistic 3D video game or an artificial intelligence model—at the absolute bottom level, it is simply a massive sequence of binary instructions telling physical microscopic switches to open or close.</p>
+                    
+                    <p>Historically, early computers like the ENIAC used massive, physical vacuum tubes instead of microscopic transistors. A technician actually had to walk inside the machine to replace burnt-out tubes. While the technology has scaled down from the size of a room to a chip smaller than a fingernail, the underlying binary logic that powers the hardware remains exactly the same today as it was decades ago.</p>
+                `
+            },
+            'hardware-usecase': {
+                title: 'Binary & Hardware: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-indigo-800 mb-2 border-b-2 border-indigo-200 pb-1">Case 1: Processor Manufacturing</h4>
+                        <p class="mb-2">When companies like Intel or AMD design new CPUs, they are fundamentally engineering microscopic architectures to handle binary logic more efficiently.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Transistor Density):</strong> A manufacturer shrinks the size of transistors from 14 nanometers down to 7 nanometers. This allows them to pack billions more switches onto a single chip, drastically increasing the amount of binary data (1s and 0s) the chip can process simultaneously.</li>
+                            <li><strong>Example 2 (Logic Design):</strong> Engineers design a specific arrangement of AND and XOR logic gates to create an Arithmetic Logic Unit (ALU) circuit dedicated exclusively to rapidly adding binary numbers together, speeding up mathematical software.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-indigo-800 mb-2 border-b-2 border-indigo-200 pb-1">Case 2: Machine Code Execution</h4>
+                        <p class="mb-2">When software is finally executed, it must be compiled down to binary machine code that the physical hardware can understand.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Instruction Sets):</strong> A programmer writes a command in Python. The computer compiles this high-level code down into a specific binary string (e.g., 10110000 01100001). The CPU's hardware is hardwired to recognize that specific binary pattern as the physical instruction to "move data to a memory register."</li>
+                            <li><strong>Example 2 (Firmware):</strong> A network router receives a firmware update. The update is essentially replacing the old sequence of binary instructions stored on the router's ROM chip with a new sequence of 1s and 0s to improve how its hardware gates route network traffic.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Microscopic Transistors</p>
+                            <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&h=350" alt="Close up of a computer microchip processor" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Data Center Processing</p>
+                            <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=600&h=350" alt="Server racks in a data center executing machine code" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'storage-details': {
+                title: 'Bits, Bytes, & Storage Units',
+                icon: '<i class="fa-solid fa-database text-cyan-600"></i>',
+                html: `
+                    <p class="mb-5">In the digital world, data is not measured in inches or pounds; it is measured in binary units. The absolute smallest unit of digital data is the <strong>Bit</strong>. The word "bit" is a portmanteau, a blending of the words "binary digit." A single bit can hold precisely one piece of information: it is either a 0 or a 1. However, a single bit is generally too small to represent meaningful information on its own, such as a letter of the alphabet or a color on a screen.</p>
+                    
+                    <p class="mb-5">To make data useful, computers group bits together. The most standard grouping is the <strong>Byte</strong>. A byte consists of exactly eight bits. Because each of the 8 bits can be in two states (0 or 1), a single byte can represent 2 to the 8th power ($2^8$), or 256 unique combinations. These combinations range from 00000000 (decimal 0) up to 11111111 (decimal 255). The byte is the foundational block of modern computing storage.</p>
+                    
+                    <p class="mb-5">Historically, computer scientists also referred to a half-byte—a grouping of four bits—as a <strong>Nibble</strong>. A nibble can represent 16 unique values ($2^4$), which perfectly aligns with the hexadecimal (base-16) number system commonly used by programmers to shorten long strings of binary. While "nibble" sounds like a joke, it is an actual technical term you may encounter when studying data structures or assembly language.</p>
+                    
+                    <p class="mb-5">As technology rapidly advanced, grouping data into single bytes became insufficient. The industry adopted standard metric prefixes to describe larger collections of bytes. A Kilobyte (KB) is approximately one thousand bytes. A Megabyte (MB) is about one million bytes. A Gigabyte (GB) is roughly one billion bytes, and a Terabyte (TB) is approximately one trillion bytes. These terms dictate how we measure the capacity of hard drives, RAM, and file sizes today.</p>
+                    
+                    <p class="mb-5">It is crucial to note a technical discrepancy in these prefixes. Because computers operate in base-2, a true binary "Kilo" is actually 1,024 ($2^{10}$), not exactly 1,000 (which is base-10). Therefore, a true binary Kilobyte is 1,024 bytes. To resolve confusion, the International Electrotechnical Commission introduced terms like Kibibyte (KiB) for exactly 1,024 bytes, while Kilobyte (KB) technically refers to 1,000 bytes. However, Windows operating systems still confusingly use "KB" to mean 1,024 bytes.</p>
+                    
+                    <p class="mb-5">Another critical concept related to bits and bytes is the <strong>Word Size</strong> of a processor. You often hear about "32-bit" or "64-bit" operating systems and processors. This refers to the number of bits the CPU can process as a single unit, or "word," at one time. A 64-bit processor can grab data from RAM in massive 64-bit chunks, making it significantly faster and capable of addressing vastly more memory than an older 32-bit processor.</p>
+                    
+                    <p>Understanding the difference between bits and bytes is essential for IT professionals, especially in networking. Storage capacity (like a 500 GB hard drive) is almost always measured in Bytes (capital 'B'). However, network transmission speeds (like a 100 Mbps internet connection) are traditionally measured in bits (lowercase 'b'). Therefore, a 100 Megabit per second connection only downloads about 12.5 Megabytes of a file per second, since you must divide the bits by 8.</p>
+                `
+            },
+            'storage-usecase': {
+                title: 'Bits, Bytes, & Storage: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-cyan-800 mb-2 border-b-2 border-cyan-200 pb-1">Case 1: Calculating Storage Capacity</h4>
+                        <p class="mb-2">IT professionals must constantly evaluate file sizes against physical storage limits to ensure servers and devices do not run out of memory.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (File Sizes):</strong> A user needs to back up a folder containing 3,000 high-resolution photos. Each photo is 5 Megabytes (MB). The IT tech calculates the total is 15,000 MB, which is roughly 15 Gigabytes (GB). They provide the user with a 32 GB flash drive, knowing it has more than enough capacity.</li>
+                            <li><strong>Example 2 (The 1024 Discrepancy):</strong> A customer buys a "1 Terabyte (TB)" hard drive but complains that Windows only shows it has 931 GB of free space. The IT tech explains the manufacturer used base-10 mathematics (1,000,000,000,000 bytes = 1 TB), while Windows uses base-2 mathematics to read the bytes (dividing by 1024 three times), resulting in the smaller 931 GB number.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-cyan-800 mb-2 border-b-2 border-cyan-200 pb-1">Case 2: Network Bandwidth vs. Download Speed</h4>
+                        <p class="mb-2">Understanding the capitalization of 'b' (bits) versus 'B' (Bytes) is critical when dealing with Internet Service Providers (ISPs) and network downloads.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Bits vs Bytes):</strong> A business pays for a "Gigabit" fiber internet connection (1 Gbps). An employee complains a 1 Gigabyte (1 GB) video file takes 8 seconds to download instead of 1 second. The tech explains that 1 Gigabit per second is measuring individual bits; since there are 8 bits in a Byte, the maximum download speed is actually 125 MegaBytes per second (MB/s).</li>
+                            <li><strong>Example 2 (Streaming):</strong> A network administrator is calculating if the office Wi-Fi can support a training video. The 4K video stream requires 25 Mbps (Megabits per second). With a total network capacity of 500 Mbps, the admin determines exactly 20 employees can watch the video simultaneously before the network congests.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Physical RAM Storage</p>
+                            <img src="https://images.unsplash.com/photo-1562976540-1502f7592304?auto=format&fit=crop&w=600&h=350" alt="Computer RAM sticks representing Bytes" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Downloading Files</p>
+                            <img src="https://images.unsplash.com/photo-1614064641913-a520f16e2dc8?auto=format&fit=crop&w=600&h=350" alt="Laptop screen showing network connection and download concepts" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'conversion-details': {
+                title: 'Binary to Decimal Conversions',
+                icon: '<i class="fa-solid fa-calculator text-emerald-600"></i>',
+                html: `
+                    <p class="mb-5">To bridge the gap between human mathematics and computer hardware, we must be able to translate between the base-10 decimal system and the base-2 binary system. Both of these are <strong>Positional Number Systems</strong>. This means that the physical position of a digit determines its actual value. In base-10, reading from right to left, the positions represent powers of 10: the ones place ($10^0$), the tens place ($10^1$), the hundreds place ($10^2$), and so on. If you have the number 305, it means three 100s, zero 10s, and five 1s.</p>
+                    
+                    <p class="mb-5">Binary operates on the exact same positional logic, but instead of multiplying by powers of 10, it multiplies by <strong>Powers of 2</strong>. Reading from right to left, the binary place values are the ones place ($2^0$), the twos place ($2^1$), the fours place ($2^2$), the eights place ($2^3$), the sixteens place ($2^4$), and so forth. Each position to the left is exactly double the value of the position to its right.</p>
+                    
+                    <p class="mb-5">To convert a binary number to a decimal number, you simply look at which bits are set to '1' and add their corresponding place values together. Any bit set to '0' is ignored, as multiplying a place value by zero equals zero. For example, let us convert the 4-bit binary number <strong>1101</strong>. From left to right, the places are 8, 4, 2, and 1. We have a 1 in the 8s place, a 1 in the 4s place, a 0 in the 2s place, and a 1 in the 1s place. We add $8 + 4 + 0 + 1 = 13$. Therefore, binary 1101 is decimal 13.</p>
+                    
+                    <p class="mb-5">Converting in the opposite direction, from a decimal number into binary, requires a process of division. To convert a decimal number to binary, you repeatedly divide the decimal number by 2 and write down the remainder. In base-2, the remainder can only ever be a 0 or a 1. You continue dividing the quotient by 2 until the quotient reaches zero.</p>
+                    
+                    <p class="mb-5">Let us walk through an example of converting the decimal number <strong>14</strong> to binary. First, $14 / 2 = 7$ with a remainder of <strong>0</strong>. Next, we take the quotient 7: $7 / 2 = 3$ with a remainder of <strong>1</strong>. Next, $3 / 2 = 1$ with a remainder of <strong>1</strong>. Finally, $1 / 2 = 0$ with a remainder of <strong>1</strong>. When the quotient hits 0, we stop. We then read the remainders from bottom to top (or last calculated to first). The sequence is 1, 1, 1, 0. Therefore, decimal 14 is binary 1110.</p>
+                    
+                    <p class="mb-5">While computers are incredibly fast at calculating binary arithmetic, humans can struggle when the binary strings become very long. A 32-bit IP address might look like 11000000 10101000 00000001 00000001. If a computer attempts to add 1 to the absolute maximum binary value a memory register can hold (like adding 1 to 11111111), the number resets to zero in an error known as an <strong>Integer Overflow</strong>, which has historically caused massive software crashes and security vulnerabilities.</p>
+                    
+                    <p>To make long binary strings easier for human programmers to read and write without making errors, the <strong>Hexadecimal (base-16)</strong> number system is frequently used as a shorthand. Because 16 is a power of 2 ($2^4$), exactly four binary digits (one nibble) map perfectly to one single hexadecimal character (0-9, A-F). Therefore, an 8-bit byte like 11111111 can be written quickly as 'FF' in hexadecimal.</p>
+                `
+            },
+            'conversion-usecase': {
+                title: 'Binary Conversions: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-emerald-800 mb-2 border-b-2 border-emerald-200 pb-1">Case 1: IP Addressing and Networking</h4>
+                        <p class="mb-2">Computer networks fundamentally route traffic based on binary addresses, but humans read these addresses in decimal format.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (IPv4 Addresses):</strong> An IT technician configures a router with the IP address 192.168.1.1. The router hardware does not understand this decimal text. The OS automatically converts the four decimal numbers into four 8-bit binary bytes (11000000.10101000.00000001.00000001) so the network interface card can transmit the data as electrical pulses.</li>
+                            <li><strong>Example 2 (Subnet Masks):</strong> A network admin applies a standard Subnet Mask of 255.255.255.0 to a computer. In binary, 255 represents a full byte of 1s (11111111). The computer uses these binary 1s to perform a logical AND operation against its IP address to mathematically determine which part of the address represents the Network, and which part represents the local Host.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-emerald-800 mb-2 border-b-2 border-emerald-200 pb-1">Case 2: Color Codes and Graphics</h4>
+                        <p class="mb-2">Digital displays mix Red, Green, and Blue light to create colors, and the intensity of each color is stored as a converted binary value.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (RGB Values):</strong> A web designer sets a font color to pure Red using the RGB decimal value (255, 0, 0). The computer converts this to binary, sending maximum voltage (11111111) to the red sub-pixels on the monitor, and minimum voltage (00000000) to the green and blue sub-pixels.</li>
+                            <li><strong>Example 2 (Hexadecimal Shorthand):</strong> Instead of typing out 24 bits of binary or three decimal numbers, the web designer uses Hexadecimal shorthand to define the color in CSS. They type #FF0000. The browser immediately converts the hex 'FF' back into the binary '11111111' required by the graphics card.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Binary Code</p>
+                            <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=600&h=350" alt="Screen displaying green binary code numbers" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Network IP Addressing</p>
+                            <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=600&h=350" alt="Network switches and ethernet cables" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'coding-details': {
+                title: 'Information Coding Formats',
+                icon: '<i class="fa-solid fa-language text-fuchsia-600"></i>',
+                html: `
+                    <p class="mb-5">Binary is excellent for performing mathematical calculations, but computers must also process non-numeric data like text documents, emails, and web pages. Because hardware can only store numbers (1s and 0s), computer scientists had to invent coding systems that map specific binary numbers to specific human letters and symbols. This process is known as <strong>Character Encoding</strong>, and without it, word processing and text messaging would be impossible.</p>
+                    
+                    <p class="mb-5">In the 1960s, the computing industry standardized on <strong>ASCII</strong> (American Standard Code for Information Interchange). Original ASCII is a 7-bit code, meaning it uses 7 binary digits to represent characters, allowing for $2^7$ or 128 unique values (0 through 127). These 128 slots were assigned to the uppercase and lowercase English alphabet, numbers 0-9, common punctuation marks, and a few specialized commands.</p>
+                    
+                    <p class="mb-5">In the ASCII table, the capital letter 'A' is permanently assigned to the decimal number 65, which is 01000001 in binary. When you press 'A' on your keyboard, an electrical signal sends that exact binary string to the CPU. The computer stores 01000001 in a text file. Later, when you open the file, the text editor software reads the binary, looks it up in its internal ASCII table, sees that it maps to the 65th character, and draws the shape of an 'A' on your screen.</p>
+                    
+                    <p class="mb-5">A critical aspect of ASCII is that it is strictly <strong>Case Sensitive</strong>. The computer does not inherently know that 'A' and 'a' are related concepts. In the ASCII table, the lowercase 'a' is assigned to decimal 97, which is 01100001 in binary. Because the binary values are completely different, the computer treats them as entirely different characters. This is why passwords are case-sensitive; the system compares the literal binary strings for an exact match.</p>
+                    
+                    <p class="mb-5">Not all of the original 128 ASCII slots were used for printable letters. The first 32 numbers (0-31) were reserved for <strong>Control Characters</strong>. These were invisible commands originally intended for old physical teletype printers. For example, decimal 13 represents a "Carriage Return" (moving the printer head back to the start of the line), and decimal 7 is the "Bell" character, which would literally ring a physical bell on the printer to alert the operator.</p>
+                    
+                    <p class="mb-5">As computers evolved to use 8-bit bytes, an "Extended ASCII" standard emerged, utilizing the 8th bit to double the capacity to 256 characters. This allowed for the inclusion of accented characters used in Western European languages (like ñ or é). However, 256 characters were vastly insufficient to represent the thousands of characters required for global languages like Chinese, Japanese, or Arabic.</p>
+                    
+                    <p>To solve this global communication issue, the tech industry developed <strong>Unicode</strong>. Unicode is an expansive encoding standard that assigns a unique number to virtually every character in every language on Earth, regardless of the platform or program. Modern systems commonly use a specific implementation of Unicode called <strong>UTF-8</strong>, which is a variable-width encoding. It uses 8 bits for standard ASCII English characters to save space, but expands up to 32 bits when necessary to encode complex foreign characters and modern emojis like the smiling face (😊).</p>
+                `
+            },
+            'coding-usecase': {
+                title: 'Information Coding: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-fuchsia-800 mb-2 border-b-2 border-fuchsia-200 pb-1">Case 1: Text Data Analysis</h4>
+                        <p class="mb-2">Cybersecurity analysts frequently intercept hidden or encoded data and must translate the raw binary back into readable ASCII text to understand the threat.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Decoding Payloads):</strong> An analyst captures a suspicious network packet containing the binary string "01001000 01100001 01100011 01101011". They use a tool like CyberChef to apply an ASCII decoding recipe. The tool reads the bytes, checks the ASCII table, and reveals the hidden text message: "Hack".</li>
+                            <li><strong>Example 2 (Case Sensitivity in Passwords):</strong> A hacker steals a database of passwords, but the system required strict case sensitivity. If the user's password was "PassWord", the hacker cannot log in by typing "password" because the binary values for the uppercase P and W do not match the lowercase versions expected by the authentication server.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-fuchsia-800 mb-2 border-b-2 border-fuchsia-200 pb-1">Case 2: Global Communication</h4>
+                        <p class="mb-2">Software developers must ensure their applications can display data correctly for users all over the world, necessitating modern encoding standards.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Unicode Implementation):</strong> A developer is building a global messaging app. They configure the database to store text using the UTF-8 Unicode standard instead of old ASCII. This ensures that when a user in Japan types a Kanji character, and a user in America replies with a "Thumbs Up" emoji, both complex symbols are assigned unique binary codes and render perfectly on both screens.</li>
+                            <li><strong>Example 2 (Encoding Errors/Mojibake):</strong> A user downloads an old text file created on a Japanese system and opens it on an English computer set to a legacy encoding standard. Instead of Japanese characters, the screen displays random gibberish symbols (like Ã£Æ’Â³). The IT tech explains this happens because the computer tried to read Unicode binary using an outdated ASCII dictionary.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Text Encoding</p>
+                            <img src="https://images.unsplash.com/photo-1542831371-29b0f74f9713?auto=format&fit=crop&w=600&h=350" alt="Computer screen with code syntax" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Modern Emojis (Unicode)</p>
+                            <img src="https://images.unsplash.com/photo-1588602984180-2dbf37b67664?auto=format&fit=crop&w=600&h=350" alt="Smartphone displaying various emojis" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        // Modal Control Functions
+        function openBriefing(key) {
+            const modal = document.getElementById('briefing-modal');
+            const data = briefingData[key];
+            if(data) {
+                document.getElementById('briefing-modal-icon').innerHTML = data.icon;
+                document.getElementById('briefing-modal-title').innerText = data.title;
+                document.getElementById('briefing-modal-content').innerHTML = data.html;
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; 
+            }
+        }
+
+        function closeBriefing() {
+            document.getElementById('briefing-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto'; 
+        }
+
+        document.getElementById('briefing-modal').addEventListener('click', function(e) {
+            if(e.target === this) closeBriefing();
+        });
+        
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId + '-section').classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-indigo-950'));
+            const activeBtn = document.getElementById('nav-' + tabId);
+            if(activeBtn && tabId !== 'cert') activeBtn.classList.add('bg-indigo-950');
+            
+            document.querySelectorAll('.nav-btn-mobile').forEach(btn => btn.classList.remove('bg-indigo-950'));
+            const activeMobileBtn = document.getElementById('nav-' + tabId + '-mobile');
+            if(activeMobileBtn && tabId !== 'cert') activeMobileBtn.classList.add('bg-indigo-950');
+
+            window.scrollTo(0,0);
+
+            if (tabId === 'game' && !gameRunning && !gameOverState) {
+                drawGameStatic();
+            }
+        }
+
+        function showModal(title, message, type = 'info') {
+            const modal = document.getElementById('custom-modal');
+            const icon = document.getElementById('modal-icon');
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-msg').innerText = message;
+            
+            if(type === 'success') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-check text-green-500"></i>';
+            } else if (type === 'error') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500"></i>';
+            } else if (type === 'warning') {
+                icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-yellow-500"></i>';
+            } else {
+                icon.innerHTML = '<i class="fa-solid fa-circle-info text-blue-500"></i>';
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        // --- LAB 1: Hardware Switchboard Logic ---
+        let currentTarget = 0;
+        let switchState = { 128:0, 64:0, 32:0, 16:0, 8:0, 4:0, 2:0, 1:0 };
+        let lab1Solved = false;
+
+        function initLab1() {
+            newTarget();
+        }
+
+        function newTarget() {
+            // Generate random number between 1 and 255
+            currentTarget = Math.floor(Math.random() * 255) + 1;
+            document.getElementById('target-decimal').innerText = currentTarget;
+            
+            // Reset switches
+            document.querySelectorAll('.switch').forEach(el => {
+                el.classList.remove('on');
+            });
+            document.querySelectorAll('.bit-val').forEach(el => el.innerText = "0");
+            
+            switchState = { 128:0, 64:0, 32:0, 16:0, 8:0, 4:0, 2:0, 1:0 };
+            updateDecimal();
+        }
+
+        function toggleSwitch(el, val) {
+            el.classList.toggle('on');
+            const isOn = el.classList.contains('on');
+            switchState[val] = isOn ? 1 : 0;
+            
+            // update local bit text
+            el.nextElementSibling.innerText = isOn ? "1" : "0";
+            
+            updateDecimal();
+        }
+
+        function updateDecimal() {
+            let sum = 0;
+            for(let key in switchState) {
+                if(switchState[key] === 1) sum += parseInt(key);
+            }
+            document.getElementById('current-decimal').innerText = sum;
+            
+            if(sum === currentTarget && currentTarget !== 0) {
+                setTimeout(() => {
+                    if(!lab1Solved) {
+                        showModal('Voltage Stabilized!', `You successfully converted binary to match the ${currentTarget} decimal target.`, 'success');
+                        lab1Solved = true;
+                    }
+                }, 300);
+            }
+        }
+
+        // --- LAB 2: ASCII Decryption Logic ---
+        const decodeWords = [
+            { text: "BYTE", bin: "01000010 01011001 01010100 01000101" },
+            { text: "HACK", bin: "01001000 01000001 01000011 01011011" }, // wait, K is not in reference, I'll use words from reference
+            { text: "TECH", bin: "01010100 01000101 01000011 01001000" },
+            { text: "RATE", bin: "01010010 01000001 01010100 01000101" },
+            { text: "BYTE", bin: "01000010 01011001 01010100 01000101" },
+            { text: "BEAR", bin: "01000010 01000101 01000001 01010010" },
+            { text: "chat", bin: "01100011 01101000 01100001 01110100" },
+            { text: "byte", bin: "01100010 01111001 01110100 01100101" },
+            { text: "CYBER", bin: "01000011 01011001 01000010 01000101 01010010"} // 5 chars
+        ];
+        
+        // I'll stick to 4 chars based on the reference provided in HTML
+        const wordPool = [
+            { w: "TECH", b: "01010100 01000101 01000011 01001000" },
+            { w: "BETA", b: "01000010 01000101 01010100 01000001" },
+            { w: "chat", b: "01100011 01101000 01100001 01110100" },
+            { w: "byte", b: "01100010 01111001 01110100 01100101" },
+            { w: "RATE", b: "01010010 01000001 01010100 01000101" }
+        ];
+
+        let currentAsciiTarget = "";
+        
+        function initLab2() {
+            let rnd = wordPool[Math.floor(Math.random() * wordPool.length)];
+            currentAsciiTarget = rnd.w;
+            document.getElementById('intercept-binary').innerText = rnd.b;
+            document.getElementById('ascii-input').value = "";
+            document.getElementById('decrypt-feedback').innerText = "";
+        }
+
+        function checkDecryption() {
+            let userIn = document.getElementById('ascii-input').value;
+            // The prompt said case sensitive, but html forces uppercase visually. 
+            // We'll check exact match.
+            
+            // Wait, if the input forces uppercase, how do they type "chat"?
+            // I'll remove uppercase class from input in HTML structure (done above? wait no I added uppercase. Let's remove uppercase class via JS if it exists, or just do case insensitive for simplicity, but the lesson says case is important. Let's allow case).
+            const inputEl = document.getElementById('ascii-input');
+            inputEl.classList.remove('uppercase'); 
+
+            if(userIn === currentAsciiTarget) {
+                document.getElementById('decrypt-feedback').innerText = "Signal Decrypted! Authentication Success.";
+                document.getElementById('decrypt-feedback').className = "mt-4 h-6 text-sm font-bold font-mono text-green-400";
+                setTimeout(() => showModal('Lab 2 Complete!', `You successfully decoded the ASCII string: "${currentAsciiTarget}".`, 'success'), 500);
+            } else if (userIn.toLowerCase() === currentAsciiTarget.toLowerCase()) {
+                document.getElementById('decrypt-feedback').innerText = "Decryption Failed: Remember, ASCII is CASE SENSITIVE. Check 0100 vs 0110.";
+                document.getElementById('decrypt-feedback').className = "mt-4 h-6 text-sm font-bold font-mono text-yellow-400";
+            } else {
+                document.getElementById('decrypt-feedback').innerText = "Decryption Failed: Invalid sequence. Check reference.";
+                document.getElementById('decrypt-feedback').className = "mt-4 h-6 text-sm font-bold font-mono text-red-500";
+            }
+        }
+
+
+        // --- QUIZ LOGIC (20 Questions) ---
+        const quizData = [
+            // 10 provided from Document
+            { q: "What is the primary reason computers use the binary number system?", options: ["It is the easiest for humans to understand.", "Computers operate using electrical circuits that recognize two states: on and off.", "Binary numbers take up less memory than decimal numbers.", "The binary system was invented before the decimal system."], answer: 1 },
+            { q: "What is a bit?", options: ["A group of 8 numbers", "The smallest unit of data in computing representing either 0 or 1.", "A type of computer memory storage", "A special character in ASCII"], answer: 1 },
+            { q: "How many bits are in a byte?", options: ["4", "8", "16", "32"], answer: 1 },
+            { q: "Which of the following storage units is the largest?", options: ["1 Byte (B)", "1 Kilobyte (KB)", "1 Megabyte (MB)", "1 Gigabyte (GB)"], answer: 3 },
+            { q: "What is ASCII used for?", options: ["Converting binary into decimal numbers", "Encoding text characters into binary", "Storing images in binary format", "Compressing files for storage"], answer: 1 },
+            { q: "What is the decimal equivalent of the binary number 1010?", options: ["8", "9", "10", "11"], answer: 2 },
+            { q: "What is the binary equivalent of the decimal number 6?", options: ["100", "101", "110", "111"], answer: 2 },
+            { q: "Which of the following decimal numbers is represented by 1001 in binary?", options: ["7", "8", "9", "10"], answer: 2 },
+            { q: "What is the decimal equivalent of the binary number 1111?", options: ["12", "13", "14", "15"], answer: 3 },
+            { q: "What is the binary equivalent of the decimal number 13?", options: ["1010", "1011", "1101", "1110"], answer: 2 },
+            
+            // 10 new questions based on briefing
+            { q: "What are the fundamental building blocks of digital circuits that use binary inputs to perform logical operations?", options: ["Transistors", "Logic Gates", "Control Characters", "Nibbles"], answer: 1 },
+            { q: "How does Unicode improve upon the original ASCII standard?", options: ["It calculates decimal numbers faster.", "It uses less storage space on hard drives.", "It expands encoding to include characters from global languages and emojis.", "It forces all text to be uppercase."], answer: 2 },
+            { q: "How many unique combinations or values can a single 8-bit byte represent?", options: ["128", "256", "512", "1024"], answer: 1 },
+            { q: "In computer science, what does the term 'nibble' refer to?", options: ["A broken memory chip", "A half-byte (4 bits)", "A single binary 1", "The remainders left after division"], answer: 1 },
+            { q: "When calculating internet bandwidth, a '100 Mbps' connection transfers 100 million what?", options: ["Bytes per second", "Megabytes per second", "Bits per second", "Gigabytes per second"], answer: 2 },
+            { q: "In the binary positional number system, what decimal value does the rightmost bit represent?", options: ["The 1s place", "The 2s place", "The 10s place", "The 8s place"], answer: 0 },
+            { q: "What mathematical error occurs when a binary calculation exceeds the maximum value a register can hold (e.g., adding 1 to 11111111)?", options: ["Hexadecimal Error", "Syntax Error", "Boolean Inversion", "Integer Overflow"], answer: 3 },
+            { q: "In ASCII encoding, why do uppercase 'A' and lowercase 'a' have completely different binary values?", options: ["Because they take up different amounts of physical screen space.", "Because the computer treats them as entirely different characters in its index.", "Because lowercase letters were added to Unicode, not ASCII.", "Because 'A' is base-10 and 'a' is base-2."], answer: 1 },
+            { q: "How many bits were used in the original standard ASCII encoding system?", options: ["4 bits", "7 bits", "8 bits", "16 bits"], answer: 1 },
+            { q: "When converting a decimal number to binary by hand, what mathematical operation is primarily used to find the bits?", options: ["Multiplication by 10", "Subtraction of 2", "Repeated division by 2 to find remainders", "Adding exponents"], answer: 2 }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        
+        quizData.forEach((item, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = "bg-gray-50 p-6 rounded-lg border border-gray-200 transition-all";
+            qDiv.id = `q-block-${index}`;
+            
+            const qTitle = document.createElement('h3');
+            qTitle.className = "font-bold text-lg text-gray-800 mb-4";
+            qTitle.innerText = `${index + 1}. ${item.q}`;
+            qDiv.appendChild(qTitle);
+            
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = "space-y-3";
+            
+            item.options.forEach((opt, optIndex) => {
+                const label = document.createElement('label');
+                label.className = "flex items-center space-x-3 p-3 rounded bg-white border border-gray-300 hover:bg-indigo-50 cursor-pointer transition";
+                
+                const radio = document.createElement('input');
+                radio.type = "radio";
+                radio.name = `q${index}`;
+                radio.value = optIndex;
+                radio.className = "form-radio h-5 w-5 text-indigo-600";
+                
+                const span = document.createElement('span');
+                span.className = "text-gray-700";
+                span.innerText = opt;
+                
+                label.appendChild(radio);
+                label.appendChild(span);
+                optionsDiv.appendChild(label);
+            });
+            
+            qDiv.appendChild(optionsDiv);
+            quizContainer.appendChild(qDiv);
+        });
+
+        function gradeQuiz() {
+            let score = 0;
+            let allAnswered = true;
+
+            for(let i = 0; i < quizData.length; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if(selected) {
+                    if(parseInt(selected.value) === quizData[i].answer) {
+                        score++;
+                    }
+                } else {
+                    allAnswered = false;
+                }
+            }
+            
+            if(!allAnswered) {
+                showModal('Incomplete Quiz', 'Please answer all 20 questions before submitting.', 'warning');
+                return;
+            }
+            
+            const percentage = (score / quizData.length) * 100;
+            
+            if(score >= 18) { 
+                const navGame = document.getElementById('nav-game');
+                const navGameMobile = document.getElementById('nav-game-mobile');
+                
+                navGame.classList.remove('text-gray-400', 'cursor-not-allowed');
+                navGame.classList.add('text-white', 'hover:bg-indigo-600');
+                navGame.disabled = false;
+                navGame.innerHTML = '<i class="fa-solid fa-gamepad mr-1"></i>Game';
+                
+                navGameMobile.classList.remove('text-gray-400', 'cursor-not-allowed');
+                navGameMobile.classList.add('text-white', 'hover:bg-indigo-600');
+                navGameMobile.disabled = false;
+                navGameMobile.innerHTML = '<i class="fa-solid fa-gamepad"></i> Game';
+
+                document.getElementById('nav-cert').classList.remove('hidden');
+                document.getElementById('nav-cert-mobile').classList.remove('hidden');
+                
+                document.getElementById('proceed-game-btn').classList.remove('hidden');
+                document.getElementById('submit-quiz-btn').classList.add('hidden');
+
+                showModal('Outstanding!', `You scored ${score}/20 (${percentage}%). You have unlocked your Certificate of Mastery AND the Retro Game!`, 'success');
+            } else {
+                quizData.forEach((_, i) => {
+                    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                    if(selected) selected.checked = false;
+                });
+                showModal('Keep Trying!', `You scored ${score}/20 (${percentage}%). You need 90% (18/20) to earn the certificate. Your answers have been reset so you can try again.`, 'error');
+                document.getElementById('quiz-section').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // --- RETRO GAME LOGIC: Scorched Artillery ---
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let score = 0;
+        let ammo = 10;
+        let gameRunning = false;
+        let gameOverState = false;
+        let animationId;
+        
+        let player = { x: 50, y: 350, w: 30, h: 20 };
+        let target = { x: 500, y: 350, w: 40, h: 20, active: true };
+        let mountain = { peakX: 300, peakY: 150, leftX: 150, rightX: 450 };
+        
+        let projectiles = [];
+        let particles = [];
+        let lastTime = 0;
+        
+        const overlay = document.getElementById('game-overlay');
+        const startBtn = document.getElementById('start-game-btn');
+        const angleInput = document.getElementById('angle-input');
+        const powerInput = document.getElementById('power-input');
+        const fireBtn = document.getElementById('fire-btn');
+        
+        angleInput.addEventListener('input', (e) => document.getElementById('angle-val').innerText = e.target.value);
+        powerInput.addEventListener('input', (e) => document.getElementById('power-val').innerText = e.target.value);
+        startBtn.addEventListener('click', startGame);
+
+        function resetGame() {
+            score = 0;
+            ammo = 10;
+            projectiles = [];
+            particles = [];
+            gameOverState = false;
+            document.getElementById('game-score').innerText = score;
+            document.getElementById('game-ammo').innerText = ammo;
+            fireBtn.disabled = false;
+            generateLevel();
+            lastTime = Date.now();
+        }
+
+        function startGame() {
+            overlay.classList.add('hidden');
+            if(!gameRunning) {
+                resetGame();
+                gameRunning = true;
+                drawGame();
+            }
+        }
+        
+        function generateLevel() {
+            // Randomize mountain peak
+            mountain.peakX = Math.floor(Math.random() * 150) + 200; // 200 to 350
+            mountain.peakY = Math.floor(Math.random() * 150) + 100; // 100 to 250
+            mountain.leftX = mountain.peakX - (Math.floor(Math.random() * 50) + 80);
+            mountain.rightX = mountain.peakX + (Math.floor(Math.random() * 50) + 80);
+            
+            // Randomize target position (right side)
+            target.x = Math.floor(Math.random() * 150) + 400; // 400 to 550
+            target.y = 350; // Floor level
+            target.active = true;
+        }
+
+        function fireArtillery() {
+            if(!gameRunning || ammo <= 0) return;
+            
+            let angleDeg = parseInt(angleInput.value);
+            let power = parseInt(powerInput.value);
+            
+            // Convert angle to radians for canvas (0 is right, negative is up)
+            let angleRad = -(angleDeg * Math.PI / 180);
+            
+            // Scale power
+            let speed = power * 0.15; 
+            
+            // Starting position (cannon tip)
+            let startX = player.x + player.w/2;
+            let startY = player.y;
+            
+            projectiles.push({
+                x: startX,
+                y: startY,
+                vx: Math.cos(angleRad) * speed,
+                vy: Math.sin(angleRad) * speed,
+                active: true
+            });
+            
+            ammo--;
+            document.getElementById('game-ammo').innerText = ammo;
+            
+            if(ammo <= 0) {
+                setTimeout(checkGameOver, 3000); // Wait for last shot to land
+            }
+        }
+        
+        function createExplosion(x, y, color) {
+            for(let i=0; i<30; i++) {
+                particles.push({
+                    x: x, y: y,
+                    vx: (Math.random() - 0.5) * 8,
+                    vy: (Math.random() - 0.5) * 8,
+                    life: 1.0,
+                    color: color
+                });
+            }
+        }
+
+        function checkCollisionPointPoly(px, py, poly) {
+            // simple check for mountain: if px is between left and right, check y
+            if(px >= mountain.leftX && px <= mountain.rightX) {
+                // Determine height of mountain at px
+                let mountainY;
+                if(px <= mountain.peakX) {
+                    // slope left
+                    let ratio = (px - mountain.leftX) / (mountain.peakX - mountain.leftX);
+                    mountainY = 350 - (350 - mountain.peakY) * ratio;
+                } else {
+                    // slope right
+                    let ratio = (px - mountain.peakX) / (mountain.rightX - mountain.peakX);
+                    mountainY = mountain.peakY + (350 - mountain.peakY) * ratio;
+                }
+                if(py >= mountainY) return true;
+            }
+            return false;
+        }
+
+        function drawGameStatic() {
+             ctx.fillStyle = '#0f172a';
+             ctx.fillRect(0,0,canvas.width,canvas.height);
+             
+             // Ground
+             ctx.fillStyle = '#475569';
+             ctx.fillRect(0, 350, canvas.width, 50);
+             
+             ctx.fillStyle = '#94a3b8';
+             ctx.font = '24px monospace';
+             ctx.textAlign = 'center';
+             ctx.fillText('STANDBY FOR TRANSMISSION', canvas.width/2, canvas.height/2);
+        }
+
+        function drawGame() {
+            if(!gameRunning) return;
+            
+            let now = Date.now();
+            let dt = (now - lastTime) / 1000; // seconds
+            lastTime = now;
+            
+            // Clear
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            
+            // Stars background
+            ctx.fillStyle = '#ffffff';
+            for(let i=0; i<20; i++) {
+                let rX = Math.sin(i * 123) * canvas.width;
+                let rY = Math.cos(i * 321) * 200;
+                if(rX<0) rX = -rX; if(rY<0) rY = -rY;
+                ctx.fillRect(rX%canvas.width, rY%200, 2, 2);
+            }
+
+            // Draw Mountain
+            ctx.beginPath();
+            ctx.moveTo(mountain.leftX, 350);
+            ctx.lineTo(mountain.peakX, mountain.peakY);
+            ctx.lineTo(mountain.rightX, 350);
+            ctx.fillStyle = '#1e293b';
+            ctx.fill();
+            ctx.strokeStyle = '#334155';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+            
+            // Ground
+            ctx.fillStyle = '#475569';
+            ctx.fillRect(0, 350, canvas.width, 50);
+            
+            // Draw Player (Transmitter)
+            ctx.fillStyle = '#4f46e5';
+            ctx.fillRect(player.x, player.y, player.w, player.h);
+            // Cannon barrel based on angle
+            let angleRad = -(parseInt(angleInput.value) * Math.PI / 180);
+            ctx.beginPath();
+            ctx.moveTo(player.x + player.w/2, player.y);
+            ctx.lineTo(player.x + player.w/2 + Math.cos(angleRad)*20, player.y + Math.sin(angleRad)*20);
+            ctx.strokeStyle = '#818cf8';
+            ctx.lineWidth = 4;
+            ctx.stroke();
+
+            // Draw Target (Server)
+            if(target.active) {
+                ctx.fillStyle = '#dc2626';
+                ctx.fillRect(target.x, target.y, target.w, target.h);
+                // Antenna
+                ctx.beginPath();
+                ctx.moveTo(target.x + 10, target.y); ctx.lineTo(target.x + 10, target.y-15);
+                ctx.moveTo(target.x + 30, target.y); ctx.lineTo(target.x + 30, target.y-10);
+                ctx.strokeStyle = '#f87171'; ctx.lineWidth=2; ctx.stroke();
+            }
+
+            // Update & Draw Projectiles
+            const gravity = 4.0; 
+            for(let i=projectiles.length-1; i>=0; i--) {
+                let p = projectiles[i];
+                if(!p.active) continue;
+                
+                // physics steps (multiple small steps to prevent clipping)
+                p.vy += gravity * 0.1;
+                p.x += p.vx;
+                p.y += p.vy;
+                
+                // Draw
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 3, 0, Math.PI*2);
+                ctx.fillStyle = '#fbbf24';
+                ctx.fill();
+                
+                // Trail
+                ctx.beginPath();
+                ctx.moveTo(p.x, p.y);
+                ctx.lineTo(p.x - p.vx*2, p.y - p.vy*2);
+                ctx.strokeStyle = '#fde68a';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Collision with floor
+                if(p.y >= 350) {
+                    p.active = false;
+                    createExplosion(p.x, 350, '#94a3b8');
+                    continue;
+                }
+                
+                // Collision with mountain
+                if(checkCollisionPointPoly(p.x, p.y)) {
+                    p.active = false;
+                    createExplosion(p.x, p.y, '#334155');
+                    continue;
+                }
+                
+                // Collision with target
+                if(target.active && p.x >= target.x && p.x <= target.x+target.w && p.y >= target.y && p.y <= target.y+target.h) {
+                    p.active = false;
+                    target.active = false;
+                    createExplosion(p.x, p.y, '#ef4444');
+                    score++;
+                    document.getElementById('game-score').innerText = score;
+                    setTimeout(generateLevel, 1500); // Generate new target
+                }
+            }
+            
+            // Clean inactive projectiles
+            projectiles = projectiles.filter(p => p.active);
+            
+            // Particles
+            for(let i=particles.length-1; i>=0; i--) {
+                let pt = particles[i];
+                pt.x += pt.vx;
+                pt.y += pt.vy;
+                pt.life -= 0.03;
+                if(pt.life <= 0) {
+                    particles.splice(i, 1);
+                } else {
+                    ctx.globalAlpha = pt.life;
+                    ctx.fillStyle = pt.color;
+                    ctx.fillRect(pt.x, pt.y, 3, 3);
+                    ctx.globalAlpha = 1.0;
+                }
+            }
+
+            if(gameRunning) {
+                animationId = requestAnimationFrame(drawGame);
+            }
+        }
+
+        function checkGameOver() {
+            // only run if no active projectiles
+            if(projectiles.length === 0 && ammo <= 0) {
+                gameRunning = false;
+                gameOverState = true;
+                cancelAnimationFrame(animationId);
+                overlay.classList.remove('hidden');
+                startBtn.innerText = `LINK CLOSED. HITS: ${score} - RESTART`;
+                fireBtn.disabled = true;
+            }
+        }
+
+        // --- CERTIFICATE LOGIC ---
+        function updateCertName() {
+            let name = document.getElementById('student-name-input').value.trim();
+            if(name) {
+                if (name.includes(' ')) {
+                    name = name.split(' ')[0];
+                    document.getElementById('student-name-input').value = name;
+                    showModal('Notice', 'Only your first name has been applied to the certificate.', 'info');
+                }
+                document.getElementById('cert-student-name').innerText = name;
+            } else {
+                showModal('Wait!', 'Please enter your first name to update the certificate.', 'warning');
+            }
+        }
+
+        const today = new Date();
+        document.getElementById('cert-date').innerText = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        function downloadCert() {
+            const certEl = document.getElementById('certificate');
+            const name = document.getElementById('cert-student-name').innerText;
+            let filename = 'Certificate.png';
+            if (name && name !== 'Student') {
+                filename = `${name.replace(/\s+/g, '_')}_Certificate.png`;
+            }
+
+            const originalTransform = certEl.style.transform;
+            certEl.style.transform = 'none';
+
+            const btn = document.getElementById('download-btn');
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Generating...';
+            btn.disabled = true;
+
+            html2canvas(certEl, { 
+                scale: 2, 
+                useCORS: true,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+            }).catch(err => {
+                console.error(err);
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                showModal('Error', 'Failed to generate image. Try using a desktop browser.', 'error');
+            });
+        }
+
+        window.onload = () => {
+            initLab1();
+            initLab2();
+            drawGameStatic();
+            // initialize input styles via js to ensure removal of uppercase
+            document.getElementById('ascii-input').classList.remove('uppercase');
+        }
+    </script>
+</body>
+</html>

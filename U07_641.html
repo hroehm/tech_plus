@@ -1,0 +1,1525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 07 Section 6.4.1 Mastery - Plain Text vs Cipher Text</title>
+    
+    <!-- Load Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load HTML2Canvas for Certificate Download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- Load Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Qwitcher+Grypen:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0fdf4; 
+            color: #1f2937;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        /* Interactive Elements CSS */
+        .io-dropzone { min-height: 70px; min-width: 130px; border: 2px dashed #9ca3af; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: #f9fafb; transition: all 0.2s;}
+        .io-dropzone.drag-over { background: #e5e7eb; border-color: #16a34a; box-shadow: inset 0 0 10px rgba(22, 163, 74, 0.2);}
+        
+        .io-item { cursor: grab; transition: transform 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .io-item:active { cursor: grabbing; transform: scale(0.95); }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #e5e7eb; }
+        ::-webkit-scrollbar-thumb { background: #10b981; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #059669; }
+
+        /* Retro Game Canvas */
+        #game-canvas {
+            background-color: #111827;
+            border: 4px solid #374151;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+            max-width: 100%;
+            height: auto;
+            touch-action: none;
+            cursor: crosshair;
+        }
+        
+        /* Mobile D-Pad */
+        .dpad-btn {
+            background-color: #374151;
+            color: white;
+            border: 2px solid #4b5563;
+            border-radius: 8px;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            user-select: none;
+            touch-action: manipulation;
+        }
+        .dpad-btn:active { background-color: #60a5fa; border-color: #3b82f6; }
+
+        /* --- CERTIFICATE STYLES --- */
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .font-body { font-family: 'Lora', serif; }
+        .font-script { font-family: 'Qwitcher Grypen', cursive; }
+        
+        .cert-preview-container {
+            width: 100%;
+            overflow: auto;
+            display: flex;
+            justify-content: center;
+            background: #e5e7eb;
+            padding: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        #certificate {
+            width: 1056px !important;
+            height: 816px !important;
+            flex-shrink: 0;
+            background-color: #ffffff;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1056" height="816"><polygon points="0,0 250,0 0,650" fill="%23fcd34d"/><polygon points="0,0 350,0 0,900" fill="%23d97706" opacity="0.8"/><polygon points="0,0 120,0 0,300" fill="%23fcd34d"/><polygon points="0,450 650,816 0,816" fill="%23fcd34d"/><polygon points="0,550 450,816 0,816" fill="%23d97706" opacity="0.8"/><polygon points="800,0 1056,0 1056,256" fill="%23f3f4f6"/><polygon points="1056,500 1056,816 750,816" fill="%23f3f4f6"/></svg>');
+            background-size: cover;
+            border: 4px solid #e5e7eb;
+        }
+
+        .gold-seal {
+            position: absolute;
+            left: 110px;
+            top: 350px;
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c, #fcf6ba);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3), inset 0 0 15px rgba(255,255,255,0.7), inset 0 0 25px rgba(139,105,20,0.9);
+            z-index: 10;
+        }
+        .gold-seal::before {
+            content: '';
+            position: absolute;
+            top: -4px; bottom: -4px; left: -4px; right: -4px;
+            border-radius: 50%;
+            border: 6px dashed #d4af37;
+        }
+        .gold-seal-inner-1 {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 2px solid rgba(139, 105, 20, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #e8c678, #dbab46);
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.2), 0 2px 5px rgba(255,255,255,0.7);
+            z-index: 1;
+        }
+        .gold-seal-inner-2 {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: radial-gradient(circle, #fcf6ba, #d4af37);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            padding: 10px;
+        }
+        .embossed-text {
+            color: #b38728;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2);
+            font-family: 'Playfair Display', serif;
+            font-weight: 800;
+            line-height: 1.1;
+            text-transform: uppercase;
+        }
+        .embossed-text-large { font-size: 14px; letter-spacing: 1px; }
+        .embossed-text-small { font-size: 11px; letter-spacing: 2px; margin: 2px 0; }
+        .embossed-star { font-size: 12px; color: #b38728; text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2); margin: 2px 0; }
+
+        @media (max-width: 1100px) { #certificate { transform: scale(0.7); transform-origin: top left; margin-bottom: -240px; margin-right: -310px; } }
+        @media (max-width: 768px) { #certificate { transform: scale(0.4); transform-origin: top left; margin-bottom: -490px; margin-right: -630px; } }
+        
+        /* Lab Specific Styles */
+        .sequence-dropzone { min-height: 50px; background-color: #f3f4f6; border: 2px dashed #d1d5db; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; margin-bottom: 0.5rem; transition: all 0.2s;}
+        .network-node { width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.5rem; color: white; transition: all 0.3s; z-index: 10;}
+        .packet { width: 20px; height: 20px; border-radius: 50%; position: absolute; top: 50%; transform: translateY(-50%); transition: left 2s linear; z-index: 20;}
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
+    <nav class="bg-green-700 text-white shadow-lg sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-user-secret text-2xl"></i>
+                    <span class="font-bold text-xl tracking-wider hidden sm:inline-block">Tech+ Unit 07 Section 6.4.1</span>
+                    <span class="font-bold text-xl tracking-wider sm:hidden">6.4.1</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-2">
+                        <button onclick="switchTab('briefing')" class="nav-btn bg-green-900 px-3 py-2 rounded-md text-sm font-medium hover:bg-green-600 transition" id="nav-briefing"><i class="fa-solid fa-book-open mr-1"></i>Briefing</button>
+                        <button onclick="switchTab('activity')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-green-600 transition" id="nav-activity"><i class="fa-solid fa-flask mr-1"></i>Lab Activity</button>
+                        <button onclick="switchTab('quiz')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-green-600 transition" id="nav-quiz"><i class="fa-solid fa-clipboard-check mr-1"></i>Quiz</button>
+                        <button onclick="switchTab('game')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-gray-400 cursor-not-allowed transition" id="nav-game" disabled><i class="fa-solid fa-lock mr-1"></i>Game</button>
+                        <button onclick="switchTab('cert')" class="nav-btn hidden px-3 py-2 rounded-md text-sm font-medium text-yellow-300 hover:bg-green-600 transition" id="nav-cert"><i class="fa-solid fa-award mr-1"></i>Certificate</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Nav -->
+        <div class="md:hidden flex flex-wrap justify-center gap-2 py-2 px-2 bg-green-800">
+            <button onclick="switchTab('briefing')" class="nav-btn-mobile px-3 py-1 text-sm rounded bg-green-900" id="nav-briefing-mobile">Briefing</button>
+            <button onclick="switchTab('activity')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-activity-mobile">Lab</button>
+            <button onclick="switchTab('quiz')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-quiz-mobile">Quiz</button>
+            <button onclick="switchTab('game')" class="nav-btn-mobile px-3 py-1 text-sm rounded text-gray-400 cursor-not-allowed" id="nav-game-mobile" disabled><i class="fa-solid fa-lock"></i></button>
+            <button onclick="switchTab('cert')" id="nav-cert-mobile" class="hidden px-2 py-1 text-sm text-yellow-300 rounded"><i class="fa-solid fa-award"></i></button>
+        </div>
+    </nav>
+
+    <main class="flex-grow w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <!-- BRIEFING SECTION -->
+        <div id="briefing-section" class="tab-content active no-print">
+            <div class="text-center mb-10">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">Plain Text vs. Cipher Text</h1>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">Discover the foundational concepts of encryption by understanding how readable information is mathematically scrambled to protect our privacy, secure our communications, and build digital trust.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                
+                <!-- Tile 1 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-blue-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-blue-700"><i class="fa-regular fa-file-lines mr-2"></i>Data States & Formats</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Plain Text:</strong> Information stored in its original, readable format.</li>
+                            <li><strong>Cipher Text:</strong> Scrambled, unreadable information requiring a key.</li>
+                            <li><strong>Data at Rest vs Transit:</strong> Determines when text must be encrypted.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-2">
+                            <button onclick="openBriefing('format-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('format-usecase')" class="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 2 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-green-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-green-700"><i class="fa-solid fa-lock mr-2"></i>Encryption Algorithms</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Encryption:</strong> The process of encoding plain text to prevent unauthorized access.</li>
+                            <li><strong>Algorithms:</strong> Step-by-step mathematical rules that govern the scrambling process.</li>
+                            <li><strong>Benefits:</strong> Protects privacy, secures info, builds trust, and prevents misuse.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-2">
+                            <button onclick="openBriefing('algo-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('algo-usecase')" class="flex-1 bg-green-100 hover:bg-green-200 text-green-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 3 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-purple-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-purple-700"><i class="fa-solid fa-key mr-2"></i>Caesar Cipher & Keys</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Julius Caesar:</strong> Earliest recorded use of shift ciphers for military messages.</li>
+                            <li><strong>The Key:</strong> The unique secret value that dictates how the algorithm shifts the data.</li>
+                            <li><strong>Decryption:</strong> Using the secret key to revert cipher text back to plain text.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-2">
+                            <button onclick="openBriefing('caesar-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('caesar-usecase')" class="flex-1 bg-purple-100 hover:bg-purple-200 text-purple-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Cases</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-12 flex justify-center">
+                <button onclick="switchTab('activity')" class="bg-green-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-green-500 shadow-lg transition transform hover:scale-105">Proceed to Lab Activity <i class="fa-solid fa-arrow-right ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- LAB ACTIVITY SECTION -->
+        <div id="activity-section" class="tab-content no-print">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Cryptography Lab Activity</h1>
+                <p class="text-gray-600">Complete all 6 security labs to demonstrate your mastery of encryption concepts.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                
+                <!-- Lab 1: Data Classifier -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 flex flex-col h-full">
+                    <h2 class="text-xl font-bold mb-2 text-blue-700"><i class="fa-regular fa-file-lines mr-2"></i>Lab 1: Data Classifier</h2>
+                    <p class="text-sm text-gray-600 mb-4">Drag and drop the data snippets into their correct format category.</p>
+                    
+                    <div class="flex flex-wrap gap-2 mb-4 min-h-[50px]" id="lab1-source">
+                        <div class="io-item px-3 py-1 bg-gray-100 border border-gray-300 rounded text-sm font-mono" draggable="true" data-type="plain">"Hello World!"</div>
+                        <div class="io-item px-3 py-1 bg-gray-100 border border-gray-300 rounded text-sm font-mono" draggable="true" data-type="cipher">s8#kD9!zQ</div>
+                        <div class="io-item px-3 py-1 bg-gray-100 border border-gray-300 rounded text-sm font-mono" draggable="true" data-type="plain">Balance:$500</div>
+                        <div class="io-item px-3 py-1 bg-gray-100 border border-gray-300 rounded text-sm font-mono" draggable="true" data-type="cipher">U2FsdGVkX1</div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 flex-grow">
+                        <div class="io-dropzone flex-col border-blue-400 bg-blue-50" data-target="plain">
+                            <h3 class="font-bold text-blue-800 text-xs mb-2 uppercase tracking-wide">Plain Text</h3>
+                        </div>
+                        <div class="io-dropzone flex-col border-red-400 bg-red-50" data-target="cipher">
+                            <h3 class="font-bold text-red-800 text-xs mb-2 uppercase tracking-wide">Cipher Text</h3>
+                        </div>
+                    </div>
+                    <div id="lab1-feedback" class="text-center font-bold mt-4 h-6 text-green-600 text-sm"></div>
+                </div>
+
+                <!-- Lab 2: Transit vs Rest -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 flex flex-col h-full">
+                    <h2 class="text-xl font-bold mb-2 text-blue-700"><i class="fa-solid fa-server mr-2"></i>Lab 2: State Analyzer</h2>
+                    <p class="text-sm text-gray-600 mb-4">Read the scenario and identify the state of the data to apply the correct security.</p>
+                    
+                    <div class="bg-gray-100 p-4 rounded text-center mb-4 border border-gray-300 flex-grow flex items-center justify-center flex-col">
+                        <i class="fa-solid fa-envelope-open-text text-3xl text-gray-500 mb-2"></i>
+                        <p class="font-semibold text-gray-800" id="lab2-scenario">"An employee is sending an email containing sensitive financial documents to a client over the internet."</p>
+                    </div>
+                    
+                    <div class="flex gap-4">
+                        <button onclick="checkLab2('rest')" class="flex-1 bg-indigo-100 hover:bg-indigo-200 text-indigo-800 py-2 rounded font-bold border border-indigo-300">Data at Rest</button>
+                        <button onclick="checkLab2('transit')" class="flex-1 bg-teal-100 hover:bg-teal-200 text-teal-800 py-2 rounded font-bold border border-teal-300">Data in Transit</button>
+                    </div>
+                    <div id="lab2-feedback" class="text-center font-bold mt-4 h-6 text-green-600 text-sm"></div>
+                </div>
+
+                <!-- Lab 3: Sequence Builder -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 flex flex-col h-full">
+                    <h2 class="text-xl font-bold mb-2 text-green-700"><i class="fa-solid fa-arrow-right-arrow-left mr-2"></i>Lab 3: Sequence Builder</h2>
+                    <p class="text-sm text-gray-600 mb-4">Click the blocks in the correct chronological order to securely transmit and read a message.</p>
+                    
+                    <div class="flex flex-wrap gap-2 mb-4" id="lab3-options">
+                        <button onclick="addLab3Sequence('Decryption')" class="px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded font-bold text-sm">Decryption Algorithm</button>
+                        <button onclick="addLab3Sequence('Cipher Text')" class="px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded font-bold text-sm">Cipher Text (Transit)</button>
+                        <button onclick="addLab3Sequence('Plain Text (End)')" class="px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded font-bold text-sm">Plain Text (Recipient)</button>
+                        <button onclick="addLab3Sequence('Plain Text (Start)')" class="px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded font-bold text-sm">Plain Text (Sender)</button>
+                        <button onclick="addLab3Sequence('Encryption')" class="px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded font-bold text-sm">Encryption Algorithm</button>
+                    </div>
+
+                    <div class="flex-grow bg-gray-50 border-2 border-dashed border-gray-300 rounded p-4 flex flex-col gap-2" id="lab3-target">
+                        <!-- Items appended here -->
+                    </div>
+                    
+                    <div class="flex justify-between mt-4">
+                        <button onclick="resetLab3()" class="text-gray-500 text-sm hover:underline">Reset</button>
+                        <div id="lab3-feedback" class="font-bold h-6 text-green-600 text-sm"></div>
+                    </div>
+                </div>
+
+                <!-- Lab 4: Transmission Intercept -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 flex flex-col h-full">
+                    <h2 class="text-xl font-bold mb-2 text-green-700"><i class="fa-solid fa-network-wired mr-2"></i>Lab 4: Secure Transmission</h2>
+                    <p class="text-sm text-gray-600 mb-4">Toggle the VPN Encryption to secure the data before sending it across the public network.</p>
+                    
+                    <div class="flex justify-center mb-4">
+                        <label class="flex items-center cursor-pointer">
+                            <div class="relative">
+                                <input type="checkbox" id="encryption-toggle" class="sr-only">
+                                <div class="block bg-gray-400 w-14 h-8 rounded-full transition-colors duration-300" id="toggle-bg"></div>
+                                <div class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition transform duration-300" id="toggle-dot"></div>
+                            </div>
+                            <div class="ml-3 font-bold text-gray-700" id="toggle-label">Encryption OFF</div>
+                        </label>
+                    </div>
+
+                    <div class="relative h-24 bg-gray-100 rounded border border-gray-300 overflow-hidden mb-4">
+                        <div class="absolute left-4 top-1/2 transform -translate-y-1/2 network-node bg-blue-500 shadow-md border-2 border-white">A</div>
+                        <div class="absolute right-4 top-1/2 transform -translate-y-1/2 network-node bg-blue-500 shadow-md border-2 border-white">B</div>
+                        <div class="absolute left-10 right-10 top-1/2 h-1 bg-gray-300 transform -translate-y-1/2 z-0 dashed-line"></div>
+                        <div id="data-packet" class="packet bg-red-500 left-12 hidden"><i class="fa-regular fa-file-lines text-white text-xs absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></i></div>
+                    </div>
+                    
+                    <div class="text-center">
+                        <button onclick="sendPacket()" class="bg-gray-800 text-white px-6 py-2 rounded font-bold hover:bg-gray-700 shadow transition" id="send-btn">Send Data</button>
+                    </div>
+                    <div id="lab4-feedback" class="text-center font-bold mt-4 h-6 text-green-600 text-sm"></div>
+                </div>
+
+                <!-- Lab 5: Caesar Decryptor -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 flex flex-col h-full">
+                    <h2 class="text-xl font-bold mb-2 text-purple-700"><i class="fa-solid fa-unlock mr-2"></i>Lab 5: Caesar Decryptor</h2>
+                    <p class="text-sm text-gray-600 mb-4">You intercepted the cipher text below. Decrypt it using the provided Key shift.</p>
+                    
+                    <div class="bg-gray-900 text-green-400 p-4 rounded font-mono text-center text-xl mb-4 tracking-widest border-2 border-gray-700 shadow-inner">
+                        WKH ZLIL LV GRZQ
+                    </div>
+                    <div class="flex justify-center items-center gap-2 mb-4 font-bold text-gray-700 bg-gray-100 py-2 rounded">
+                        <i class="fa-solid fa-key text-yellow-500"></i> KEY: Shift Left by 3
+                    </div>
+                    
+                    <input type="text" id="lab5-input" placeholder="Type plain text here..." class="w-full border-2 border-gray-300 rounded px-4 py-2 mb-4 text-center font-bold uppercase focus:border-purple-500 focus:outline-none">
+                    
+                    <div class="text-center">
+                        <button onclick="checkLab5()" class="bg-purple-600 text-white px-6 py-2 rounded font-bold hover:bg-purple-700 shadow transition">Decrypt Message</button>
+                    </div>
+                    <div id="lab5-feedback" class="text-center font-bold mt-4 h-6 text-green-600 text-sm"></div>
+                </div>
+
+                <!-- Lab 6: Key Cracker -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 flex flex-col h-full">
+                    <h2 class="text-xl font-bold mb-2 text-purple-700"><i class="fa-solid fa-user-ninja mr-2"></i>Lab 6: Key Cracker</h2>
+                    <p class="text-sm text-gray-600 mb-4">Compare the Plain Text to the intercepted Cipher Text to deduce the numerical shift Key used in the algorithm.</p>
+                    
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div class="bg-blue-50 border border-blue-200 p-3 rounded text-center">
+                            <span class="block text-xs font-bold text-blue-800 mb-1">PLAIN TEXT</span>
+                            <span class="font-mono font-bold text-lg text-gray-800">HELLO</span>
+                        </div>
+                        <div class="bg-red-50 border border-red-200 p-3 rounded text-center">
+                            <span class="block text-xs font-bold text-red-800 mb-1">CIPHER TEXT</span>
+                            <span class="font-mono font-bold text-lg text-gray-800">KHOOR</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center justify-center gap-4 mb-4">
+                        <label class="font-bold text-gray-700">Deduced Key (Number):</label>
+                        <input type="number" id="lab6-input" min="1" max="25" class="border-2 border-gray-300 rounded w-20 px-2 py-1 text-center font-bold focus:border-purple-500 outline-none">
+                    </div>
+                    
+                    <div class="text-center">
+                        <button onclick="checkLab6()" class="bg-gray-800 text-white px-6 py-2 rounded font-bold hover:bg-gray-700 shadow transition">Verify Key</button>
+                    </div>
+                    <div id="lab6-feedback" class="text-center font-bold mt-4 h-6 text-green-600 text-sm"></div>
+                </div>
+
+            </div>
+
+            <div class="text-center mt-12">
+                <button onclick="switchTab('quiz')" class="bg-green-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-green-500 shadow-lg transition transform hover:scale-105">Take the Mastery Quiz <i class="fa-solid fa-clipboard-check ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- QUIZ SECTION -->
+        <div id="quiz-section" class="tab-content no-print">
+            <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-xl max-w-4xl mx-auto border border-gray-200">
+                <div class="text-center mb-8 border-b pb-4">
+                    <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Unit 07 Section 6.4.1 Mastery Quiz</h1>
+                    <p class="text-gray-600">Score 90% or higher (18/20) to earn your Certificate of Mastery and unlock the Logic Bomb game!</p>
+                </div>
+
+                <div id="quiz-container" class="space-y-6">
+                    <!-- Questions injected via JS -->
+                </div>
+
+                <div class="mt-10 text-center border-t pt-6 flex flex-col md:flex-row justify-center items-center gap-4">
+                    <button id="submit-quiz-btn" onclick="gradeQuiz()" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">Submit Quiz</button>
+                    <button id="proceed-game-btn" onclick="switchTab('game')" class="hidden bg-purple-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-purple-700 shadow-lg transition w-full md:w-auto">Play Logic Bomb <i class="fa-solid fa-bomb ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RETRO GAME SECTION -->
+        <div id="game-section" class="tab-content no-print">
+            <div class="bg-gray-900 p-4 sm:p-8 rounded-2xl shadow-xl max-w-4xl mx-auto border-4 border-gray-700 flex flex-col items-center">
+                <div class="text-center mb-4 w-full">
+                    <h1 class="text-3xl font-extrabold text-green-500 mb-2 tracking-widest uppercase" style="font-family: monospace;"><i class="fa-solid fa-bomb mr-2"></i>Logic Bomb</h1>
+                    <p class="text-gray-300 text-sm max-w-xl mx-auto">Navigate the grid and drop decryption logic bombs (<kbd class="bg-gray-700 px-1 rounded">Space</kbd>) to blast away encrypted cipher walls (Brown). Avoid the rogue malware viruses! Clear a path to survive. Move using Arrow Keys or WASD.</p>
+                </div>
+                
+                <div class="flex justify-between items-center w-full max-w-[600px] mb-2 px-2 text-white font-mono text-lg">
+                    <div>Score: <span id="game-score" class="text-yellow-400 font-bold">0</span></div>
+                    <div>Status: <span id="game-lives" class="text-blue-400 font-bold">ACTIVE</span></div>
+                </div>
+
+                <div class="relative flex justify-center w-full">
+                    <!-- Game Canvas -->
+                    <canvas id="game-canvas" width="600" height="440" class="w-full max-w-[600px] bg-gray-800 border-2 border-gray-600 rounded shadow-lg"></canvas>
+                    
+                    <!-- Overlay Start Button -->
+                    <div id="game-overlay" class="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-80 rounded max-w-[600px] mx-auto z-10 p-4">
+                        <button id="start-game-btn" class="bg-green-600 hover:bg-green-500 text-white font-bold font-mono py-3 px-8 rounded-lg text-xl border-4 border-green-800 uppercase transform transition hover:scale-105 mb-4 shadow-[0_0_15px_rgba(34,197,94,0.6)]">Execute Program</button>
+                        <p class="text-gray-400 font-mono text-sm text-center">Avoid explosions.<br>Bombs detonate in 3 seconds.</p>
+                    </div>
+                </div>
+
+                <!-- Mobile Controls -->
+                <div class="mt-4 flex flex-col items-center w-full sm:hidden">
+                    <div class="flex flex-col items-center gap-1 mb-2">
+                        <button class="dpad-btn" onpointerdown="triggerGameKey('ArrowUp', true)" onpointerup="triggerGameKey('ArrowUp', false)"><i class="fa-solid fa-caret-up"></i></button>
+                        <div class="flex gap-1">
+                            <button class="dpad-btn" onpointerdown="triggerGameKey('ArrowLeft', true)" onpointerup="triggerGameKey('ArrowLeft', false)"><i class="fa-solid fa-caret-left"></i></button>
+                            <button class="dpad-btn" onpointerdown="triggerGameKey('ArrowDown', true)" onpointerup="triggerGameKey('ArrowDown', false)"><i class="fa-solid fa-caret-down"></i></button>
+                            <button class="dpad-btn" onpointerdown="triggerGameKey('ArrowRight', true)" onpointerup="triggerGameKey('ArrowRight', false)"><i class="fa-solid fa-caret-right"></i></button>
+                        </div>
+                    </div>
+                    <button class="bg-red-600 text-white font-bold py-3 px-8 rounded-full shadow-lg border-2 border-red-800 touch-manipulation uppercase tracking-wider" onpointerdown="triggerGameKey(' ', true)" onpointerup="triggerGameKey(' ', false)">Drop Bomb</button>
+                </div>
+
+                <div class="mt-8 text-center w-full border-t border-gray-700 pt-6">
+                    <button onclick="switchTab('cert')" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">View Certificate <i class="fa-solid fa-award ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CERTIFICATE SECTION -->
+        <div id="cert-section" class="tab-content">
+            <div class="max-w-5xl mx-auto">
+                <div class="bg-white p-6 rounded shadow mb-6 no-print text-center border border-gray-200">
+                    <h2 class="text-2xl font-bold text-green-600 mb-2">🎉 Congratulations! 🎉</h2>
+                    <p class="text-gray-700 mb-4">You have achieved mastery of Plain Text vs Cipher Text and Encryption concepts.</p>
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+                        <input type="text" id="student-name-input" value="Student" placeholder="Enter your first name" class="border-2 border-gray-300 rounded px-4 py-2 w-full md:w-64 focus:border-green-500 focus:outline-none">
+                        <button onclick="updateCertName()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">Update Name</button>
+                        <button id="download-btn" onclick="downloadCert()" class="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900 transition flex items-center justify-center">
+                            <i class="fa-solid fa-download mr-2"></i>Download PNG
+                        </button>
+                    </div>
+                </div>
+
+                <div class="cert-preview-container print:p-0 print:bg-white">
+                    <div id="certificate">
+                        <div class="gold-seal">
+                            <div class="gold-seal-inner-1">
+                                <div class="gold-seal-inner-2">
+                                     <span class="embossed-text embossed-text-large">Certificate</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-small">Of</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-large">Excellence</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="relative z-20 w-full h-full flex flex-col pt-[48px] pl-[380px] pr-[48px]">
+                            <h1 class="text-[#065f46] text-[4.5rem] leading-none font-serif font-bold tracking-wide uppercase mb-2">CERTIFICATE</h1>
+                            <h2 class="text-gray-800 text-3xl font-serif tracking-widest uppercase mb-10">Of Achievement</h2>
+                            
+                            <p class="text-[1.4rem] font-body text-gray-800 mb-4">This is to certify that</p>
+                            
+                            <div class="relative mb-8 w-full">
+                                <h3 id="cert-student-name" class="text-[4rem] text-[#065f46] font-serif italic leading-none pb-2 relative z-10 text-center w-full block">Student</h3>
+                                <div class="w-full border-b-[2px] border-[#065f46] absolute bottom-[4px] left-0 z-0"></div>
+                                <div class="w-full border-b-[2px] border-dotted border-gray-400 absolute bottom-[0px] left-0 z-0"></div>
+                            </div>
+                            
+                            <p class="text-[1.3rem] font-body text-gray-800 leading-relaxed w-full pr-4">
+                                Has successfully completed the assessment for 
+                                <strong class="text-[1.8rem] text-[#065f46] block mt-4 mb-2 font-serif">Cyber.org Tech+ Unit 07 Section 6.4.1</strong>
+                                <strong class="text-[1.5rem] text-black block mb-4 font-serif italic">Plain Text vs Cipher Text</strong>
+                                <span class="text-[1.1rem] text-gray-700 leading-snug block">Demonstrating proficiency in explaining the foundational role of encryption algorithms, identifying data states, utilizing cryptographic keys, and executing Caesar Ciphers to secure communications.</span>
+                            </p>
+                            
+                            <div class="flex justify-end gap-16 items-end mt-auto mb-[60px] w-full pr-8">
+                                <div class="w-64">
+                                    <div class="border-b border-gray-600 mb-2 h-20 flex items-end justify-center relative">
+                                        <span class="font-script text-[5rem] text-[#065f46] absolute bottom-[-10px] transform -rotate-3 opacity-90">Dr. Crypto</span>
+                                    </div>
+                                    <p class="font-serif text-xl text-gray-800 text-center">Lead Cryptographer</p>
+                                </div>
+                                
+                                <div class="w-64">
+                                    <div class="border-b border-gray-600 mb-2 text-center h-20 flex items-end justify-center">
+                                        <p id="cert-date" class="font-body text-2xl text-gray-800 pb-1">Date Here</p>
+                                    </div>
+                                    <p class="font-serif text-xl text-gray-800 text-center">Date</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Custom Modal for Alerts -->
+    <div id="custom-modal" class="fixed inset-0 bg-black bg-opacity-50 z-[100] hidden flex justify-center items-center backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all">
+            <div class="text-center">
+                <div id="modal-icon" class="text-5xl mb-4"></div>
+                <h3 id="modal-title" class="text-2xl font-bold mb-2 text-gray-900"></h3>
+                <p id="modal-msg" class="text-gray-600 mb-6"></p>
+                <button onclick="closeModal()" class="bg-green-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-green-700 transition w-full">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Briefing Modal -->
+    <div id="briefing-modal" class="fixed inset-0 bg-black bg-opacity-70 z-[120] hidden flex justify-center items-center backdrop-blur-sm p-4 sm:p-6">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col transform transition-all overflow-hidden border-4 border-green-700">
+            <div class="p-4 sm:p-6 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+                <div class="flex items-center gap-4">
+                    <div id="briefing-modal-icon" class="text-3xl sm:text-4xl"></div>
+                    <h3 id="briefing-modal-title" class="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900"></h3>
+                </div>
+                <button onclick="closeBriefing()" class="text-gray-400 hover:text-red-600 transition text-4xl leading-none">&times;</button>
+            </div>
+            <div id="briefing-modal-content" class="p-6 md:p-10 overflow-y-auto flex-grow text-gray-700 text-lg leading-relaxed bg-white">
+                <!-- Dynamic Content Injected Here -->
+            </div>
+            <div class="p-4 sm:p-6 border-t border-gray-200 bg-gray-50 flex justify-end">
+                <button onclick="closeBriefing()" class="bg-green-700 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-green-800 transition shadow-md w-full sm:w-auto">Acknowledge & Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Extensive Briefing Content Data ---
+        const briefingData = {
+            'format-details': {
+                title: 'Data States & Formats',
+                icon: '<i class="fa-regular fa-file-lines text-blue-600"></i>',
+                html: `
+                    <p class="mb-5">In the digital realm, information must be structured in specific formats to be processed by machines and understood by humans. At the most fundamental level, communication relies on standard encoding (like ASCII or Unicode). However, when we consider security, we categorize data based on its readability to unauthorized viewers. The two primary categories in this regard are Plain Text and Cipher Text.</p>
+                    
+                    <p class="mb-5"><strong>Plain Text</strong> is defined explicitly as data or information that exists in its original, human-readable, or easily machine-readable format without any applied security or mathematical obfuscation. If you open a standard document, an email draft, or a basic text file, and you can immediately read the words "Hello, World!", you are looking at plain text. It requires no special mathematical key to understand.</p>
+                    
+                    <p class="mb-5">The inherent vulnerability of plain text becomes a critical issue when we consider the state of the data. When plain text is transmitted over open networks (like sending an unencrypted email across the public internet), it is highly susceptible to eavesdropping. Malicious actors using packet sniffers can easily intercept and read plain text data as it travels from your computer to the server.</p>
+                    
+                    <p class="mb-5">To combat this vulnerability, security professionals utilize <strong>Cipher Text</strong>. Cipher text is the scrambled, completely unintelligible output that is generated after applying a complex encryption algorithm to the original plain text. To the human eye, cipher text looks like a random, meaningless sequence of letters, numbers, and symbols (e.g., "U2FsdGVkX19B...").</p>
+                    
+                    <p class="mb-5">The structural characteristics of cipher text are entirely dependent on the algorithm used to create it. Some basic ciphers maintain the same length as the original message, while modern, robust encryption algorithms often pad the data, resulting in cipher text that is significantly longer and more complex than the original plain text. The defining feature of cipher text is that it is absolutely meaningless without the specific decryption key.</p>
+                    
+                    <p class="mb-5">In modern computing, the transition phase between plain text and cipher text is handled seamlessly in the background by operating systems and software applications. When a user types a password into a secure website, their browser instantly captures the plain text, runs it through an encryption algorithm, and sends only the cipher text across the internet. The end-user rarely interacts directly with the raw cipher text.</p>
+                    
+                    <p class="mb-5">Ultimately, understanding the difference between plain text and cipher text requires understanding the context of the data's state. Cybersecurity professionals categorize data as either "Data at Rest" (information stored permanently on a hard drive or server) or "Data in Transit" (information actively moving across a network). Determining when data should be left as plain text for quick processing versus converted to cipher text for protection is a foundational security decision.</p>
+                `
+            },
+            'format-usecase': {
+                title: 'Data States & Formats: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 1: Data in Transit (Network Communication)</h4>
+                        <p class="mb-2">When information leaves a physical device and travels across the internet, it passes through dozens of unknown routers and servers. Securing this data is paramount.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (HTTPS):</strong> A user enters their credit card number (Plain Text) on an e-commerce site. The web browser instantly encrypts it into Cipher Text using the HTTPS protocol before sending it across the web, ensuring eavesdroppers only intercept scrambled noise.</li>
+                            <li><strong>Example 2 (Email):</strong> A doctor sends a patient's medical records. If sent via standard, unencrypted email, the records travel as Plain Text, violating privacy laws. If sent via a secure, encrypted portal, the records travel as Cipher Text.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 2: Data at Rest (Local Storage)</h4>
+                        <p class="mb-2">Data at rest refers to information residing passively in computer storage (hard drives, flash drives, databases). While it isn't actively moving, it is vulnerable to physical theft.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (File-Level):</strong> An HR manager uses software to encrypt a specific Excel spreadsheet containing employee salaries. Even though the file sits on their desktop, clicking it reveals only Cipher Text unless the correct password is provided.</li>
+                            <li><strong>Example 2 (Mobile Device):</strong> A user's smartphone automatically converts all photos and messages into Cipher Text while the screen is locked. If the phone is stolen, the thief cannot read the data by plugging the storage drive into another computer.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Cipher Text Output</p>
+                            <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=600&h=350" alt="Matrix digital code representing scrambled cipher text" class="w-full h-48 rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Mobile Encryption (At Rest)</p>
+                            <img src="https://images.unsplash.com/photo-1614064641913-6b70fea56658?auto=format&fit=crop&w=600&h=350" alt="Locked smartphone screen" class="w-full h-48 rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'algo-details': {
+                title: 'Encryption Algorithms',
+                icon: '<i class="fa-solid fa-lock text-green-600"></i>',
+                html: `
+                    <p class="mb-5"><strong>Encryption</strong> is the active, mathematical process of encoding plain text information into an unintelligible format specifically to prevent unauthorized access. It is the cornerstone of modern digital security, ensuring that even if physical or network perimeters are breached, the core data itself remains protected from exploitation.</p>
+                    
+                    <p class="mb-5">At the heart of the encryption process is the <strong>Algorithm</strong>. An encryption algorithm is a complex set of mathematical rules and step-by-step instructions that dictate exactly how the plain text is chopped up, substituted, and mathematically transformed into cipher text. Modern algorithms, such as the Advanced Encryption Standard (AES), use incredibly advanced mathematics that would take modern supercomputers billions of years to brute-force without the correct key.</p>
+                    
+                    <p class="mb-5">The counterpart to encryption is <strong>Decryption</strong>. Decryption is the exact reverse process, taking the scrambled cipher text and running it back through the algorithmic steps in reverse order to produce the original, readable plain text. Just like locking and unlocking a door, encryption and decryption are two halves of the same security mechanism.</p>
+                    
+                    <p class="mb-5">One of the primary benefits of utilizing these algorithms is protecting <strong>Privacy</strong>. In an era where vast amounts of personal data—from text messages to browsing history—are transmitted daily, encryption ensures that internet service providers, governments, and malicious hackers cannot peer into personal communications, upholding the fundamental right to digital privacy.</p>
+                    
+                    <p class="mb-5">Furthermore, encryption keeps critical <strong>Information Secure</strong>. For corporations, governments, and financial institutions, a data breach can cause catastrophic financial and reputational damage. By strictly enforcing algorithms on sensitive databases, organizations guarantee that their trade secrets and customer financial records remain confidential and tamper-proof.</p>
+                    
+                    <p class="mb-5">Encryption algorithms are also the foundation for building <strong>Trust</strong> on the internet. When a user connects to a website, the padlock icon in the browser address bar signifies that a secure, encrypted tunnel (via TLS/SSL algorithms) has been established. This cryptographic handshake proves the identity of the server and assures the user that it is safe to transmit their credentials.</p>
+                    
+                    <p class="mb-5">Finally, robust encryption explicitly <strong>Prevents Misuse</strong> of data. If a hacker manages to bypass a firewall and download a 50-gigabyte database of user passwords, that data is completely useless to them if it has been properly encrypted. The algorithm ensures that without authorization, stolen data cannot be monetized, read, or weaponized against the victims.</p>
+                `
+            },
+            'algo-usecase': {
+                title: 'Encryption Algorithms: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-green-800 mb-2 border-b-2 border-green-200 pb-1">Case 1: Secure Enterprise Communications</h4>
+                        <p class="mb-2">Modern businesses rely heavily on remote workforces. Algorithms ensure that corporate data traveling between a remote worker's home and the central office remains confidential.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (VPN):</strong> A remote employee connects to a Virtual Private Network (VPN). The VPN software uses an AES algorithm to encrypt every packet of data leaving the employee's laptop, creating a secure "tunnel" through the public Wi-Fi at a coffee shop.</li>
+                            <li><strong>Example 2 (End-to-End Encryption):</strong> A management team uses a secure messaging app (like Signal or corporate Slack with E2EE enabled). The algorithm encrypts the message on the sender's device and only decrypts it on the receiver's device; not even the company hosting the messaging server can read the plain text.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-green-800 mb-2 border-b-2 border-green-200 pb-1">Case 2: Device-Level Security</h4>
+                        <p class="mb-2">Laptops and portable drives are frequently lost or stolen. Strong algorithms prevent hardware loss from becoming a catastrophic data breach.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Full Disk Encryption):</strong> An IT department configures all company laptops with BitLocker. This algorithm encrypts the entire hard drive at the sector level. If the laptop is stolen from a car, the thief cannot extract any files without the complex decryption password.</li>
+                            <li><strong>Example 2 (Hardware Security Modules):</strong> Secure servers use physical microchips dedicated solely to running encryption algorithms incredibly fast, preventing hackers from tampering with the math via software exploits.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Algorithmic Math</p>
+                            <img src="https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&w=600&h=350" alt="Complex math formulas representing algorithms" class="w-full h-48 rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Secure VPN Connection</p>
+                            <img src="https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=600&h=350" alt="Laptop screen showing secure lock connection" class="w-full h-48 rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'caesar-details': {
+                title: 'The Caesar Cipher & Cryptography Keys',
+                icon: '<i class="fa-solid fa-key text-purple-600"></i>',
+                html: `
+                    <p class="mb-5">To truly understand the complex encryption algorithms used in modern cybersecurity, it is highly beneficial to study the historical foundations of cryptography. One of the earliest, most famous, and simplest examples of encryption in human history is the <strong>Caesar Cipher</strong>, famously utilized by the Roman general Julius Caesar around 58 B.C. to protect sensitive military dispatches from enemy interception.</p>
+                    
+                    <p class="mb-5">The Caesar Cipher operates on a basic principle known as monoalphabetic substitution. This means that every single letter in the original plain text message is replaced (substituted) by another letter located a fixed number of positions down the alphabet. It is often referred to simply as a "shift cipher" because it shifts the standard alphabet timeline left or right.</p>
+                    
+                    <p class="mb-5">The absolute most critical concept to grasp from the Caesar Cipher is the introduction of the cryptographic <strong>Key</strong>. In any encryption algorithm, the key is a unique secret value that dictates exactly how the algorithm will transform the data. In the context of the Caesar Cipher, the algorithm is the mathematical action of "shifting the alphabet." The <em>Key</em> is the specific number of spaces to shift (e.g., a Key of 3 means 'A' becomes 'D').</p>
+                    
+                    <p class="mb-5">A core tenet of cybersecurity, known as Kerckhoffs's principle, states that a cryptographic system should be completely secure even if everything about the algorithm is public knowledge—except for the key. You can tell your enemy that you are using a Caesar Cipher, but as long as you keep the specific numerical shift key a secret, your messages remain protected (at least, theoretically, against basic adversaries).</p>
+                    
+                    <p class="mb-5">However, the Caesar Cipher possesses a fatal flaw that highlights the need for modern complex algorithms: it is highly vulnerable to <strong>Frequency Analysis</strong>. In the English language, certain letters (like 'E', 'T', and 'A') appear with massive frequency compared to others (like 'Z' or 'Q'). A cryptanalyst can simply look at a lengthy cipher text, count which scrambled letter appears most often, and reasonably assume that it represents the letter 'E', instantly revealing the numerical key.</p>
+                    
+                    <p class="mb-5">Modern cryptography solves the vulnerabilities of ancient shift ciphers by vastly increasing complexity. Instead of a simple key between 1 and 25, modern keys are massive binary numbers (e.g., a 256-bit key offers 1.1 x 10^77 possible combinations). Furthermore, modern algorithms don't just shift letters; they substitute, permute, and mix blocks of digital data through multiple complex mathematical rounds.</p>
+                    
+                    <p class="mb-5">Despite its simplicity and modern obsolescence, learning the Caesar Cipher provides the essential cognitive foundation for understanding how data states change. It physically demonstrates how a readable word (plain text) uses a mathematical variable (the key) to become unreadable noise (cipher text), cementing the core mechanic of all information security.</p>
+                `
+            },
+            'caesar-usecase': {
+                title: 'Caesar Cipher & Keys: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Case 1: Historical Military Operations</h4>
+                        <p class="mb-2">Before computers existed, commanders needed a fast, analog way to secure messages carried by foot messengers across enemy lines.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Encryption):</strong> Julius Caesar wants to send the order "ATTACK". He agrees with his generals beforehand to use a Key of 3. He shifts the letters, writes "DWWDFN" on the parchment, and hands it to a runner.</li>
+                            <li><strong>Example 2 (Decryption & Security):</strong> The runner is captured by enemy forces. The enemy looks at the parchment, sees "DWWDFN", and assumes it is a foreign language or gibberish. Because they do not possess the secret Key of 3, the military strategy remains secure.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Case 2: Foundational Cybersecurity Education</h4>
+                        <p class="mb-2">Today, the Caesar cipher is not used for real security, but it is the universal starting point for teaching computer science students how cryptography functions.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Algorithm Logic):</strong> Students write simple Python scripts that take a user's string input and loop through each character, adding a key variable to the ASCII value, physically demonstrating how algorithms alter data states.</li>
+                            <li><strong>Example 2 (ROT13 Forums):</strong> A modern, colloquial use of the Caesar cipher is "ROT13" (a shift of 13). It is often used on internet forums to hide movie spoilers or puzzle answers. Because the alphabet has 26 letters, applying a key of 13 a second time perfectly decrypts the message back to plain text.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Ancient Cryptography</p>
+                            <img src="https://images.unsplash.com/photo-1599839619722-39751411ea63?auto=format&fit=crop&w=600&h=350" alt="Ancient roman bust representing Julius Caesar" class="w-full h-48 rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Modern Key Security</p>
+                            <img src="https://images.unsplash.com/photo-1614064641913-6b70fea56658?auto=format&fit=crop&w=600&h=350" alt="Digital key icon indicating modern cryptography" class="w-full h-48 rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        function openBriefing(key) {
+            const modal = document.getElementById('briefing-modal');
+            const data = briefingData[key];
+            if(data) {
+                document.getElementById('briefing-modal-icon').innerHTML = data.icon;
+                document.getElementById('briefing-modal-title').innerText = data.title;
+                document.getElementById('briefing-modal-content').innerHTML = data.html;
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; 
+            }
+        }
+
+        function closeBriefing() {
+            document.getElementById('briefing-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto'; 
+        }
+
+        document.getElementById('briefing-modal').addEventListener('click', function(e) {
+            if(e.target === this) closeBriefing();
+        });
+        
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId + '-section').classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-green-900'));
+            const activeBtn = document.getElementById('nav-' + tabId);
+            if(activeBtn && tabId !== 'cert') activeBtn.classList.add('bg-green-900');
+            
+            document.querySelectorAll('.nav-btn-mobile').forEach(btn => btn.classList.remove('bg-green-900'));
+            const activeMobileBtn = document.getElementById('nav-' + tabId + '-mobile');
+            if(activeMobileBtn && tabId !== 'cert') activeMobileBtn.classList.add('bg-green-900');
+
+            window.scrollTo(0,0);
+
+            if (tabId === 'game' && !gameRunning) {
+                resetGame();
+                drawGame();
+            }
+        }
+
+        function showModal(title, message, type = 'info') {
+            const modal = document.getElementById('custom-modal');
+            const icon = document.getElementById('modal-icon');
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-msg').innerText = message;
+            
+            if(type === 'success') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-check text-green-500"></i>';
+            } else if (type === 'error') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500"></i>';
+            } else if (type === 'warning') {
+                icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-yellow-500"></i>';
+            } else {
+                icon.innerHTML = '<i class="fa-solid fa-circle-info text-blue-500"></i>';
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        let draggedLab1Item = null;
+        let lab1Count = 0;
+
+        document.querySelectorAll('#lab1-source .io-item').forEach(item => {
+            item.addEventListener('dragstart', function() {
+                draggedLab1Item = this;
+                setTimeout(() => this.classList.add('opacity-50'), 0);
+            });
+            item.addEventListener('dragend', function() {
+                setTimeout(() => this.classList.remove('opacity-50'), 0);
+                draggedLab1Item = null;
+            });
+        });
+
+        document.querySelectorAll('.io-dropzone').forEach(zone => {
+            zone.addEventListener('dragover', e => e.preventDefault());
+            zone.addEventListener('dragenter', function(e) { e.preventDefault(); this.classList.add('brightness-95'); });
+            zone.addEventListener('dragleave', function() { this.classList.remove('brightness-95'); });
+            zone.addEventListener('drop', function() {
+                this.classList.remove('brightness-95');
+                if(draggedLab1Item) {
+                    if(draggedLab1Item.dataset.type === this.dataset.target) {
+                        this.appendChild(draggedLab1Item);
+                        draggedLab1Item.classList.remove('cursor-grab');
+                        draggedLab1Item.classList.add('cursor-default', 'mb-2', 'w-[90%]', 'text-center');
+                        draggedLab1Item.setAttribute('draggable', 'false');
+                        lab1Count++;
+                        
+                        document.getElementById('lab1-feedback').innerText = "Correct Classification!";
+                        document.getElementById('lab1-feedback').className = "text-center font-bold mt-4 h-6 text-green-600 text-sm";
+                        
+                        if(lab1Count === 4) {
+                            setTimeout(() => showModal('Lab 1 Complete!', 'You successfully classified Plain Text and Cipher Text.', 'success'), 500);
+                        }
+                    } else {
+                        document.getElementById('lab1-feedback').innerText = "Incorrect. Is the text readable by humans or obfuscated?";
+                        document.getElementById('lab1-feedback').className = "text-center font-bold mt-4 h-6 text-red-600 text-sm";
+                    }
+                }
+            });
+        });
+
+        let lab2Solved = false;
+        function checkLab2(answer) {
+            if(lab2Solved) return;
+            if(answer === 'transit') {
+                lab2Solved = true;
+                document.getElementById('lab2-feedback').innerText = "Correct! Moving data requires 'In Transit' security measures.";
+                document.getElementById('lab2-feedback').className = "text-center font-bold mt-4 h-6 text-green-600 text-sm";
+                setTimeout(() => showModal('Lab 2 Complete!', 'You successfully identified the data state as Data in Transit.', 'success'), 500);
+            } else {
+                document.getElementById('lab2-feedback').innerText = "Incorrect. The scenario states the data is moving over a network.";
+                document.getElementById('lab2-feedback').className = "text-center font-bold mt-4 h-6 text-red-600 text-sm";
+            }
+        }
+
+        const correctSequence = ['Plain Text (Start)', 'Encryption', 'Cipher Text', 'Decryption', 'Plain Text (End)'];
+        let currentSequence = [];
+
+        function addLab3Sequence(item) {
+            if (currentSequence.length >= 5) return;
+            
+            // visually hide button
+            event.target.classList.add('hidden');
+            
+            currentSequence.push(item);
+            
+            const targetDiv = document.getElementById('lab3-target');
+            const itemDiv = document.createElement('div');
+            itemDiv.className = "bg-green-100 border border-green-300 text-green-800 font-bold p-2 rounded text-center text-sm shadow-sm flex items-center justify-between";
+            itemDiv.innerHTML = `<span>${currentSequence.length}. ${item}</span> <i class="fa-solid fa-check text-green-500"></i>`;
+            targetDiv.appendChild(itemDiv);
+            
+            if(currentSequence.length === 5) {
+                let isCorrect = true;
+                for(let i=0; i<5; i++){
+                    if(currentSequence[i] !== correctSequence[i]) isCorrect = false;
+                }
+                
+                if(isCorrect) {
+                    document.getElementById('lab3-feedback').innerText = "Sequence Verified!";
+                    document.getElementById('lab3-feedback').className = "font-bold h-6 text-green-600 text-sm";
+                    setTimeout(() => showModal('Lab 3 Complete!', 'You successfully modeled the end-to-end encryption process.', 'success'), 500);
+                } else {
+                    document.getElementById('lab3-feedback').innerText = "Incorrect sequence. Please reset and try again.";
+                    document.getElementById('lab3-feedback').className = "font-bold h-6 text-red-600 text-sm";
+                }
+            }
+        }
+
+        function resetLab3() {
+            currentSequence = [];
+            document.getElementById('lab3-target').innerHTML = '';
+            document.getElementById('lab3-feedback').innerText = '';
+            const buttons = document.getElementById('lab3-options').querySelectorAll('button');
+            buttons.forEach(btn => btn.classList.remove('hidden'));
+        }
+
+        let isEncrypted = false;
+        let lab4Solved = false;
+
+        document.getElementById('encryption-toggle').addEventListener('change', function() {
+            isEncrypted = this.checked;
+            const bg = document.getElementById('toggle-bg');
+            const dot = document.getElementById('toggle-dot');
+            const label = document.getElementById('toggle-label');
+            
+            if(isEncrypted) {
+                bg.classList.replace('bg-gray-400', 'bg-green-500');
+                dot.classList.add('translate-x-6');
+                label.innerText = "Encryption ON";
+                label.classList.replace('text-gray-700', 'text-green-700');
+            } else {
+                bg.classList.replace('bg-green-500', 'bg-gray-400');
+                dot.classList.remove('translate-x-6');
+                label.innerText = "Encryption OFF";
+                label.classList.replace('text-green-700', 'text-gray-700');
+            }
+        });
+
+        function sendPacket() {
+            if(lab4Solved && isEncrypted) return;
+            const btn = document.getElementById('send-btn');
+            btn.disabled = true;
+            
+            const packet = document.getElementById('data-packet');
+            packet.classList.remove('hidden');
+            
+            if(isEncrypted) {
+                packet.className = "packet bg-green-500 left-12 flex items-center justify-center border border-white";
+                packet.innerHTML = '<i class="fa-solid fa-lock text-white text-[10px]"></i>';
+            } else {
+                packet.className = "packet bg-red-500 left-12 flex items-center justify-center border border-white";
+                packet.innerHTML = '<i class="fa-regular fa-file-lines text-white text-[10px]"></i>';
+            }
+            
+            // animate
+            setTimeout(() => {
+                packet.style.left = "calc(100% - 3.5rem)";
+            }, 50);
+            
+            setTimeout(() => {
+                packet.classList.add('hidden');
+                packet.style.left = "3rem"; // reset
+                btn.disabled = false;
+                
+                if(isEncrypted) {
+                    lab4Solved = true;
+                    document.getElementById('lab4-feedback').innerText = "Success! Cipher text securely transmitted.";
+                    document.getElementById('lab4-feedback').className = "text-center font-bold mt-4 h-6 text-green-600 text-sm";
+                    setTimeout(() => showModal('Lab 4 Complete!', 'You successfully secured the transmission using encryption algorithms.', 'success'), 500);
+                } else {
+                    document.getElementById('lab4-feedback').innerText = "Failure. Plain text intercepted on the public network!";
+                    document.getElementById('lab4-feedback').className = "text-center font-bold mt-4 h-6 text-red-600 text-sm";
+                }
+            }, 2050);
+        }
+
+        let lab5Solved = false;
+        function checkLab5() {
+            if(lab5Solved) return;
+            const input = document.getElementById('lab5-input').value.toUpperCase().trim();
+            if(input === "THE WIFI IS DOWN") {
+                lab5Solved = true;
+                document.getElementById('lab5-feedback').innerText = "Decryption Successful!";
+                document.getElementById('lab5-feedback').className = "text-center font-bold mt-4 h-6 text-green-600 text-sm";
+                document.getElementById('lab5-input').disabled = true;
+                setTimeout(() => showModal('Lab 5 Complete!', 'You successfully decrypted the cipher text using the correct Key.', 'success'), 500);
+            } else {
+                document.getElementById('lab5-feedback').innerText = "Incorrect. Try shifting each letter left by 3 spaces in the alphabet.";
+                document.getElementById('lab5-feedback').className = "text-center font-bold mt-4 h-6 text-red-600 text-sm";
+            }
+        }
+
+        let lab6Solved = false;
+        function checkLab6() {
+            if(lab6Solved) return;
+            const input = parseInt(document.getElementById('lab6-input').value);
+            if(input === 3) {
+                lab6Solved = true;
+                document.getElementById('lab6-feedback').innerText = "Key Cracked! Shift +3 Identified.";
+                document.getElementById('lab6-feedback').className = "text-center font-bold mt-4 h-6 text-green-600 text-sm";
+                document.getElementById('lab6-input').disabled = true;
+                setTimeout(() => showModal('Lab 6 Complete!', 'You successfully identified the numerical key used in the algorithm.', 'success'), 500);
+            } else {
+                document.getElementById('lab6-feedback').innerText = "Incorrect Key. Look at the distance from 'H' to 'K'.";
+                document.getElementById('lab6-feedback').className = "text-center font-bold mt-4 h-6 text-red-600 text-sm";
+            }
+        }
+
+        const quizData = [
+            // 10 provided from Document
+            { q: "What is plain text?", options: ["A password", "Readable information", "A scrambled message", "Encrypted data"], answer: 1 },
+            { q: "What is cipher text?", options: ["Scrambled or unreadable information created by encryption", "A type of computer", "Readable information", "A password"], answer: 0 },
+            { q: "What is the purpose of encryption?", options: ["To replace passwords", "To clearly communicate", "To delete data", "To protect information from unauthorized access"], answer: 3 },
+            { q: "In a Caesar Cipher, what does a key represent?", options: ["The type of encryption", "The alphabet", "The number of letters each letter has been shifted", "The recipient of the message"], answer: 2 },
+            { q: "Decryption is the process of:", options: ["Writing a password", "Scrambling a message", "Hiding files on a computer", "Turning cipher text back into plain text"], answer: 3 },
+            { q: "Why should an encryption or decryption key be kept private?", options: ["The key will change the alphabet", "It allows only authorized users to decrypt the message", "It will delete the message", "It makes cipher text look different"], answer: 1 },
+            { q: "What is an encryption algorithm?", options: ["A step-by-step set of rules to encrypt and decrypt data", "A computer virus", "A password manager", "A type of cipher text"], answer: 0 },
+            { q: "Who is credited as creating the Caesar Cipher?", options: ["Julius Caesar", "Isaac Newton", "Albert Einstein", "Leonardo da Vinci"], answer: 0 },
+            { q: "If a message is encrypted with a key of 5, how do you decrypt it?", options: ["Shift the letters forwards by 5", "Use a new random key", "Shift the letters backwards by 5", "Reverse the message letter by letter"], answer: 2 },
+            { q: "A message that looks like 'ZQQR' is an example of:", options: ["An algorithm", "A password", "Plain text", "Cipher text"], answer: 3 },
+            
+            // 10 new questions based on briefing
+            { q: "Which data state involves encrypting information currently traveling across a network?", options: ["Data at Rest", "Data Formatting", "Data in Transit", "Plain Text Routing"], answer: 2 },
+            { q: "What protocol builds trust by encrypting your connection between your web browser and a website?", options: ["HTTP", "HTTPS", "FTP", "HTML"], answer: 1 },
+            { q: "How did Julius Caesar historically use his cipher?", options: ["To hide treasure maps", "To protect military messages", "To send letters to citizens", "To write laws secretly"], answer: 1 },
+            { q: "What vulnerability makes simple monoalphabetic substitution ciphers like the Caesar Cipher easy to crack today?", options: ["File corruption", "Frequency analysis", "Packet sniffing", "Data transmission"], answer: 1 },
+            { q: "Which of the following best describes 'Data at Rest'?", options: ["An email being sent over Wi-Fi", "Data streaming from a server", "Information stored passively on a hard drive", "A phone call in progress"], answer: 2 },
+            { q: "When referring to encryption algorithms, what is the specific role of a 'key'?", options: ["It provides the secret variable that makes the algorithm's output unique and reversible", "It opens the physical server room", "It converts the text to a different language", "It bypasses all security firewalls"], answer: 0 },
+            { q: "If a plain text message is intercepted without the decryption key, encryption successfully prevents which of the following?", options: ["The creation of more data", "Misuse of the sensitive data", "The deletion of the sender's file", "The receiving of emails"], answer: 1 },
+            { q: "In cryptography, what does the term 'substitution' mean?", options: ["Deleting letters from a message", "Replacing one letter or character with another based on a mathematical rule", "Changing the font size", "Sending the message to a substitute recipient"], answer: 1 },
+            { q: "Which of the following scenarios best demonstrates file-level encryption?", options: ["Sending an unencrypted email", "Connecting to a public Wi-Fi network", "Securing a single PDF with a password on a desktop", "Reading a public news website"], answer: 2 },
+            { q: "According to modern cybersecurity principles, what must remain an absolute secret for a cipher to work, even if the algorithm is known?", options: ["The Key", "The Plain Text language", "The File Size", "The Computer Brand"], answer: 0 }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        
+        quizData.forEach((item, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = "bg-gray-50 p-6 rounded-lg border border-gray-200 transition-all";
+            qDiv.id = `q-block-${index}`;
+            
+            const qTitle = document.createElement('h3');
+            qTitle.className = "font-bold text-lg text-gray-800 mb-4";
+            qTitle.innerText = `${index + 1}. ${item.q}`;
+            qDiv.appendChild(qTitle);
+            
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = "space-y-3";
+            
+            item.options.forEach((opt, optIndex) => {
+                const label = document.createElement('label');
+                label.className = "flex items-center space-x-3 p-3 rounded bg-white border border-gray-300 hover:bg-green-50 cursor-pointer transition";
+                
+                const radio = document.createElement('input');
+                radio.type = "radio";
+                radio.name = `q${index}`;
+                radio.value = optIndex;
+                radio.className = "form-radio h-5 w-5 text-green-600";
+                
+                const span = document.createElement('span');
+                span.className = "text-gray-700";
+                span.innerText = opt;
+                
+                label.appendChild(radio);
+                label.appendChild(span);
+                optionsDiv.appendChild(label);
+            });
+            
+            qDiv.appendChild(optionsDiv);
+            quizContainer.appendChild(qDiv);
+        });
+
+        function gradeQuiz() {
+            let score = 0;
+            let allAnswered = true;
+
+            for(let i = 0; i < quizData.length; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if(selected) {
+                    if(parseInt(selected.value) === quizData[i].answer) {
+                        score++;
+                    }
+                } else {
+                    allAnswered = false;
+                }
+            }
+            
+            if(!allAnswered) {
+                showModal('Incomplete Quiz', 'Please answer all 20 questions before submitting.', 'warning');
+                return;
+            }
+            
+            const percentage = (score / quizData.length) * 100;
+            
+            if(score >= 18) { 
+                const navGame = document.getElementById('nav-game');
+                const navGameMobile = document.getElementById('nav-game-mobile');
+                
+                navGame.classList.remove('text-gray-400', 'cursor-not-allowed');
+                navGame.classList.add('text-white', 'hover:bg-green-600');
+                navGame.disabled = false;
+                navGame.innerHTML = '<i class="fa-solid fa-gamepad mr-1"></i>Game';
+                
+                navGameMobile.classList.remove('text-gray-400', 'cursor-not-allowed');
+                navGameMobile.classList.add('text-white', 'hover:bg-green-600');
+                navGameMobile.disabled = false;
+                navGameMobile.innerHTML = '<i class="fa-solid fa-gamepad"></i> Game';
+
+                document.getElementById('nav-cert').classList.remove('hidden');
+                document.getElementById('nav-cert-mobile').classList.remove('hidden');
+                
+                document.getElementById('proceed-game-btn').classList.remove('hidden');
+                document.getElementById('submit-quiz-btn').classList.add('hidden');
+
+                showModal('Outstanding!', `You scored ${score}/20 (${percentage}%). You have unlocked your Certificate of Mastery AND the Retro Game!`, 'success');
+            } else {
+                quizData.forEach((_, i) => {
+                    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                    if(selected) selected.checked = false;
+                });
+                showModal('Keep Trying!', `You scored ${score}/20 (${percentage}%). You need 90% (18/20) to earn the certificate. Your answers have been reset so you can try again.`, 'error');
+                document.getElementById('quiz-section').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let score = 0;
+        let gameRunning = false;
+        let animationId;
+        
+        const COLS = 15;
+        const ROWS = 11;
+        const TILE = 40; // 15*40=600, 11*40=440
+        
+        let grid = [];
+        let player = {};
+        let bombs = [];
+        let explosions = [];
+        let enemies = [];
+        
+        const keys = { w:false, a:false, s:false, d:false, space:false };
+        
+        // Setup Grid
+        // 0=floor, 1=solid(gray), 2=breakable(brown)
+        function initGrid() {
+            grid = [];
+            for(let r=0; r<ROWS; r++) {
+                let row = [];
+                for(let c=0; c<COLS; c++) {
+                    if(r===0 || r===ROWS-1 || c===0 || c===COLS-1) row.push(1); // border
+                    else if(r%2===0 && c%2===0) row.push(1); // pillars
+                    else row.push(Math.random() < 0.6 ? 2 : 0); // 60% chance of breakable block
+                }
+                grid.push(row);
+            }
+            // Clear spawn area
+            grid[1][1] = 0;
+            grid[1][2] = 0;
+            grid[2][1] = 0;
+        }
+
+        // Setup Entities
+        function initEntities() {
+            player = { x: 1, y: 1, px: 40, py: 40, speed: 2, dead: false, lastDrop: 0 };
+            bombs = [];
+            explosions = [];
+            enemies = [];
+            
+            // Spawn 4 enemies away from player
+            let spawned = 0;
+            while(spawned < 4) {
+                let r = Math.floor(Math.random() * (ROWS-4)) + 3;
+                let c = Math.floor(Math.random() * (COLS-4)) + 3;
+                if(grid[r][c] === 0) {
+                    enemies.push({ r: r, c: c, px: c*TILE, py: r*TILE, dir: Math.floor(Math.random()*4), speed: 1 });
+                    spawned++;
+                }
+            }
+        }
+
+        // Input
+        window.addEventListener('keydown', e => {
+            if(!gameRunning) return;
+            if(e.key==='ArrowUp' || e.key.toLowerCase()==='w') { keys.w = true; e.preventDefault(); }
+            if(e.key==='ArrowLeft' || e.key.toLowerCase()==='a') { keys.a = true; e.preventDefault(); }
+            if(e.key==='ArrowDown' || e.key.toLowerCase()==='s') { keys.s = true; e.preventDefault(); }
+            if(e.key==='ArrowRight' || e.key.toLowerCase()==='d') { keys.d = true; e.preventDefault(); }
+            if(e.key===' ') { keys.space = true; e.preventDefault(); }
+        });
+        window.addEventListener('keyup', e => {
+            if(e.key==='ArrowUp' || e.key.toLowerCase()==='w') keys.w = false;
+            if(e.key==='ArrowLeft' || e.key.toLowerCase()==='a') keys.a = false;
+            if(e.key==='ArrowDown' || e.key.toLowerCase()==='s') keys.s = false;
+            if(e.key==='ArrowRight' || e.key.toLowerCase()==='d') keys.d = false;
+            if(e.key===' ') keys.space = false;
+        });
+
+        function triggerGameKey(key, state) {
+            if(!gameRunning && key === ' ' && state) startGame();
+            if(!gameRunning) return;
+            if(key==='ArrowUp') keys.w = state;
+            if(key==='ArrowLeft') keys.a = state;
+            if(key==='ArrowDown') keys.s = state;
+            if(key==='ArrowRight') keys.d = state;
+            if(key===' ') keys.space = state;
+        }
+
+        function canMove(x, y, size) {
+            let margin = 4;
+            // Check 4 corners of hitbox
+            let left = Math.floor((x + margin) / TILE);
+            let right = Math.floor((x + size - margin - 1) / TILE);
+            let top = Math.floor((y + margin) / TILE);
+            let bottom = Math.floor((y + size - margin - 1) / TILE);
+            
+            // Check grid collisions
+            for(let r=top; r<=bottom; r++) {
+                for(let c=left; c<=right; c++) {
+                    if(grid[r][c] === 1 || grid[r][c] === 2) return false;
+                    // Check bombs (treat as solid if outside it)
+                    for(let b of bombs) {
+                        if(b.c === c && b.r === r) {
+                            // Only block if center of player is not currently on bomb
+                            let pcx = x + size/2;
+                            let pcy = y + size/2;
+                            let bHit = pcx < c*TILE || pcx > (c+1)*TILE || pcy < r*TILE || pcy > (r+1)*TILE;
+                            if(bHit) return false;
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+
+        function update() {
+            if(player.dead) return;
+
+            // Player Movement
+            let newX = player.px;
+            let newY = player.py;
+            
+            if(keys.w) newY -= player.speed;
+            if(keys.s) newY += player.speed;
+            if(keys.a) newX -= player.speed;
+            if(keys.d) newX += player.speed;
+            
+            // Allow sliding on corners
+            if(newX !== player.px && canMove(newX, player.py, TILE)) player.px = newX;
+            if(newY !== player.py && canMove(player.px, newY, TILE)) player.py = newY;
+            
+            // Drop Bomb
+            if(keys.space && Date.now() - player.lastDrop > 500) {
+                let r = Math.floor((player.py + TILE/2) / TILE);
+                let c = Math.floor((player.px + TILE/2) / TILE);
+                
+                // check if bomb already there
+                let hasBomb = bombs.some(b => b.r === r && b.c === c);
+                if(!hasBomb) {
+                    bombs.push({ r: r, c: c, timer: 180 }); // 3 seconds at 60fps
+                    player.lastDrop = Date.now();
+                }
+            }
+
+            // Update Bombs
+            for(let i=bombs.length-1; i>=0; i--) {
+                bombs[i].timer--;
+                if(bombs[i].timer <= 0) {
+                    explode(bombs[i].r, bombs[i].c);
+                    bombs.splice(i, 1);
+                }
+            }
+
+            // Update Explosions
+            for(let i=explosions.length-1; i>=0; i--) {
+                explosions[i].timer--;
+                
+                // Kill player
+                let pc = Math.floor((player.px + TILE/2) / TILE);
+                let pr = Math.floor((player.py + TILE/2) / TILE);
+                if(explosions[i].c === pc && explosions[i].r === pr) player.dead = true;
+                
+                // Kill enemies
+                for(let j=enemies.length-1; j>=0; j--) {
+                    let ec = Math.floor((enemies[j].px + TILE/2) / TILE);
+                    let er = Math.floor((enemies[j].py + TILE/2) / TILE);
+                    if(explosions[i].c === ec && explosions[i].r === er) {
+                        enemies.splice(j, 1);
+                        score += 50;
+                        document.getElementById('game-score').innerText = score;
+                    }
+                }
+                
+                if(explosions[i].timer <= 0) {
+                    explosions.splice(i, 1);
+                }
+            }
+
+            // Update Enemies (Simple AI)
+            for(let e of enemies) {
+                let dx = [0, 1, 0, -1]; // up, right, down, left
+                let dy = [-1, 0, 1, 0];
+                
+                let nX = e.px + dx[e.dir] * e.speed;
+                let nY = e.py + dy[e.dir] * e.speed;
+                
+                if(canMove(nX, nY, TILE-4)) {
+                    e.px = nX;
+                    e.py = nY;
+                } else {
+                    // Turn
+                    let opts = [];
+                    for(let i=0; i<4; i++) {
+                        if(canMove(e.px + dx[i]*e.speed, e.py + dy[i]*e.speed, TILE-4)) opts.push(i);
+                    }
+                    if(opts.length > 0) e.dir = opts[Math.floor(Math.random()*opts.length)];
+                }
+                
+                // Hit Player
+                let pCenter = { x: player.px + TILE/2, y: player.py + TILE/2 };
+                let eCenter = { x: e.px + TILE/2, y: e.py + TILE/2 };
+                let dist = Math.hypot(pCenter.x - eCenter.x, pCenter.y - eCenter.y);
+                if(dist < TILE - 8) player.dead = true;
+            }
+
+            if(player.dead) gameOver();
+        }
+
+        function explode(r, c) {
+            let radius = 2;
+            let dirs = [[0,1], [1,0], [0,-1], [-1,0]];
+            
+            explosions.push({ r: r, c: c, timer: 30 }); // center
+            
+            for(let d of dirs) {
+                for(let i=1; i<=radius; i++) {
+                    let nr = r + d[0]*i;
+                    let nc = c + d[1]*i;
+                    if(nr<0 || nr>=ROWS || nc<0 || nc>=COLS) break;
+                    
+                    if(grid[nr][nc] === 1) break; // hit solid
+                    if(grid[nr][nc] === 2) {
+                        grid[nr][nc] = 0; // break wall
+                        explosions.push({ r: nr, c: nc, timer: 30 });
+                        score += 10;
+                        document.getElementById('game-score').innerText = score;
+                        break; // stop spreading in this dir
+                    }
+                    explosions.push({ r: nr, c: nc, timer: 30 }); // open space
+                }
+            }
+        }
+
+        function drawGame() {
+            if(!gameRunning) return;
+            
+            update();
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw Grid
+            for(let r=0; r<ROWS; r++) {
+                for(let c=0; c<COLS; c++) {
+                    let x = c * TILE;
+                    let y = r * TILE;
+                    
+                    if(grid[r][c] === 1) { // Solid
+                        ctx.fillStyle = '#4b5563';
+                        ctx.fillRect(x, y, TILE, TILE);
+                        ctx.strokeStyle = '#1f2937';
+                        ctx.strokeRect(x, y, TILE, TILE);
+                    } else if(grid[r][c] === 2) { // Breakable Cipher Block
+                        ctx.fillStyle = '#b45309';
+                        ctx.fillRect(x, y, TILE, TILE);
+                        ctx.strokeStyle = '#78350f';
+                        ctx.strokeRect(x, y, TILE, TILE);
+                        ctx.fillStyle = '#fef3c7';
+                        ctx.font = '10px monospace';
+                        ctx.fillText('CIPHER', x+4, y+24);
+                    } else { // Floor
+                        ctx.fillStyle = '#111827';
+                        ctx.fillRect(x, y, TILE, TILE);
+                    }
+                }
+            }
+            
+            // Draw Bombs
+            for(let b of bombs) {
+                let x = b.c * TILE + TILE/2;
+                let y = b.r * TILE + TILE/2;
+                let pulse = (Math.sin(b.timer * 0.2) + 1) * 2;
+                
+                ctx.beginPath();
+                ctx.arc(x, y, 12 + pulse, 0, Math.PI*2);
+                ctx.fillStyle = '#ef4444';
+                ctx.fill();
+                ctx.strokeStyle = '#7f1d1d';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+            
+            // Draw Explosions
+            for(let ex of explosions) {
+                let x = ex.c * TILE;
+                let y = ex.r * TILE;
+                ctx.fillStyle = (ex.timer % 4 < 2) ? '#fbbf24' : '#ef4444'; // Flicker yellow/red
+                ctx.fillRect(x+4, y+4, TILE-8, TILE-8);
+            }
+            
+            // Draw Enemies (Malware)
+            for(let e of enemies) {
+                ctx.fillStyle = '#a855f7'; // Purple
+                ctx.fillRect(e.px + 4, e.py + 4, TILE-8, TILE-8);
+                ctx.fillStyle = '#f3f4f6';
+                ctx.fillRect(e.px + 8, e.py + 10, 6, 6); // eye
+                ctx.fillRect(e.px + 24, e.py + 10, 6, 6); // eye
+                ctx.fillStyle = '#ef4444';
+                ctx.fillRect(e.px + 10, e.py + 12, 2, 2); // pupil
+                ctx.fillRect(e.px + 26, e.py + 12, 2, 2); // pupil
+            }
+
+            // Draw Player (Decryptor)
+            if(!player.dead) {
+                ctx.fillStyle = '#3b82f6'; // Blue
+                ctx.beginPath();
+                ctx.arc(player.px + TILE/2, player.py + TILE/2, 14, 0, Math.PI*2);
+                ctx.fill();
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+
+            animationId = requestAnimationFrame(drawGame);
+        }
+
+        function resetGame() {
+            score = 0;
+            document.getElementById('game-score').innerText = score;
+            document.getElementById('game-lives').innerText = "ACTIVE";
+            document.getElementById('game-lives').className = "text-blue-400 font-bold";
+            initGrid();
+            initEntities();
+        }
+
+        function startGame() {
+            const overlay = document.getElementById('game-overlay');
+            overlay.classList.add('hidden');
+            if(!gameRunning) {
+                resetGame();
+                gameRunning = true;
+                drawGame();
+            }
+        }
+
+        document.getElementById('start-game-btn').addEventListener('click', startGame);
+
+        function gameOver() {
+            gameRunning = false;
+            cancelAnimationFrame(animationId);
+            document.getElementById('game-lives').innerText = "CRASHED";
+            document.getElementById('game-lives').className = "text-red-500 font-bold";
+            
+            const overlay = document.getElementById('game-overlay');
+            overlay.classList.remove('hidden');
+            document.getElementById('start-game-btn').innerText = "System Crash! Reboot";
+            document.getElementById('start-game-btn').classList.replace('bg-green-600', 'bg-red-600');
+            document.getElementById('start-game-btn').classList.replace('border-green-800', 'border-red-800');
+        }
+
+        function updateCertName() {
+            let name = document.getElementById('student-name-input').value.trim();
+            if(name) {
+                if (name.includes(' ')) {
+                    name = name.split(' ')[0];
+                    document.getElementById('student-name-input').value = name;
+                    showModal('Notice', 'Only your first name has been applied to the certificate.', 'info');
+                }
+                document.getElementById('cert-student-name').innerText = name;
+            } else {
+                showModal('Wait!', 'Please enter your first name to update the certificate.', 'warning');
+            }
+        }
+
+        const today = new Date();
+        document.getElementById('cert-date').innerText = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        function downloadCert() {
+            const certEl = document.getElementById('certificate');
+            const name = document.getElementById('cert-student-name').innerText;
+            let filename = 'Certificate.png';
+            if (name && name !== 'Student') {
+                filename = `${name.replace(/\s+/g, '_')}_Encryption_Certificate.png`;
+            }
+
+            const originalTransform = certEl.style.transform;
+            certEl.style.transform = 'none';
+
+            const btn = document.getElementById('download-btn');
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Generating...';
+            btn.disabled = true;
+
+            html2canvas(certEl, { 
+                scale: 2, 
+                useCORS: true,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+            }).catch(err => {
+                console.error(err);
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                showModal('Error', 'Failed to generate image. Try using a desktop browser.', 'error');
+            });
+        }
+
+        window.onload = () => {
+            // Draw static background for game preview
+            ctx.fillStyle = '#111827';
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle = '#4b5563';
+            ctx.font = '20px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('SYSTEM READY. PRESS EXECUTE.', canvas.width/2, canvas.height/2);
+        }
+    </script>
+</body>
+</html>

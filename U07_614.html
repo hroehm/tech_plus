@@ -1,0 +1,1546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 07 Section 6.1.4 Mastery - Privacy</title>
+    
+    <!-- Load Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load HTML2Canvas for Certificate Download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- Load Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Qwitcher+Grypen:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0fdf4; 
+            color: #1f2937;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        /* Interactive Elements CSS */
+        .io-dropzone { min-height: 80px; border: 2px dashed #9ca3af; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: #f9fafb; transition: all 0.2s; flex-wrap: wrap; gap: 4px; padding: 8px;}
+        .io-dropzone.drag-over { background: #e5e7eb; border-color: #16a34a; box-shadow: inset 0 0 10px rgba(22, 163, 74, 0.2);}
+        .io-item { cursor: grab; transition: transform 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .io-item:active { cursor: grabbing; transform: scale(0.95); }
+        
+        /* Redaction Lab */
+        .redactable { background-color: #fee2e2; border: 1px dashed #ef4444; cursor: pointer; transition: all 0.2s; border-radius: 2px; padding: 0 4px; }
+        .redactable.redacted { background-color: #000 !important; color: #000 !important; border: 1px solid #000; }
+        
+        /* Toggle Switch */
+        .toggle-checkbox:checked { right: 0; border-color: #10b981; }
+        .toggle-checkbox:checked + .toggle-label { background-color: #10b981; }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #e5e7eb; }
+        ::-webkit-scrollbar-thumb { background: #047857; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #065f46; }
+
+        /* Retro Game Canvas */
+        #game-canvas {
+            background-color: #1e293b;
+            border: 4px solid #475569;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+            max-width: 100%;
+            height: auto;
+            touch-action: none;
+            cursor: pointer;
+        }
+
+        /* --- CERTIFICATE STYLES --- */
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .font-body { font-family: 'Lora', serif; }
+        .font-script { font-family: 'Qwitcher Grypen', cursive; }
+        
+        .cert-preview-container {
+            width: 100%;
+            overflow: auto;
+            display: flex;
+            justify-content: center;
+            background: #e5e7eb;
+            padding: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        #certificate {
+            width: 1056px !important;
+            height: 816px !important;
+            flex-shrink: 0;
+            background-color: #ffffff;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1056" height="816"><polygon points="0,0 250,0 0,650" fill="%2310b981"/><polygon points="0,0 350,0 0,900" fill="%23047857" opacity="0.8"/><polygon points="0,0 120,0 0,300" fill="%2310b981"/><polygon points="0,450 650,816 0,816" fill="%2310b981"/><polygon points="0,550 450,816 0,816" fill="%23047857" opacity="0.8"/><polygon points="800,0 1056,0 1056,256" fill="%23f3f4f6"/><polygon points="1056,500 1056,816 750,816" fill="%23f3f4f6"/></svg>');
+            background-size: cover;
+            border: 4px solid #e5e7eb;
+        }
+
+        .gold-seal {
+            position: absolute;
+            left: 110px;
+            top: 350px;
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c, #fcf6ba);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3), inset 0 0 15px rgba(255,255,255,0.7), inset 0 0 25px rgba(139,105,20,0.9);
+            z-index: 10;
+        }
+        .gold-seal::before {
+            content: '';
+            position: absolute;
+            top: -4px; bottom: -4px; left: -4px; right: -4px;
+            border-radius: 50%;
+            border: 6px dashed #d4af37;
+        }
+        .gold-seal-inner-1 {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 2px solid rgba(139, 105, 20, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #e8c678, #dbab46);
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.2), 0 2px 5px rgba(255,255,255,0.7);
+            z-index: 1;
+        }
+        .gold-seal-inner-2 {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: radial-gradient(circle, #fcf6ba, #d4af37);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            padding: 10px;
+        }
+        .embossed-text {
+            color: #b38728;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2);
+            font-family: 'Playfair Display', serif;
+            font-weight: 800;
+            line-height: 1.1;
+            text-transform: uppercase;
+        }
+        .embossed-text-large { font-size: 14px; letter-spacing: 1px; }
+        .embossed-text-small { font-size: 11px; letter-spacing: 2px; margin: 2px 0; }
+        .embossed-star { font-size: 12px; color: #b38728; text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2); margin: 2px 0; }
+
+        @media (max-width: 1100px) {
+            #certificate { transform: scale(0.7); transform-origin: top left; margin-bottom: -240px; margin-right: -310px; }
+        }
+        @media (max-width: 768px) {
+            #certificate { transform: scale(0.4); transform-origin: top left; margin-bottom: -490px; margin-right: -630px; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
+    <nav class="bg-green-800 text-white shadow-lg sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-user-shield text-2xl"></i>
+                    <span class="font-bold text-xl tracking-wider hidden sm:inline-block">Tech+ Unit 07 Section 6.1.4</span>
+                    <span class="font-bold text-xl tracking-wider sm:hidden">6.1.4 Privacy</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-2">
+                        <button onclick="switchTab('briefing')" class="nav-btn bg-green-900 px-3 py-2 rounded-md text-sm font-medium hover:bg-green-700 transition" id="nav-briefing"><i class="fa-solid fa-book-open mr-1"></i>Briefing</button>
+                        <button onclick="switchTab('activity')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-green-700 transition" id="nav-activity"><i class="fa-solid fa-flask mr-1"></i>Lab Activity</button>
+                        <button onclick="switchTab('quiz')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-green-700 transition" id="nav-quiz"><i class="fa-solid fa-clipboard-check mr-1"></i>Quiz</button>
+                        <button onclick="switchTab('game')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-gray-400 cursor-not-allowed transition" id="nav-game" disabled><i class="fa-solid fa-lock mr-1"></i>Game</button>
+                        <button onclick="switchTab('cert')" class="nav-btn hidden px-3 py-2 rounded-md text-sm font-medium text-yellow-300 hover:bg-green-700 transition" id="nav-cert"><i class="fa-solid fa-award mr-1"></i>Certificate</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Nav -->
+        <div class="md:hidden flex flex-wrap justify-center gap-2 py-2 px-2 bg-green-900">
+            <button onclick="switchTab('briefing')" class="nav-btn-mobile px-3 py-1 text-sm rounded bg-green-950" id="nav-briefing-mobile">Briefing</button>
+            <button onclick="switchTab('activity')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-activity-mobile">Lab</button>
+            <button onclick="switchTab('quiz')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-quiz-mobile">Quiz</button>
+            <button onclick="switchTab('game')" class="nav-btn-mobile px-3 py-1 text-sm rounded text-gray-400 cursor-not-allowed" id="nav-game-mobile" disabled><i class="fa-solid fa-lock"></i></button>
+            <button onclick="switchTab('cert')" id="nav-cert-mobile" class="hidden px-2 py-1 text-sm text-yellow-300 rounded"><i class="fa-solid fa-award"></i></button>
+        </div>
+    </nav>
+
+    <main class="flex-grow w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <!-- BRIEFING SECTION -->
+        <div id="briefing-section" class="tab-content active no-print">
+            <div class="text-center mb-10">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">Privacy in the Digital World</h1>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">Privacy goes beyond basic security; it addresses exactly how personal information is collected, stored, used, and shared. Explore the vulnerabilities of digital communication and the regulations that protect users.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- Tile 1 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-indigo-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-indigo-700"><i class="fa-solid fa-id-card mr-2"></i>PII & Privacy Principles</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>PII:</strong> Personally Identifiable Information that reveals your identity (Name, Phone).</li>
+                            <li><strong>SPII:</strong> Sensitive PII that can cause serious harm if stolen (SSN, Medical Records).</li>
+                            <li><strong>Privacy Definition:</strong> The principle of maintaining control over how your data is used and stored.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('pii-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('pii-usecase')" class="flex-1 bg-indigo-100 hover:bg-indigo-200 text-indigo-900 py-3 rounded text-sm font-bold transition flex items-center justify-center"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 2 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-blue-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-blue-700"><i class="fa-solid fa-comments mr-2"></i>Social Media & Email</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Social Ownership:</strong> Platforms often own your uploaded content and share it with advertisers.</li>
+                            <li><strong>Encryption:</strong> End-to-End Encryption converts messages so only the recipient can read them.</li>
+                            <li><strong>Organizational Email:</strong> Avoid using school or work emails for private communications.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('social-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('social-usecase')" class="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-900 py-3 rounded text-sm font-bold transition flex items-center justify-center"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 3 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-purple-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-purple-700"><i class="fa-solid fa-folder-open mr-2"></i>IM & File Sharing</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Instant Messaging:</strong> Often lacks default encryption; users lose control over sent messages.</li>
+                            <li><strong>File Permissions:</strong> Giving too many permissions (e.g., Edit instead of View) poses severe risks.</li>
+                            <li><strong>Secure Practices:</strong> Utilize expiration dates and secure networks when sharing files.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('im-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('im-usecase')" class="flex-1 bg-purple-100 hover:bg-purple-200 text-purple-900 py-3 rounded text-sm font-bold transition flex items-center justify-center"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 4 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-emerald-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-emerald-700"><i class="fa-solid fa-scale-balanced mr-2"></i>AI & Regulations</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>AI Data:</strong> Generative AI often saves user inputs and chats to train future models.</li>
+                            <li><strong>GDPR & HIPAA:</strong> Strict government frameworks that mandate how data must be protected.</li>
+                            <li><strong>Cookies:</strong> Third-party cookies track users across multiple sites and compromise privacy.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('ai-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('ai-usecase')" class="flex-1 bg-emerald-100 hover:bg-emerald-200 text-emerald-900 py-3 rounded text-sm font-bold transition flex items-center justify-center"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 flex justify-center">
+                <button onclick="switchTab('activity')" class="bg-green-700 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-green-600 shadow-lg transition transform hover:scale-105">Proceed to Lab Activity <i class="fa-solid fa-arrow-right ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- LAB ACTIVITY SECTION (8 Labs) -->
+        <div id="activity-section" class="tab-content no-print">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Interactive Privacy Labs</h1>
+                <p class="text-gray-600">Complete these 8 essential security tasks (2 per concept) to master digital privacy.</p>
+            </div>
+
+            <!-- Concept 1: PII Labs -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <!-- Lab 1: PII Sorter -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                    <h2 class="text-lg font-bold mb-3 text-indigo-700"><i class="fa-solid fa-sort mr-2"></i>Lab 1: PII Classification</h2>
+                    <p class="text-sm text-gray-600 mb-4">Drag the data points into the correct privacy classification zone.</p>
+                    
+                    <div class="flex flex-wrap gap-2 mb-4" id="pii-items">
+                        <div class="io-item px-3 py-1 bg-gray-100 border border-gray-300 rounded text-sm font-semibold" draggable="true" data-type="spii">Social Security #</div>
+                        <div class="io-item px-3 py-1 bg-gray-100 border border-gray-300 rounded text-sm font-semibold" draggable="true" data-type="none">Favorite Color</div>
+                        <div class="io-item px-3 py-1 bg-gray-100 border border-gray-300 rounded text-sm font-semibold" draggable="true" data-type="pii">Full Name</div>
+                        <div class="io-item px-3 py-1 bg-gray-100 border border-gray-300 rounded text-sm font-semibold" draggable="true" data-type="spii">Bank Account</div>
+                        <div class="io-item px-3 py-1 bg-gray-100 border border-gray-300 rounded text-sm font-semibold" draggable="true" data-type="none">School Mascot</div>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2">
+                        <div class="io-dropzone bg-blue-50 border-blue-300" data-target="pii"><span class="text-xs font-bold text-blue-700 w-full text-center">Standard PII</span></div>
+                        <div class="io-dropzone bg-red-50 border-red-300" data-target="spii"><span class="text-xs font-bold text-red-700 w-full text-center">Sensitive PII</span></div>
+                        <div class="io-dropzone bg-gray-50 border-gray-300" data-target="none"><span class="text-xs font-bold text-gray-600 w-full text-center">Not PII</span></div>
+                    </div>
+                    <div id="lab1-feedback" class="text-center font-bold mt-2 text-sm h-5 text-green-600"></div>
+                </div>
+
+                <!-- Lab 2: Data Redaction -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                    <h2 class="text-lg font-bold mb-3 text-indigo-700"><i class="fa-solid fa-highlighter mr-2"></i>Lab 2: SPII Redaction</h2>
+                    <p class="text-sm text-gray-600 mb-4">Click the 3 pieces of highly Sensitive PII (SPII) in this message to redact them before sending.</p>
+                    
+                    <div class="p-4 bg-gray-100 border rounded font-mono text-sm leading-relaxed">
+                        Hey HR, here is my updated direct deposit info. My name is <span class="text-gray-800">John Doe</span> and my new routing number is <span class="redactable" onclick="redact(this)">091000019</span>. Also, for the health insurance update, my medical record ID is <span class="redactable" onclick="redact(this)">MED-884-21X</span> and my driver's license number is <span class="redactable" onclick="redact(this)">DL-99482-TX</span>. Let me know if you need my <span class="text-gray-800">phone number</span>.
+                    </div>
+                    <div class="text-center mt-4">
+                        <button onclick="checkLab2()" class="bg-indigo-600 text-white px-4 py-2 rounded text-sm font-bold hover:bg-indigo-700">Submit Redacted Message</button>
+                    </div>
+                    <div id="lab2-feedback" class="text-center font-bold mt-2 text-sm h-5 text-green-600"></div>
+                </div>
+            </div>
+
+            <!-- Concept 2: Communications Labs -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <!-- Lab 3: Social Media Settings -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                    <h2 class="text-lg font-bold mb-3 text-blue-700"><i class="fa-solid fa-user-lock mr-2"></i>Lab 3: Social Profile Securing</h2>
+                    <p class="text-sm text-gray-600 mb-4">Toggle the switches to secure this public profile against data harvesting and tracking.</p>
+                    
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center bg-gray-50 p-3 rounded border">
+                            <span class="text-sm font-bold">Account Visibility (Public)</span>
+                            <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+                                <input type="checkbox" id="toggle-private" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer"/>
+                                <label for="toggle-private" class="toggle-label block overflow-hidden h-5 rounded-full bg-gray-300 cursor-pointer"></label>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center bg-gray-50 p-3 rounded border">
+                            <span class="text-sm font-bold">Background Location Tracking</span>
+                            <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+                                <input type="checkbox" id="toggle-location" checked class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer"/>
+                                <label for="toggle-location" class="toggle-label block overflow-hidden h-5 rounded-full bg-red-400 cursor-pointer"></label>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center bg-gray-50 p-3 rounded border">
+                            <span class="text-sm font-bold">Share Data with 3rd Party Quizzes</span>
+                            <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+                                <input type="checkbox" id="toggle-3rdparty" checked class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer"/>
+                                <label for="toggle-3rdparty" class="toggle-label block overflow-hidden h-5 rounded-full bg-red-400 cursor-pointer"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center mt-4">
+                        <button onclick="checkLab3()" class="bg-blue-600 text-white px-4 py-2 rounded text-sm font-bold hover:bg-blue-700">Apply Settings</button>
+                    </div>
+                    <div id="lab3-feedback" class="text-center font-bold mt-2 text-sm h-5 text-green-600"></div>
+                </div>
+
+                <!-- Lab 4: End-to-End Encryption -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 relative">
+                    <h2 class="text-lg font-bold mb-3 text-blue-700"><i class="fa-solid fa-lock mr-2"></i>Lab 4: E2E Encryption Simulator</h2>
+                    <p class="text-sm text-gray-600 mb-4">Click the steps in order to securely transmit a message using End-to-End Encryption.</p>
+                    
+                    <div class="flex justify-between items-center bg-gray-100 p-4 rounded-lg border border-gray-300">
+                        <div class="text-center">
+                            <i class="fa-solid fa-mobile-screen text-2xl mb-1 text-gray-700"></i>
+                            <p class="text-xs font-bold mb-2">Sender</p>
+                            <button id="btn-enc-1" onclick="stepE2E(1)" class="bg-gray-800 text-white text-xs px-2 py-1 rounded hover:bg-black">1. Encrypt</button>
+                        </div>
+                        <div class="flex-grow flex flex-col items-center px-2">
+                            <span id="e2e-msg" class="font-mono text-xs bg-white border px-2 py-1 mb-2">"Hello"</span>
+                            <div class="w-full h-1 bg-gray-400 relative">
+                                <div id="e2e-progress" class="absolute top-0 left-0 h-1 bg-green-500 w-0 transition-all duration-500"></div>
+                            </div>
+                            <button id="btn-enc-2" onclick="stepE2E(2)" class="mt-2 bg-gray-800 text-white text-xs px-2 py-1 rounded hover:bg-black opacity-50 cursor-not-allowed" disabled>2. Transmit</button>
+                        </div>
+                        <div class="text-center">
+                            <i class="fa-solid fa-mobile-screen text-2xl mb-1 text-gray-700"></i>
+                            <p class="text-xs font-bold mb-2">Receiver</p>
+                            <button id="btn-enc-3" onclick="stepE2E(3)" class="bg-gray-800 text-white text-xs px-2 py-1 rounded hover:bg-black opacity-50 cursor-not-allowed" disabled>3. Decrypt</button>
+                        </div>
+                    </div>
+                    <div id="lab4-feedback" class="text-center font-bold mt-4 text-sm h-5 text-green-600"></div>
+                </div>
+            </div>
+
+            <!-- Concept 3: IM & Storage Labs -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <!-- Lab 5: File Permissions -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                    <h2 class="text-lg font-bold mb-3 text-purple-700"><i class="fa-solid fa-share-nodes mr-2"></i>Lab 5: Secure File Sharing</h2>
+                    <p class="text-sm text-gray-600 mb-4">You are sharing a sensitive report via a public link. Apply the safest configuration.</p>
+                    
+                    <div class="bg-gray-50 p-4 border rounded">
+                        <div class="mb-3">
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Anyone with the link can:</label>
+                            <select id="file-perm" class="w-full border-gray-300 rounded p-2 text-sm border focus:ring-purple-500">
+                                <option value="edit">Edit and Delete</option>
+                                <option value="comment">Add Comments</option>
+                                <option value="view">View Only</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Link Expiration:</label>
+                            <select id="file-exp" class="w-full border-gray-300 rounded p-2 text-sm border focus:ring-purple-500">
+                                <option value="never">Never Expires</option>
+                                <option value="30days">Expires in 30 Days</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="text-center mt-4">
+                        <button onclick="checkLab5()" class="bg-purple-600 text-white px-4 py-2 rounded text-sm font-bold hover:bg-purple-700">Create Share Link</button>
+                    </div>
+                    <div id="lab5-feedback" class="text-center font-bold mt-2 text-sm h-5 text-green-600"></div>
+                </div>
+
+                <!-- Lab 6: AI Prompt Filtering -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                    <h2 class="text-lg font-bold mb-3 text-purple-700"><i class="fa-solid fa-robot mr-2"></i>Lab 6: AI Data Filter</h2>
+                    <p class="text-sm text-gray-600 mb-4">Generative AI platforms save user inputs. Click "Reject" for prompts that expose PII, and "Approve" for safe prompts.</p>
+                    
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between bg-red-50 p-2 rounded border border-red-200" id="ai-p1">
+                            <p class="text-xs italic text-gray-700">"Write an email for John Doe at 555-0192 regarding his account."</p>
+                            <div class="flex gap-2">
+                                <button onclick="handleAI(1, false)" class="text-xs bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700">Reject</button>
+                                <button onclick="handleAI(1, true)" class="text-xs bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700">Approve</button>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between bg-gray-50 p-2 rounded border border-gray-200" id="ai-p2">
+                            <p class="text-xs italic text-gray-700">"Explain the core concepts of End-to-End Encryption simply."</p>
+                            <div class="flex gap-2">
+                                <button onclick="handleAI(2, false)" class="text-xs bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700">Reject</button>
+                                <button onclick="handleAI(2, true)" class="text-xs bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700">Approve</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="lab6-feedback" class="text-center font-bold mt-4 text-sm h-5 text-green-600"></div>
+                </div>
+            </div>
+
+            <!-- Concept 4: Regulations & Cookies Labs -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <!-- Lab 7: Cookie Manager -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                    <h2 class="text-lg font-bold mb-3 text-emerald-700"><i class="fa-solid fa-cookie-bite mr-2"></i>Lab 7: Cookie Consent</h2>
+                    <p class="text-sm text-gray-600 mb-4">A new website is asking for data. Configure the settings to allow site functionality while blocking data brokers.</p>
+                    
+                    <div class="space-y-2 bg-gray-50 p-4 border rounded text-sm">
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="checkbox" id="cookie-1st" class="form-checkbox text-emerald-600 h-4 w-4">
+                            <span class="font-bold">Essential 1st-Party Cookies (Required)</span>
+                        </label>
+                        <p class="text-xs text-gray-500 pl-6 mb-2">Required for shopping cart and login functionality.</p>
+                        
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="checkbox" id="cookie-3rd" checked class="form-checkbox text-emerald-600 h-4 w-4">
+                            <span class="font-bold">3rd-Party Tracking Cookies</span>
+                        </label>
+                        <p class="text-xs text-gray-500 pl-6">Allows partners to track your activity across other sites.</p>
+                    </div>
+                    <div class="text-center mt-4">
+                        <button onclick="checkLab7()" class="bg-emerald-600 text-white px-4 py-2 rounded text-sm font-bold hover:bg-emerald-700">Save Preferences</button>
+                    </div>
+                    <div id="lab7-feedback" class="text-center font-bold mt-2 text-sm h-5 text-green-600"></div>
+                </div>
+
+                <!-- Lab 8: Regulation Matcher -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                    <h2 class="text-lg font-bold mb-3 text-emerald-700"><i class="fa-solid fa-gavel mr-2"></i>Lab 8: Regulation Matching</h2>
+                    <p class="text-sm text-gray-600 mb-4">Match the correct regulatory framework to its primary protective function.</p>
+                    
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between bg-gray-50 p-2 rounded border border-gray-200 text-sm">
+                            <span class="w-2/3 text-xs pr-2">EU law granting citizens rights over how their data is collected.</span>
+                            <select id="reg-1" class="w-1/3 border-gray-300 rounded p-1 text-xs border bg-white">
+                                <option value="none">Select...</option>
+                                <option value="hipaa">HIPAA</option><option value="pci">PCI</option><option value="gdpr">GDPR</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center justify-between bg-gray-50 p-2 rounded border border-gray-200 text-sm">
+                            <span class="w-2/3 text-xs pr-2">US regulation protecting personal health information.</span>
+                            <select id="reg-2" class="w-1/3 border-gray-300 rounded p-1 text-xs border bg-white">
+                                <option value="none">Select...</option>
+                                <option value="hipaa">HIPAA</option><option value="pci">PCI</option><option value="gdpr">GDPR</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center justify-between bg-gray-50 p-2 rounded border border-gray-200 text-sm">
+                            <span class="w-2/3 text-xs pr-2">Regulates credit cards and financial data transactions.</span>
+                            <select id="reg-3" class="w-1/3 border-gray-300 rounded p-1 text-xs border bg-white">
+                                <option value="none">Select...</option>
+                                <option value="hipaa">HIPAA</option><option value="pci">PCI</option><option value="gdpr">GDPR</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="text-center mt-3">
+                        <button onclick="checkLab8()" class="bg-emerald-600 text-white px-4 py-1 rounded text-sm font-bold hover:bg-emerald-700">Verify Compliance</button>
+                    </div>
+                    <div id="lab8-feedback" class="text-center font-bold mt-2 text-sm h-5 text-green-600"></div>
+                </div>
+            </div>
+
+            <div class="text-center border-t border-gray-300 pt-8 mt-4">
+                <button onclick="switchTab('quiz')" class="bg-green-700 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-green-600 shadow-lg transition transform hover:scale-105">Take the Mastery Quiz <i class="fa-solid fa-clipboard-check ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- QUIZ SECTION -->
+        <div id="quiz-section" class="tab-content no-print">
+            <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-xl max-w-4xl mx-auto border-t-8 border-green-700">
+                <div class="text-center mb-8 border-b pb-4">
+                    <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Unit 07 Section 6.1.4 Mastery Quiz</h1>
+                    <p class="text-gray-600">Score 90% or higher (18/20) to earn your Certificate of Mastery and unlock the <strong class="text-green-700">Cipher Breaker</strong> retro game!</p>
+                </div>
+
+                <div id="quiz-container" class="space-y-6">
+                    <!-- Questions injected via JS -->
+                </div>
+
+                <div class="mt-10 text-center border-t pt-6 flex flex-col md:flex-row justify-center items-center gap-4">
+                    <button id="submit-quiz-btn" onclick="gradeQuiz()" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">Submit Quiz</button>
+                    <button id="proceed-game-btn" onclick="switchTab('game')" class="hidden bg-purple-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-purple-700 shadow-lg transition w-full md:w-auto">Play Cipher Breaker <i class="fa-solid fa-gamepad ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RETRO GAME SECTION -->
+        <div id="game-section" class="tab-content no-print">
+            <div class="bg-gray-900 p-6 sm:p-8 rounded-2xl shadow-xl max-w-4xl mx-auto border-4 border-gray-700 flex flex-col items-center">
+                <div class="text-center mb-4 w-full">
+                    <h1 class="text-3xl font-extrabold text-green-500 mb-2 tracking-widest uppercase" style="font-family: monospace;">CIPHER BREAKER</h1>
+                    <p class="text-gray-300 text-sm">A malicious hacker has encrypted your sensitive files! Guess the 4-color encryption sequence within 8 attempts. <br/><span class="text-red-400 font-bold">Red Peg</span> = Right Color & Right Spot. <span class="text-white font-bold">White Peg</span> = Right Color, Wrong Spot.</p>
+                </div>
+                
+                <div class="relative flex justify-center w-full">
+                    <canvas id="game-canvas" width="400" height="600" class="w-full max-w-[400px] bg-gray-800 border-2 border-gray-600 rounded shadow-lg"></canvas>
+                    
+                    <div id="game-overlay" class="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-80 rounded-lg max-w-[400px] mx-auto z-10 p-6 text-center">
+                        <h2 id="game-over-title" class="text-3xl font-bold text-white mb-4 uppercase" style="font-family: monospace;">System Locked</h2>
+                        <button id="start-game-btn" class="bg-green-600 hover:bg-green-500 text-white font-bold font-mono py-3 px-6 rounded-lg text-xl border-4 border-green-800 uppercase transform transition hover:scale-105">Initiate Hack</button>
+                    </div>
+                </div>
+
+                <div class="mt-8 text-center w-full border-t border-gray-700 pt-6">
+                    <button onclick="switchTab('cert')" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">View Certificate <i class="fa-solid fa-award ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CERTIFICATE SECTION -->
+        <div id="cert-section" class="tab-content">
+            <div class="max-w-5xl mx-auto">
+                <div class="bg-white p-6 rounded shadow mb-6 no-print text-center border border-gray-200">
+                    <h2 class="text-2xl font-bold text-green-700 mb-2">🎉 Congratulations! 🎉</h2>
+                    <p class="text-gray-700 mb-4">You have achieved mastery of Digital Privacy.</p>
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+                        <input type="text" id="student-name-input" value="Student" placeholder="Enter your first name" class="border-2 border-gray-300 rounded px-4 py-2 w-full md:w-64 focus:border-green-600 focus:outline-none">
+                        <button onclick="updateCertName()" class="bg-green-700 text-white px-4 py-2 rounded hover:bg-green-800 transition">Update Name</button>
+                        <button id="download-btn" onclick="downloadCert()" class="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900 transition flex items-center justify-center">
+                            <i class="fa-solid fa-download mr-2"></i>Download PNG
+                        </button>
+                    </div>
+                </div>
+
+                <div class="cert-preview-container print:p-0 print:bg-white">
+                    <div id="certificate">
+                        <div class="gold-seal">
+                            <div class="gold-seal-inner-1">
+                                <div class="gold-seal-inner-2">
+                                     <span class="embossed-text embossed-text-large">Certificate</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-small">Of</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-large">Excellence</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="relative z-20 w-full h-full flex flex-col pt-[48px] pl-[380px] pr-[48px]">
+                            <h1 class="text-[#047857] text-[4.5rem] leading-none font-serif font-bold tracking-wide uppercase mb-2">CERTIFICATE</h1>
+                            <h2 class="text-gray-800 text-3xl font-serif tracking-widest uppercase mb-10">Of Achievement</h2>
+                            
+                            <p class="text-[1.4rem] font-body text-gray-800 mb-4">This is to certify that</p>
+                            
+                            <div class="relative mb-8 w-full">
+                                <h3 id="cert-student-name" class="text-[4rem] text-[#047857] font-serif italic leading-none pb-2 relative z-10 text-center w-full block">Student</h3>
+                                <div class="w-full border-b-[2px] border-[#047857] absolute bottom-[4px] left-0 z-0"></div>
+                                <div class="w-full border-b-[2px] border-dotted border-gray-400 absolute bottom-[0px] left-0 z-0"></div>
+                            </div>
+                            
+                            <p class="text-[1.3rem] font-body text-gray-800 leading-relaxed w-full pr-4">
+                                Has successfully completed the assessment for 
+                                <strong class="text-[1.8rem] text-[#047857] block mt-4 mb-2 font-serif">Cyber.org Tech+ Unit 07 Section 6.1.4</strong>
+                                <strong class="text-[1.5rem] text-black block mb-4 font-serif italic">Privacy</strong>
+                                <span class="text-[1.1rem] text-gray-700 leading-snug block">Demonstrating proficiency in identifying PII/SPII, securing social networking and email communications, implementing safe file sharing, and understanding government regulations such as GDPR and HIPAA.</span>
+                            </p>
+                            
+                            <div class="flex justify-end gap-16 items-end mt-auto mb-[60px] w-full pr-8">
+                                <div class="w-64">
+                                    <div class="border-b border-gray-600 mb-2 h-20 flex items-end justify-center relative">
+                                        <span class="font-script text-[5rem] text-[#047857] absolute bottom-[-10px] transform -rotate-3 opacity-90">Dr. M. S</span>
+                                    </div>
+                                    <p class="font-serif text-xl text-gray-800 text-center">Administration</p>
+                                </div>
+                                
+                                <div class="w-64">
+                                    <div class="border-b border-gray-600 mb-2 text-center h-20 flex items-end justify-center">
+                                        <p id="cert-date" class="font-body text-2xl text-gray-800 pb-1">Date Here</p>
+                                    </div>
+                                    <p class="font-serif text-xl text-gray-800 text-center">Date</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Base -->
+    <div id="custom-modal" class="fixed inset-0 bg-black bg-opacity-60 z-[100] hidden flex justify-center items-center backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all border-t-8 border-green-700">
+            <div class="text-center">
+                <div id="modal-icon" class="text-5xl mb-4"></div>
+                <h3 id="modal-title" class="text-2xl font-bold mb-2 text-gray-900"></h3>
+                <p id="modal-msg" class="text-gray-600 mb-6"></p>
+                <button onclick="closeModal()" class="bg-green-700 text-white px-6 py-2 rounded-lg font-bold hover:bg-green-800 transition w-full">Acknowledge</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Briefing Modal -->
+    <div id="briefing-modal" class="fixed inset-0 bg-black bg-opacity-70 z-[120] hidden flex justify-center items-center backdrop-blur-sm p-4 sm:p-6">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col transform transition-all overflow-hidden border-4 border-indigo-700" id="briefing-modal-border">
+            <div class="p-6 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+                <div class="flex items-center gap-4">
+                    <div id="briefing-modal-icon" class="text-4xl"></div>
+                    <h3 id="briefing-modal-title" class="text-2xl md:text-3xl font-bold text-gray-900"></h3>
+                </div>
+                <button onclick="closeBriefing()" class="text-gray-400 hover:text-red-600 transition text-4xl leading-none">&times;</button>
+            </div>
+            <div id="briefing-modal-content" class="p-6 md:p-10 overflow-y-auto flex-grow text-gray-700 text-lg leading-relaxed bg-white">
+                <!-- Content Injected -->
+            </div>
+            <div class="p-6 border-t border-gray-200 bg-gray-50 flex justify-end">
+                <button onclick="closeBriefing()" class="bg-gray-800 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-black transition shadow-md">Close Briefing</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Briefing Content Data ---
+        const briefingData = {
+            'pii-details': {
+                title: 'PII & Privacy Principles',
+                icon: '<i class="fa-solid fa-id-card text-indigo-600"></i>',
+                border: 'border-indigo-700',
+                html: `
+                    <p class="mb-5">In the interconnected digital landscape, data is the most valuable currency. Central to this is the concept of <strong>Personally Identifiable Information (PII)</strong>. PII refers to any piece of data that could potentially be used to reveal a specific person's identity. This includes obvious markers like a person's full legal name, their exact birthdate, their physical home address, or their personal phone number. As we live more of our lives online, the trail of PII we leave behind forms our digital footprint.</p>
+                    <p class="mb-5">While standard PII is concerning if leaked, there is a specific subset of data that requires even tighter security, known as <strong>Sensitive Personally Identifiable Information (SPII)</strong>. SPII consists of information that, if stolen or compromised, could cause substantial financial, reputational, or physical harm to an individual. Examples of SPII include Social Security numbers, state-issued driver's license numbers, bank account routing numbers, and deeply personal medical or health records.</p>
+                    <p class="mb-5">The core reason we must aggressively protect PII and SPII is the persistent threat of malicious exploitation. In the wrong hands, this data is heavily weaponized. Cybercriminals use standard PII to craft convincing phishing emails to trick users. More dangerously, they use stolen SPII to commit outright identity theft—opening fraudulent credit cards in a victim's name, draining bank accounts, or filing false tax returns.</p>
+                    <p class="mb-5">This brings us to the fundamental definition of <strong>Privacy</strong> in the digital world. Privacy is not merely about keeping secrets; rather, it is the principle that an individual should maintain ultimate control over how their personal information is collected, stored, and used. When you provide a website with your address to ship a package, privacy dictates that they use it only for shipping, not for selling to a data broker.</p>
+                    <p class="mb-5">Unfortunately, maintaining this privacy is becoming exceedingly difficult. Every time we send an instant message, renew a license online, or purchase groceries through an app, data is exchanged between our local devices and massive corporate servers via the open internet. This constant transmission creates countless opportunities for interception and data harvesting.</p>
+                    <p class="mb-5">Furthermore, the danger lies in <strong>Data Aggregation</strong>. A single piece of leaked PII, like a high school graduation year, might seem harmless. However, when a malicious actor aggregates that graduation year with a hometown found on a public profile and a pet's name gleaned from a forum post, they can often piece together enough information to bypass security questions and compromise secure accounts.</p>
+                    <p>Therefore, understanding the distinction between PII and SPII, and recognizing that true privacy equates to data control, is the foundational first step in digital security. Users must actively audit what they share, who they share it with, and remain vigilant about the terms of service that dictate how their data will be utilized long after they hit "submit."</p>
+                `
+            },
+            'pii-usecase': {
+                title: 'PII & Privacy: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                border: 'border-indigo-700',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-indigo-800 mb-2 border-b-2 border-indigo-200 pb-1">Case 1: School Registration Systems</h4>
+                        <p class="mb-2">Schools collect massive amounts of student data. Understanding the difference between general data and sensitive data is critical for school administrators to prevent identity theft of minors.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Standard PII):</strong> A school publishes a public directory containing student names and grade levels. While this is PII, it poses a lower immediate risk and is often treated as public directory information.</li>
+                            <li><strong>Example 2 (Handling SPII):</strong> A student submits their Social Security Number and medical immunization records for enrollment. The school's IT department must store this SPII on an encrypted, restricted-access server, as a breach could ruin a student's financial future before they even graduate.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-indigo-800 mb-2 border-b-2 border-indigo-200 pb-1">Case 2: E-Commerce and Data Control</h4>
+                        <p class="mb-2">Online shopping requires users to willingly hand over PII and SPII. The concept of digital privacy centers on controlling what happens to that data after the transaction.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Data Collection):</strong> A user enters their name, shipping address (PII), and credit card number (SPII) to buy shoes. They expect this data to be used solely for this specific transaction.</li>
+                            <li><strong>Example 2 (Loss of Privacy):</strong> Hidden in the site's terms of service, the retailer claims the right to sell user purchase history and addresses to a third-party data broker. The user has lost privacy, as they no longer control how their personal information is being monetized and distributed.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Protecting Identity</p>
+                            <img src="https://images.unsplash.com/photo-1507925922873-b468ce20412e?auto=format&fit=crop&w=600&h=350" alt="Identity security concept" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Secure Transactions</p>
+                            <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=600&h=350" alt="Credit card transaction" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'social-details': {
+                title: 'Social Media & Email',
+                icon: '<i class="fa-solid fa-comments text-blue-600"></i>',
+                border: 'border-blue-700',
+                html: `
+                    <p class="mb-5">Social media platforms are revolutionary tools that connect friends, families, and global businesses. However, this connectivity comes at a steep price to personal privacy. One of the most significant, yet overlooked, risks is <strong>Content Ownership</strong>. When you upload a photo, video, or text post to a social media site, the terms of service usually grant the platform a perpetual license to own, store, and utilize that data. Users effectively surrender control of their digital assets the moment they click post.</p>
+                    <p class="mb-5">Beyond what you actively post, social media apps excel at <strong>Background Data Collection</strong>. Even when you are not actively looking at the app, it may be tracking your physical GPS location, monitoring how long your screen lingers on specific advertisements, and logging your device's unique identifiers. This massive pool of behavioral data is incredibly valuable and is routinely sold to third-party advertisers to build hyper-targeted psychological profiles of users.</p>
+                    <p class="mb-5">To mitigate these risks, users must proactively <strong>Secure their Social Media</strong>. This involves navigating complex settings menus to switch accounts from 'Public' to 'Private', strictly limiting visibility to known friends, and disabling background location services at the mobile OS level. Furthermore, users must be highly critical of what they share, avoiding posts that accidentally reveal daily routines, home addresses, or answers to common security questions (like a pet's name).</p>
+                    <p class="mb-5">Another hidden social media vulnerability involves <strong>Third-Party Add-ons</strong>. Those fun quizzes determining "Which TV character are you?" or integrated games often require users to grant broad permissions to an external company. By clicking "Allow", users often unknowingly grant these third-party developers full access to their entire friend list, email address, and private timeline data, bypassing the platform's primary security entirely.</p>
+                    <p class="mb-5">Transitioning from public platforms to direct communication, <strong>Email</strong> remains a cornerstone of digital life but carries inherent legacy risks. Because email was designed in the early days of the internet to prioritize delivery over security, standard emails are sent largely in plain text. While modern networks protect data somewhat during transit, standard emails remain readable by anyone who gains access to the email server itself.</p>
+                    <p class="mb-5">To truly secure email privacy, users must utilize <strong>End-to-End Encryption (E2EE)</strong>. When E2EE is enabled, the sender's device scrambles the message into unreadable ciphertext using a complex mathematical key. The message remains a garbled mess as it travels across the internet and sits on the provider's servers. It is only decrypted back into readable text when it arrives on the specific recipient's device. With E2EE, not even the email hosting company can read the contents.</p>
+                    <p>Finally, a critical rule of privacy involves distinguishing between personal and organizational accounts. <strong>Work and School Emails</strong> are legally owned by the respective organization, not the individual user. Network administrators possess full administrative rights to read, search, and archive every message sent through these accounts. Therefore, it is a massive privacy failure to use a school or corporate email address for private, personal conversations.</p>
+                `
+            },
+            'social-usecase': {
+                title: 'Social Media & Email: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                border: 'border-blue-700',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 1: Social Media Oversharing</h4>
+                        <p class="mb-2">Users often forget that the internet is public and permanent, leading to the accidental leakage of sensitive personal routines and data.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Location Tagging):</strong> A high schooler posts a photo with the caption "Home alone for the weekend while the parents are out of town!" and accidentally leaves geo-location tagging on. They have just broadcasted an empty house and its exact coordinates to the internet.</li>
+                            <li><strong>Example 2 (Third-Party Quizzes):</strong> A user takes a viral "What is your Ninja Name?" quiz on Facebook. To see the result, they click "Login with Facebook," unknowingly granting the quiz creator's sketchy company full access to their private email, birthdate, and timeline posts.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 2: Protecting Email Confidentiality</h4>
+                        <p class="mb-2">Assuming that an email is inherently private is a common mistake that can lead to organizational surveillance or data interception.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Organizational Access):</strong> An employee uses their @company.com email to complain to a coworker about their boss and discuss applying for a new job. The IT administrator, conducting a routine keyword audit, flags and reads the emails, resulting in the employee's termination.</li>
+                            <li><strong>Example 2 (End-to-End Encryption):</strong> A lawyer needs to send highly sensitive legal documents to a client. Instead of a standard email, they use an E2EE secure message portal. Even if a hacker breaches the email provider's central servers, they only steal mathematically scrambled, unreadable ciphertext.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Social Data Harvesting</p>
+                            <img src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=600&h=350" alt="Social media application icons" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Secure Communication</p>
+                            <img src="https://images.unsplash.com/photo-1593640408182-31c70c8268f5?auto=format&fit=crop&w=600&h=350" alt="Person typing on a laptop" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'im-details': {
+                title: 'Instant Messaging & File Sharing',
+                icon: '<i class="fa-solid fa-folder-open text-purple-600"></i>',
+                border: 'border-purple-700',
+                html: `
+                    <p class="mb-5"><strong>Instant Messaging (IM)</strong> applications have largely replaced SMS texts, acting as a hybrid between social media speed and email directness. Because they are often owned by massive parent companies (like Meta owning WhatsApp), IM platforms carry similar privacy risks to social networks. These parent companies can collect extensive metadata about your habits—who you message, when you message them, and how often—and leverage that data for targeted advertising, even if they can't read the messages themselves.</p>
+                    <p class="mb-5">A critical factor in IM privacy is the implementation of encryption. While some premier applications enforce End-to-End Encryption by default, many popular platforms do not. Without explicit E2EE, messages are stored in plain text on the provider's cloud servers. If that company suffers a data breach, or if a government issues a subpoena, your private conversations can be fully exposed and scrutinized.</p>
+                    <p class="mb-5">Furthermore, IM presents a unique psychological vulnerability: the illusion of informality. Users tend to be casual on IM, rapidly firing off passwords, gossip, or sensitive photos. However, users must remember they have <strong>Zero Control over Sent Messages</strong>. Once an image hits the recipient's phone, the recipient can screenshot it, save it, or forward it globally in seconds. Privacy online relies heavily on trusting the digital hygiene of the person on the receiving end.</p>
+                    <p class="mb-5">Shifting to data storage, <strong>File Sharing</strong> has evolved drastically. Historically, moving files required the File Transfer Protocol (FTP). FTP was notoriously insecure; it sent not only the data payload but also the user's login username and password across the network in clear, readable text, making it a prime target for early network sniffers.</p>
+                    <p class="mb-5">Today, cloud-based file sharing (like Google Drive or OneDrive) is heavily encrypted in transit. The modern privacy failure stems not from the technology, but from <strong>Improper Permission Settings</strong>. When a user generates a shareable link, they must actively choose the access level. Carelessly granting "Edit" or "Full Control" permissions via a public link allows anyone who stumbles upon the URL to maliciously delete, alter, or hold the data ransom.</p>
+                    <p class="mb-5">To enforce privacy in file sharing, users must adopt the principle of least privilege. Always restrict permissions to <strong>"View Only"</strong> unless editing is strictly required. Furthermore, users should never leave links active indefinitely. Utilizing <strong>Expiration Dates</strong> ensures that a sensitive document shared for a weekend project automatically locks down on Monday, minimizing the long-term attack surface.</p>
+                    <p>Finally, the physical environment matters. Even with secure cloud platforms, accessing or sharing sensitive files over <strong>Unsecured Public Wi-Fi</strong> (like at a coffee shop) exposes the session to local network attacks. Maintaining privacy requires combining secure platform settings with secure network access protocols, ensuring data remains confidential from the cloud all the way down to the local device.</p>
+                `
+            },
+            'im-usecase': {
+                title: 'IM & File Sharing: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                border: 'border-purple-700',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Case 1: Instant Messaging Casualties</h4>
+                        <p class="mb-2">The rapid, casual nature of instant messaging often causes users to drop their guard, leading to severe privacy compromises.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Loss of Control):</strong> A student casually texts a photo of their new driver's license (SPII) to a friend via an unencrypted IM app. The friend's phone is later stolen and lacks a passcode, granting the thief direct access to the student's identity documents.</li>
+                            <li><strong>Example 2 (Corporate IM):</strong> Employees use Microsoft Teams (a corporate IM tool) to vent about company policy. They assume it is private, but the HR department requests an audit log from IT, pulling every chat transcript from the server database, as the organization owns the platform.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Case 2: Cloud Collaboration Security</h4>
+                        <p class="mb-2">Sharing documents via cloud links is standard practice, but failing to configure the security settings correctly can expose sensitive organizational data.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Improper Permissions):</strong> A manager generates a "Anyone with the link can Edit" URL for a master financial spreadsheet and emails it to the team. An employee accidentally forwards the email to an outside contractor, who now has the ability to view and maliciously delete the company's financial data.</li>
+                            <li><strong>Example 2 (Expiration Dates):</strong> A design firm shares a portfolio of unreleased, confidential artwork with a prospective client. To protect their intellectual property, they set the link permission to "View Only" and set a strict 48-hour expiration date, ensuring the client cannot download or hoard the files.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Chat Vulnerabilities</p>
+                            <img src="https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?auto=format&fit=crop&w=600&h=350" alt="Person holding phone texting" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Secure Cloud Sharing</p>
+                            <img src="https://images.unsplash.com/photo-1614064641913-6b7132a875fb?auto=format&fit=crop&w=600&h=350" alt="Cloud computing data transfer" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'ai-details': {
+                title: 'AI Privacy & Regulations',
+                icon: '<i class="fa-solid fa-scale-balanced text-emerald-600"></i>',
+                border: 'border-emerald-700',
+                html: `
+                    <p class="mb-5">The rapid integration of <strong>Artificial Intelligence (AI)</strong> into daily workflows has introduced unprecedented privacy concerns. Generative AI models (like chatbots) require vast oceans of data to learn and improve. Consequently, many AI platforms actively save user chat logs, prompts, and uploaded documents to train their future iterations. If a user inputs proprietary code or personal secrets into a free AI tool, they may inadvertently be feeding that private data into a public model's training set.</p>
+                    <p class="mb-5">Because of this data harvesting, a fundamental rule of modern digital safety is to <strong>Never input PII or SPII into an AI platform.</strong> Uploading photos of real people allows the AI to train on facial recognition, making deepfakes easier to generate. Providing financial numbers or personal addresses to a beta-stage AI tool risks that data being regurgitated to a completely different user asking a similar question weeks later.</p>
+                    <p class="mb-5">To combat massive corporate data harvesting, governments have stepped in. The gold standard of privacy law is the <strong>General Data Protection Regulation (GDPR)</strong> from the European Union. The GDPR fundamentally shifted power back to the user. It dictates that EU citizens, regardless of where a tech company is headquartered, have the absolute right to know what data is collected, how it is used, and possess the "Right to be Forgotten" (forcing the company to delete their data). Violations result in astronomical financial fines.</p>
+                    <p class="mb-5">In the United States, privacy regulations are highly fragmented by industry rather than a single overarching law. The <strong>Health Insurance Portability and Accountability Act (HIPAA)</strong> is a strict federal law that makes it illegal for healthcare providers or insurance companies to disclose a patient's medical records or health information without explicit, written consent. A leaked medical record is a severe HIPAA violation.</p>
+                    <p class="mb-5">Financially, the industry self-regulates through the <strong>Payment Card Industry (PCI)</strong> Security Standards Council. Created collectively by major credit card brands (Visa, Mastercard), PCI compliance mandates extremely rigorous encryption and network security standards for any business that accepts, processes, or stores credit card data, ensuring users' financial SPII is heavily shielded during online transactions.</p>
+                    <p class="mb-5">A highly visible result of these regulations is <strong>Cookie Control</strong>. Cookies are small text files downloaded to your browser. <strong>First-party cookies</strong> are generated by the site you are visiting; they are generally helpful, remembering your login state or shopping cart contents. They are restricted to that specific domain and pose minimal privacy risk.</p>
+                    <p>Conversely, <strong>Third-party cookies</strong> are insidious privacy invaders. Placed by advertising networks hidden on the page, these cookies track your browsing behavior across multiple, completely unrelated websites to build a comprehensive profile of your interests. Modern regulations (like the GDPR) now legally require websites to present cookie consent banners, forcing companies to ask for explicit permission before deploying these third-party trackers onto a user's machine.</p>
+                `
+            },
+            'ai-usecase': {
+                title: 'AI & Regulations: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                border: 'border-emerald-700',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-emerald-800 mb-2 border-b-2 border-emerald-200 pb-1">Case 1: The Dangers of AI Inputs</h4>
+                        <p class="mb-2">Users often treat AI chatbots like private search engines, failing to realize the platform is actively consuming and saving their data.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Proprietary Leak):</strong> A software engineer copies highly secretive, unreleased code from their company and pastes it into an AI chatbot to find a bug. The AI company saves this prompt, and the proprietary code is now permanently absorbed into the AI's external training database, causing a massive corporate breach.</li>
+                            <li><strong>Example 2 (Safe Usage):</strong> A user needs help writing a professional email to resolve a billing dispute. Instead of pasting their actual account number and home address into the AI prompt, they use placeholders like "[ACCOUNT_NUM]" and "[ADDRESS]", ensuring their SPII is kept out of the AI ecosystem.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-emerald-800 mb-2 border-b-2 border-emerald-200 pb-1">Case 2: Navigating Web Regulations</h4>
+                        <p class="mb-2">Website compliance with privacy regulations directly impacts the daily user experience, providing users with the tools to defend their digital footprint.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (GDPR & Cookies):</strong> A user visits a news website and is immediately met with a large pop-up requiring them to "Manage Cookie Preferences." Because of the GDPR, the user can uncheck "Marketing and Tracking (Third-Party)" cookies, preventing data brokers from following them across the web, while keeping "Strictly Necessary (First-Party)" cookies checked so the site still functions.</li>
+                            <li><strong>Example 2 (HIPAA Protection):</strong> A patient uses a hospital's online portal to view their blood test results. Because of HIPAA regulations, the hospital cannot send these sensitive results directly to a standard, unencrypted email address. Instead, they must secure the data behind a multi-factor authenticated portal.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: AI Data Consumption</p>
+                            <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=600&h=350" alt="Artificial Intelligence concept with binary code" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Regulatory Compliance</p>
+                            <img src="https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&w=600&h=350" alt="Legal gavel representing government regulations" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        // --- Core UI Functions ---
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId + '-section').classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-green-900', 'bg-green-950'));
+            const activeBtn = document.getElementById('nav-' + tabId);
+            if(activeBtn && tabId !== 'cert') activeBtn.classList.add('bg-green-900');
+            
+            document.querySelectorAll('.nav-btn-mobile').forEach(btn => btn.classList.remove('bg-green-950'));
+            const activeMobileBtn = document.getElementById('nav-' + tabId + '-mobile');
+            if(activeMobileBtn && tabId !== 'cert') activeMobileBtn.classList.add('bg-green-950');
+
+            window.scrollTo(0,0);
+
+            if (tabId === 'game' && !gameRunning) {
+                resetGame();
+                drawGame();
+            }
+        }
+
+        function showModal(title, message, type = 'info') {
+            const modal = document.getElementById('custom-modal');
+            const icon = document.getElementById('modal-icon');
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-msg').innerText = message;
+            
+            if(type === 'success') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-check text-green-500"></i>';
+            } else if (type === 'error') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500"></i>';
+            } else if (type === 'warning') {
+                icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-yellow-500"></i>';
+            } else {
+                icon.innerHTML = '<i class="fa-solid fa-circle-info text-blue-500"></i>';
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        function openBriefing(key) {
+            const modal = document.getElementById('briefing-modal');
+            const data = briefingData[key];
+            if(data) {
+                document.getElementById('briefing-modal-icon').innerHTML = data.icon;
+                document.getElementById('briefing-modal-title').innerText = data.title;
+                document.getElementById('briefing-modal-content').innerHTML = data.html;
+                
+                // Set border color dynamically
+                const borderEl = document.getElementById('briefing-modal-border');
+                borderEl.className = `bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col transform transition-all overflow-hidden border-4 ${data.border}`;
+
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; 
+            }
+        }
+
+        function closeBriefing() {
+            document.getElementById('briefing-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto'; 
+        }
+
+        document.getElementById('briefing-modal').addEventListener('click', function(e) {
+            if(e.target === this) closeBriefing();
+        });
+
+
+        // --- LAB 1: PII Sorter ---
+        let draggedCatItem = null;
+        let lab1Count = 0;
+
+        document.querySelectorAll('#pii-items .io-item').forEach(item => {
+            item.addEventListener('dragstart', function() {
+                draggedCatItem = this;
+                setTimeout(() => this.classList.add('opacity-50'), 0);
+            });
+            item.addEventListener('dragend', function() {
+                setTimeout(() => this.classList.remove('opacity-50'), 0);
+                draggedCatItem = null;
+            });
+        });
+
+        document.querySelectorAll('.io-dropzone').forEach(zone => {
+            zone.addEventListener('dragover', e => e.preventDefault());
+            zone.addEventListener('dragenter', function(e) { e.preventDefault(); this.classList.add('brightness-95'); });
+            zone.addEventListener('dragleave', function() { this.classList.remove('brightness-95'); });
+            zone.addEventListener('drop', function() {
+                this.classList.remove('brightness-95');
+                if(draggedCatItem) {
+                    if(draggedCatItem.dataset.type === this.dataset.target) {
+                        this.appendChild(draggedCatItem);
+                        draggedCatItem.classList.remove('cursor-grab');
+                        draggedCatItem.classList.add('cursor-default');
+                        draggedCatItem.setAttribute('draggable', 'false');
+                        lab1Count++;
+                        
+                        document.getElementById('lab1-feedback').innerText = "Correct Classification!";
+                        document.getElementById('lab1-feedback').className = "text-center font-bold mt-2 text-sm h-5 text-green-600";
+                        
+                        if(lab1Count === 5) {
+                            setTimeout(() => showModal('Lab 1 Complete!', 'You successfully classified PII, SPII, and non-sensitive data.', 'success'), 300);
+                        }
+                    } else {
+                        document.getElementById('lab1-feedback').innerText = "Incorrect. Think about the severity of the data if stolen.";
+                        document.getElementById('lab1-feedback').className = "text-center font-bold mt-2 text-sm h-5 text-red-600";
+                    }
+                }
+            });
+        });
+
+        // --- LAB 2: Redaction ---
+        let redactedCount = 0;
+        let lab2Solved = false;
+        function redact(el) {
+            if(lab2Solved) return;
+            if(!el.classList.contains('redacted')) {
+                el.classList.add('redacted');
+                redactedCount++;
+            }
+        }
+        function checkLab2() {
+            if(redactedCount === 3) {
+                lab2Solved = true;
+                document.getElementById('lab2-feedback').innerText = "SPII successfully redacted.";
+                document.getElementById('lab2-feedback').className = "text-center font-bold mt-2 text-sm h-5 text-green-600";
+                showModal('Lab 2 Complete!', 'You identified and removed the highly sensitive medical, banking, and government identifiers.', 'success');
+            } else {
+                document.getElementById('lab2-feedback').innerText = "Review the message again. There are 3 pieces of highly Sensitive PII (SPII).";
+                document.getElementById('lab2-feedback').className = "text-center font-bold mt-2 text-sm h-5 text-red-600";
+            }
+        }
+
+        // --- LAB 3: Social Profile ---
+        function checkLab3() {
+            const priv = document.getElementById('toggle-private').checked;
+            const loc = document.getElementById('toggle-location').checked;
+            const third = document.getElementById('toggle-3rdparty').checked;
+
+            if(priv && !loc && !third) {
+                document.getElementById('lab3-feedback').innerText = "Profile Secured.";
+                document.getElementById('lab3-feedback').className = "text-center font-bold mt-2 text-sm h-5 text-green-600";
+                showModal('Lab 3 Complete!', 'Account set to private, and invasive tracking/sharing has been disabled.', 'success');
+            } else {
+                document.getElementById('lab3-feedback').innerText = "Insecure configuration. Protect visibility and stop data sharing.";
+                document.getElementById('lab3-feedback').className = "text-center font-bold mt-2 text-sm h-5 text-red-600";
+            }
+        }
+
+        // --- LAB 4: E2E Simulator ---
+        let e2eStep = 0;
+        function stepE2E(step) {
+            if(step === 1 && e2eStep === 0) {
+                document.getElementById('e2e-msg').innerText = "xk9#Lp2!";
+                document.getElementById('e2e-msg').classList.add('bg-gray-800', 'text-green-400');
+                document.getElementById('btn-enc-1').classList.add('opacity-50', 'cursor-not-allowed');
+                document.getElementById('btn-enc-1').disabled = true;
+                document.getElementById('btn-enc-2').classList.remove('opacity-50', 'cursor-not-allowed');
+                document.getElementById('btn-enc-2').disabled = false;
+                e2eStep = 1;
+            } else if (step === 2 && e2eStep === 1) {
+                document.getElementById('e2e-progress').style.width = '100%';
+                document.getElementById('btn-enc-2').classList.add('opacity-50', 'cursor-not-allowed');
+                document.getElementById('btn-enc-2').disabled = true;
+                setTimeout(() => {
+                    document.getElementById('btn-enc-3').classList.remove('opacity-50', 'cursor-not-allowed');
+                    document.getElementById('btn-enc-3').disabled = false;
+                    e2eStep = 2;
+                }, 600);
+            } else if (step === 3 && e2eStep === 2) {
+                document.getElementById('e2e-msg').innerText = "Hello";
+                document.getElementById('e2e-msg').classList.remove('bg-gray-800', 'text-green-400');
+                document.getElementById('btn-enc-3').classList.add('opacity-50', 'cursor-not-allowed');
+                document.getElementById('btn-enc-3').disabled = true;
+                document.getElementById('lab4-feedback').innerText = "Transmission Complete.";
+                e2eStep = 3;
+                setTimeout(() => showModal('Lab 4 Complete!', 'The ciphertext safely crossed the network and was decrypted only by the receiver.', 'success'), 400);
+            }
+        }
+
+        // --- LAB 5: File Share ---
+        function checkLab5() {
+            const perm = document.getElementById('file-perm').value;
+            const exp = document.getElementById('file-exp').value;
+            if(perm === 'view' && exp === '30days') {
+                document.getElementById('lab5-feedback').innerText = "Secure Link Generated.";
+                document.getElementById('lab5-feedback').className = "text-center font-bold mt-2 text-sm h-5 text-green-600";
+                showModal('Lab 5 Complete!', 'You successfully applied the principle of least privilege and reduced the attack surface with an expiration date.', 'success');
+            } else {
+                document.getElementById('lab5-feedback').innerText = "Configuration too risky for sensitive data.";
+                document.getElementById('lab5-feedback').className = "text-center font-bold mt-2 text-sm h-5 text-red-600";
+            }
+        }
+
+        // --- LAB 6: AI Filter ---
+        let ai1Solved = false, ai2Solved = false;
+        function handleAI(id, isApprove) {
+            const el = document.getElementById('ai-p' + id);
+            const feedback = document.getElementById('lab6-feedback');
+            
+            if(id === 1) { // Contains PII
+                if(!isApprove) {
+                    el.classList.add('opacity-30', 'line-through');
+                    ai1Solved = true;
+                    feedback.innerText = "Correct. Do not send names/phone numbers to AI.";
+                    feedback.className = "text-center font-bold mt-4 text-sm h-5 text-blue-600";
+                } else {
+                    feedback.innerText = "Danger! You just leaked PII to the AI platform.";
+                    feedback.className = "text-center font-bold mt-4 text-sm h-5 text-red-600";
+                }
+            } else if (id === 2) { // Safe
+                if(isApprove) {
+                    el.classList.replace('bg-gray-50', 'bg-green-100');
+                    el.classList.replace('border-gray-200', 'border-green-300');
+                    ai2Solved = true;
+                    feedback.innerText = "Correct. General technical questions are safe.";
+                    feedback.className = "text-center font-bold mt-4 text-sm h-5 text-blue-600";
+                } else {
+                    feedback.innerText = "Incorrect. There is no PII in this prompt.";
+                    feedback.className = "text-center font-bold mt-4 text-sm h-5 text-red-600";
+                }
+            }
+            
+            if(ai1Solved && ai2Solved) {
+                feedback.innerText = "AI Data Filtering complete.";
+                feedback.className = "text-center font-bold mt-4 text-sm h-5 text-green-600";
+                setTimeout(() => showModal('Lab 6 Complete!', 'You successfully protected sensitive data from being ingested by the Generative AI model.', 'success'), 300);
+            }
+        }
+
+        // --- LAB 7: Cookies ---
+        function checkLab7() {
+            const first = document.getElementById('cookie-1st').checked;
+            const third = document.getElementById('cookie-3rd').checked;
+            if(first && !third) {
+                document.getElementById('lab7-feedback').innerText = "Preferences Saved.";
+                document.getElementById('lab7-feedback').className = "text-center font-bold mt-2 text-sm h-5 text-green-600";
+                showModal('Lab 7 Complete!', 'You allowed necessary site functions while successfully blocking cross-site third-party trackers.', 'success');
+            } else {
+                document.getElementById('lab7-feedback').innerText = "Incorrect configuration. Review essential vs tracking cookies.";
+                document.getElementById('lab7-feedback').className = "text-center font-bold mt-2 text-sm h-5 text-red-600";
+            }
+        }
+
+        // --- LAB 8: Regulations ---
+        function checkLab8() {
+            const r1 = document.getElementById('reg-1').value;
+            const r2 = document.getElementById('reg-2').value;
+            const r3 = document.getElementById('reg-3').value;
+            if(r1 === 'gdpr' && r2 === 'hipaa' && r3 === 'pci') {
+                document.getElementById('lab8-feedback').innerText = "Compliance Verified.";
+                document.getElementById('lab8-feedback').className = "text-center font-bold mt-2 text-sm h-5 text-green-600";
+                showModal('Lab 8 Complete!', 'You matched all regulatory frameworks to their protective functions perfectly.', 'success');
+            } else {
+                document.getElementById('lab8-feedback').innerText = "Compliance Failure. Review your selections.";
+                document.getElementById('lab8-feedback').className = "text-center font-bold mt-2 text-sm h-5 text-red-600";
+            }
+        }
+
+
+        // --- QUIZ LOGIC (20 Questions) ---
+        const quizData = [
+            // 10 from document
+            { q: "Which of the following is an example of personally identifiable information (PII)?", options: ["A random username like 'Gamer385'", "Your favorite color", "Your full name", "A school mascot"], answer: 2 },
+            { q: "Which of the following is considered sensitive PII (SPII)?", options: ["Phone number", "Email address", "Bank account numbers", "Favorite website"], answer: 2 },
+            { q: "Privacy can best be described as:", options: ["Keeping data secret at all costs", "Controlling how personal information is collected, stored, and used", "The process of encrypting all data", "The ability to block hackers completely"], answer: 1 },
+            { q: "Why is social media considered a privacy risk?", options: ["Platforms often own uploaded content and may share data with third parties", "Posts are always deleted automatically after 24 hours", "It is only accessible by close friends", "They use FTP for connections"], answer: 0 },
+            { q: "Which of the following is NOT recommended for securing privacy on social media?", options: ["Reviewing all friend requests", "Keeping accounts public", "Limiting who can view your posts", "Preventing location tracking in posts"], answer: 1 },
+            { q: "What does end-to-end encryption ensure for emails?", options: ["Only the sender can read the message", "Only the sender and recipient can read the message", "The email is automatically deleted", "The email provider saves a backup"], answer: 1 },
+            { q: "Why is it not recommended to use a school or work email for private conversations?", options: ["They don’t allow attachments", "The organization often has full access and control over those emails", "They cannot send to outside addresses", "They are less reliable"], answer: 1 },
+            { q: "Which of the following is a risk with file sharing?", options: ["Using incorrect file names", "Giving users too many permissions, such as 'edit' instead of 'view'", "Saving files in folders", "Using strong passwords"], answer: 1 },
+            { q: "What are some best practices for protecting shared files online?", options: ["Setting expiration dates on links", "Allowing anyone with the link to edit", "Using unsecured public Wi-Fi", "Sharing the original master file always"], answer: 0 },
+            { q: "Why should you avoid entering PII into AI platforms?", options: ["AI platforms automatically delete all user inputs", "AI platforms never store chats", "AI platforms may save your data and inputs", "AI platforms are illegal"], answer: 2 },
+            
+            // 10 new questions from briefing
+            { q: "What is the fundamental difference between standard PII and SPII (Sensitive PII)?", options: ["SPII is only used by the government.", "SPII can cause substantial financial or reputational harm if compromised.", "Standard PII cannot be stolen.", "There is no difference; they are identical."], answer: 1 },
+            { q: "What tracking method functions across multiple websites, primarily to build profiles for online ads?", options: ["First-party cookies", "End-to-end encryption", "Third-party cookies", "FTP requests"], answer: 2 },
+            { q: "What European Union law dictates how companies collect and manage citizen data, regardless of company location?", options: ["PCI", "HIPAA", "FTP", "GDPR"], answer: 3 },
+            { q: "Which regulation specifically protects personal health and medical information in the United States?", options: ["HIPAA", "PCI", "GDPR", "E2EE"], answer: 0 },
+            { q: "Which framework regulates credit card and financial data transactions for user privacy?", options: ["HIPAA", "PCI", "GDPR", "URL"], answer: 1 },
+            { q: "What was a major security vulnerability of the older File Transfer Protocol (FTP)?", options: ["It required complex math.", "It transmitted data and login credentials in readable plain text.", "It blocked all third-party cookies.", "It expired links too quickly."], answer: 1 },
+            { q: "When you use an Instant Messaging (IM) app, what is a primary psychological vulnerability regarding privacy?", options: ["The illusion of informality makes users drop their guard and overshare.", "The app always encrypts everything perfectly.", "The app automatically deletes messages after 5 seconds.", "IM apps cannot send photos."], answer: 0 },
+            { q: "Why are third-party app add-ons (like fun quizzes) on social media a privacy concern?", options: ["They slow down your phone.", "They use up your battery.", "They require permissions that often extract your PII and friend lists.", "They automatically post photos for you."], answer: 2 },
+            { q: "First-party cookies are primarily designed to:", options: ["Track you across entirely different websites.", "Make navigating a specific site more seamless, like remembering your login.", "Steal your passwords.", "Encrypt your email."], answer: 1 },
+            { q: "What happens when multiple small, seemingly harmless pieces of PII are gathered together by a malicious actor?", options: ["Data Encryption", "Data Expiration", "Data Aggregation, allowing them to piece together your identity.", "Cookie blocking"], answer: 2 }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        
+        quizData.forEach((item, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = "bg-gray-50 p-6 rounded-lg border border-gray-200 transition-all";
+            qDiv.id = `q-block-${index}`;
+            
+            const qTitle = document.createElement('h3');
+            qTitle.className = "font-bold text-lg text-gray-800 mb-4";
+            qTitle.innerText = `${index + 1}. ${item.q}`;
+            qDiv.appendChild(qTitle);
+            
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = "space-y-3";
+            
+            item.options.forEach((opt, optIndex) => {
+                const label = document.createElement('label');
+                label.className = "flex items-center space-x-3 p-3 rounded bg-white border border-gray-300 hover:bg-green-50 cursor-pointer transition";
+                
+                const radio = document.createElement('input');
+                radio.type = "radio";
+                radio.name = `q${index}`;
+                radio.value = optIndex;
+                radio.className = "form-radio h-5 w-5 text-green-600";
+                
+                const span = document.createElement('span');
+                span.className = "text-gray-700";
+                span.innerText = opt;
+                
+                label.appendChild(radio);
+                label.appendChild(span);
+                optionsDiv.appendChild(label);
+            });
+            
+            qDiv.appendChild(optionsDiv);
+            quizContainer.appendChild(qDiv);
+        });
+
+        function gradeQuiz() {
+            let score = 0;
+            let allAnswered = true;
+
+            for(let i = 0; i < quizData.length; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if(selected) {
+                    if(parseInt(selected.value) === quizData[i].answer) {
+                        score++;
+                    }
+                } else {
+                    allAnswered = false;
+                }
+            }
+            
+            if(!allAnswered) {
+                showModal('Incomplete Quiz', 'Please answer all 20 questions before submitting.', 'warning');
+                return;
+            }
+            
+            const percentage = (score / quizData.length) * 100;
+            
+            if(score >= 18) { 
+                const navGame = document.getElementById('nav-game');
+                const navGameMobile = document.getElementById('nav-game-mobile');
+                
+                navGame.classList.remove('text-gray-400', 'cursor-not-allowed');
+                navGame.classList.add('text-white', 'hover:bg-green-700');
+                navGame.disabled = false;
+                navGame.innerHTML = '<i class="fa-solid fa-gamepad mr-1"></i>Game';
+                
+                navGameMobile.classList.remove('text-gray-400', 'cursor-not-allowed');
+                navGameMobile.classList.add('text-white', 'hover:bg-green-900');
+                navGameMobile.disabled = false;
+                navGameMobile.innerHTML = '<i class="fa-solid fa-gamepad"></i> Game';
+
+                document.getElementById('nav-cert').classList.remove('hidden');
+                document.getElementById('nav-cert-mobile').classList.remove('hidden');
+                
+                document.getElementById('proceed-game-btn').classList.remove('hidden');
+                document.getElementById('submit-quiz-btn').classList.add('hidden');
+
+                showModal('Outstanding!', `You scored ${score}/20 (${percentage}%). You have unlocked your Certificate of Mastery AND the Retro Game!`, 'success');
+            } else {
+                quizData.forEach((_, i) => {
+                    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                    if(selected) selected.checked = false;
+                });
+                showModal('Keep Trying!', `You scored ${score}/20 (${percentage}%). You need 90% (18/20) to earn the certificate. Your answers have been reset so you can try again.`, 'error');
+                document.getElementById('quiz-section').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+
+        // --- RETRO GAME LOGIC: CIPHER BREAKER (Mastermind Clone) ---
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let gameRunning = false;
+        
+        // Colors: Red, Blue, Green, Yellow, Purple, Cyan
+        const colors = ['#ef4444', '#3b82f6', '#10b981', '#eab308', '#a855f7', '#06b6d4'];
+        let secretCode = [];
+        let guesses = []; // array of { code: [], feedback: { red: 0, white: 0 } }
+        let currentGuess = [];
+        const maxAttempts = 8;
+        
+        const overlay = document.getElementById('game-overlay');
+        const startBtn = document.getElementById('start-game-btn');
+        startBtn.addEventListener('click', startGame);
+
+        // Layout constants
+        const boardX = 50;
+        const boardY = 20;
+        const holeRadius = 15;
+        const pegRadius = 6;
+        
+        function resetGame() {
+            secretCode = [];
+            for(let i=0; i<4; i++) {
+                secretCode.push(colors[Math.floor(Math.random() * colors.length)]);
+            }
+            guesses = [];
+            currentGuess = [];
+            gameRunning = false;
+        }
+
+        function startGame() {
+            overlay.classList.add('hidden');
+            resetGame();
+            gameRunning = true;
+            drawGame();
+        }
+        
+        function calculateFeedback(guess, secret) {
+            let red = 0;
+            let white = 0;
+            let guessCopy = [...guess];
+            let secretCopy = [...secret];
+            
+            // Check exact matches (Red)
+            for(let i=3; i>=0; i--) {
+                if(guessCopy[i] === secretCopy[i]) {
+                    red++;
+                    guessCopy.splice(i, 1);
+                    secretCopy.splice(i, 1);
+                }
+            }
+            // Check color matches (White)
+            for(let i=0; i<guessCopy.length; i++) {
+                let index = secretCopy.indexOf(guessCopy[i]);
+                if(index > -1) {
+                    white++;
+                    secretCopy.splice(index, 1);
+                }
+            }
+            return { red, white };
+        }
+
+        canvas.addEventListener('click', function(e) {
+            if(!gameRunning) return;
+            
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const x = (e.clientX - rect.left) * scaleX;
+            const y = (e.clientY - rect.top) * scaleY;
+            
+            // Palette Clicks (Bottom)
+            const palY = canvas.height - 80;
+            for(let i=0; i<colors.length; i++) {
+                let px = 40 + (i * 55);
+                let py = palY + 25;
+                if(Math.hypot(x - px, y - py) < 20) {
+                    if(currentGuess.length < 4) {
+                        currentGuess.push(colors[i]);
+                        drawGame();
+                    }
+                    return;
+                }
+            }
+            
+            // Backspace button
+            if(x > 320 && x < 380 && y > canvas.height - 110 && y < canvas.height - 80) {
+                if(currentGuess.length > 0) {
+                    currentGuess.pop();
+                    drawGame();
+                }
+                return;
+            }
+
+            // Submit Button
+            if(x > 320 && x < 380 && y > canvas.height - 60 && y < canvas.height - 20) {
+                if(currentGuess.length === 4) {
+                    let feedback = calculateFeedback(currentGuess, secretCode);
+                    guesses.push({ code: [...currentGuess], feedback: feedback });
+                    currentGuess = [];
+                    
+                    drawGame();
+                    
+                    if(feedback.red === 4) {
+                        endGame(true);
+                    } else if(guesses.length >= maxAttempts) {
+                        endGame(false);
+                    }
+                }
+            }
+        });
+
+        function drawGame() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw background tech grid
+            ctx.strokeStyle = '#334155';
+            ctx.lineWidth = 1;
+            for(let i=0; i<canvas.width; i+=40) {
+                ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke();
+            }
+            for(let i=0; i<canvas.height; i+=40) {
+                ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(canvas.width, i); ctx.stroke();
+            }
+
+            // Draw Board (8 Rows)
+            for(let row=0; row<maxAttempts; row++) {
+                let y = boardY + (row * 50);
+                
+                // Draw row background
+                ctx.fillStyle = '#0f172a';
+                ctx.fillRect(boardX - 10, y, 320, 40);
+                ctx.strokeStyle = '#475569';
+                ctx.strokeRect(boardX - 10, y, 320, 40);
+                
+                // Draw 4 holes
+                for(let col=0; col<4; col++) {
+                    let hx = boardX + 30 + (col * 50);
+                    let hy = y + 20;
+                    
+                    ctx.beginPath();
+                    ctx.arc(hx, hy, holeRadius, 0, Math.PI*2);
+                    
+                    if(row < guesses.length) {
+                        // Draw submitted guess
+                        ctx.fillStyle = guesses[row].code[col];
+                        ctx.fill();
+                        ctx.strokeStyle = '#ffffff';
+                        ctx.lineWidth = 2;
+                        ctx.stroke();
+                    } else if (row === guesses.length && col < currentGuess.length) {
+                        // Draw current active guess
+                        ctx.fillStyle = currentGuess[col];
+                        ctx.fill();
+                        ctx.strokeStyle = '#ffffff';
+                        ctx.lineWidth = 2;
+                        ctx.stroke();
+                    } else {
+                        // Empty hole
+                        ctx.fillStyle = '#1e293b';
+                        ctx.fill();
+                        ctx.strokeStyle = '#000000';
+                        ctx.lineWidth = 2;
+                        ctx.stroke();
+                    }
+                }
+                
+                // Draw Feedback Pegs
+                let fx = boardX + 250;
+                let fy = y + 10;
+                let pegPositions = [ {x: fx, y: fy}, {x: fx+15, y: fy}, {x: fx, y: fy+15}, {x: fx+15, y: fy+15} ];
+                
+                for(let p=0; p<4; p++) {
+                    ctx.beginPath();
+                    ctx.arc(pegPositions[p].x, pegPositions[p].y, pegRadius, 0, Math.PI*2);
+                    
+                    if(row < guesses.length) {
+                        let feedback = guesses[row].feedback;
+                        if(p < feedback.red) {
+                            ctx.fillStyle = '#ef4444'; // Red peg
+                        } else if (p < feedback.red + feedback.white) {
+                            ctx.fillStyle = '#ffffff'; // White peg
+                        } else {
+                            ctx.fillStyle = '#334155'; // empty
+                        }
+                    } else {
+                        ctx.fillStyle = '#334155'; // empty
+                    }
+                    ctx.fill();
+                    ctx.strokeStyle = '#000';
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                }
+            }
+            
+            // Draw UI Bottom Panel
+            ctx.fillStyle = '#334155';
+            ctx.fillRect(0, canvas.height - 130, canvas.width, 130);
+            ctx.fillStyle = '#cbd5e1';
+            ctx.font = '14px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText("Select 4 Colors to Hack Encryption", canvas.width/2, canvas.height - 110);
+            
+            // Draw Color Palette
+            const palY = canvas.height - 80;
+            for(let i=0; i<colors.length; i++) {
+                ctx.beginPath();
+                ctx.arc(40 + (i * 55), palY + 25, 20, 0, Math.PI*2);
+                ctx.fillStyle = colors[i];
+                ctx.fill();
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+            
+            // Draw Backspace Button
+            ctx.fillStyle = '#dc2626';
+            ctx.fillRect(320, canvas.height - 110, 60, 30);
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '14px monospace';
+            ctx.fillText("DEL", 350, canvas.height - 90);
+
+            // Draw Submit Button
+            ctx.fillStyle = currentGuess.length === 4 ? '#10b981' : '#64748b';
+            ctx.fillRect(320, canvas.height - 60, 60, 40);
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '16px monospace';
+            ctx.fillText("RUN", 350, canvas.height - 35);
+        }
+
+        function endGame(win) {
+            gameRunning = false;
+            overlay.classList.remove('hidden');
+            const title = document.getElementById('game-over-title');
+            
+            if(win) {
+                title.innerText = "ENCRYPTION BROKEN!";
+                title.classList.replace('text-white', 'text-green-400');
+                startBtn.innerText = "Hack Again";
+            } else {
+                title.innerText = "ACCESS DENIED!";
+                title.classList.replace('text-white', 'text-red-500');
+                startBtn.innerText = "Retry Hack";
+                
+                // Show secret code on canvas before overlay covers it completely? 
+                // We'll just let the user retry.
+            }
+            
+            // Revert button colors to normal
+            startBtn.classList.replace('bg-gray-700', 'bg-green-600');
+            startBtn.classList.replace('border-gray-900', 'border-green-800');
+        }
+
+
+        // --- CERTIFICATE LOGIC ---
+        function updateCertName() {
+            let name = document.getElementById('student-name-input').value.trim();
+            if(name) {
+                if (name.includes(' ')) {
+                    name = name.split(' ')[0];
+                    document.getElementById('student-name-input').value = name;
+                    showModal('Notice', 'Only your first name has been applied to the certificate.', 'info');
+                }
+                document.getElementById('cert-student-name').innerText = name;
+            } else {
+                showModal('Wait!', 'Please enter your first name to update the certificate.', 'warning');
+            }
+        }
+
+        const today = new Date();
+        document.getElementById('cert-date').innerText = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        function downloadCert() {
+            const certEl = document.getElementById('certificate');
+            const name = document.getElementById('cert-student-name').innerText;
+            let filename = 'Certificate.png';
+            if (name && name !== 'Student') {
+                filename = `${name.replace(/\s+/g, '_')}_Certificate.png`;
+            }
+
+            const originalTransform = certEl.style.transform;
+            certEl.style.transform = 'none';
+
+            const btn = document.getElementById('download-btn');
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Generating...';
+            btn.disabled = true;
+
+            html2canvas(certEl, { 
+                scale: 2, 
+                useCORS: true,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+            }).catch(err => {
+                console.error(err);
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                showModal('Error', 'Failed to generate image. Try using a desktop browser.', 'error');
+            });
+        }
+
+        window.onload = () => {
+            // Draw static background for game preview
+            ctx.fillStyle = '#1e293b';
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = '20px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('TERMINAL LOCKED', canvas.width/2, canvas.height/2);
+        }
+    </script>
+</body>
+</html>
+```eof

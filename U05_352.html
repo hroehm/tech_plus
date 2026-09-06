@@ -1,0 +1,1576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 05 Section 3.5.2 Mastery - Generative AI</title>
+    
+    <!-- Load Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load HTML2Canvas for Certificate Download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- Load Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Qwitcher+Grypen:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0fdf4; 
+            color: #1f2937;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        /* Interactive Elements CSS */
+        .io-dropzone { min-height: 70px; min-width: 130px; border: 2px dashed #9ca3af; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: #f9fafb; transition: all 0.2s;}
+        .io-dropzone.drag-over { background: #e5e7eb; border-color: #16a34a; box-shadow: inset 0 0 10px rgba(22, 163, 74, 0.2);}
+        
+        .io-item { cursor: grab; transition: transform 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .io-item:active { cursor: grabbing; transform: scale(0.95); }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #e5e7eb; }
+        ::-webkit-scrollbar-thumb { background: #10b981; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #059669; }
+
+        /* Retro Game Canvas */
+        #game-canvas {
+            background-color: #000000;
+            border: 4px solid #374151;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+            max-width: 100%;
+            height: auto;
+            touch-action: none;
+        }
+
+        /* --- CERTIFICATE STYLES --- */
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .font-body { font-family: 'Lora', serif; }
+        .font-script { font-family: 'Qwitcher Grypen', cursive; }
+        
+        .cert-preview-container {
+            width: 100%;
+            overflow: auto;
+            display: flex;
+            justify-content: center;
+            background: #e5e7eb;
+            padding: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        #certificate {
+            width: 1056px !important;
+            height: 816px !important;
+            flex-shrink: 0;
+            background-color: #ffffff;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1056" height="816"><polygon points="0,0 250,0 0,650" fill="%23fcd34d"/><polygon points="0,0 350,0 0,900" fill="%23d97706" opacity="0.8"/><polygon points="0,0 120,0 0,300" fill="%23fcd34d"/><polygon points="0,450 650,816 0,816" fill="%23fcd34d"/><polygon points="0,550 450,816 0,816" fill="%23d97706" opacity="0.8"/><polygon points="800,0 1056,0 1056,256" fill="%23f3f4f6"/><polygon points="1056,500 1056,816 750,816" fill="%23f3f4f6"/></svg>');
+            background-size: cover;
+            border: 4px solid #e5e7eb;
+        }
+
+        .gold-seal {
+            position: absolute;
+            left: 110px;
+            top: 350px;
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c, #fcf6ba);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3), inset 0 0 15px rgba(255,255,255,0.7), inset 0 0 25px rgba(139,105,20,0.9);
+            z-index: 10;
+        }
+        .gold-seal::before {
+            content: '';
+            position: absolute;
+            top: -4px; bottom: -4px; left: -4px; right: -4px;
+            border-radius: 50%;
+            border: 6px dashed #d4af37;
+        }
+        .gold-seal-inner-1 {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 2px solid rgba(139, 105, 20, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #e8c678, #dbab46);
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.2), 0 2px 5px rgba(255,255,255,0.7);
+            z-index: 1;
+        }
+        .gold-seal-inner-2 {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: radial-gradient(circle, #fcf6ba, #d4af37);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            padding: 10px;
+        }
+        .embossed-text {
+            color: #b38728;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2);
+            font-family: 'Playfair Display', serif;
+            font-weight: 800;
+            line-height: 1.1;
+            text-transform: uppercase;
+        }
+        .embossed-text-large { font-size: 14px; letter-spacing: 1px; }
+        .embossed-text-small { font-size: 11px; letter-spacing: 2px; margin: 2px 0; }
+        .embossed-star { font-size: 12px; color: #b38728; text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2); margin: 2px 0; }
+
+        @media (max-width: 1100px) {
+            #certificate { transform: scale(0.7); transform-origin: top left; margin-bottom: -240px; margin-right: -310px; }
+        }
+        @media (max-width: 768px) {
+            #certificate { transform: scale(0.4); transform-origin: top left; margin-bottom: -490px; margin-right: -630px; }
+        }
+
+        /* Lab Custom Styles */
+        .lab-selectable:hover { background-color: #dbeafe; cursor: pointer; border-color: #3b82f6;}
+        .lab-selectable.selected { background-color: #bfdbfe; border-color: #2563eb; }
+        
+        .code-bug-line:hover { background-color: #fecaca; cursor: pointer; }
+        .privacy-switch { width: 40px; height: 20px; background-color: #cbd5e1; border-radius: 10px; position: relative; cursor: pointer; transition: 0.3s;}
+        .privacy-switch.on { background-color: #ef4444; }
+        .privacy-switch::after { content: ''; width: 16px; height: 16px; background-color: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: 0.3s;}
+        .privacy-switch.on::after { left: 22px; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
+    <nav class="bg-green-700 text-white shadow-lg sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-microchip text-2xl"></i>
+                    <span class="font-bold text-xl tracking-wider hidden sm:inline-block">Tech+ Unit 05 Section 3.5.2</span>
+                    <span class="font-bold text-xl tracking-wider sm:hidden">3.5.2</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-2">
+                        <button onclick="switchTab('briefing')" class="nav-btn bg-green-900 px-3 py-2 rounded-md text-sm font-medium hover:bg-green-600 transition" id="nav-briefing"><i class="fa-solid fa-book-open mr-1"></i>Briefing</button>
+                        <button onclick="switchTab('activity')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-green-600 transition" id="nav-activity"><i class="fa-solid fa-flask mr-1"></i>Lab Activity</button>
+                        <button onclick="switchTab('quiz')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-green-600 transition" id="nav-quiz"><i class="fa-solid fa-clipboard-check mr-1"></i>Quiz</button>
+                        <button onclick="switchTab('game')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-gray-400 cursor-not-allowed transition" id="nav-game" disabled><i class="fa-solid fa-lock mr-1"></i>Game</button>
+                        <button onclick="switchTab('cert')" class="nav-btn hidden px-3 py-2 rounded-md text-sm font-medium text-yellow-300 hover:bg-green-600 transition" id="nav-cert"><i class="fa-solid fa-award mr-1"></i>Certificate</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Nav -->
+        <div class="md:hidden flex flex-wrap justify-center gap-2 py-2 px-2 bg-green-800">
+            <button onclick="switchTab('briefing')" class="nav-btn-mobile px-3 py-1 text-sm rounded bg-green-900" id="nav-briefing-mobile">Briefing</button>
+            <button onclick="switchTab('activity')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-activity-mobile">Lab</button>
+            <button onclick="switchTab('quiz')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-quiz-mobile">Quiz</button>
+            <button onclick="switchTab('game')" class="nav-btn-mobile px-3 py-1 text-sm rounded text-gray-400 cursor-not-allowed" id="nav-game-mobile" disabled><i class="fa-solid fa-lock"></i></button>
+            <button onclick="switchTab('cert')" id="nav-cert-mobile" class="hidden px-2 py-1 text-sm text-yellow-300 rounded"><i class="fa-solid fa-award"></i></button>
+        </div>
+    </nav>
+
+    <main class="flex-grow w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <!-- BRIEFING SECTION -->
+        <div id="briefing-section" class="tab-content active no-print">
+            <div class="text-center mb-10">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">Generative Artificial Intelligence</h1>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">Explore how Generative AI works, what it can create, and how it is rapidly changing the way we write, code, and design.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- Tile 1 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-indigo-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-indigo-700"><i class="fa-solid fa-brain mr-2"></i>What is Generative AI?</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>New Content Creation:</strong> Unlike older AI, it creates entirely new text, images, or code.</li>
+                            <li><strong>Neural Networks:</strong> Powered by complex machine learning models trained on vast datasets.</li>
+                            <li><strong>Examples:</strong> Tools like ChatGPT, DALL-E, and Microsoft Copilot.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('genai-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('genai-usecase')" class="flex-1 bg-indigo-100 hover:bg-indigo-200 text-indigo-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 2 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-teal-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-teal-700"><i class="fa-solid fa-terminal mr-2"></i>The Art of the Prompt</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Prompt:</strong> The specific instructions or questions given to the AI tool.</li>
+                            <li><strong>Clarity & Specificity:</strong> The quality of the output relies entirely on the clarity of the prompt.</li>
+                            <li><strong>Iterative Refinement:</strong> Improving results by adjusting and resubmitting prompts.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('prompt-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('prompt-usecase')" class="flex-1 bg-teal-100 hover:bg-teal-200 text-teal-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 3 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-blue-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-blue-700"><i class="fa-solid fa-laptop-code mr-2"></i>Use Cases: Text & Code</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Speed & Support:</strong> Generates drafts and code structures in seconds.</li>
+                            <li><strong>Clueless Coding Buddy:</strong> It predicts code but doesn't actually understand the logic.</li>
+                            <li><strong>Creativity:</strong> A powerful tool for brainstorming and overcoming creative blocks.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('usecases-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('usecases-usecase')" class="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 4 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-red-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-red-700"><i class="fa-solid fa-triangle-exclamation mr-2"></i>Limitations & Risks</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Hallucinations:</strong> AI can confidently make up false facts and information.</li>
+                            <li><strong>AI Drift & Bias:</strong> Models can degrade over time or adopt biases from bad training data.</li>
+                            <li><strong>Privacy:</strong> Users should never share personal or secure information in prompts.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('risks-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('risks-usecase')" class="flex-1 bg-red-100 hover:bg-red-200 text-red-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 flex justify-center">
+                <button onclick="switchTab('activity')" class="bg-green-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-green-500 shadow-lg transition transform hover:scale-105">Proceed to Lab Activity <i class="fa-solid fa-arrow-right ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- LAB ACTIVITY SECTION -->
+        <div id="activity-section" class="tab-content no-print">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Interactive Lab Activities</h1>
+                <p class="text-gray-600">Complete all 8 interactive labs to reinforce your understanding of Generative AI concepts.</p>
+            </div>
+
+            <!-- Lab 1 & 2: What is Gen AI -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                    <h2 class="text-xl font-bold mb-4 text-indigo-700"><i class="fa-solid fa-layer-group mr-2"></i>Lab 1: Categorize the AI</h2>
+                    <p class="text-sm text-gray-600 mb-4">Drag the AI capability into the correct category: Generative (creates new) or Predictive (analyzes patterns).</p>
+                    
+                    <div class="flex flex-wrap gap-2 mb-4" id="lab1-items">
+                        <div class="io-item px-3 py-1 bg-indigo-100 border border-indigo-300 rounded text-xs font-bold" draggable="true" data-type="gen">Write a Poem</div>
+                        <div class="io-item px-3 py-1 bg-indigo-100 border border-indigo-300 rounded text-xs font-bold" draggable="true" data-type="pred">Filter Spam Emails</div>
+                        <div class="io-item px-3 py-1 bg-indigo-100 border border-indigo-300 rounded text-xs font-bold" draggable="true" data-type="gen">Draw a Cyber-Dog</div>
+                        <div class="io-item px-3 py-1 bg-indigo-100 border border-indigo-300 rounded text-xs font-bold" draggable="true" data-type="pred">Predict Traffic</div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="cat-dropzone border-2 border-dashed border-indigo-400 bg-indigo-50 rounded-lg p-2 min-h-[100px] flex flex-col items-center" data-target="gen">
+                            <h3 class="font-bold text-indigo-800 mb-1 border-b border-indigo-200 w-full text-center pb-1 text-xs">Generative AI</h3>
+                        </div>
+                        <div class="cat-dropzone border-2 border-dashed border-gray-400 bg-gray-50 rounded-lg p-2 min-h-[100px] flex flex-col items-center" data-target="pred">
+                            <h3 class="font-bold text-gray-800 mb-1 border-b border-gray-200 w-full text-center pb-1 text-xs">Predictive AI</h3>
+                        </div>
+                    </div>
+                    <div id="lab1-feedback" class="text-center font-bold mt-2 h-4 text-xs text-green-600"></div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                    <h2 class="text-xl font-bold mb-4 text-indigo-700"><i class="fa-solid fa-wand-magic-sparkles mr-2"></i>Lab 2: The Generator</h2>
+                    <p class="text-sm text-gray-600 mb-4">Generative AI works by combining concepts. Select a Subject and a Style, then click Generate.</p>
+                    
+                    <div class="flex gap-4 mb-4">
+                        <div class="flex-1">
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Subject</label>
+                            <select id="lab2-subject" class="w-full border border-gray-300 rounded p-1 text-sm">
+                                <option value="cat">A Cat</option>
+                                <option value="robot">A Robot</option>
+                            </select>
+                        </div>
+                        <div class="flex-1">
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Style</label>
+                            <select id="lab2-style" class="w-full border border-gray-300 rounded p-1 text-sm">
+                                <option value="pirate">Speaking like a Pirate</option>
+                                <option value="code">Written in Python Code</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button onclick="runLab2()" class="w-full bg-indigo-600 text-white rounded py-2 text-sm font-bold hover:bg-indigo-700">Generate Output</button>
+                    <div id="lab2-output" class="mt-4 p-3 bg-gray-100 rounded text-sm font-mono border border-gray-300 min-h-[60px] text-gray-500 italic">Output will appear here...</div>
+                </div>
+            </div>
+
+            <!-- Lab 3 & 4: Prompts -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                    <h2 class="text-xl font-bold mb-4 text-teal-700"><i class="fa-solid fa-magnifying-glass mr-2"></i>Lab 3: Prompt Improver</h2>
+                    <p class="text-sm text-gray-600 mb-4">Which of these prompts is the MOST clear and specific for generating a summary?</p>
+                    
+                    <div class="space-y-2">
+                        <div class="lab-selectable border border-gray-300 p-2 rounded text-sm" onclick="checkLab3(this, false)">"Summarize this long article for me."</div>
+                        <div class="lab-selectable border border-gray-300 p-2 rounded text-sm" onclick="checkLab3(this, true)">"Summarize this article into 3 bullet points, written at a 5th-grade reading level."</div>
+                        <div class="lab-selectable border border-gray-300 p-2 rounded text-sm" onclick="checkLab3(this, false)">"Read this and tell me what it's about simply."</div>
+                    </div>
+                    <div id="lab3-feedback" class="text-center font-bold mt-2 h-4 text-xs text-green-600"></div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                    <h2 class="text-xl font-bold mb-4 text-teal-700"><i class="fa-solid fa-hammer mr-2"></i>Lab 4: Prompt Builder</h2>
+                    <p class="text-sm text-gray-600 mb-4">A good prompt has structure. Drag the elements below into the correct logical order (Top to Bottom).</p>
+                    
+                    <div class="flex flex-col gap-2" id="lab4-container">
+                        <div class="io-item border border-teal-300 bg-teal-50 p-2 rounded text-sm cursor-grab" draggable="true" id="p-context"><strong>Context:</strong> "The audience is high school students."</div>
+                        <div class="io-item border border-teal-300 bg-teal-50 p-2 rounded text-sm cursor-grab" draggable="true" id="p-format"><strong>Format:</strong> "Provide the answer as a bulleted list."</div>
+                        <div class="io-item border border-teal-300 bg-teal-50 p-2 rounded text-sm cursor-grab" draggable="true" id="p-role"><strong>Role:</strong> "Act as an expert historian."</div>
+                        <div class="io-item border border-teal-300 bg-teal-50 p-2 rounded text-sm cursor-grab" draggable="true" id="p-task"><strong>Task:</strong> "Explain the causes of World War 2."</div>
+                    </div>
+                    <button onclick="checkLab4()" class="mt-4 w-full bg-teal-600 text-white rounded py-2 text-sm font-bold hover:bg-teal-700">Check Order</button>
+                    <div id="lab4-feedback" class="text-center font-bold mt-2 h-4 text-xs text-green-600"></div>
+                </div>
+            </div>
+
+            <!-- Lab 5 & 6: Use Cases -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                    <h2 class="text-xl font-bold mb-4 text-blue-700"><i class="fa-solid fa-bug mr-2"></i>Lab 5: Code Debugger</h2>
+                    <p class="text-sm text-gray-600 mb-4">Your "Clueless AI Buddy" generated this HTML, but it's broken. Click the line of code that contains the error.</p>
+                    
+                    <div class="bg-gray-800 text-gray-300 font-mono text-sm p-4 rounded mb-4">
+                        <div class="code-bug-line p-1" onclick="checkLab5(false)">&lt;html&gt;</div>
+                        <div class="code-bug-line p-1" onclick="checkLab5(false)">&lt;head&gt;&lt;title&gt;My Page&lt;/title&gt;&lt;/head&gt;</div>
+                        <div class="code-bug-line p-1" onclick="checkLab5(false)">&lt;body&gt;</div>
+                        <div class="code-bug-line p-1 text-blue-300" onclick="checkLab5(true)">&nbsp;&nbsp;&lt;img src="dog.jpg" wigth="300"&gt;</div>
+                        <div class="code-bug-line p-1" onclick="checkLab5(false)">&nbsp;&nbsp;&lt;p&gt;Look at my dog!&lt;/p&gt;</div>
+                        <div class="code-bug-line p-1" onclick="checkLab5(false)">&lt;/body&gt;</div>
+                        <div class="code-bug-line p-1" onclick="checkLab5(false)">&lt;/html&gt;</div>
+                    </div>
+                    <div id="lab5-feedback" class="text-center font-bold mt-2 h-4 text-xs text-green-600"></div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                    <h2 class="text-xl font-bold mb-4 text-blue-700"><i class="fa-solid fa-puzzle-piece mr-2"></i>Lab 6: Tool Matcher</h2>
+                    <p class="text-sm text-gray-600 mb-4">Select an AI Tool, then select the Output Type it generates.</p>
+                    
+                    <div class="flex gap-4">
+                        <div class="flex-1 space-y-2">
+                            <h3 class="text-xs font-bold text-center border-b pb-1">AI Tools</h3>
+                            <div class="lab-selectable match-tool border border-gray-300 p-2 rounded text-sm text-center" data-val="text" onclick="selectMatch('tool', this)">ChatGPT</div>
+                            <div class="lab-selectable match-tool border border-gray-300 p-2 rounded text-sm text-center" data-val="img" onclick="selectMatch('tool', this)">DALL-E</div>
+                        </div>
+                        <div class="flex-1 space-y-2">
+                            <h3 class="text-xs font-bold text-center border-b pb-1">Output Type</h3>
+                            <div class="lab-selectable match-type border border-gray-300 p-2 rounded text-sm text-center" data-val="img" onclick="selectMatch('type', this)">Digital Images</div>
+                            <div class="lab-selectable match-type border border-gray-300 p-2 rounded text-sm text-center" data-val="text" onclick="selectMatch('type', this)">Text & Code</div>
+                        </div>
+                    </div>
+                    <div id="lab6-feedback" class="text-center font-bold mt-4 h-4 text-xs text-green-600"></div>
+                </div>
+            </div>
+
+            <!-- Lab 7 & 8: Limitations -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                    <h2 class="text-xl font-bold mb-4 text-red-700"><i class="fa-solid fa-eye-slash mr-2"></i>Lab 7: Hallucination Spotter</h2>
+                    <p class="text-sm text-gray-600 mb-4">AI can hallucinate (make things up). Read this AI output about Mars. Click the sentence that is a hallucination.</p>
+                    
+                    <div class="bg-yellow-50 p-4 border border-yellow-200 rounded text-sm text-gray-800 leading-relaxed">
+                        <span class="hover:bg-yellow-200 cursor-pointer p-1 rounded transition" onclick="checkLab7(false)">Mars is the fourth planet from the Sun.</span> 
+                        <span class="hover:bg-yellow-200 cursor-pointer p-1 rounded transition" onclick="checkLab7(false)">It is often called the Red Planet due to iron oxide on its surface.</span> 
+                        <span class="hover:bg-yellow-200 cursor-pointer p-1 rounded transition font-medium" onclick="checkLab7(true)">In 1998, NASA astronauts successfully established a small farming colony near the equator.</span> 
+                        <span class="hover:bg-yellow-200 cursor-pointer p-1 rounded transition" onclick="checkLab7(false)">Mars has two small moons named Phobos and Deimos.</span>
+                    </div>
+                    <div id="lab7-feedback" class="text-center font-bold mt-4 h-4 text-xs text-green-600"></div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                    <h2 class="text-xl font-bold mb-4 text-red-700"><i class="fa-solid fa-user-shield mr-2"></i>Lab 8: Privacy Filter</h2>
+                    <p class="text-sm text-gray-600 mb-2">Never share personal info with an AI. Toggle the switches to <strong class="text-red-500">OFF</strong> for any Personally Identifiable Information (PII) before submitting the prompt.</p>
+                    
+                    <div class="space-y-3 mb-4 bg-gray-50 p-3 rounded border border-gray-200">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm">"Summarize this generic article:"</span>
+                            <div class="privacy-switch on" onclick="togglePrivacy(this, false)"></div>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm font-bold text-red-700">"My Social Security Number is..."</span>
+                            <div class="privacy-switch on" onclick="togglePrivacy(this, true)"></div>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm">"Write a Python script for..."</span>
+                            <div class="privacy-switch on" onclick="togglePrivacy(this, false)"></div>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm font-bold text-red-700">"My patient's medical history..."</span>
+                            <div class="privacy-switch on" onclick="togglePrivacy(this, true)"></div>
+                        </div>
+                    </div>
+                    <button onclick="checkLab8()" class="w-full bg-red-600 text-white rounded py-2 text-sm font-bold hover:bg-red-700">Submit Safe Prompt</button>
+                    <div id="lab8-feedback" class="text-center font-bold mt-2 h-4 text-xs text-green-600"></div>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <button onclick="switchTab('quiz')" class="bg-green-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-green-500 shadow-lg transition transform hover:scale-105">Take the Mastery Quiz <i class="fa-solid fa-clipboard-check ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- QUIZ SECTION -->
+        <div id="quiz-section" class="tab-content no-print">
+            <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-xl max-w-4xl mx-auto">
+                <div class="text-center mb-8 border-b pb-4">
+                    <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Unit 05 Section 3.5.2 Mastery Quiz</h1>
+                    <p class="text-gray-600">Score 90% or higher (18/20) to earn your Certificate of Mastery and unlock the Retro Game!</p>
+                </div>
+
+                <div id="quiz-container" class="space-y-8">
+                    <!-- Questions injected via JS -->
+                </div>
+
+                <div class="mt-10 text-center border-t pt-6 flex flex-col md:flex-row justify-center items-center gap-4">
+                    <button id="submit-quiz-btn" onclick="gradeQuiz()" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">Submit Quiz</button>
+                    <button id="proceed-game-btn" onclick="switchTab('game')" class="hidden bg-purple-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-purple-700 shadow-lg transition w-full md:w-auto">Play Retro Game <i class="fa-solid fa-gamepad ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RETRO GAME SECTION -->
+        <div id="game-section" class="tab-content no-print">
+            <div class="bg-gray-900 p-6 sm:p-8 rounded-2xl shadow-xl max-w-4xl mx-auto border-4 border-gray-700 flex flex-col items-center">
+                <div class="text-center mb-4 w-full">
+                    <h1 class="text-3xl font-extrabold text-blue-400 mb-2 tracking-widest uppercase" style="font-family: monospace;">Prompt Lander</h1>
+                    <p class="text-gray-300 text-sm">Avoid AI Drift! Use your <strong class="text-white">Left/Right Arrows</strong> to rotate and <strong class="text-white">Up Arrow</strong> to thrust. Land the AI Model safely on the green platform. Land too hard, and the AI hallucinates (crashes)!</p>
+                </div>
+                
+                <div class="flex justify-between items-center w-full max-w-[600px] mb-2 px-4 text-white font-mono text-xl">
+                    <div>Score: <span id="game-score" class="text-green-400 font-bold">0</span></div>
+                    <div>Fuel: <span id="game-fuel" class="text-yellow-400 font-bold">100</span>%</div>
+                </div>
+
+                <div class="relative flex justify-center w-full">
+                    <!-- Game Canvas -->
+                    <canvas id="game-canvas" width="600" height="400" class="w-full max-w-[600px] bg-black border-2 border-gray-600 rounded shadow-lg"></canvas>
+                    
+                    <!-- Overlay Start Button -->
+                    <div id="game-overlay" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-70 rounded-lg max-w-[600px] mx-auto z-10">
+                        <button id="start-game-btn" class="bg-blue-600 hover:bg-blue-500 text-white font-bold font-mono py-3 px-6 rounded-lg text-xl border-4 border-blue-800 uppercase transform transition hover:scale-105">Deploy Model (Start)</button>
+                    </div>
+                </div>
+
+                <div class="mt-8 text-center w-full border-t border-gray-700 pt-6">
+                    <button onclick="switchTab('cert')" class="bg-green-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-green-700 shadow-lg transition w-full md:w-auto">Claim Certificate <i class="fa-solid fa-award ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CERTIFICATE SECTION -->
+        <div id="cert-section" class="tab-content">
+            <div class="max-w-5xl mx-auto">
+                
+                <!-- Controls -->
+                <div class="bg-white p-6 rounded shadow mb-6 no-print text-center border border-gray-200">
+                    <h2 class="text-2xl font-bold text-green-600 mb-2">🎉 Congratulations! 🎉</h2>
+                    <p class="text-gray-700 mb-4">You have achieved mastery of Generative AI concepts.</p>
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+                        <input type="text" id="student-name-input" value="Student" placeholder="Enter your first name" class="border-2 border-gray-300 rounded px-4 py-2 w-full md:w-64 focus:border-green-500 focus:outline-none">
+                        <button onclick="updateCertName()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">Update Name</button>
+                        <button id="download-btn" onclick="downloadCert()" class="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900 transition flex items-center justify-center">
+                            <i class="fa-solid fa-download mr-2"></i>Download PNG
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Certificate Render Container -->
+                <div class="cert-preview-container print:p-0 print:bg-white">
+                    <div id="certificate">
+                        <div class="gold-seal">
+                            <div class="gold-seal-inner-1">
+                                <div class="gold-seal-inner-2">
+                                     <span class="embossed-text embossed-text-large">Certificate</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-small">Of</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-large">Excellence</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="relative z-20 w-full h-full flex flex-col pt-[48px] pl-[380px] pr-[48px]">
+                            <h1 class="text-[#1e3a8a] text-[4.5rem] leading-none font-serif font-bold tracking-wide uppercase mb-2">CERTIFICATE</h1>
+                            <h2 class="text-gray-800 text-3xl font-serif tracking-widest uppercase mb-10">Of Achievement</h2>
+                            
+                            <p class="text-[1.4rem] font-body text-gray-800 mb-4">This is to certify that</p>
+                            
+                            <div class="relative mb-8 w-full">
+                                <h3 id="cert-student-name" class="text-[4rem] text-[#1e3a8a] font-serif italic leading-none pb-2 relative z-10 text-center w-full block">Student</h3>
+                                <div class="w-full border-b-[2px] border-[#1e3a8a] absolute bottom-[4px] left-0 z-0"></div>
+                                <div class="w-full border-b-[2px] border-dotted border-red-500 absolute bottom-[0px] left-0 z-0"></div>
+                            </div>
+                            
+                            <p class="text-[1.3rem] font-body text-gray-800 leading-relaxed w-full pr-4">
+                                Has successfully completed the assessment for 
+                                <strong class="text-[1.8rem] text-[#1e3a8a] block mt-4 mb-2 font-serif">Cyber.org Tech+ Unit 05 Section 3.5.2</strong>
+                                <strong class="text-[1.5rem] text-black block mb-4 font-serif italic">Generative Artificial Intelligence</strong>
+                                <span class="text-[1.1rem] text-gray-700 leading-snug block">Demonstrating proficiency in understanding generative models, prompt engineering, practical use cases for text and code generation, and critical awareness of AI limitations such as hallucinations, drift, and bias.</span>
+                            </p>
+                            
+                            <div class="flex justify-end gap-16 items-end mt-auto mb-[60px] w-full pr-8">
+                                <div class="w-64">
+                                    <div class="border-b border-gray-600 mb-2 h-20 flex items-end justify-center relative">
+                                        <span class="font-script text-[5rem] text-[#1e3a8a] absolute bottom-[-10px] transform -rotate-3 opacity-90">Dr. M. S</span>
+                                    </div>
+                                    <p class="font-serif text-xl text-gray-800 text-center">Administration</p>
+                                </div>
+                                
+                                <div class="w-64">
+                                    <div class="border-b border-gray-600 mb-2 text-center h-20 flex items-end justify-center">
+                                        <p id="cert-date" class="font-body text-2xl text-gray-800 pb-1">Date Here</p>
+                                    </div>
+                                    <p class="font-serif text-xl text-gray-800 text-center">Date</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Custom Modal for Alerts -->
+    <div id="custom-modal" class="fixed inset-0 bg-black bg-opacity-50 z-[100] hidden flex justify-center items-center backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all">
+            <div class="text-center">
+                <div id="modal-icon" class="text-5xl mb-4"></div>
+                <h3 id="modal-title" class="text-2xl font-bold mb-2 text-gray-900"></h3>
+                <p id="modal-msg" class="text-gray-600 mb-6"></p>
+                <button onclick="closeModal()" class="bg-green-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-green-700 transition w-full">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Briefing Modal -->
+    <div id="briefing-modal" class="fixed inset-0 bg-black bg-opacity-70 z-[120] hidden flex justify-center items-center backdrop-blur-sm p-4 sm:p-6">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col transform transition-all overflow-hidden border-4 border-green-700">
+            <div class="p-6 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+                <div class="flex items-center gap-4">
+                    <div id="briefing-modal-icon" class="text-4xl"></div>
+                    <h3 id="briefing-modal-title" class="text-2xl md:text-3xl font-bold text-gray-900"></h3>
+                </div>
+                <button onclick="closeBriefing()" class="text-gray-400 hover:text-red-600 transition text-4xl leading-none">&times;</button>
+            </div>
+            <div id="briefing-modal-content" class="p-6 md:p-10 overflow-y-auto flex-grow text-gray-700 text-lg leading-relaxed bg-white">
+                <!-- Dynamic Content Injected Here -->
+            </div>
+            <div class="p-6 border-t border-gray-200 bg-gray-50 flex justify-end">
+                <button onclick="closeBriefing()" class="bg-green-700 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-green-800 transition shadow-md">Acknowledge & Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Extensive Briefing Content Data (Min 7 Paragraphs per detail, specific structure for Use Cases) ---
+        const briefingData = {
+            'genai-details': {
+                title: 'What is Generative AI?',
+                icon: '<i class="fa-solid fa-brain text-indigo-600"></i>',
+                html: `
+                    <p class="mb-5">Artificial Intelligence has been part of computing for decades, but historically, it focused on analysis and prediction. Traditional predictive AI is designed to look at existing data and make a decision based on patterns. For example, a predictive AI might look at thousands of emails and predict whether a new incoming email is "Spam" or "Not Spam," or it might look at user habits to predict what movie they want to watch next. Generative AI represents a massive leap forward; rather than just analyzing data, it is designed to create entirely new, original content that has never existed before.</p>
+                    
+                    <p class="mb-5">The foundation of modern generative AI lies in advanced algorithms known as neural networks, which are modeled loosely on the human brain. These networks contain billions, or even trillions, of parameters—mathematical connections that adjust based on the data fed into them. To create a generative model, engineers train these neural networks on massive datasets scraped from the internet, encompassing books, articles, websites, and images. Through this training, the AI learns the complex statistical relationships between words, colors, and concepts.</p>
+                    
+                    <p class="mb-5">In the realm of text, the most prominent technology is the Large Language Model (LLM). When you interact with a tool like ChatGPT, the LLM is not "thinking" in the human sense, nor is it retrieving pre-written answers from a database. Instead, it functions as an incredibly advanced autocomplete. Based on your input, it mathematically predicts the most likely next word, then the next, chaining them together to form coherent, grammatically correct, and often highly creative sentences.</p>
+                    
+                    <p class="mb-5">Beyond text, generative AI extends into the visual domain through technologies like diffusion models. Programs such as DALL-E and Midjourney start with a field of random static noise. By reversing the process of adding noise to an image (a process they learned during training), they slowly subtract the noise until a clear image emerges that matches the user's description. This allows for the creation of photorealistic images, surreal art, and graphic design elements from mere text descriptions.</p>
+                    
+                    <p class="mb-5">Another critical development in this space is the rise of Generative Adversarial Networks (GANs). In a GAN, two neural networks compete against each other. The "Generator" tries to create fake content (like a fake photograph of a human face), while the "Discriminator" tries to tell if the image is real or fake. This continuous loop pushes the generator to create increasingly realistic outputs until the discriminator can no longer tell the difference. This technology is often behind incredibly realistic deepfake videos.</p>
+                    
+                    <p class="mb-5">Today's most advanced AI systems are becoming "multimodal." This means they are no longer restricted to just one type of data. A multimodal generative AI can accept a photograph as input, analyze its contents, and then write a descriptive essay about it. Alternatively, it can listen to a spoken audio prompt and generate a corresponding video. This convergence of text, audio, image, and video generation is expanding the capabilities of AI beyond simple chatbots into comprehensive digital assistants.</p>
+                    
+                    <p>Understanding the distinction between generative and traditional AI is vital for modern technologists. Generative AI is not merely an automation tool; it is a co-creator. It democratizes skills, allowing someone who cannot draw to produce stunning illustrations, and someone who cannot code to develop functional software scripts, fundamentally altering the landscape of digital creation, education, and the global workforce.</p>
+                `
+            },
+            'genai-usecase': {
+                title: 'What is Generative AI: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-indigo-800 mb-2 border-b-2 border-indigo-200 pb-1">Case 1: Creative Arts & Design</h4>
+                        <p class="mb-2">Artists, graphic designers, and musicians use generative AI to expand their creative toolkit, generate novel concepts, and overcome creative blocks.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Digital Art):</strong> An indie game developer uses DALL-E to generate dozens of concept art variations for alien landscapes, using the AI outputs as inspiration before hand-painting the final game assets.</li>
+                            <li><strong>Example 2 (Music Production):</strong> A video creator uses an AI audio tool to generate a completely unique, royalty-free background track tailored exactly to the mood and 60-second length of their new vlog.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-indigo-800 mb-2 border-b-2 border-indigo-200 pb-1">Case 2: Content Creation & Marketing</h4>
+                        <p class="mb-2">Marketing professionals leverage generative AI to scale their output, rapidly creating written and visual content tailored to different audiences.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Copywriting):</strong> A social media manager asks an LLM to generate 10 different catchy Instagram captions for a new shoe launch, selecting the best one to publish.</li>
+                            <li><strong>Example 2 (Video Scripts):</strong> A YouTuber feeds their rough bullet points into an AI tool, asking it to generate a fully fleshed-out, humorous 5-minute video script complete with visual cues.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Neural Networks</p>
+                            <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=600&h=350" alt="Abstract visualization of a glowing AI neural network" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: AI Image Generation</p>
+                            <img src="https://images.unsplash.com/photo-1684369175836-8db7456b3e6d?auto=format&fit=crop&w=600&h=350" alt="Person interacting with an AI art generator on a laptop" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'prompt-details': {
+                title: 'The Art of the Prompt',
+                icon: '<i class="fa-solid fa-terminal text-teal-600"></i>',
+                html: `
+                    <p class="mb-5">In the context of Generative AI, a "prompt" is the input—the specific instructions, questions, or parameters—that a human user provides to the AI system. Because generative models lack true consciousness or intuition, they cannot guess what a user wants. The AI relies entirely on the text provided in the prompt to understand the goal, the context, and the desired format of the output. If a user inputs a vague prompt like "Write about space," the AI must guess the audience, tone, and length, usually resulting in a generic, unhelpful response.</p>
+                    
+                    <p class="mb-5">The practice of crafting highly effective inputs is known as "Prompt Engineering." It has rapidly evolved into a critical technical skill. Good prompt engineering requires extreme clarity and specificity. A well-engineered prompt transforms the vague request above into: "Write a 300-word educational summary about the Apollo 11 moon landing. Use simple language appropriate for a 5th-grade student, and format the output using bullet points." By defining the topic, length, audience, and format, the user severely limits the AI's guesswork, ensuring a targeted and useful output.</p>
+                    
+                    <p class="mb-5">One of the most powerful techniques in prompt engineering is assigning a "Persona" or Role. By starting a prompt with "Act as an expert cybersecurity analyst..." or "Assume the role of a friendly kindergarten teacher...", you force the AI to adjust its vocabulary, tone, and the complexity of its concepts to match that specific persona. This simple addition drastically alters the statistical weights the LLM uses to select its next words, resulting in highly specialized outputs.</p>
+                    
+                    <p class="mb-5">Another fundamental concept is providing Context. AI models do not know who you are, what project you are working on, or what happened previously (unless you are in an ongoing chat session). Providing background context—such as "I am writing an email to my boss to ask for a deadline extension because my computer crashed"—gives the AI the necessary parameters to craft a message that is both accurate to the situation and appropriate in its professional tone.</p>
+                    
+                    <p class="mb-5">Prompt engineers often use a strategy called "Few-Shot Prompting." A "zero-shot" prompt simply asks the AI to do a task with no examples (e.g., "Translate this sentence to French"). In few-shot prompting, the user provides a few examples of exactly what they want before asking the final question. For instance, the user might provide three examples of a specific JSON data format, and then ask the AI to format new data in that exact same way. The AI learns the pattern from the examples instantly.</p>
+                    
+                    <p class="mb-5">Iterative refinement is the reality of working with generative AI. It is rare for a prompt to yield a perfect result on the very first try. Users must view prompting as a conversation. If the first output is too formal, the user replies, "Make it more casual." If it is too long, they reply, "Cut this down to one paragraph." This back-and-forth iteration is essential for molding the raw AI generation into a polished final product.</p>
+                    
+                    <p>Ultimately, a strong prompt usually contains four key elements: the Task (what to do), the Context (background info), the Persona (who the AI is acting as), and the Format (how the output should look). Mastering the combination of these four elements allows users to unlock the true potential of generative AI, transforming it from a simple chatbot into a highly customizable, powerful digital assistant tailored to their specific daily needs.</p>
+                `
+            },
+            'prompt-usecase': {
+                title: 'The Art of the Prompt: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-teal-800 mb-2 border-b-2 border-teal-200 pb-1">Case 1: Academic & Research Efficiency</h4>
+                        <p class="mb-2">Students and researchers use complex prompts to help distill dense information and organize data efficiently without plagiarizing.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Summarization):</strong> A college student pastes a dense 10-page scientific article into an LLM and uses the prompt: "Act as a biology tutor. Summarize the key findings of this text in 5 bullet points, explaining any complex jargon simply."</li>
+                            <li><strong>Example 2 (Formatting Data):</strong> A researcher uses Few-Shot prompting by giving the AI three examples of how a book should be cited in APA format, then pastes a list of 20 raw book titles and asks the AI to format them all matching the examples.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-teal-800 mb-2 border-b-2 border-teal-200 pb-1">Case 2: Specialized Coding Assistance</h4>
+                        <p class="mb-2">Developers use specific prompt structures to force the AI to write clean, usable code snippets for their software projects.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Debugging):</strong> A developer provides context in their prompt: "I am writing a Python script for a Discord bot. I am getting a 'SyntaxError' on line 42. Explain what is wrong and provide the corrected line of code."</li>
+                            <li><strong>Example 2 (Boilerplate Generation):</strong> A web developer uses a highly specific prompt to generate the foundation of a website: "Create a single HTML file with embedded CSS. It should have a dark mode theme, a top navigation bar with 3 links, and a centered hero image."</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Prompt Engineering</p>
+                            <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=600&h=350" alt="Code on a screen representing typing a detailed command" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Research Summarization</p>
+                            <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=600&h=350" alt="Student studying late at night with laptop and notebooks" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'usecases-details': {
+                title: 'Use Cases: Text & Code',
+                icon: '<i class="fa-solid fa-laptop-code text-blue-600"></i>',
+                html: `
+                    <p class="mb-5">Generative AI has quickly transitioned from a novelty to a fundamental tool in both personal and professional environments. Its applications are vast, but they generally fall into three main categories: increasing speed, enhancing creativity, and providing foundational support. When it comes to text generation, AI excels at breaking the "blank page syndrome." Whether drafting a difficult professional email, outlining a class essay, or writing a speech, the AI can provide a rough first draft in seconds, giving the human user a solid foundation to edit and refine.</p>
+                    
+                    <p class="mb-5">In professional settings, the speed of text generation is revolutionary. Customer service teams use AI to draft polite, accurate responses to common client inquiries. Sales teams use it to generate personalized outreach emails based on a client's LinkedIn profile. By handling these repetitive, time-consuming writing tasks, generative AI frees up human workers to focus on higher-level strategic thinking, empathy, and complex problem-solving that AI cannot replicate.</p>
+                    
+                    <p class="mb-5">Perhaps one of the most significant impacts of generative AI is in the field of software development and coding. AI tools like GitHub Copilot are heavily integrated directly into developers' code editors. As a programmer types, the AI anticipates what they are trying to achieve and suggests entire blocks of code. This dramatically increases coding speed, allowing developers to write boilerplate code (the standard, repetitive setup code required for many applications) almost instantly.</p>
+                    
+                    <p class="mb-5">However, in the context of coding, AI is often referred to as a "helpful but clueless coding buddy." It is vital to understand that the AI does not actually *understand* the logic of the code it is writing. It is simply predicting the next most likely line of code based on millions of open-source projects it studied. While it can suggest brilliant, elegant solutions, it can also suggest code that is fundamentally flawed, insecure, or completely non-functional if the context is slightly unusual.</p>
+                    
+                    <p class="mb-5">Because the AI is a "clueless buddy," humans remain essential. The AI is fantastic for support—explaining what a complex block of legacy code does, or suggesting a fix for a stubborn syntax error. But a human developer must always review, test, and validate the AI's suggestions. Blindly copying and pasting AI-generated code without understanding it is a recipe for introducing severe bugs and security vulnerabilities into software systems.</p>
+                    
+                    <p class="mb-5">Beyond speed and support, generative AI is a powerful engine for creativity and ideation. When stuck on a project, users can prompt the AI to act as a brainstorming partner. A writer can ask, "Give me 10 unexpected plot twists for a mystery novel set in a submarine." An event planner can ask, "Suggest 5 unique themes for a corporate retreat." The AI's ability to instantly combine disparate concepts often sparks ideas the human user would never have considered.</p>
+                    
+                    <p>Ultimately, the most successful use cases for generative AI treat the technology not as a replacement for human effort, but as an amplifier of human capability. It provides the speed to draft quickly, the support to learn and troubleshoot technical problems (like HTML or Python), and the creativity to brainstorm broadly. The human remains the editor, the director, and the final quality control check, ensuring the final output is accurate, safe, and aligned with human intent.</p>
+                `
+            },
+            'usecases-usecase': {
+                title: 'Use Cases - Text & Code: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 1: Business Communications</h4>
+                        <p class="mb-2">Business professionals use generative AI to streamline daily communications and drastically reduce the time spent on administrative writing tasks.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Drafting Emails):</strong> An employee needs to decline a vendor's proposal politely. They prompt the AI: "Draft a brief, professional email declining this marketing proposal, stating budget constraints as the reason." The AI generates a polite draft in two seconds.</li>
+                            <li><strong>Example 2 (Meeting Minutes):</strong> After a long virtual meeting, a project manager feeds the rough transcript into an AI and asks it to extract the key decisions made and generate a checklist of action items for the team.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 2: Web Development & Learning</h4>
+                        <p class="mb-2">Students and junior developers use AI coding assistants to learn new languages, troubleshoot errors, and understand complex logic.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (CSS Styling):</strong> A beginner building a website doesn't know how to center a <i>div</i> element. They ask the AI for the CSS code required to center an element both vertically and horizontally, and the AI provides the exact Flexbox code needed.</li>
+                            <li><strong>Example 2 (Code Explanation):</strong> A student inherits a messy, uncommented JavaScript file. They highlight a confusing function, paste it into the AI, and ask, "Explain what this function does line-by-line," allowing them to understand the code without asking a senior developer.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: The Coding Buddy</p>
+                            <img src="https://images.unsplash.com/photo-1542831371-29b0f74f9713?auto=format&fit=crop&w=600&h=350" alt="Programmer writing code on multiple screens" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Business Brainstorming</p>
+                            <img src="https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=600&h=350" alt="Business team in a meeting brainstorming ideas" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'risks-details': {
+                title: 'Limitations & Risks',
+                icon: '<i class="fa-solid fa-triangle-exclamation text-red-600"></i>',
+                html: `
+                    <p class="mb-5">While generative AI feels incredibly advanced, it is crucial to remember that it is software, not a sentient being, and it possesses significant limitations. The most prominent and dangerous limitation is the phenomenon known as "Hallucination." Because an LLM is essentially predicting the next most likely word based on statistical probabilities, it does not possess an internal database of true/false facts. If it doesn't "know" the answer, it will mathematically string words together that *sound* highly plausible, confidently presenting entirely fabricated facts, fake historical dates, or non-existent legal cases as absolute truth.</p>
+                    
+                    <p class="mb-5">Because of these hallucinations, the golden rule of using generative AI is that you must always double-check its facts. If a student uses AI to write a history paper and the AI hallucinates a battle that never happened, the student is ultimately responsible for that error. Blind trust in AI outputs can lead to severe consequences in professional fields; for instance, lawyers have faced legal sanctions for submitting court briefs containing fake legal precedents hallucinated by ChatGPT.</p>
+                    
+                    <p class="mb-5">Another critical limitation is the issue of Bias and bad data. An AI model is only as good as the data it was trained on. Because these models are trained on vast swaths of the internet, they inevitably ingest human biases, prejudices, and toxic viewpoints. If left unchecked, an AI asked to generate an image of a "CEO" might only generate images of older men, or an AI used to screen resumes might unfairly penalize applicants based on demographic markers. Developers spend immense effort trying to align and filter these models, but bias remains a persistent risk.</p>
+                    
+                    <p class="mb-5">Over time, AI models can also suffer from what is known as "AI Drift." AI Drift occurs when an artificial intelligence model begins to perform worse or behave unpredictably over time. This can happen because the developers issue a bad software update, because the real-world data it operates on changes drastically, or because it begins learning from low-quality user interactions. A model that was highly accurate in January might become noticeably worse at coding or writing by July due to AI Drift.</p>
+                    
+                    <p class="mb-5">Furthermore, the rise of generative AI has sparked intense concerns regarding Privacy and Data Security. When you type a prompt into a public AI tool, that text is often saved on the company's servers and may even be used to train future versions of the AI. Therefore, it is a severe security risk to ever paste Personally Identifiable Information (PII) like Social Security Numbers, patient medical records, or confidential corporate trade secrets into a public AI prompt, as that data could potentially be exposed.</p>
+                    
+                    <p class="mb-5">Copyright and intellectual property represent another massive legal gray area. Generative models were trained on billions of copyrighted images, books, and articles, often without the original creators' permission or compensation. If an AI generates a piece of art that looks suspiciously similar to a living artist's specific style, or writes code identical to a copyrighted software program, the legal question of who owns that output—and whether it constitutes theft—is currently being fiercely debated in global courts.</p>
+                    
+                    <p>In conclusion, generative AI is a powerful but flawed tool. The risks of hallucinations, bias, drift, and privacy violations mean that it can never fully replace human judgment. Users must adopt a mindset of healthy skepticism, acting as editors and fact-checkers. By understanding these limitations, users can safely harness the immense creative and productive power of generative AI while avoiding its hidden pitfalls.</p>
+                `
+            },
+            'risks-usecase': {
+                title: 'Limitations & Risks: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-red-800 mb-2 border-b-2 border-red-200 pb-1">Case 1: Mitigating Hallucinations in Research</h4>
+                        <p class="mb-2">Professionals must actively fact-check AI outputs to prevent the spread of false information in their work.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Verifying Citations):</strong> A journalist asks an AI to summarize recent studies on climate change. The AI provides three study names and authors. Before publishing, the journalist manually searches Google Scholar to confirm those specific studies actually exist, preventing a hallucinated source from entering their article.</li>
+                            <li><strong>Example 2 (Code Validation):</strong> A programmer uses AI to generate a complex SQL database query. Knowing the AI is a "clueless buddy," they refuse to run the code on the live database immediately. Instead, they test the query in an isolated sandbox environment to ensure it doesn't accidentally delete critical data.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-red-800 mb-2 border-b-2 border-red-200 pb-1">Case 2: Protecting Privacy and Data</h4>
+                        <p class="mb-2">Users must rigorously filter their prompts to ensure they are not accidentally leaking sensitive information to public AI servers.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Anonymizing Data):</strong> A doctor wants to use AI to help draft a letter to an insurance company. Before pasting the patient's file into the prompt, the doctor manually deletes the patient's name, date of birth, and address, replacing them with generic placeholders like "[PATIENT_NAME]".</li>
+                            <li><strong>Example 2 (Corporate Security):</strong> A software engineer working for Apple is writing code for an unannounced secret project. They are strictly forbidden by company policy from pasting any of their proprietary code into public AI tools like ChatGPT to debug it, as doing so would leak corporate secrets.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: AI Hallucinations</p>
+                            <img src="https://images.unsplash.com/photo-1507146153580-69a1fe6d8aa1?auto=format&fit=crop&w=600&h=350" alt="Abstract optical illusion representing hallucinations" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Data Privacy</p>
+                            <img src="https://images.unsplash.com/photo-1614064641913-a538a5b23d57?auto=format&fit=crop&w=600&h=350" alt="Padlock on a keyboard representing data security" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        // Modal Control Functions
+        function openBriefing(key) {
+            const modal = document.getElementById('briefing-modal');
+            const data = briefingData[key];
+            if(data) {
+                document.getElementById('briefing-modal-icon').innerHTML = data.icon;
+                document.getElementById('briefing-modal-title').innerText = data.title;
+                document.getElementById('briefing-modal-content').innerHTML = data.html;
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; 
+            }
+        }
+
+        function closeBriefing() {
+            document.getElementById('briefing-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto'; 
+        }
+
+        document.getElementById('briefing-modal').addEventListener('click', function(e) {
+            if(e.target === this) closeBriefing();
+        });
+        
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId + '-section').classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-green-900'));
+            const activeBtn = document.getElementById('nav-' + tabId);
+            if(activeBtn && tabId !== 'cert') activeBtn.classList.add('bg-green-900');
+            
+            document.querySelectorAll('.nav-btn-mobile').forEach(btn => btn.classList.remove('bg-green-900'));
+            const activeMobileBtn = document.getElementById('nav-' + tabId + '-mobile');
+            if(activeMobileBtn && tabId !== 'cert') activeMobileBtn.classList.add('bg-green-900');
+
+            window.scrollTo(0,0);
+
+            if (tabId === 'game' && !gameRunning) {
+                resetGame();
+                drawGame();
+            }
+        }
+
+        function showModal(title, message, type = 'info') {
+            const modal = document.getElementById('custom-modal');
+            const icon = document.getElementById('modal-icon');
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-msg').innerText = message;
+            
+            if(type === 'success') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-check text-green-500"></i>';
+            } else if (type === 'error') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500"></i>';
+            } else if (type === 'warning') {
+                icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-yellow-500"></i>';
+            } else {
+                icon.innerHTML = '<i class="fa-solid fa-circle-info text-blue-500"></i>';
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        // --- LAB 1: Drag/Drop Logic ---
+        let draggedCatItem = null;
+        let lab1Count = 0;
+
+        document.querySelectorAll('#lab1-items .io-item').forEach(item => {
+            item.addEventListener('dragstart', function() {
+                draggedCatItem = this;
+                setTimeout(() => this.classList.add('opacity-50'), 0);
+            });
+            item.addEventListener('dragend', function() {
+                setTimeout(() => this.classList.remove('opacity-50'), 0);
+                draggedCatItem = null;
+            });
+        });
+
+        document.querySelectorAll('.cat-dropzone').forEach(zone => {
+            zone.addEventListener('dragover', e => e.preventDefault());
+            zone.addEventListener('dragenter', function(e) { e.preventDefault(); this.classList.add('brightness-95'); });
+            zone.addEventListener('dragleave', function() { this.classList.remove('brightness-95'); });
+            zone.addEventListener('drop', function() {
+                this.classList.remove('brightness-95');
+                if(draggedCatItem) {
+                    if(draggedCatItem.dataset.type === this.dataset.target) {
+                        this.appendChild(draggedCatItem);
+                        draggedCatItem.classList.remove('bg-indigo-100', 'cursor-grab');
+                        draggedCatItem.classList.add('bg-green-100', 'text-green-800', 'cursor-default', 'mt-1', 'w-[90%]');
+                        draggedCatItem.setAttribute('draggable', 'false');
+                        lab1Count++;
+                        document.getElementById('lab1-feedback').innerText = "Correct Classification!";
+                        document.getElementById('lab1-feedback').className = "text-center font-bold mt-2 h-4 text-xs text-green-600";
+                        if(lab1Count === 4) setTimeout(() => showModal('Lab 1 Complete!', 'You successfully categorized Generative vs Predictive AI.', 'success'), 400);
+                    } else {
+                        document.getElementById('lab1-feedback').innerText = "Incorrect. Think about if it is CREATING something new.";
+                        document.getElementById('lab1-feedback').className = "text-center font-bold mt-2 h-4 text-xs text-red-600";
+                    }
+                }
+            });
+        });
+
+        // --- LAB 2: Generator Logic ---
+        let lab2Solved = false;
+        function runLab2() {
+            if(lab2Solved) return;
+            const sub = document.getElementById('lab2-subject').value;
+            const sty = document.getElementById('lab2-style').value;
+            const out = document.getElementById('lab2-output');
+            
+            out.classList.remove('text-gray-500', 'italic');
+            out.classList.add('text-indigo-900', 'bg-indigo-50');
+            
+            if(sub === 'cat' && sty === 'pirate') out.innerText = "Yarrr, I be a fuzzy feline sailin' the seven seas searching for tuna!";
+            if(sub === 'cat' && sty === 'code') out.innerText = "def print_cat():\n    print('Meow! 🐱')";
+            if(sub === 'robot' && sty === 'pirate') out.innerText = "Shiver me circuits! I be a scallywag made of steel and gears!";
+            if(sub === 'robot' && sty === 'code') out.innerText = "class Robot:\n    def __init__(self):\n        self.status = 'Beep Boop 🤖'";
+            
+            lab2Solved = true;
+            setTimeout(() => showModal('Lab 2 Complete!', 'You simulated how generative AI combines concepts to create new outputs based on parameters.', 'success'), 600);
+        }
+
+        // --- LAB 3: Prompt Selector Logic ---
+        let lab3Solved = false;
+        function checkLab3(el, isCorrect) {
+            if(lab3Solved) return;
+            document.querySelectorAll('.lab-selectable').forEach(div => {
+                if(div.parentElement.contains(el)) div.classList.remove('selected');
+            });
+            el.classList.add('selected');
+            
+            if(isCorrect) {
+                lab3Solved = true;
+                document.getElementById('lab3-feedback').innerText = "Correct! It defines the task, format, and audience context.";
+                document.getElementById('lab3-feedback').className = "text-center font-bold mt-2 h-4 text-xs text-green-600";
+                setTimeout(() => showModal('Lab 3 Complete!', 'You identified the most specific, well-engineered prompt.', 'success'), 400);
+            } else {
+                document.getElementById('lab3-feedback').innerText = "Incorrect. This prompt is too vague and lacks constraints.";
+                document.getElementById('lab3-feedback').className = "text-center font-bold mt-2 h-4 text-xs text-red-600";
+            }
+        }
+
+        // --- LAB 4: Prompt Builder (Order) Logic ---
+        const container4 = document.getElementById('lab4-container');
+        let draggedItem4 = null;
+        
+        container4.querySelectorAll('.io-item').forEach(item => {
+            item.addEventListener('dragstart', function(e) {
+                draggedItem4 = this;
+                setTimeout(() => this.classList.add('opacity-50'), 0);
+            });
+            item.addEventListener('dragend', function() {
+                setTimeout(() => this.classList.remove('opacity-50'), 0);
+                draggedItem4 = null;
+            });
+            item.addEventListener('dragover', e => e.preventDefault());
+            item.addEventListener('dragenter', function(e) { e.preventDefault(); });
+            item.addEventListener('drop', function(e) {
+                if(draggedItem4 && draggedItem4 !== this) {
+                    let allItems = [...container4.querySelectorAll('.io-item')];
+                    let draggedIdx = allItems.indexOf(draggedItem4);
+                    let droppedIdx = allItems.indexOf(this);
+                    
+                    if(draggedIdx < droppedIdx) {
+                        this.parentNode.insertBefore(draggedItem4, this.nextSibling);
+                    } else {
+                        this.parentNode.insertBefore(draggedItem4, this);
+                    }
+                }
+            });
+        });
+
+        let lab4Solved = false;
+        function checkLab4() {
+            if(lab4Solved) return;
+            let currentOrder = [...container4.querySelectorAll('.io-item')].map(i => i.id);
+            // Logical order: Role -> Context -> Task -> Format
+            if(currentOrder[0] === 'p-role' && currentOrder[1] === 'p-context' && currentOrder[2] === 'p-task' && currentOrder[3] === 'p-format') {
+                lab4Solved = true;
+                document.getElementById('lab4-feedback').innerText = "Perfect Structure!";
+                document.getElementById('lab4-feedback').className = "text-center font-bold mt-2 h-4 text-xs text-green-600";
+                setTimeout(() => showModal('Lab 4 Complete!', 'You successfully structured the prompt elements in a logical order.', 'success'), 400);
+            } else {
+                document.getElementById('lab4-feedback').innerText = "Not quite. Start with who they are (Role), then background (Context), then what to do (Task), ending with how it looks (Format).";
+                document.getElementById('lab4-feedback').className = "text-center font-bold mt-2 h-4 text-xs text-red-600";
+            }
+        }
+
+        // --- LAB 5: Code Debugger Logic ---
+        let lab5Solved = false;
+        function checkLab5(isCorrect) {
+            if(lab5Solved) return;
+            if(isCorrect) {
+                lab5Solved = true;
+                document.getElementById('lab5-feedback').innerText = "Bug found! 'wigth' is misspelled.";
+                document.getElementById('lab5-feedback').className = "text-center font-bold mt-2 h-4 text-xs text-green-600";
+                setTimeout(() => showModal('Lab 5 Complete!', 'You successfully acted as the human-in-the-loop, catching the AI\'s coding error!', 'success'), 400);
+            } else {
+                document.getElementById('lab5-feedback').innerText = "Incorrect line. That code is valid HTML.";
+                document.getElementById('lab5-feedback').className = "text-center font-bold mt-2 h-4 text-xs text-red-600";
+            }
+        }
+
+        // --- LAB 6: Tool Matcher Logic ---
+        let selectedTool = null;
+        let selectedType = null;
+        let lab6Matches = 0;
+
+        function selectMatch(group, el) {
+            if(el.classList.contains('bg-green-100')) return; // already matched
+            
+            // Highlight selection
+            let siblings = el.parentElement.querySelectorAll('.lab-selectable');
+            siblings.forEach(s => { if(!s.classList.contains('bg-green-100')) s.classList.remove('selected'); });
+            el.classList.add('selected');
+
+            if(group === 'tool') selectedTool = el;
+            if(group === 'type') selectedType = el;
+
+            if(selectedTool && selectedType) {
+                if(selectedTool.dataset.val === selectedType.dataset.val) {
+                    // Match found
+                    selectedTool.classList.remove('selected', 'border-gray-300');
+                    selectedType.classList.remove('selected', 'border-gray-300');
+                    selectedTool.classList.add('bg-green-100', 'border-green-500', 'text-green-800', 'font-bold');
+                    selectedType.classList.add('bg-green-100', 'border-green-500', 'text-green-800', 'font-bold');
+                    document.getElementById('lab6-feedback').innerText = "Match Correct!";
+                    document.getElementById('lab6-feedback').className = "text-center font-bold mt-4 h-4 text-xs text-green-600";
+                    lab6Matches++;
+                    selectedTool = null;
+                    selectedType = null;
+                    if(lab6Matches === 2) setTimeout(() => showModal('Lab 6 Complete!', 'You successfully matched the AI tools to their output modalities.', 'success'), 400);
+                } else {
+                    document.getElementById('lab6-feedback').innerText = "Incorrect Match. Try again.";
+                    document.getElementById('lab6-feedback').className = "text-center font-bold mt-4 h-4 text-xs text-red-600";
+                    selectedTool.classList.remove('selected');
+                    selectedType.classList.remove('selected');
+                    selectedTool = null;
+                    selectedType = null;
+                }
+            }
+        }
+
+        // --- LAB 7: Hallucination Spotter Logic ---
+        let lab7Solved = false;
+        function checkLab7(isCorrect) {
+            if(lab7Solved) return;
+            if(isCorrect) {
+                lab7Solved = true;
+                document.getElementById('lab7-feedback').innerText = "Hallucination caught! NASA does not have a farming colony on Mars.";
+                document.getElementById('lab7-feedback').className = "text-center font-bold mt-4 h-4 text-xs text-green-600";
+                setTimeout(() => showModal('Lab 7 Complete!', 'You successfully identified the confident but completely fabricated AI hallucination.', 'success'), 400);
+            } else {
+                document.getElementById('lab7-feedback').innerText = "That is actually a true fact about Mars. Keep looking for the fake one.";
+                document.getElementById('lab7-feedback').className = "text-center font-bold mt-4 h-4 text-xs text-red-600";
+            }
+        }
+
+        // --- LAB 8: Privacy Filter Logic ---
+        function togglePrivacy(el, isPII) {
+            el.classList.toggle('on');
+        }
+        let lab8Solved = false;
+        function checkLab8() {
+            if(lab8Solved) return;
+            let switches = document.querySelectorAll('.privacy-switch');
+            let isSafe = (!switches[1].classList.contains('on') && !switches[3].classList.contains('on') && switches[0].classList.contains('on') && switches[2].classList.contains('on'));
+            
+            if(isSafe) {
+                lab8Solved = true;
+                document.getElementById('lab8-feedback').innerText = "Secure! You protected the PII data.";
+                document.getElementById('lab8-feedback').className = "text-center font-bold mt-2 h-4 text-xs text-green-600";
+                setTimeout(() => showModal('Lab 8 Complete!', 'You successfully filtered sensitive personal information before prompting the public AI.', 'success'), 400);
+            } else {
+                document.getElementById('lab8-feedback').innerText = "Danger! You must turn OFF only the prompts containing PII (Social Security / Medical info).";
+                document.getElementById('lab8-feedback').className = "text-center font-bold mt-2 h-4 text-xs text-red-600";
+            }
+        }
+
+
+        // --- QUIZ LOGIC (20 Questions) ---
+        const quizData = [
+            // 10 provided from Document (adapted for single choice format)
+            { q: "Which of the following is an example of generative AI?", options: ["A GPS app predicting traffic", "A chatbot giving menu options", "DALL-E creating a fantasy landscape from a prompt", "A fitness tracker counting your steps"], answer: 2 },
+            { q: "True or False: Generative AI creates new content based on the prompt you give it.", options: ["True", "False"], answer: 0 },
+            { q: "Which of the following are things generative AI can create?", options: ["Only Essays", "Only Videos", "Only Code", "Essays, Videos, and Code"], answer: 3 },
+            { q: "The instructions or question you give to a generative AI tool is called a _____.", options: ["Query", "Quandary", "Explanation", "Prompt"], answer: 3 },
+            { q: "Why should one double-check information given by generative AI?", options: ["It always gives fake answers.", "It might sound confident but still be wrong.", "It only works online.", "It doesn't use real data."], answer: 1 },
+            { q: "What is AI drift?", options: ["When AI forgets older prompts.", "When AI moves between tasks automatically.", "When AI starts performing worse due to bad updates or data.", "When AI gets hacked by users."], answer: 2 },
+            { q: "True or False: AI-generated code always works the first time and doesn't need to be tested.", options: ["True", "False"], answer: 1 },
+            { q: "Which of the following is the best example of a clear and specific prompt?", options: ["'Make something cool.'", "'I need help.'", "'Write a poem about pizza in the style of Shakespeare.'", "'Tell me stuff.'"], answer: 2 },
+            { q: "In the 'Prompt to Page' lab, what was one way you used AI to help improve your webpage?", options: ["To search for videos", "To write alt text for an image", "To delete your code", "To grade your work"], answer: 1 },
+            { q: "Which of the following are smart practices when using generative AI?", options: ["Share your login and password with AI.", "Let the AI decide your final grade.", "Be specific in your prompt and check for errors.", "Expect it to be perfect the first try."], answer: 2 },
+            
+            // 10 new questions based on briefing
+            { q: "How does generative AI fundamentally differ from predictive AI?", options: ["It operates significantly faster.", "It creates entirely original content rather than just analyzing patterns.", "It does not require an internet connection.", "It can only process numbers, not text."], answer: 1 },
+            { q: "What underlying technology powers modern text generators like ChatGPT?", options: ["Local RAM buffers", "Large Language Models (LLMs)", "Hard-coded decision trees", "Analog sound waves"], answer: 1 },
+            { q: "When an AI confidently presents a fabricated fact or fake historical date as absolute truth, this is known as a:", options: ["Data Breach", "Compiler Error", "Hallucination", "Syntax Bug"], answer: 2 },
+            { q: "Why is an AI coding assistant often described as a 'helpful but clueless buddy'?", options: ["It refuses to write code for beginners.", "It predicts text patterns but doesn't actually understand the logical execution of the code.", "It constantly deletes your previous work.", "It requires voice commands to function."], answer: 1 },
+            { q: "Providing examples within a prompt to guide the AI on the exact format you want is known as:", options: ["Zero-shot prompting", "Few-shot prompting", "Data scraping", "Reverse engineering"], answer: 1 },
+            { q: "Which of the following should you NEVER include in a prompt sent to a public generative AI tool?", options: ["A request for a fictional story", "CSS styling code", "Personally Identifiable Information (PII) like medical records", "General historical questions"], answer: 2 },
+            { q: "If an AI model begins to output worse or biased results over several months due to learning from low-quality user interactions, this is an example of:", options: ["AI Drift", "Multimodal expansion", "Hardware failure", "Context switching"], answer: 0 },
+            { q: "In image generation, what type of model slowly subtracts random static noise until a clear picture emerges?", options: ["Predictive text model", "Diffusion model", "Audio spectrograph", "Blockchain ledger"], answer: 1 },
+            { q: "What is the primary benefit of assigning a 'Persona' (e.g., 'Act as a friendly teacher') in a prompt?", options: ["It forces the AI to use more server memory.", "It prevents the AI from crashing.", "It guides the AI's tone, vocabulary, and expertise level.", "It legally protects the output from copyright."], answer: 2 },
+            { q: "Which of the following is a key limitation of the vast internet datasets used to train AI models?", options: ["They are too small to be useful.", "They cause the AI to generate only black and white images.", "They inevitably contain human biases and toxic viewpoints that the AI can learn and repeat.", "They prevent the AI from generating any text longer than a paragraph."], answer: 2 }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        
+        quizData.forEach((item, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = "bg-gray-50 p-6 rounded-lg border border-gray-200 transition-all";
+            qDiv.id = `q-block-${index}`;
+            
+            const qTitle = document.createElement('h3');
+            qTitle.className = "font-bold text-lg text-gray-800 mb-4";
+            qTitle.innerText = `${index + 1}. ${item.q}`;
+            qDiv.appendChild(qTitle);
+            
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = "space-y-3";
+            
+            item.options.forEach((opt, optIndex) => {
+                const label = document.createElement('label');
+                label.className = "flex items-center space-x-3 p-3 rounded bg-white border border-gray-300 hover:bg-green-50 cursor-pointer transition";
+                
+                const radio = document.createElement('input');
+                radio.type = "radio";
+                radio.name = `q${index}`;
+                radio.value = optIndex;
+                radio.className = "form-radio h-5 w-5 text-green-600";
+                
+                const span = document.createElement('span');
+                span.className = "text-gray-700";
+                span.innerText = opt;
+                
+                label.appendChild(radio);
+                label.appendChild(span);
+                optionsDiv.appendChild(label);
+            });
+            
+            qDiv.appendChild(optionsDiv);
+            quizContainer.appendChild(qDiv);
+        });
+
+        function gradeQuiz() {
+            let score = 0;
+            let allAnswered = true;
+
+            for(let i = 0; i < quizData.length; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if(selected) {
+                    if(parseInt(selected.value) === quizData[i].answer) {
+                        score++;
+                    }
+                } else {
+                    allAnswered = false;
+                }
+            }
+            
+            if(!allAnswered) {
+                showModal('Incomplete Quiz', 'Please answer all 20 questions before submitting.', 'warning');
+                return;
+            }
+            
+            const percentage = (score / quizData.length) * 100;
+            
+            if(score >= 18) { 
+                const navGame = document.getElementById('nav-game');
+                const navGameMobile = document.getElementById('nav-game-mobile');
+                
+                navGame.classList.remove('text-gray-400', 'cursor-not-allowed');
+                navGame.classList.add('text-white', 'hover:bg-green-600');
+                navGame.disabled = false;
+                navGame.innerHTML = '<i class="fa-solid fa-gamepad mr-1"></i>Game';
+                
+                navGameMobile.classList.remove('text-gray-400', 'cursor-not-allowed');
+                navGameMobile.classList.add('text-white', 'hover:bg-green-600');
+                navGameMobile.disabled = false;
+                navGameMobile.innerHTML = '<i class="fa-solid fa-gamepad"></i> Game';
+
+                document.getElementById('nav-cert').classList.remove('hidden');
+                document.getElementById('nav-cert-mobile').classList.remove('hidden');
+                
+                document.getElementById('proceed-game-btn').classList.remove('hidden');
+                document.getElementById('submit-quiz-btn').classList.add('hidden');
+
+                showModal('Outstanding!', `You scored ${score}/20 (${percentage}%). You have unlocked your Certificate of Mastery AND the Retro Game!`, 'success');
+            } else {
+                quizData.forEach((_, i) => {
+                    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                    if(selected) selected.checked = false;
+                });
+                showModal('Keep Trying!', `You scored ${score}/20 (${percentage}%). You need 90% (18/20) to earn the certificate. Your answers have been reset so you can try again.`, 'error');
+                document.getElementById('quiz-section').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // --- RETRO GAME LOGIC: Prompt Lander (Lunar Lander Clone) ---
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let score = 0;
+        let fuel = 100;
+        let gameRunning = false;
+        let animationId;
+        
+        let keys = { ArrowUp: false, ArrowLeft: false, ArrowRight: false };
+
+        window.addEventListener('keydown', e => {
+            if(keys.hasOwnProperty(e.code)) {
+                keys[e.code] = true;
+                if(gameRunning) e.preventDefault();
+            }
+        });
+        window.addEventListener('keyup', e => {
+            if(keys.hasOwnProperty(e.code)) keys[e.code] = false;
+        });
+
+        // Touch controls for mobile
+        let touchLeft = false, touchRight = false, touchUp = false;
+        canvas.addEventListener('touchstart', e => {
+            if(!gameRunning) return;
+            e.preventDefault();
+            for(let i=0; i<e.changedTouches.length; i++){
+                let touch = e.changedTouches[i];
+                let rect = canvas.getBoundingClientRect();
+                let x = touch.clientX - rect.left;
+                let y = touch.clientY - rect.top;
+                
+                if(y > canvas.height/2) {
+                    if(x < canvas.width/2) touchLeft = true;
+                    else touchRight = true;
+                } else {
+                    touchUp = true;
+                }
+            }
+            updateKeysFromTouch();
+        }, {passive: false});
+
+        canvas.addEventListener('touchend', e => {
+            if(!gameRunning) return;
+            e.preventDefault();
+            touchLeft = touchRight = touchUp = false;
+            updateKeysFromTouch();
+        }, {passive: false});
+        
+        function updateKeysFromTouch() {
+            keys.ArrowLeft = touchLeft;
+            keys.ArrowRight = touchRight;
+            keys.ArrowUp = touchUp;
+        }
+
+
+        const overlay = document.getElementById('game-overlay');
+        const startBtn = document.getElementById('start-game-btn');
+        startBtn.addEventListener('click', startGame);
+
+        let lander = {
+            x: canvas.width/2,
+            y: 50,
+            vx: 0,
+            vy: 0,
+            angle: 0, // 0 is pointing straight up
+            width: 20,
+            height: 30,
+            color: '#38bdf8' // AI Blue
+        };
+
+        let terrain = [];
+        let pad = { x: 0, width: 60, y: 0 };
+        let stars = [];
+
+        function generateTerrain() {
+            terrain = [];
+            // Start left
+            let currY = canvas.height - 50 - Math.random()*50;
+            terrain.push({x: 0, y: currY});
+            
+            // Generate segments
+            let segments = 8;
+            let padSegment = Math.floor(Math.random() * (segments - 2)) + 1; // Not ends
+            let segmentWidth = canvas.width / segments;
+
+            for(let i=1; i<=segments; i++) {
+                if(i === padSegment) {
+                    // Create landing pad
+                    currY = canvas.height - 30 - Math.random()*40;
+                    terrain.push({x: i*segmentWidth - segmentWidth/2, y: currY}); // left edge of pad
+                    terrain.push({x: i*segmentWidth + segmentWidth/2, y: currY}); // right edge
+                    pad.x = i*segmentWidth - segmentWidth/2;
+                    pad.width = segmentWidth;
+                    pad.y = currY;
+                } else {
+                    currY = canvas.height - 20 - Math.random()*80;
+                    terrain.push({x: i*segmentWidth, y: currY});
+                }
+            }
+        }
+
+        function generateStars() {
+            stars = [];
+            for(let i=0; i<50; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * (canvas.height - 100),
+                    size: Math.random() * 2
+                });
+            }
+        }
+
+        function resetGame() {
+            lander.x = Math.random() * (canvas.width - 100) + 50;
+            lander.y = 30;
+            lander.vx = (Math.random() - 0.5) * 2;
+            lander.vy = 0;
+            lander.angle = 0;
+            fuel = 100;
+            document.getElementById('game-fuel').innerText = fuel;
+            
+            generateTerrain();
+            generateStars();
+        }
+
+        function startGame() {
+            overlay.classList.add('hidden');
+            if(!gameRunning) {
+                resetGame();
+                score = 0;
+                document.getElementById('game-score').innerText = score;
+                gameRunning = true;
+                drawGame();
+            }
+        }
+
+        function drawGame() {
+            if(!gameRunning) return;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw Stars
+            ctx.fillStyle = '#ffffff';
+            for(let s of stars) {
+                ctx.fillRect(s.x, s.y, s.size, s.size);
+            }
+
+            // Physics & Input
+            if(keys.ArrowLeft) lander.angle -= 0.05;
+            if(keys.ArrowRight) lander.angle += 0.05;
+            
+            lander.vy += 0.02; // Gravity
+            
+            let thrusting = false;
+            if(keys.ArrowUp && fuel > 0) {
+                lander.vx += Math.sin(lander.angle) * 0.08;
+                lander.vy -= Math.cos(lander.angle) * 0.08;
+                fuel -= 0.2;
+                if(fuel < 0) fuel = 0;
+                document.getElementById('game-fuel').innerText = Math.floor(fuel);
+                thrusting = true;
+            }
+
+            lander.x += lander.vx;
+            lander.y += lander.vy;
+
+            // Screen Wrap X
+            if(lander.x < 0) lander.x = canvas.width;
+            if(lander.x > canvas.width) lander.x = 0;
+
+            // Collision Detection
+            let landed = false;
+            let crashed = false;
+
+            // Simple point collision at bottom of lander
+            let bX = lander.x + Math.sin(lander.angle) * (lander.height/2);
+            let bY = lander.y + Math.cos(lander.angle) * (lander.height/2);
+
+            // Check pad landing
+            if(bX > pad.x && bX < pad.x + pad.width && bY >= pad.y - 2) {
+                // Determine if landing was safe
+                let speed = Math.sqrt(lander.vx*lander.vx + lander.vy*lander.vy);
+                let angleDeg = Math.abs(lander.angle * (180/Math.PI)) % 360;
+                
+                if(speed < 1.0 && (angleDeg < 15 || angleDeg > 345)) {
+                    landed = true;
+                } else {
+                    crashed = true;
+                }
+            } else if (bY >= canvas.height - 20) {
+                 crashed = true; // hit bottom loosely
+            } else {
+                // Check rough terrain collision (simple vertical check)
+                for(let i=0; i<terrain.length-1; i++) {
+                    let p1 = terrain[i];
+                    let p2 = terrain[i+1];
+                    if(bX >= p1.x && bX <= p2.x) {
+                        // linear interpolation
+                        let t = (bX - p1.x) / (p2.x - p1.x);
+                        let terrY = p1.y + t * (p2.y - p1.y);
+                        if(bY >= terrY) {
+                            crashed = true;
+                        }
+                    }
+                }
+            }
+
+            // Draw Terrain
+            ctx.beginPath();
+            ctx.moveTo(terrain[0].x, terrain[0].y);
+            for(let i=1; i<terrain.length; i++) {
+                ctx.lineTo(terrain[i].x, terrain[i].y);
+            }
+            ctx.lineTo(canvas.width, canvas.height);
+            ctx.lineTo(0, canvas.height);
+            ctx.closePath();
+            ctx.fillStyle = '#1f2937'; // dark gray ground
+            ctx.fill();
+            ctx.strokeStyle = '#4b5563';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Draw Pad
+            ctx.fillStyle = '#22c55e'; // Green pad
+            ctx.fillRect(pad.x, pad.y, pad.width, 4);
+
+            // Draw Lander
+            ctx.save();
+            ctx.translate(lander.x, lander.y);
+            ctx.rotate(lander.angle);
+            
+            // Ship body (Model Box)
+            ctx.fillStyle = lander.color;
+            ctx.fillRect(-lander.width/2, -lander.height/2, lander.width, lander.height);
+            
+            // AI "Eye"
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(-5, -5, 10, 5);
+
+            // Legs
+            ctx.strokeStyle = '#9ca3af';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(-lander.width/2, lander.height/2);
+            ctx.lineTo(-lander.width, lander.height/2 + 10);
+            ctx.moveTo(lander.width/2, lander.height/2);
+            ctx.lineTo(lander.width, lander.height/2 + 10);
+            ctx.stroke();
+
+            // Thrust flame
+            if(thrusting) {
+                ctx.fillStyle = '#ef4444'; // red
+                ctx.beginPath();
+                ctx.moveTo(-5, lander.height/2);
+                ctx.lineTo(5, lander.height/2);
+                ctx.lineTo(0, lander.height/2 + 15 + Math.random()*10);
+                ctx.fill();
+            }
+            ctx.restore();
+
+            // End State Handling
+            if(landed) {
+                score += 100 + Math.floor(fuel);
+                document.getElementById('game-score').innerText = score;
+                gameRunning = false;
+                setTimeout(() => {
+                    resetGame();
+                    gameRunning = true;
+                    drawGame();
+                }, 1500);
+                
+                ctx.fillStyle = '#22c55e';
+                ctx.font = '24px monospace';
+                ctx.textAlign = 'center';
+                ctx.fillText('CLEAN PROMPT - PERFECT LANDING!', canvas.width/2, canvas.height/2);
+                return; // Stop this frame
+            }
+
+            if(crashed) {
+                gameRunning = false;
+                overlay.classList.remove('hidden');
+                startBtn.innerText = "AI Hallucinated (Crash)! Reboot";
+                startBtn.classList.replace('bg-blue-600', 'bg-red-700');
+                startBtn.classList.replace('border-blue-800', 'border-red-900');
+                
+                // Draw explosion
+                ctx.fillStyle = '#ef4444';
+                ctx.beginPath();
+                ctx.arc(lander.x, lander.y, 30, 0, Math.PI*2);
+                ctx.fill();
+                ctx.fillStyle = '#facc15';
+                ctx.beginPath();
+                ctx.arc(lander.x, lander.y, 15, 0, Math.PI*2);
+                ctx.fill();
+                return;
+            }
+
+            animationId = requestAnimationFrame(drawGame);
+        }
+
+        // --- CERTIFICATE LOGIC ---
+        function updateCertName() {
+            let name = document.getElementById('student-name-input').value.trim();
+            if(name) {
+                if (name.includes(' ')) {
+                    name = name.split(' ')[0];
+                    document.getElementById('student-name-input').value = name;
+                    showModal('Notice', 'Only your first name has been applied to the certificate.', 'info');
+                }
+                document.getElementById('cert-student-name').innerText = name;
+            } else {
+                showModal('Wait!', 'Please enter your first name to update the certificate.', 'warning');
+            }
+        }
+
+        const today = new Date();
+        document.getElementById('cert-date').innerText = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        function downloadCert() {
+            const certEl = document.getElementById('certificate');
+            const name = document.getElementById('cert-student-name').innerText;
+            let filename = 'Certificate.png';
+            if (name && name !== 'Student') {
+                filename = `${name.replace(/\s+/g, '_')}_Certificate.png`;
+            }
+
+            const originalTransform = certEl.style.transform;
+            certEl.style.transform = 'none';
+
+            const btn = document.getElementById('download-btn');
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Generating...';
+            btn.disabled = true;
+
+            html2canvas(certEl, { 
+                scale: 2, 
+                useCORS: true,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+            }).catch(err => {
+                console.error(err);
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                showModal('Error', 'Failed to generate image. Try using a desktop browser.', 'error');
+            });
+        }
+
+        window.onload = () => {
+            // Draw static background for game preview
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle = '#374151';
+            ctx.font = '20px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('STANDBY FOR PROMPT INJECTION', canvas.width/2, canvas.height/2);
+        }
+    </script>
+</body>
+</html>
+```eof

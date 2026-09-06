@@ -1,0 +1,1445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 06 Section 5.4.1 Mastery - Data Backups</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Qwitcher+Grypen:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; 
+            color: #1e293b;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.4s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Interactive Lab Styles */
+        .io-dropzone { min-height: 70px; min-width: 130px; border: 2px dashed #94a3b8; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: #f1f5f9; transition: all 0.2s; padding: 10px;}
+        .io-dropzone.drag-over { background: #e2e8f0; border-color: #3b82f6; box-shadow: inset 0 0 10px rgba(59, 130, 246, 0.2);}
+        
+        .io-item { cursor: grab; transition: transform 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); user-select: none; }
+        .io-item:active { cursor: grabbing; transform: scale(0.95); }
+        .cat-dropzone { transition: background-color 0.2s ease; }
+
+        .terminal-box { font-family: 'Courier New', Courier, monospace; background: #0f172a; color: #38bdf8; border-radius: 0.5rem; padding: 1rem; overflow-x: auto; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); }
+        .cmd-btn { transition: all 0.1s; }
+        .cmd-btn:active { transform: scale(0.95); }
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #e2e8f0; }
+        ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #2563eb; }
+
+        /* Retro Game Canvas (Storage Stacker) */
+        #game-canvas {
+            background-color: #020617;
+            border: 4px solid #1e293b;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
+            max-width: 100%;
+            height: auto;
+            touch-action: none;
+            cursor: pointer;
+        }
+
+        /* Certificate Styles */
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .font-body { font-family: 'Lora', serif; }
+        .font-script { font-family: 'Qwitcher Grypen', cursive; }
+        
+        .cert-preview-container {
+            width: 100%;
+            overflow: auto;
+            display: flex;
+            justify-content: center;
+            background: #e2e8f0;
+            padding: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        #certificate {
+            width: 1056px !important;
+            height: 816px !important;
+            flex-shrink: 0;
+            background-color: #ffffff;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1056" height="816"><polygon points="0,0 250,0 0,650" fill="%23cbd5e1"/><polygon points="0,0 350,0 0,900" fill="%233b82f6" opacity="0.8"/><polygon points="0,0 120,0 0,300" fill="%23cbd5e1"/><polygon points="0,450 650,816 0,816" fill="%23cbd5e1"/><polygon points="0,550 450,816 0,816" fill="%233b82f6" opacity="0.8"/><polygon points="800,0 1056,0 1056,256" fill="%23f8fafc"/><polygon points="1056,500 1056,816 750,816" fill="%23f8fafc"/></svg>');
+            background-size: cover;
+            border: 4px solid #cbd5e1;
+        }
+
+        .gold-seal {
+            position: absolute;
+            left: 110px;
+            top: 350px;
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c, #fcf6ba);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3), inset 0 0 15px rgba(255,255,255,0.7), inset 0 0 25px rgba(139,105,20,0.9);
+            z-index: 10;
+        }
+        .gold-seal::before {
+            content: '';
+            position: absolute;
+            top: -4px; bottom: -4px; left: -4px; right: -4px;
+            border-radius: 50%;
+            border: 6px dashed #d4af37;
+        }
+        .gold-seal-inner-1 {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 2px solid rgba(139, 105, 20, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #e8c678, #dbab46);
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.2), 0 2px 5px rgba(255,255,255,0.7);
+            z-index: 1;
+        }
+        .gold-seal-inner-2 {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: radial-gradient(circle, #fcf6ba, #d4af37);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            padding: 10px;
+        }
+        .embossed-text {
+            color: #b38728;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2);
+            font-family: 'Playfair Display', serif;
+            font-weight: 800;
+            line-height: 1.1;
+            text-transform: uppercase;
+        }
+        .embossed-text-large { font-size: 14px; letter-spacing: 1px; }
+        .embossed-text-small { font-size: 11px; letter-spacing: 2px; margin: 2px 0; }
+        .embossed-star { font-size: 12px; color: #b38728; text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2); margin: 2px 0; }
+
+        @media (max-width: 1100px) {
+            #certificate { transform: scale(0.7); transform-origin: top left; margin-bottom: -240px; margin-right: -310px; }
+        }
+        @media (max-width: 768px) {
+            #certificate { transform: scale(0.4); transform-origin: top left; margin-bottom: -490px; margin-right: -630px; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen flex flex-col">
+
+    <nav class="bg-blue-800 text-white shadow-lg sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-server text-2xl text-blue-300"></i>
+                    <span class="font-bold text-xl tracking-wider hidden sm:inline-block">Tech+ Unit 06 Section 5.4.1</span>
+                    <span class="font-bold text-xl tracking-wider sm:hidden">5.4.1</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-2">
+                        <button onclick="switchTab('briefing')" class="nav-btn bg-blue-900 px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-600 transition" id="nav-briefing"><i class="fa-solid fa-book-open mr-1"></i>Briefing</button>
+                        <button onclick="switchTab('activity')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-600 transition" id="nav-activity"><i class="fa-solid fa-flask mr-1"></i>Lab Activity</button>
+                        <button onclick="switchTab('quiz')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-600 transition" id="nav-quiz"><i class="fa-solid fa-clipboard-check mr-1"></i>Quiz</button>
+                        <button onclick="switchTab('game')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-blue-300 opacity-50 cursor-not-allowed transition" id="nav-game" disabled><i class="fa-solid fa-lock mr-1"></i>Game</button>
+                        <button onclick="switchTab('cert')" class="nav-btn hidden px-3 py-2 rounded-md text-sm font-medium text-yellow-300 hover:bg-blue-600 transition" id="nav-cert"><i class="fa-solid fa-award mr-1"></i>Certificate</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Nav -->
+        <div class="md:hidden flex flex-wrap justify-center gap-2 py-2 px-2 bg-blue-900">
+            <button onclick="switchTab('briefing')" class="nav-btn-mobile px-3 py-1 text-sm rounded bg-blue-950 text-white" id="nav-briefing-mobile">Briefing</button>
+            <button onclick="switchTab('activity')" class="nav-btn-mobile px-3 py-1 text-sm rounded text-white" id="nav-activity-mobile">Lab</button>
+            <button onclick="switchTab('quiz')" class="nav-btn-mobile px-3 py-1 text-sm rounded text-white" id="nav-quiz-mobile">Quiz</button>
+            <button onclick="switchTab('game')" class="nav-btn-mobile px-3 py-1 text-sm rounded text-blue-300 opacity-50 cursor-not-allowed" id="nav-game-mobile" disabled><i class="fa-solid fa-lock"></i></button>
+            <button onclick="switchTab('cert')" id="nav-cert-mobile" class="hidden px-2 py-1 text-sm text-yellow-300 rounded"><i class="fa-solid fa-award"></i></button>
+        </div>
+    </nav>
+
+    <main class="flex-grow w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <!-- BRIEFING SECTION -->
+        <div id="briefing-section" class="tab-content active no-print">
+            <div class="text-center mb-10">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4">Data Backups & Recovery</h1>
+                <p class="text-lg text-slate-600 max-w-3xl mx-auto">Protect your digital assets. Explore how to safeguard data from loss, corruption, or disaster using physical and cloud storage.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- Tile 1: Fundamentals -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-indigo-500 overflow-hidden flex flex-col hover:shadow-xl transition-shadow">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-indigo-700"><i class="fa-solid fa-life-ring mr-2"></i>Fundamentals & Planning</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>Prevention & Continuity:</strong> Mitigates operational damage from malware, disasters, or user errors.</li>
+                            <li><strong>Data Recovery:</strong> The critical process of restoring data when original copies are lost.</li>
+                            <li><strong>Recovery Plan:</strong> Defines what, where, and how often to backup, plus testing methodologies.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 border-t border-slate-100 p-4 flex gap-4">
+                        <button onclick="openBriefing('fundamentals-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                        <button onclick="openBriefing('fundamentals-usecase')" class="flex-1 bg-indigo-100 hover:bg-indigo-200 text-indigo-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                    </div>
+                </div>
+
+                <!-- Tile 2: File vs System -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-emerald-500 overflow-hidden flex flex-col hover:shadow-xl transition-shadow">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-emerald-700"><i class="fa-solid fa-copy mr-2"></i>File vs. System Backups</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>File Backups:</strong> Secures individual documents, photos, or specific directories.</li>
+                            <li><strong>System Backups:</strong> Captures entire OS images, applications, and settings for total recovery.</li>
+                            <li><strong>Backup Methods:</strong> Includes Full, Incremental, and Differential backup cycles.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-slate-50 border-t border-slate-100 p-4 flex gap-4">
+                        <button onclick="openBriefing('types-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                        <button onclick="openBriefing('types-usecase')" class="flex-1 bg-emerald-100 hover:bg-emerald-200 text-emerald-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                    </div>
+                </div>
+
+                <!-- Tile 3: Storage Locations -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-sky-500 overflow-hidden flex flex-col hover:shadow-xl transition-shadow">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-sky-700"><i class="fa-solid fa-cloud-arrow-up mr-2"></i>Storage Locations</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>Local Storage:</strong> Fast, physical devices like Flash Drives, SD Cards, and External HDDs.</li>
+                            <li><strong>Cloud Storage:</strong> Off-site, internet-dependent servers (Google Drive, OneDrive, AWS).</li>
+                            <li><strong>Trade-offs:</strong> Balancing portability, cost, speed, and geographic redundancy.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-slate-50 border-t border-slate-100 p-4 flex gap-4">
+                        <button onclick="openBriefing('storage-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                        <button onclick="openBriefing('storage-usecase')" class="flex-1 bg-sky-100 hover:bg-sky-200 text-sky-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                    </div>
+                </div>
+
+                <!-- Tile 4: CLI vs GUI Tools -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-amber-500 overflow-hidden flex flex-col hover:shadow-xl transition-shadow">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-amber-700"><i class="fa-solid fa-terminal mr-2"></i>CLI vs. GUI Management</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>GUI (Graphical):</strong> Easy visual drag-and-drop file copying, pasting, and replacing.</li>
+                            <li><strong>CLI (Command Line):</strong> Powerful text-based syntax for mass file management.</li>
+                            <li><strong>Utilities:</strong> Utilizing <code>robocopy</code> (Windows) and <code>rsync</code> (Linux) for robust syncing.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 border-t border-slate-100 p-4 flex gap-4">
+                        <button onclick="openBriefing('tools-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                        <button onclick="openBriefing('tools-usecase')" class="flex-1 bg-amber-100 hover:bg-amber-200 text-amber-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 flex justify-center">
+                <button onclick="switchTab('activity')" class="bg-blue-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-blue-500 shadow-lg transition transform hover:scale-105">Proceed to Lab Activities <i class="fa-solid fa-arrow-right ml-2"></i></button>
+            </div>
+        </div>
+
+        <div id="activity-section" class="tab-content no-print">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-extrabold text-slate-900 mb-2">Interactive Lab Activities</h1>
+                <p class="text-slate-600">Complete these 8 specialized labs to demonstrate mastery of Data Backups.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                
+                <!-- LAB 1: Recovery Plan Sequencer -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200 flex flex-col">
+                    <h2 class="text-xl font-bold mb-2 text-indigo-700"><i class="fa-solid fa-list-ol mr-2"></i>Lab 1: Recovery Plan Sequence</h2>
+                    <p class="text-sm text-slate-600 mb-4 flex-grow">A robust Data Recovery Plan follows a specific order of decisions. Drag and drop the steps below into the correct chronological order from Step 1 (top) to Step 5 (bottom).</p>
+                    
+                    <div id="lab1-container" class="space-y-2 mb-4 bg-slate-100 p-3 rounded-lg min-h-[250px]">
+                        <div class="io-item bg-white border-2 border-indigo-200 p-3 rounded text-sm font-semibold text-slate-800" draggable="true" data-step="1">1. Identify What data to back up</div>
+                        <div class="io-item bg-white border-2 border-indigo-200 p-3 rounded text-sm font-semibold text-slate-800" draggable="true" data-step="3">3. Determine How often to back up</div>
+                        <div class="io-item bg-white border-2 border-indigo-200 p-3 rounded text-sm font-semibold text-slate-800" draggable="true" data-step="5">5. Test that the recovery plan works</div>
+                        <div class="io-item bg-white border-2 border-indigo-200 p-3 rounded text-sm font-semibold text-slate-800" draggable="true" data-step="2">2. Decide Where to store the backups</div>
+                        <div class="io-item bg-white border-2 border-indigo-200 p-3 rounded text-sm font-semibold text-slate-800" draggable="true" data-step="4">4. Establish How to recover from data loss</div>
+                    </div>
+                    
+                    <button onclick="checkLab1()" class="w-full bg-indigo-600 text-white font-bold py-2 rounded hover:bg-indigo-700 transition">Verify Sequence</button>
+                    <div id="lab1-feedback" class="text-center font-bold mt-3 h-6 text-sm"></div>
+                </div>
+
+                <!-- LAB 2: Threat Mitigation Matcher -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200 flex flex-col">
+                    <h2 class="text-xl font-bold mb-2 text-indigo-700"><i class="fa-solid fa-shield-virus mr-2"></i>Lab 2: Threat Mitigation</h2>
+                    <p class="text-sm text-slate-600 mb-4 flex-grow">Data backups satisfy different needs based on the threat. Click a Threat on the left, then click the matching Mitigation Strategy on the right.</p>
+                    
+                    <div class="flex gap-4 mb-4 text-sm font-medium">
+                        <div class="w-1/2 space-y-2" id="lab2-threats">
+                            <button class="w-full bg-slate-100 hover:bg-slate-200 border border-slate-300 p-2 rounded text-left transition" onclick="selectLab2Threat(this, 'fire')">A. Office Building Fire</button>
+                            <button class="w-full bg-slate-100 hover:bg-slate-200 border border-slate-300 p-2 rounded text-left transition" onclick="selectLab2Threat(this, 'ransomware')">B. Ransomware Encryption</button>
+                            <button class="w-full bg-slate-100 hover:bg-slate-200 border border-slate-300 p-2 rounded text-left transition" onclick="selectLab2Threat(this, 'user')">C. Accidental File Deletion</button>
+                        </div>
+                        <div class="w-1/2 space-y-2" id="lab2-strats">
+                            <button class="w-full bg-slate-100 hover:bg-slate-200 border border-slate-300 p-2 rounded text-left transition" onclick="selectLab2Strat(this, 'user')">1. Built-in File Version History</button>
+                            <button class="w-full bg-slate-100 hover:bg-slate-200 border border-slate-300 p-2 rounded text-left transition" onclick="selectLab2Strat(this, 'fire')">2. Geographically Distant Cloud</button>
+                            <button class="w-full bg-slate-100 hover:bg-slate-200 border border-slate-300 p-2 rounded text-left transition" onclick="selectLab2Strat(this, 'ransomware')">3. Offline (Air-gapped) Local Backup</button>
+                        </div>
+                    </div>
+                    
+                    <div id="lab2-feedback" class="text-center font-bold mt-auto h-6 text-sm text-slate-500">Matches: 0 / 3</div>
+                </div>
+
+                <!-- LAB 3: Backup Type Classifier -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200 flex flex-col">
+                    <h2 class="text-xl font-bold mb-2 text-emerald-700"><i class="fa-solid fa-filter mr-2"></i>Lab 3: Backup Architect</h2>
+                    <p class="text-sm text-slate-600 mb-4 flex-grow">Read the scenario and select the most efficient backup type from the dropdown to optimize the system.</p>
+                    
+                    <div class="space-y-3 mb-4 text-sm">
+                        <div class="bg-slate-50 p-2 rounded border border-slate-200">
+                            <p class="font-bold text-slate-800 mb-1">Scenario A: You need to secure an entire OS, applications, and settings to bare-metal restore a crashed server.</p>
+                            <select id="lab3-a" class="w-full p-1 border rounded"><option value="">Select...</option><option value="sys">System Image Backup</option><option value="inc">Incremental File Backup</option><option value="diff">Differential File Backup</option></select>
+                        </div>
+                        <div class="bg-slate-50 p-2 rounded border border-slate-200">
+                            <p class="font-bold text-slate-800 mb-1">Scenario B: You perform a Full Backup on Sunday. You want weekday backups to be as fast as possible, only saving new data.</p>
+                            <select id="lab3-b" class="w-full p-1 border rounded"><option value="">Select...</option><option value="sys">System Image Backup</option><option value="inc">Incremental File Backup</option><option value="diff">Differential File Backup</option></select>
+                        </div>
+                    </div>
+                    <button onclick="checkLab3()" class="w-full bg-emerald-600 text-white font-bold py-2 rounded hover:bg-emerald-700 transition">Validate Architecture</button>
+                    <div id="lab3-feedback" class="text-center font-bold mt-3 h-6 text-sm"></div>
+                </div>
+
+                <!-- LAB 4: Data Size Calculator -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200 flex flex-col">
+                    <h2 class="text-xl font-bold mb-2 text-emerald-700"><i class="fa-solid fa-calculator mr-2"></i>Lab 4: Capacity Forecaster</h2>
+                    <p class="text-sm text-slate-600 mb-4 flex-grow">A server holds 100GB of base data. Every day, 10GB of new data is added. Adjust the slider to see how much total storage a Differential vs Incremental backup consumes by Day X.</p>
+                    
+                    <div class="mb-4">
+                        <label class="block text-sm font-bold text-slate-800 mb-2 flex justify-between">
+                            <span>Days since Sunday Full Backup:</span>
+                            <span id="lab4-day-val" class="text-emerald-600 text-lg">Day 3</span>
+                        </label>
+                        <input type="range" id="lab4-slider" min="1" max="6" value="3" class="w-full accent-emerald-600" oninput="updateLab4()">
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4 text-center mb-4">
+                        <div class="bg-slate-100 p-3 rounded-lg border border-slate-300">
+                            <p class="text-xs font-bold text-slate-500 uppercase">Incremental Total</p>
+                            <p id="lab4-inc-val" class="text-2xl font-mono font-bold text-slate-800">130 GB</p>
+                            <p class="text-[10px] text-slate-400 mt-1">(100GB + 10+10+10)</p>
+                        </div>
+                        <div class="bg-slate-100 p-3 rounded-lg border border-slate-300">
+                            <p class="text-xs font-bold text-slate-500 uppercase">Differential Total</p>
+                            <p id="lab4-diff-val" class="text-2xl font-mono font-bold text-slate-800">160 GB</p>
+                            <p class="text-[10px] text-slate-400 mt-1">(100GB + 10+20+30)</p>
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-500 italic text-center mt-auto">Incremental saves space but takes longer to restore. Differential uses more space but restores faster.</p>
+                </div>
+
+                <!-- LAB 5: Storage Device Selector -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200 flex flex-col">
+                    <h2 class="text-xl font-bold mb-2 text-sky-700"><i class="fa-solid fa-sd-card mr-2"></i>Lab 5: Hardware Provisioning</h2>
+                    <p class="text-sm text-slate-600 mb-4 flex-grow">Your photography business needs a local storage device that boasts high physical durability, massive capacity (2TB+), and fast performance for editing. Select the correct device.</p>
+                    
+                    <div class="grid grid-cols-3 gap-3 mb-4">
+                        <div class="bg-slate-50 border-2 border-slate-200 rounded p-3 text-center cursor-pointer hover:bg-sky-50 transition" onclick="checkLab5('sd')">
+                            <i class="fa-solid fa-memory text-3xl text-slate-600 mb-2"></i>
+                            <p class="text-xs font-bold">SD Card</p>
+                        </div>
+                        <div class="bg-slate-50 border-2 border-slate-200 rounded p-3 text-center cursor-pointer hover:bg-sky-50 transition" onclick="checkLab5('hdd')">
+                            <i class="fa-solid fa-hard-drive text-3xl text-slate-600 mb-2"></i>
+                            <p class="text-xs font-bold">External HDD</p>
+                        </div>
+                        <div class="bg-slate-50 border-2 border-slate-200 rounded p-3 text-center cursor-pointer hover:bg-sky-50 transition" onclick="checkLab5('flash')">
+                            <i class="fa-brands fa-usb text-3xl text-slate-600 mb-2"></i>
+                            <p class="text-xs font-bold">Flash Drive</p>
+                        </div>
+                    </div>
+                    <div id="lab5-feedback" class="text-center font-bold mt-auto h-6 text-sm"></div>
+                </div>
+
+                <!-- LAB 6: Cloud vs Local Balancer -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200 flex flex-col">
+                    <h2 class="text-xl font-bold mb-2 text-sky-700"><i class="fa-solid fa-cloud mr-2"></i>Lab 6: Cloud Analysis</h2>
+                    <p class="text-sm text-slate-600 mb-4">Categorize the following attributes as an Advantage or Disadvantage of specifically using Cloud Storage.</p>
+                    
+                    <div class="flex flex-wrap gap-2 mb-4 justify-center" id="lab6-items">
+                        <span class="lab6-item bg-white border border-slate-400 px-3 py-1 rounded-full text-xs font-bold cursor-pointer hover:bg-slate-100" onclick="moveLab6(this, 'adv')">Scalability</span>
+                        <span class="lab6-item bg-white border border-slate-400 px-3 py-1 rounded-full text-xs font-bold cursor-pointer hover:bg-slate-100" onclick="moveLab6(this, 'dis')">Internet Dependency</span>
+                        <span class="lab6-item bg-white border border-slate-400 px-3 py-1 rounded-full text-xs font-bold cursor-pointer hover:bg-slate-100" onclick="moveLab6(this, 'dis')">Subscription Costs</span>
+                        <span class="lab6-item bg-white border border-slate-400 px-3 py-1 rounded-full text-xs font-bold cursor-pointer hover:bg-slate-100" onclick="moveLab6(this, 'adv')">Off-site Geographic Protection</span>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-2 mt-auto">
+                        <div class="border-2 border-dashed border-green-400 bg-green-50 p-2 rounded min-h-[80px]" id="lab6-adv-zone">
+                            <p class="text-xs font-bold text-center text-green-700 mb-1 border-b border-green-200">Advantages</p>
+                        </div>
+                        <div class="border-2 border-dashed border-red-400 bg-red-50 p-2 rounded min-h-[80px]" id="lab6-dis-zone">
+                            <p class="text-xs font-bold text-center text-red-700 mb-1 border-b border-red-200">Disadvantages</p>
+                        </div>
+                    </div>
+                    <button onclick="checkLab6()" class="w-full mt-4 bg-sky-600 text-white font-bold py-2 rounded hover:bg-sky-700 transition">Analyze Distribution</button>
+                    <div id="lab6-feedback" class="text-center font-bold mt-2 h-4 text-sm"></div>
+                </div>
+
+                <!-- LAB 7: Windows CLI Builder -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200 flex flex-col">
+                    <h2 class="text-xl font-bold mb-2 text-amber-700"><i class="fa-brands fa-windows mr-2"></i>Lab 7: Windows CLI Syntax</h2>
+                    <p class="text-sm text-slate-600 mb-4 flex-grow">You need to copy files from the <code>Data_Backups-lab</code> folder into a new <code>Backups</code> folder. Build the exact command sequence.</p>
+                    
+                    <div class="terminal-box mb-4 min-h-[60px] flex items-center">
+                        <span class="text-slate-400 mr-2">C:\></span>
+                        <span id="lab7-output" class="text-white"></span>
+                        <span class="animate-pulse">_</span>
+                    </div>
+                    
+                    <div class="flex flex-wrap gap-2 mb-4 justify-center">
+                        <button class="cmd-btn bg-slate-200 hover:bg-slate-300 px-3 py-1 rounded text-sm font-mono font-bold" onclick="addLab7Cmd('Documents\\Backups')">Documents\Backups</button>
+                        <button class="cmd-btn bg-slate-200 hover:bg-slate-300 px-3 py-1 rounded text-sm font-mono font-bold" onclick="addLab7Cmd('robocopy')">robocopy</button>
+                        <button class="cmd-btn bg-slate-200 hover:bg-slate-300 px-3 py-1 rounded text-sm font-mono font-bold" onclick="addLab7Cmd('Documents\\Data_Backups-lab')">Documents\Data_Backups-lab</button>
+                        <button class="cmd-btn bg-slate-200 hover:bg-slate-300 px-3 py-1 rounded text-sm font-mono font-bold" onclick="addLab7Cmd('mkdir')">mkdir</button>
+                        <button class="cmd-btn bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1 rounded text-sm font-mono font-bold ml-auto" onclick="clearLab7()">Clear</button>
+                    </div>
+                    
+                    <button onclick="checkLab7()" class="w-full mt-auto bg-amber-600 text-white font-bold py-2 rounded hover:bg-amber-700 transition">Execute Command</button>
+                    <div id="lab7-feedback" class="text-center font-bold mt-2 h-4 text-sm"></div>
+                </div>
+
+                <!-- LAB 8: Ubuntu Terminal Simulator -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200 flex flex-col">
+                    <h2 class="text-xl font-bold mb-2 text-amber-700"><i class="fa-brands fa-ubuntu mr-2"></i>Lab 8: Linux CLI Execution</h2>
+                    <p class="text-sm text-slate-600 mb-4">You want to completely delete the <code>Data_Backups-lab</code> directory AND all of its contents. Type the exact Linux command and press Enter.</p>
+                    
+                    <div class="terminal-box mb-4 flex-grow flex flex-col cursor-text" onclick="document.getElementById('lab8-input').focus()">
+                        <div><span class="text-green-400">ubuntu@server</span>:<span class="text-blue-400">~</span>$ ls -lh</div>
+                        <div class="text-slate-300 text-sm mb-2">drwxrwxr-x 2 ubuntu ubuntu 4.0K May 29 Data_Backups-lab</div>
+                        <div class="flex items-center">
+                            <span class="text-green-400 mr-2">ubuntu@server</span>:<span class="text-blue-400">~</span>$ 
+                            <input type="text" id="lab8-input" class="bg-transparent border-none outline-none text-white w-full font-mono" autocomplete="off" spellcheck="false">
+                        </div>
+                    </div>
+                    
+                    <button onclick="checkLab8()" class="w-full bg-amber-600 text-white font-bold py-2 rounded hover:bg-amber-700 transition">Run Script</button>
+                    <div id="lab8-feedback" class="text-center font-bold mt-2 h-4 text-sm"></div>
+                </div>
+
+            </div>
+            
+            <div class="mt-10 text-center">
+                <button onclick="switchTab('quiz')" class="bg-blue-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-blue-500 shadow-lg transition transform hover:scale-105">Take the Mastery Quiz <i class="fa-solid fa-clipboard-check ml-2"></i></button>
+            </div>
+        </div>
+
+        <div id="quiz-section" class="tab-content no-print">
+            <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-xl max-w-4xl mx-auto border border-slate-200">
+                <div class="text-center mb-8 border-b border-slate-200 pb-4">
+                    <h1 class="text-3xl font-extrabold text-slate-900 mb-2">Unit 06 Section 5.4.1 Mastery Quiz</h1>
+                    <p class="text-slate-600">Score 90% or higher (18/20) to earn your Certificate of Mastery and unlock the Retro Game!</p>
+                </div>
+
+                <div id="quiz-container" class="space-y-8">
+                    <!-- Questions injected via JS -->
+                </div>
+
+                <div class="mt-10 text-center border-t border-slate-200 pt-6 flex flex-col md:flex-row justify-center items-center gap-4">
+                    <button id="submit-quiz-btn" onclick="gradeQuiz()" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">Submit Assessment</button>
+                    <button id="proceed-game-btn" onclick="switchTab('game')" class="hidden bg-purple-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-purple-700 shadow-lg transition w-full md:w-auto">Play Retro Arcade <i class="fa-solid fa-gamepad ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <div id="game-section" class="tab-content no-print">
+            <div class="bg-slate-900 p-6 sm:p-8 rounded-2xl shadow-xl max-w-4xl mx-auto border-4 border-slate-700 flex flex-col items-center relative overflow-hidden">
+                
+                <div class="text-center mb-4 w-full z-10">
+                    <h1 class="text-4xl font-extrabold text-sky-400 mb-2 tracking-widest uppercase shadow-sm" style="font-family: 'Courier New', Courier, monospace;">Storage Stacker</h1>
+                    <p class="text-slate-300 text-sm max-w-lg mx-auto">Build the ultimate backup server rack! Click or tap the screen to drop the swinging data block exactly on top of the previous one. Overhanging data is lost. Stack as high as you can!</p>
+                </div>
+                
+                <div class="flex justify-between items-center w-full max-w-[400px] mb-2 px-4 text-white font-mono text-xl z-10 bg-slate-800 p-2 rounded border border-slate-600">
+                    <div>Data Blocks: <span id="game-score" class="text-sky-400 font-bold">0</span></div>
+                    <div>Combo: <span id="game-combo" class="text-yellow-400 font-bold">x1</span></div>
+                </div>
+
+                <div class="relative flex justify-center w-full max-w-[400px]">
+                    <canvas id="game-canvas" width="400" height="500" class="w-full bg-slate-950 border-2 border-slate-600 rounded shadow-2xl z-0"></canvas>
+                    
+                    <div id="game-overlay" class="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-80 rounded z-10">
+                        <h2 id="game-over-text" class="text-3xl font-bold text-red-500 mb-4 hidden font-mono">STACK COLLAPSE</h2>
+                        <button id="start-game-btn" onclick="startGame()" class="bg-sky-600 hover:bg-sky-500 text-white font-bold font-mono py-3 px-8 rounded-lg text-xl border-4 border-sky-800 uppercase transform transition hover:scale-105 shadow-[0_0_15px_rgba(56,189,248,0.5)]">Deploy Server</button>
+                    </div>
+                </div>
+
+                <div class="mt-8 text-center w-full border-t border-slate-700 pt-6 z-10">
+                    <button onclick="switchTab('cert')" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">View Certificate <i class="fa-solid fa-award ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CERTIFICATE SECTION -->
+        <div id="cert-section" class="tab-content">
+            <div class="max-w-5xl mx-auto">
+                <div class="bg-white p-6 rounded shadow mb-6 no-print text-center border border-slate-200">
+                    <h2 class="text-2xl font-bold text-emerald-600 mb-2">🎉 Congratulations! 🎉</h2>
+                    <p class="text-slate-700 mb-4">You have achieved mastery of Data Backups and Recovery Planning.</p>
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+                        <input type="text" id="student-name-input" value="Student" placeholder="Enter your first name" class="border-2 border-slate-300 rounded px-4 py-2 w-full md:w-64 focus:border-emerald-500 focus:outline-none">
+                        <button onclick="updateCertName()" class="bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700 transition">Update Name</button>
+                        <button id="download-btn" onclick="downloadCert()" class="bg-slate-800 text-white px-4 py-2 rounded hover:bg-slate-900 transition flex items-center justify-center">
+                            <i class="fa-solid fa-download mr-2"></i>Download PNG
+                        </button>
+                    </div>
+                </div>
+
+                <div class="cert-preview-container print:p-0 print:bg-white">
+                    <div id="certificate">
+                        <div class="gold-seal">
+                            <div class="gold-seal-inner-1">
+                                <div class="gold-seal-inner-2">
+                                     <span class="embossed-text embossed-text-large">Certificate</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-small">Of</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-large">Excellence</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="relative z-20 w-full h-full flex flex-col pt-[48px] pl-[380px] pr-[48px]">
+                            <h1 class="text-[#1e3a8a] text-[4.5rem] leading-none font-serif font-bold tracking-wide uppercase mb-2">CERTIFICATE</h1>
+                            <h2 class="text-slate-800 text-3xl font-serif tracking-widest uppercase mb-10">Of Achievement</h2>
+                            
+                            <p class="text-[1.4rem] font-body text-slate-800 mb-4">This is to certify that</p>
+                            
+                            <div class="relative mb-8 w-full">
+                                <h3 id="cert-student-name" class="text-[4rem] text-[#1e3a8a] font-serif italic leading-none pb-2 relative z-10 text-center w-full block">Student</h3>
+                                <div class="w-full border-b-[2px] border-[#1e3a8a] absolute bottom-[4px] left-0 z-0"></div>
+                                <div class="w-full border-b-[2px] border-dotted border-red-500 absolute bottom-[0px] left-0 z-0"></div>
+                            </div>
+                            
+                            <p class="text-[1.3rem] font-body text-slate-800 leading-relaxed w-full pr-4">
+                                Has successfully completed the assessment for 
+                                <strong class="text-[1.8rem] text-[#1e3a8a] block mt-4 mb-2 font-serif">Cyber.org Tech+ Unit 06 Section 5.4.1</strong>
+                                <strong class="text-[1.5rem] text-black block mb-4 font-serif italic">Data Backups</strong>
+                                <span class="text-[1.1rem] text-slate-700 leading-snug block">Demonstrating proficiency in defining backup strategies, distinguishing file and system backup architectures, evaluating local versus cloud storage capabilities, and executing data recovery operations.</span>
+                            </p>
+                            
+                            <div class="flex justify-end gap-16 items-end mt-auto mb-[60px] w-full pr-8">
+                                <div class="w-64">
+                                    <div class="border-b border-slate-600 mb-2 h-20 flex items-end justify-center relative">
+                                        <span class="font-script text-[5rem] text-[#1e3a8a] absolute bottom-[-10px] transform -rotate-3 opacity-90">Dr. M. S</span>
+                                    </div>
+                                    <p class="font-serif text-xl text-slate-800 text-center">Administration</p>
+                                </div>
+                                
+                                <div class="w-64">
+                                    <div class="border-b border-slate-600 mb-2 text-center h-20 flex items-end justify-center">
+                                        <p id="cert-date" class="font-body text-2xl text-slate-800 pb-1">Date Here</p>
+                                    </div>
+                                    <p class="font-serif text-xl text-slate-800 text-center">Date</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="custom-modal" class="fixed inset-0 bg-black bg-opacity-50 z-[100] hidden flex justify-center items-center backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all">
+            <div class="text-center">
+                <div id="modal-icon" class="text-5xl mb-4"></div>
+                <h3 id="modal-title" class="text-2xl font-bold mb-2 text-slate-900"></h3>
+                <p id="modal-msg" class="text-slate-600 mb-6"></p>
+                <button onclick="closeModal()" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-700 transition w-full">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="briefing-modal" class="fixed inset-0 bg-black bg-opacity-70 z-[120] hidden flex justify-center items-center backdrop-blur-sm p-4 sm:p-6">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col transform transition-all overflow-hidden border-4 border-blue-800">
+            <div class="p-6 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+                <div class="flex items-center gap-4">
+                    <div id="briefing-modal-icon" class="text-4xl"></div>
+                    <h3 id="briefing-modal-title" class="text-2xl md:text-3xl font-bold text-slate-900"></h3>
+                </div>
+                <button onclick="closeBriefing()" class="text-slate-400 hover:text-red-600 transition text-4xl leading-none">&times;</button>
+            </div>
+            <div id="briefing-modal-content" class="p-6 md:p-10 overflow-y-auto flex-grow text-slate-700 text-lg leading-relaxed bg-white">
+                <!-- Dynamic Content Injected Here -->
+            </div>
+            <div class="p-6 border-t border-slate-200 bg-slate-50 flex justify-end">
+                <button onclick="closeBriefing()" class="bg-blue-800 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-900 transition shadow-md">Acknowledge & Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const briefingData = {
+            'fundamentals-details': {
+                title: 'Data Backups & Recovery Concepts',
+                icon: '<i class="fa-solid fa-life-ring text-indigo-600"></i>',
+                html: `
+                    <p class="mb-5">At the foundation of digital preservation is the <strong>Data Backup</strong>. A data backup is strictly defined as the process of creating identical copies of data to protect it from permanent loss. This loss can occur due to a myriad of unforeseen circumstances, including catastrophic natural disasters, invisible data corruption, malicious cyberattacks, or simply accidental deletion by human error. Without a backup, lost digital information is often gone forever.</p>
+                    
+                    <p class="mb-5">The primary goal of instituting a backup strategy is <strong>Data Loss Prevention</strong>. Modern computing environments are fragile ecosystems. Hard drives have mechanical parts that eventually wear out and fail. By maintaining regular backups, an individual or organization creates a failsafe mechanism, ensuring that even if the primary storage medium is completely destroyed, the critical data itself survives intact in a secondary location.</p>
+                    
+                    <p class="mb-5">Beyond just preventing the loss of the files, backups are essential for <strong>Business Continuity</strong>. In a corporate setting, data is the lifeblood of operations. If customer databases or financial records are wiped out, the business halts immediately. Having a robust backup system allows an organization to recover swiftly from an incident, minimizing expensive downtime and protecting the company from severe reputational damage and lost revenue.</p>
+                    
+                    <p class="mb-5">Furthermore, many industries are bound by strict legal frameworks enforcing <strong>Compliance</strong>. Healthcare organizations must protect patient records (HIPAA), and financial institutions must retain transaction logs for years. Regular, verifiable backups ensure that an organization adheres to these regulatory standards, preventing them from facing massive government fines for failing to secure and retain mandatory data.</p>
+                    
+                    <p class="mb-5">The counterpart to the backup process is <strong>Data Recovery</strong> (or Restoration). Taking a backup is only half of the equation. Data recovery is the actual process of pulling the data from the backup storage and restoring it to the active device in the event of hardware failure or deletion. A backup that cannot be successfully recovered is entirely useless, highlighting the need for reliable recovery software.</p>
+                    
+                    <p class="mb-5">To guarantee success, individuals and organizations must formalize a <strong>Data Recovery Plan</strong>. This plan acts as an emergency playbook. It starts by answering fundamental questions: <em>What</em> specific data is critical enough to back up? <em>Where</em> will these backups physically or virtually reside? <em>How often</em> does the data change, dictating the schedule (daily, weekly, monthly)?</p>
+                    
+                    <p>Finally, a recovery plan must explicitly detail the restoration procedure and mandate periodic <strong>Testing</strong>. A theoretical plan is dangerous. IT professionals must run simulated disasters—deleting a test file and executing the recovery steps—to verify that the backup media works, the data is uncorrupted, and the recovery timeline meets the operational needs of the business before a real emergency strikes.</p>
+                `
+            },
+            'fundamentals-usecase': {
+                title: 'Data Backups: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-indigo-800 mb-2 border-b-2 border-indigo-200 pb-1">Case 1: Ransomware Attack on a Hospital</h4>
+                        <p class="mb-2">A hospital's network is infected by ransomware, locking all active patient records behind encryption. Lives are at risk if doctors cannot access medical histories.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Business Continuity):</strong> Because the hospital executes nightly backups to an isolated, off-network server, they refuse to pay the ransom. They wipe the infected machines and recover the previous night's data, resuming operations within hours.</li>
+                            <li><strong>Example 2 (Loss Prevention):</strong> By recovering the data, the hospital prevents the permanent loss of years of vital research data and patient charts that the hackers threatened to delete.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-indigo-800 mb-2 border-b-2 border-indigo-200 pb-1">Case 2: Student Accidental Deletion</h4>
+                        <p class="mb-2">A college student has been working on a 50-page senior thesis for an entire semester. The night before it is due, they accidentally delete the entire folder while trying to clean up their desktop.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Data Recovery):</strong> Because the student had a Data Recovery Plan configured to sync their "Documents" folder to a cloud drive every 15 minutes, they log into the cloud web portal and easily download the restored file to their empty desktop.</li>
+                            <li><strong>Example 2 (Testing the Plan):</strong> The student knew exactly how to do this quickly because, at the start of the semester, they deliberately deleted a test document to ensure they understood the recovery interface.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Protecting Critical Assets</p>
+                            <img src="https://images.unsplash.com/photo-1614064641913-a53b15c60ac0?auto=format&fit=crop&w=600&h=350" alt="Lock on a hard drive representing data protection" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Recovering Operations</p>
+                            <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=600&h=350" alt="IT professional recovering data in a server room" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'types-details': {
+                title: 'File vs. System Backups',
+                icon: '<i class="fa-solid fa-copy text-emerald-600"></i>',
+                html: `
+                    <p class="mb-5">When designing a backup architecture, IT professionals must decide exactly what scope of data needs protection. The most granular approach is the <strong>File Backup</strong>. This method is focused exclusively on saving copies of individual files or specific folders—such as a user's "Documents," "Pictures," or a company's "Financial Ledgers" directory. It is highly efficient because it ignores the massive, easily replaceable operating system files and focuses only on the irreplaceable user-generated content.</p>
+                    
+                    <p class="mb-5">Within the realm of file backups, the most basic procedure is the <strong>Full File Backup</strong>. Every time this backup runs, it blindly copies every single file selected by the user, regardless of whether that file has been modified since the last backup. While this makes recovery incredibly simple (you just restore the single largest backup file), taking a full backup every day consumes massive amounts of storage space and network bandwidth.</p>
+                    
+                    <p class="mb-5">To optimize storage, systems utilize an <strong>Incremental Backup</strong>. This method is highly efficient: it only copies files that have changed or been created since the <em>very last backup of any kind</em>. If you run a full backup on Sunday, Monday's incremental only saves Monday's changes. Tuesday's incremental only saves Tuesday's changes. The downside is recovery: to restore the system on Wednesday, you must sequentially restore Sunday's full backup, then Monday's, then Tuesday's. If one incremental file is corrupt, the chain breaks.</p>
+                    
+                    <p class="mb-5">A middle-ground approach is the <strong>Differential Backup</strong>. This method backs up all files that have changed since the <em>last Full Backup</em>. Using the same schedule, Tuesday's differential backup saves everything changed on Monday AND Tuesday. This takes up more storage space each day than an incremental backup, but restoration is much faster and safer: you only need Sunday's full backup and the most recent differential file to fully recover.</p>
+                    
+                    <p class="mb-5">In contrast to granular file backups, a <strong>System Backup</strong> creates a complete, 1:1 copy of an entire computer system. It captures the operating system, all installed programs, registry settings, and user data. This is typically achieved by creating a "System Image"—a massive snapshot of the hard drive at a specific moment in time. If a hard drive mechanically fails, a system image allows a technician to install a blank drive and restore the computer to its exact previous state without manually reinstalling Windows or applications.</p>
+                    
+                    <p class="mb-5">A variant of the full system image is the <strong>System State Backup</strong>. This specialized backup targets only the critical files and settings required to make the Operating System function (like the Windows Registry, boot files, and Active Directory databases), deliberately excluding bulky user data files. This is used by administrators to repair an operating system that has become unstable due to a bad software update or registry corruption, without overwriting the user's recent personal files.</p>
+                    
+                    <p>The processes of restoring these two types vary wildly. <strong>Restoring files</strong> is generally a simple process of opening backup software, selecting a specific missing document from a timeline, and clicking "restore to original location." <strong>Restoring a system</strong> is a "bare-metal" operation. It requires booting the computer from a specialized USB recovery drive (since the main OS is broken or missing) and instructing the recovery tool to overwrite the entire hard drive with the massive system image file.</p>
+                `
+            },
+            'types-usecase': {
+                title: 'File vs. System Backups: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-emerald-800 mb-2 border-b-2 border-emerald-200 pb-1">Case 1: Daily Corporate Operations</h4>
+                        <p class="mb-2">A large accounting firm has 500 employees generating thousands of new spreadsheets daily. They need a backup solution that protects daily work without choking the network.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Incremental File Backup):</strong> The IT team configures a Full Backup on weekends. During the week, they run Incremental backups every 4 hours. This quickly secures only the spreadsheets modified in the last 4 hours, using very little bandwidth.</li>
+                            <li><strong>Example 2 (Differential File Backup):</strong> A smaller branch office runs a Differential backup nightly. On Thursday, when an accountant accidentally deletes a client folder, the IT tech easily restores it using only the Sunday Full Backup and the Wednesday night Differential file.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-emerald-800 mb-2 border-b-2 border-emerald-200 pb-1">Case 2: Server Hardware Failure</h4>
+                        <p class="mb-2">A company's primary domain controller server experiences a catastrophic motherboard and hard drive failure simultaneously. The hardware is dead.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (System Image Restoration):</strong> The IT admin purchases a brand new, empty server. Instead of spending 12 hours installing Windows Server and reconfiguring 1,000 user accounts, they boot from a recovery USB and apply last night's Full System Image. The new server is identical to the old one in 45 minutes.</li>
+                            <li><strong>Example 2 (System State):</strong> A bad Windows update causes the server to constantly reboot. The admin boots into safe mode and restores only the System State Backup from yesterday, fixing the corrupted OS files while leaving the file storage drives completely untouched.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: File Targeting</p>
+                            <img src="https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?auto=format&fit=crop&w=600&h=350" alt="Code folders representing targeted file backups" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Full System Imaging</p>
+                            <img src="https://images.unsplash.com/photo-1551739440-5dd934d3a94a?auto=format&fit=crop&w=600&h=350" alt="Complex server architecture requiring full system images" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'storage-details': {
+                title: 'Storage Locations: Local vs. Cloud',
+                icon: '<i class="fa-solid fa-cloud-arrow-up text-sky-600"></i>',
+                html: `
+                    <p class="mb-5">The efficacy of any Data Recovery Plan relies heavily on <strong>Location</strong>—the specific physical or virtual place where the backup data is housed. Location dictates how fast data can be recovered, how safe it is from local disasters, and how much the solution will cost. Storage solutions are broadly categorized into two main arenas: Local Storage and Cloud Storage, each with distinct advantages and vulnerabilities.</p>
+                    
+                    <p class="mb-5"><strong>Local Storage</strong> refers to saving backup data on physical hardware devices that are directly connected to the user's computer or the local office network. The most ubiquitous local device is the <strong>Flash Drive</strong>. Utilizing USB connections, these small, portable drives offer exceptional ease of use through "Plug and Play" (PnP) functionality. While highly affordable, their physical size makes them easy to lose, and their read/write speeds are generally too slow for backing up massive server databases.</p>
+                    
+                    <p class="mb-5">For heavier local data needs, users rely on <strong>External Hard Drives</strong>. Connecting via high-speed interfaces like USB 3.0, Thunderbolt, or eSATA, these drives offer massive capacities (often multiple terabytes) and high performance. They are the standard for local system image backups. However, traditional external hard drives with spinning magnetic disks are vulnerable to physical drops, and solid-state versions can be expensive.</p>
+                    
+                    <p class="mb-5">A smaller local alternative is the <strong>Secure Digital (SD) Card</strong>. These removable memory cards are incredibly versatile, sliding seamlessly into cameras, smartphones, and many laptops. While highly portable, they suffer from similar drawbacks as flash drives: they are easily misplaced, easily crushed, and generally feature slower data transfer speeds than external hard drives, making them better suited for temporary media storage than permanent system backups.</p>
+                    
+                    <p class="mb-5">In contrast to physical local devices, <strong>Cloud Storage</strong> backs up data by transmitting it over the internet to remote servers managed by massive third-party providers. The primary advantage of the cloud is geographic redundancy. Because the data is stored in off-site data centers (often replicated across multiple states), it is entirely immune to a local office fire, flood, or hardware theft that would destroy local backup drives.</p>
+                    
+                    <p class="mb-5">Cloud storage offers unmatched <strong>Scalability and Accessibility</strong>. A business can seamlessly upgrade from 1 Terabyte of storage to 100 Terabytes with a click of a button, avoiding the need to purchase and rack physical hard drives. Furthermore, because the data is hosted on the internet, authorized users can access and collaborate on recovered files from any smart device globally. Common consumer providers include Google Drive, Microsoft OneDrive, and Apple iCloud, offering free initial tiers (e.g., 15GB, 5GB).</p>
+                    
+                    <p>However, Cloud Storage introduces unique disadvantages. It suffers from strict <strong>Internet Dependency</strong>; if your office loses internet access, you cannot backup or recover your data. Restoring massive system images from the cloud is also heavily <strong>Time Consuming</strong>, restricted by internet download speeds. Additionally, relying on third parties introduces <strong>Security Risks</strong> and recurring <strong>Outgoing Costs</strong>, as businesses must pay monthly subscription fees (e.g., AWS per-GB fees, or Google Workspace user licenses) in perpetuity.</p>
+                `
+            },
+            'storage-usecase': {
+                title: 'Storage Locations: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-sky-800 mb-2 border-b-2 border-sky-200 pb-1">Case 1: Personal Photography Workflow</h4>
+                        <p class="mb-2">A professional wedding photographer must ensure that thousands of high-resolution RAW images are not lost before they can be delivered to the client.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (SD Card & External HDD):</strong> During the event, the camera writes data to dual <strong>SD Cards</strong> for immediate local redundancy. After the event, the photographer plugs a massive 4TB <strong>External Hard Drive</strong> into their laptop via Thunderbolt to quickly backup the massive 200GB file dump locally.</li>
+                            <li><strong>Example 2 (Flash Drive):</strong> When delivering the final, edited, compressed JPEG photos to the client, the photographer copies them onto a branded USB <strong>Flash Drive</strong> due to its cheap cost, high portability, and ease of use for the client.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-sky-800 mb-2 border-b-2 border-sky-200 pb-1">Case 2: Enterprise Hybrid Strategy</h4>
+                        <p class="mb-2">A medium-sized enterprise must protect corporate data while balancing recovery speed against the threat of physical site disasters.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Cloud Scalability):</strong> As the company hires 50 new employees, they utilize <strong>Microsoft SharePoint / OneDrive</strong> to instantly scale their storage allocation, allowing remote employees to automatically backup their files over the internet without IT needing to mail them physical hard drives.</li>
+                            <li><strong>Example 2 (Local Speed vs Cloud Safety):</strong> To balance the disadvantages, the IT team uses a hybrid approach. They keep a fast <strong>External Hard Drive</strong> server locally to quickly recover accidentally deleted files without waiting on slow internet downloads, while simultaneously syncing that server to <strong>AWS</strong> to protect against the building burning down.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Physical Local Storage</p>
+                            <img src="https://images.unsplash.com/photo-1629837136060-705a61e7a465?auto=format&fit=crop&w=600&h=350" alt="Flash drives and external hard drives on a desk" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Cloud Data Centers</p>
+                            <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=600&h=350" alt="Massive rows of glowing servers in a cloud data center" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'tools-details': {
+                title: 'CLI vs. GUI Management',
+                icon: '<i class="fa-solid fa-terminal text-amber-600"></i>',
+                html: `
+                    <p class="mb-5">When executing a backup or recovering a file, users interact with the operating system through one of two primary methods: the Graphical User Interface (GUI) or the Command Line Interface (CLI). Both methods achieve the same ultimate goal—copying data from a source location to a destination location—but they offer vastly different experiences regarding speed, automation, and user-friendliness.</p>
+                    
+                    <p class="mb-5">The <strong>Graphical User Interface (GUI)</strong> is the visual environment most users interact with daily, such as Windows File Explorer or Ubuntu's Files Application. In a GUI, backups are performed by physically interacting with visual metaphors: holding the SHIFT key to select multiple file icons, right-clicking to access a context menu, selecting "Copy," navigating to a backup folder, and clicking "Paste."</p>
+                    
+                    <p class="mb-5">While the GUI is highly intuitive and requires zero memorization of coding syntax, it introduces limitations for IT professionals. When transferring thousands of files, GUI applications can become visually unresponsive, consume significant memory, and require constant manual clicking to resolve file conflicts (e.g., clicking "Replace" or "Skip" when a pop-up warns that a file with the same name already exists in the backup folder). It is inefficient for mass management.</p>
+                    
+                    <p class="mb-5">Conversely, the <strong>Command Line Interface (CLI)</strong> allows users to bypass graphical windows entirely and execute commands by typing specific text strings into a terminal or command prompt. While CLI presents a steep learning curve requiring exact syntax memorization, it uses a fraction of the system resources. More importantly, CLI commands can be written into scripts to completely automate the backup process to run at 2:00 AM every night without any human interaction.</p>
+                    
+                    <p class="mb-5">In the Windows Server environment, administrators utilize the powerful CLI utility called <strong>robocopy</strong> (Robust File Copy). A basic syntax looks like: <code>robocopy Source\Path Destination\Path</code>. Unlike the basic GUI copy function, robocopy is designed to tolerate network interruptions, gracefully resume failed transfers, and mirror massive directory trees flawlessly, making it the industry standard for Windows data backups.</p>
+                    
+                    <p class="mb-5">In the Linux/Ubuntu environment, the equivalent powerful CLI utility is <strong>rsync</strong> (Remote Sync). Using syntax like <code>rsync -avh ~/Source/ ~/Destination/</code>, rsync excels at creating incremental backups. Instead of re-copying a massive 10GB file because one line of text changed, rsync mathematically compares the source and destination and transfers <em>only</em> the changed bytes over the network, saving massive amounts of bandwidth.</p>
+                    
+                    <p>Both operating systems share common directory management commands in their CLI. To create a new backup folder, an administrator types <strong>mkdir</strong> (make directory) followed by the folder name in both Windows and Linux. Deletion, however, differs slightly: Windows uses <strong>rmdir /S</strong> to forcefully remove a directory and its contents, while Linux utilizes <strong>rm -r</strong> (remove recursive) to achieve the same total data wipe. Understanding these CLI commands is critical for rapid, professional data recovery.</p>
+                `
+            },
+            'tools-usecase': {
+                title: 'CLI vs. GUI Management: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-amber-800 mb-2 border-b-2 border-amber-200 pb-1">Case 1: Standard End-User Recovery</h4>
+                        <p class="mb-2">A non-technical office worker accidentally modifies an important spreadsheet and needs to retrieve yesterday's version from their local backup drive.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Windows GUI):</strong> The user opens Windows File Explorer, clicks into their D: Backup drive, right-clicks the "Finance.xlsx" icon, clicks "Copy", navigates to their Documents folder, clicks "Paste", and clicks "Replace" on the visual pop-up to overwrite the bad file.</li>
+                            <li><strong>Example 2 (Ubuntu GUI):</strong> A user on an Ubuntu machine realizes they deleted a file. They open the GUI Files application, navigate to the Trash icon, right-click the deleted file, and click "Restore," seamlessly placing the data back without knowing any terminal commands.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-amber-800 mb-2 border-b-2 border-amber-200 pb-1">Case 2: Enterprise Automated Syncing</h4>
+                        <p class="mb-2">An IT Administrator must ensure that the primary database server, containing 5 million files, is backed up to a secondary server every night without manual intervention.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Windows CLI):</strong> The admin writes a script using the <code>robocopy</code> command to mirror the entire C:\\Database directory to the E:\\Backup drive. They use Windows Task Scheduler to run this script at 3:00 AM, knowing robocopy will automatically skip identical files and retry any files locked by late-working users.</li>
+                            <li><strong>Example 2 (Linux CLI):</strong> An administrator managing a remote Ubuntu web server uses SSH to connect via terminal. They execute <code>rsync -avh /var/www/ /backup/www/</code>. Because they used CLI, the server uses almost zero CPU to process the command, and rsync only transfers the exact delta of bytes changed that day.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Graphical Interaction</p>
+                            <img src="https://images.unsplash.com/photo-1600861194942-f883de0dfe96?auto=format&fit=crop&w=600&h=350" alt="Mouse cursor interacting with a screen" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Command Line Automation</p>
+                            <img src="https://images.unsplash.com/photo-1555066931-bf19f8fd1085?auto=format&fit=crop&w=600&h=350" alt="Hacker/Admin typing rapidly into a green and black terminal" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        function openBriefing(key) {
+            const modal = document.getElementById('briefing-modal');
+            const data = briefingData[key];
+            if(data) {
+                document.getElementById('briefing-modal-icon').innerHTML = data.icon;
+                document.getElementById('briefing-modal-title').innerText = data.title;
+                document.getElementById('briefing-modal-content').innerHTML = data.html;
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; 
+            }
+        }
+
+        function closeBriefing() {
+            document.getElementById('briefing-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto'; 
+        }
+
+        document.getElementById('briefing-modal').addEventListener('click', function(e) {
+            if(e.target === this) closeBriefing();
+        });
+        
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId + '-section').classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-blue-900'));
+            const activeBtn = document.getElementById('nav-' + tabId);
+            if(activeBtn && tabId !== 'cert') activeBtn.classList.add('bg-blue-900');
+            
+            document.querySelectorAll('.nav-btn-mobile').forEach(btn => btn.classList.remove('bg-blue-950'));
+            const activeMobileBtn = document.getElementById('nav-' + tabId + '-mobile');
+            if(activeMobileBtn && tabId !== 'cert') activeMobileBtn.classList.add('bg-blue-950');
+
+            window.scrollTo(0,0);
+
+            if (tabId === 'game' && !gameRunning && !gameOverState) {
+                // Initialize game view but don't auto-start
+                drawStaticGamePreview();
+            }
+        }
+
+        function showModal(title, message, type = 'info') {
+            const modal = document.getElementById('custom-modal');
+            const icon = document.getElementById('modal-icon');
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-msg').innerText = message;
+            
+            if(type === 'success') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-500"></i>';
+            } else if (type === 'error') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500"></i>';
+            } else if (type === 'warning') {
+                icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-yellow-500"></i>';
+            } else {
+                icon.innerHTML = '<i class="fa-solid fa-circle-info text-blue-500"></i>';
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        // LAB 1: Sequence
+        let draggedLab1 = null;
+        const lab1Container = document.getElementById('lab1-container');
+        
+        lab1Container.addEventListener('dragstart', e => {
+            if(e.target.classList.contains('io-item')) {
+                draggedLab1 = e.target;
+                setTimeout(() => e.target.classList.add('opacity-50'), 0);
+            }
+        });
+        lab1Container.addEventListener('dragend', e => {
+            if(e.target.classList.contains('io-item')) {
+                e.target.classList.remove('opacity-50');
+                draggedLab1 = null;
+            }
+        });
+        lab1Container.addEventListener('dragover', e => {
+            e.preventDefault();
+            const afterElement = getDragAfterElement(lab1Container, e.clientY);
+            if(draggedLab1) {
+                if (afterElement == null) {
+                    lab1Container.appendChild(draggedLab1);
+                } else {
+                    lab1Container.insertBefore(draggedLab1, afterElement);
+                }
+            }
+        });
+
+        function getDragAfterElement(container, y) {
+            const draggableElements = [...container.querySelectorAll('.io-item:not(.opacity-50)')];
+            return draggableElements.reduce((closest, child) => {
+                const box = child.getBoundingClientRect();
+                const offset = y - box.top - box.height / 2;
+                if (offset < 0 && offset > closest.offset) {
+                    return { offset: offset, element: child };
+                } else {
+                    return closest;
+                }
+            }, { offset: Number.NEGATIVE_INFINITY }).element;
+        }
+
+        function checkLab1() {
+            const items = [...lab1Container.querySelectorAll('.io-item')];
+            let correct = true;
+            for(let i=0; i<items.length; i++) {
+                if(parseInt(items[i].dataset.step) !== (i+1)) correct = false;
+            }
+            const fb = document.getElementById('lab1-feedback');
+            if(correct) {
+                fb.innerText = "Sequence Verified! Plan is viable.";
+                fb.className = "text-center font-bold mt-3 h-6 text-sm text-emerald-600";
+            } else {
+                fb.innerText = "Incorrect order. Hint: Identify data before choosing location.";
+                fb.className = "text-center font-bold mt-3 h-6 text-sm text-red-600";
+            }
+        }
+
+        // LAB 2: Threat Matcher
+        let l2SelectedThreat = null;
+        let l2SelectedThreatBtn = null;
+        let l2Matches = 0;
+
+        function selectLab2Threat(btn, type) {
+            if(btn.disabled) return;
+            document.querySelectorAll('#lab2-threats button').forEach(b => { if(!b.disabled) b.classList.replace('bg-indigo-100', 'bg-slate-100') });
+            btn.classList.replace('bg-slate-100', 'bg-indigo-100');
+            l2SelectedThreat = type;
+            l2SelectedThreatBtn = btn;
+        }
+
+        function selectLab2Strat(btn, type) {
+            if(btn.disabled || !l2SelectedThreat) return;
+            const fb = document.getElementById('lab2-feedback');
+            
+            if(l2SelectedThreat === type) {
+                btn.classList.replace('bg-slate-100', 'bg-emerald-100');
+                btn.classList.add('text-emerald-800', 'border-emerald-400');
+                l2SelectedThreatBtn.classList.replace('bg-indigo-100', 'bg-emerald-100');
+                l2SelectedThreatBtn.classList.add('text-emerald-800', 'border-emerald-400');
+                
+                btn.disabled = true;
+                l2SelectedThreatBtn.disabled = true;
+                
+                l2SelectedThreat = null;
+                l2Matches++;
+                fb.innerText = `Matches: ${l2Matches} / 3 - Correct Link!`;
+                if(l2Matches === 3) fb.innerText = "All Threats Successfully Mitigated!";
+            } else {
+                fb.innerText = "Incorrect pairing. Re-evaluate strategy.";
+                fb.classList.replace('text-slate-500', 'text-red-500');
+                setTimeout(() => fb.classList.replace('text-red-500', 'text-slate-500'), 1500);
+            }
+        }
+
+        // LAB 3: Classifier
+        function checkLab3() {
+            const a = document.getElementById('lab3-a').value;
+            const b = document.getElementById('lab3-b').value;
+            const fb = document.getElementById('lab3-feedback');
+            
+            if(a === 'sys' && b === 'inc') {
+                fb.innerText = "Architecture Approved! Optimal configurations chosen.";
+                fb.className = "text-center font-bold mt-3 h-6 text-sm text-emerald-600";
+            } else {
+                fb.innerText = "Sub-optimal choices. Review file vs system needs.";
+                fb.className = "text-center font-bold mt-3 h-6 text-sm text-red-600";
+            }
+        }
+
+        // LAB 4: Calculator
+        function updateLab4() {
+            const days = parseInt(document.getElementById('lab4-slider').value);
+            document.getElementById('lab4-day-val').innerText = `Day ${days}`;
+            
+            const base = 100;
+            const daily = 10;
+            
+            const incTotal = base + (daily * days);
+            
+            let diffData = 0;
+            for(let i=1; i<=days; i++) {
+                diffData += (daily * i);
+            }
+            const diffTotal = base + diffData;
+            
+            document.getElementById('lab4-inc-val').innerText = `${incTotal} GB`;
+            document.getElementById('lab4-diff-val').innerText = `${diffTotal} GB`;
+        }
+
+        // LAB 5: Device Selector
+        function checkLab5(type) {
+            const fb = document.getElementById('lab5-feedback');
+            if(type === 'hdd') {
+                fb.innerText = "Correct! External HDDs provide mass capacity and durability.";
+                fb.className = "text-center font-bold mt-auto h-6 text-sm text-emerald-600";
+            } else if(type === 'sd') {
+                fb.innerText = "Incorrect. SD Cards are portable but lack mass capacity/durability.";
+                fb.className = "text-center font-bold mt-auto h-6 text-sm text-red-600";
+            } else {
+                fb.innerText = "Incorrect. Flash Drives lack massive 2TB+ editing capacity.";
+                fb.className = "text-center font-bold mt-auto h-6 text-sm text-red-600";
+            }
+        }
+
+        // LAB 6: Cloud Balancer
+        let lab6Dragged = null;
+        function moveLab6(el, targetZone) {
+            el.dataset.target = targetZone;
+            if(targetZone === 'adv') {
+                document.getElementById('lab6-adv-zone').appendChild(el);
+            } else {
+                document.getElementById('lab6-dis-zone').appendChild(el);
+            }
+            el.classList.remove('hover:bg-slate-100');
+            el.classList.add('cursor-default');
+            el.onclick = null; // Disable moving again for simplicity
+        }
+        function checkLab6() {
+            const advZone = document.getElementById('lab6-adv-zone');
+            const disZone = document.getElementById('lab6-dis-zone');
+            const items = document.querySelectorAll('.lab6-item');
+            
+            if(advZone.children.length + disZone.children.length < 6) { // 2 titles + 4 items
+                 document.getElementById('lab6-feedback').innerText = "Please sort all attributes first.";
+                 document.getElementById('lab6-feedback').className = "text-center font-bold mt-2 h-4 text-sm text-amber-600";
+                 return;
+            }
+            
+            let allCorrect = true;
+            advZone.querySelectorAll('.lab6-item').forEach(el => { if(el.innerText === 'Internet Dependency' || el.innerText === 'Subscription Costs') allCorrect = false; });
+            disZone.querySelectorAll('.lab6-item').forEach(el => { if(el.innerText === 'Scalability' || el.innerText === 'Off-site Geographic Protection') allCorrect = false; });
+            
+            const fb = document.getElementById('lab6-feedback');
+            if(allCorrect) {
+                fb.innerText = "Analysis Accurate! Cloud pros/cons verified.";
+                fb.className = "text-center font-bold mt-2 h-4 text-sm text-emerald-600";
+            } else {
+                fb.innerText = "Analysis Flawed. Resetting...";
+                fb.className = "text-center font-bold mt-2 h-4 text-sm text-red-600";
+                setTimeout(() => {
+                    document.getElementById('lab6-items').append(...document.querySelectorAll('.lab6-item'));
+                    document.querySelectorAll('.lab6-item').forEach(el => {
+                        el.onclick = function() { moveLab6(this, el.innerText.includes('Scalability') || el.innerText.includes('Off-site') ? 'adv' : 'dis') };
+                        el.classList.add('cursor-pointer', 'hover:bg-slate-100');
+                    });
+                    fb.innerText = "";
+                }, 1500);
+            }
+        }
+
+        // LAB 7: Win CLI Builder
+        let lab7Command = [];
+        function addLab7Cmd(text) {
+            if(lab7Command.length < 3) {
+                lab7Command.push(text);
+                document.getElementById('lab7-output').innerText = lab7Command.join(' ');
+            }
+        }
+        function clearLab7() {
+            lab7Command = [];
+            document.getElementById('lab7-output').innerText = "";
+            document.getElementById('lab7-feedback').innerText = "";
+        }
+        function checkLab7() {
+            const cmdStr = lab7Command.join(' ');
+            const fb = document.getElementById('lab7-feedback');
+            
+            if(cmdStr === "robocopy Documents\\Data_Backups-lab Documents\\Backups") {
+                fb.innerText = "Syntax Valid! Sync initiated.";
+                fb.className = "text-center font-bold mt-2 h-4 text-sm text-emerald-600";
+            } else if(cmdStr.includes("mkdir")) {
+                fb.innerText = "Syntax Error. mkdir creates folders, it does not copy files.";
+                fb.className = "text-center font-bold mt-2 h-4 text-sm text-red-600";
+            } else {
+                fb.innerText = "Syntax Error. Format is: robocopy Source Destination";
+                fb.className = "text-center font-bold mt-2 h-4 text-sm text-red-600";
+            }
+        }
+
+        // LAB 8: Ubuntu Terminal
+        function checkLab8() {
+            const input = document.getElementById('lab8-input').value.trim();
+            const fb = document.getElementById('lab8-feedback');
+            
+            if(input === "rm -r Data_Backups-lab") {
+                fb.innerText = "Script executed. Directory and contents destroyed.";
+                fb.className = "text-center font-bold mt-2 h-4 text-sm text-emerald-600";
+            } else if (input === "rmdir /S Data_Backups-lab") {
+                fb.innerText = "Error: That is a Windows command, this is a Linux terminal.";
+                fb.className = "text-center font-bold mt-2 h-4 text-sm text-red-600";
+            } else if (input === "rm Data_Backups-lab") {
+                 fb.innerText = "Error: 'rm' alone cannot delete a directory. Use the recursive flag.";
+                 fb.className = "text-center font-bold mt-2 h-4 text-sm text-red-600";
+            } else {
+                fb.innerText = "Command not recognized or incorrect syntax. Hint: use rm with the recursive flag.";
+                fb.className = "text-center font-bold mt-2 h-4 text-sm text-red-600";
+            }
+        }
+
+        const quizData = [
+            // Provided 10
+            { q: "What is the process of restoring data from a backup in the event of accidental deletion, data corruption, or hardware failure?", options: ["File backups", "Data recovery", "Cloud storage", "System backups"], answer: 1 },
+            { q: "What is one way to backup a file using GUI?", options: ["Delete", "Move", "Copy", "Cut"], answer: 2 },
+            { q: "What is a system backup?", options: ["A backup of an entire OS including applications, settings, and personal data.", "The process of recovering data from a backup.", "A backup of individual files or folders.", "The place where data is physically or virtually stored."], answer: 0 },
+            { q: "A flash drive is _____.", options: ["A large storage device connecting via eSATA.", "A small, portable storage device that connects via USB.", "An off-site location for storing data.", "A small removable memory card for cameras."], answer: 1 },
+            { q: "What is an advantage of cloud storage?", options: ["Internet dependency", "Limited control", "Outgoing costs", "Accessibility"], answer: 3 },
+            { q: "What is the advantage of having an external hard drive as a storage device?", options: ["Versatility", "Performance", "Portability", "Affordability"], answer: 1 },
+            { q: "Which command can be used to backup files using CLI in Linux?", options: ["rsync", "mkdir", "ls -lh", "robocopy"], answer: 0 },
+            { q: "What command can be used to view files in a folder or directory using CLI in Windows?", options: ["ls -lh", "rmdir", "dir", "rm -r"], answer: 2 },
+            { q: "What command can be used to view files in a folder or directory using CLI in Linux?", options: ["ls -lh", "rdmir", "dir", "rm -r"], answer: 0 },
+            { q: "Which command can be used to backup files using CLI in Windows?", options: ["rsync", "mkdir", "ls -lh", "robocopy"], answer: 3 },
+            
+            // Created 10 from briefing
+            { q: "Why is it important to 'copy' files and not just 'move' them for backups?", options: ["Moving compresses the file and breaks it.", "Moving a file without creating a copy cannot protect against data loss if the single location fails.", "Moving a file triggers a ransomware attack.", "Copying is faster than moving."], answer: 1 },
+            { q: "What type of file backup only saves files that have changed since the *last* backup of any kind?", options: ["Full File Backup", "System Image Backup", "Incremental Backup", "Differential Backup"], answer: 2 },
+            { q: "What is the command to create a new directory in both Windows and Linux CLI?", options: ["newdir", "createdir", "md", "mkdir"], answer: 3 },
+            { q: "Which command force-removes a directory and all of its contents in the Windows CLI?", options: ["rm -r", "delete /ALL", "rmdir /S", "erase -dir"], answer: 2 },
+            { q: "Which command removes a directory and all of its contents recursively in the Linux CLI?", options: ["rm -r", "rmdir /S", "del -a", "remove -dir"], answer: 0 },
+            { q: "What is a primary disadvantage of using a standard SD card for enterprise system backups?", options: ["They hold too much data.", "They are entirely immune to physical damage.", "They generally have slower read/write speeds than external HDDs.", "They cannot connect to any modern device."], answer: 2 },
+            { q: "Which statement accurately describes a Differential backup?", options: ["It backs up all files changed since the last Incremental backup.", "It backs up all files changed since the last Full Backup, making restoration faster.", "It blindly copies every single file on the hard drive.", "It creates a bare-metal image of the operating system."], answer: 1 },
+            { q: "How much free cloud storage space does Google Drive typically provide for personal use?", options: ["5 GB", "10 GB", "15 GB", "50 GB"], answer: 2 },
+            { q: "What does the 'PnP' functionality in flash drives and external devices stand for?", options: ["Post-Network Protocol", "Plug-and-play", "Personal-Node-Pairing", "Public-Network-Ping"], answer: 1 },
+            { q: "Which cloud storage service is closely integrated with Microsoft for business scalability and collaboration?", options: ["AWS", "Google Workspace", "Apple iCloud", "Microsoft SharePoint / OneDrive"], answer: 3 }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        
+        quizData.forEach((item, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = "bg-slate-50 p-6 rounded-lg border border-slate-200 transition-all hover:border-blue-300";
+            qDiv.id = `q-block-${index}`;
+            
+            const qTitle = document.createElement('h3');
+            qTitle.className = "font-bold text-lg text-slate-800 mb-4";
+            qTitle.innerText = `${index + 1}. ${item.q}`;
+            qDiv.appendChild(qTitle);
+            
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = "space-y-3";
+            
+            item.options.forEach((opt, optIndex) => {
+                const label = document.createElement('label');
+                label.className = "flex items-center space-x-3 p-3 rounded bg-white border border-slate-300 hover:bg-blue-50 cursor-pointer transition";
+                
+                const radio = document.createElement('input');
+                radio.type = "radio";
+                radio.name = `q${index}`;
+                radio.value = optIndex;
+                radio.className = "form-radio h-5 w-5 text-blue-600";
+                
+                const span = document.createElement('span');
+                span.className = "text-slate-700";
+                span.innerText = opt;
+                
+                label.appendChild(radio);
+                label.appendChild(span);
+                optionsDiv.appendChild(label);
+            });
+            
+            qDiv.appendChild(optionsDiv);
+            quizContainer.appendChild(qDiv);
+        });
+
+        function gradeQuiz() {
+            let score = 0;
+            let allAnswered = true;
+
+            for(let i = 0; i < quizData.length; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if(selected) {
+                    if(parseInt(selected.value) === quizData[i].answer) score++;
+                } else {
+                    allAnswered = false;
+                }
+            }
+            
+            if(!allAnswered) {
+                showModal('Incomplete Assessment', 'Please answer all 20 questions before submitting.', 'warning');
+                return;
+            }
+            
+            const percentage = (score / quizData.length) * 100;
+            
+            if(score >= 18) { 
+                const navGame = document.getElementById('nav-game');
+                const navGameMobile = document.getElementById('nav-game-mobile');
+                
+                navGame.classList.remove('text-blue-300', 'opacity-50', 'cursor-not-allowed');
+                navGame.classList.add('text-white', 'hover:bg-blue-600');
+                navGame.disabled = false;
+                
+                navGameMobile.classList.remove('text-blue-300', 'opacity-50', 'cursor-not-allowed');
+                navGameMobile.classList.add('text-white', 'hover:bg-blue-600');
+                navGameMobile.disabled = false;
+
+                document.getElementById('nav-cert').classList.remove('hidden');
+                document.getElementById('nav-cert-mobile').classList.remove('hidden');
+                
+                document.getElementById('proceed-game-btn').classList.remove('hidden');
+                document.getElementById('submit-quiz-btn').classList.add('hidden');
+
+                showModal('Outstanding Mastery!', `You scored ${score}/20 (${percentage}%). You have unlocked your Certificate of Mastery AND the Retro Arcade!`, 'success');
+            } else {
+                quizData.forEach((_, i) => {
+                    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                    if(selected) selected.checked = false;
+                });
+                showModal('Keep Trying!', `You scored ${score}/20 (${percentage}%). You need 90% (18/20) to earn the certificate. Review the Briefing tab and try again.`, 'error');
+                document.getElementById('quiz-section').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        const cvs = document.getElementById('game-canvas');
+        const gctx = cvs.getContext('2d');
+        
+        let gameRunning = false;
+        let gameOverState = false;
+        let requestID;
+        
+        let stack = [];
+        let currentBlock = null;
+        let score = 0;
+        let combo = 1;
+        let speedX = 3;
+        let direction = 1;
+        let blockHeight = 30;
+        let cameraY = 0;
+        let baseWidth = 200;
+        
+        function drawStaticGamePreview() {
+            gctx.fillStyle = '#020617';
+            gctx.fillRect(0, 0, cvs.width, cvs.height);
+            
+            // Draw fake stack
+            gctx.fillStyle = '#1e293b';
+            gctx.fillRect(100, 470, 200, 30);
+            gctx.fillStyle = '#334155';
+            gctx.fillRect(110, 440, 190, 30);
+            gctx.fillStyle = '#475569';
+            gctx.fillRect(110, 410, 180, 30);
+            
+            gctx.fillStyle = '#38bdf8';
+            gctx.globalAlpha = 0.5;
+            gctx.fillRect(150, 200, 180, 30);
+            gctx.globalAlpha = 1.0;
+            
+            gctx.fillStyle = '#e2e8f0';
+            gctx.font = '20px monospace';
+            gctx.textAlign = 'center';
+            gctx.fillText('STANDBY FOR DEPLOYMENT', cvs.width/2, 100);
+        }
+
+        function createNewBlock() {
+            let y = cvs.height - ((stack.length + 1) * blockHeight);
+            let w = stack.length > 0 ? stack[stack.length-1].w : baseWidth;
+            
+            currentBlock = {
+                x: 0,
+                y: y,
+                w: w,
+                h: blockHeight,
+                color: `hsl(${200 + (stack.length * 5)}, 80%, 50%)`
+            };
+            
+            speedX = 3 + (stack.length * 0.2); // Gradually get faster
+            if(speedX > 10) speedX = 10;
+        }
+
+        function startGame() {
+            document.getElementById('game-overlay').classList.add('hidden');
+            document.getElementById('game-over-text').classList.add('hidden');
+            
+            stack = [{x: cvs.width/2 - baseWidth/2, y: cvs.height - blockHeight, w: baseWidth, h: blockHeight, color: '#334155'}];
+            score = 0;
+            combo = 1;
+            cameraY = 0;
+            direction = 1;
+            
+            document.getElementById('game-score').innerText = score;
+            document.getElementById('game-combo').innerText = 'x' + combo;
+            
+            createNewBlock();
+            
+            gameRunning = true;
+            gameOverState = false;
+            if(requestID) cancelAnimationFrame(requestID);
+            gameLoop();
+        }
+
+        function dropBlock() {
+            if(!gameRunning) return;
+            
+            let prev = stack[stack.length - 1];
+            let curr = currentBlock;
+            
+            // Calculate Overlap
+            let overlapStart = Math.max(prev.x, curr.x);
+            let overlapEnd = Math.min(prev.x + prev.w, curr.x + curr.w);
+            let overlapW = overlapEnd - overlapStart;
+            
+            if(overlapW <= 0) {
+                // Total miss
+                gameOver();
+                return;
+            }
+            
+            // Check Combo (perfect drop within 5px)
+            let diff = Math.abs(prev.x - curr.x);
+            if(diff <= 5) {
+                overlapW = prev.w; // Snap to perfect
+                curr.x = prev.x;
+                combo++;
+                if(combo > 5) combo = 5;
+            } else {
+                combo = 1;
+            }
+            
+            // Commit block
+            curr.w = overlapW;
+            curr.x = overlapStart;
+            stack.push(curr);
+            
+            score += (10 * combo);
+            document.getElementById('game-score').innerText = score;
+            document.getElementById('game-combo').innerText = 'x' + combo;
+            
+            // Move camera if stack gets too high
+            if(curr.y < 200) {
+                cameraY += blockHeight;
+            }
+            
+            createNewBlock();
+        }
+
+        // Mouse or Touch to Drop
+        cvs.addEventListener('mousedown', (e) => { e.preventDefault(); dropBlock(); });
+        cvs.addEventListener('touchstart', (e) => { e.preventDefault(); dropBlock(); }, {passive: false});
+
+        function gameLoop() {
+            if(!gameRunning) return;
+            
+            // Update
+            currentBlock.x += speedX * direction;
+            if(currentBlock.x + currentBlock.w >= cvs.width || currentBlock.x <= 0) {
+                direction *= -1;
+            }
+            
+            // Draw
+            gctx.fillStyle = '#020617';
+            gctx.fillRect(0, 0, cvs.width, cvs.height);
+            
+            gctx.save();
+            gctx.translate(0, cameraY);
+            
+            // Draw Stack
+            for(let b of stack) {
+                gctx.fillStyle = b.color;
+                gctx.fillRect(b.x, b.y, b.w, b.h);
+                gctx.strokeStyle = '#000';
+                gctx.lineWidth = 2;
+                gctx.strokeRect(b.x, b.y, b.w, b.h);
+            }
+            
+            // Draw Moving Block
+            gctx.fillStyle = currentBlock.color;
+            gctx.fillRect(currentBlock.x, currentBlock.y, currentBlock.w, currentBlock.h);
+            gctx.strokeRect(currentBlock.x, currentBlock.y, currentBlock.w, currentBlock.h);
+            
+            gctx.restore();
+            
+            requestID = requestAnimationFrame(gameLoop);
+        }
+
+        function gameOver() {
+            gameRunning = false;
+            gameOverState = true;
+            document.getElementById('game-overlay').classList.remove('hidden');
+            document.getElementById('game-over-text').classList.remove('hidden');
+            document.getElementById('start-game-btn').innerText = "Re-Deploy Server";
+        }
+
+        function updateCertName() {
+            let name = document.getElementById('student-name-input').value.trim();
+            if(name) {
+                if (name.includes(' ')) {
+                    name = name.split(' ')[0];
+                    document.getElementById('student-name-input').value = name;
+                    showModal('Notice', 'Only your first name has been applied to the certificate.', 'info');
+                }
+                document.getElementById('cert-student-name').innerText = name;
+            } else {
+                showModal('Wait!', 'Please enter your first name to update the certificate.', 'warning');
+            }
+        }
+
+        const today = new Date();
+        document.getElementById('cert-date').innerText = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        function downloadCert() {
+            const certEl = document.getElementById('certificate');
+            const name = document.getElementById('cert-student-name').innerText;
+            let filename = 'DataBackups_Certificate.png';
+            if (name && name !== 'Student') {
+                filename = `${name.replace(/\s+/g, '_')}_DataBackups_Certificate.png`;
+            }
+
+            const originalTransform = certEl.style.transform;
+            certEl.style.transform = 'none';
+
+            const btn = document.getElementById('download-btn');
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Generating...';
+            btn.disabled = true;
+
+            html2canvas(certEl, { 
+                scale: 2, 
+                useCORS: true,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+            }).catch(err => {
+                console.error(err);
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                showModal('Error', 'Failed to generate image. Try using a desktop browser.', 'error');
+            });
+        }
+
+        // Init
+        window.onload = () => {
+            drawStaticGamePreview();
+        };
+    </script>
+</body>
+</html>

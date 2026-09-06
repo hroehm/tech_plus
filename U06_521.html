@@ -1,0 +1,1523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 06 Section 5.2.1 Mastery - Database Fundamentals</title>
+    
+    <!-- Load Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load HTML2Canvas for Certificate Download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- Load Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Qwitcher+Grypen:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0fdf4; 
+            color: #1f2937;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        /* Interactive Elements CSS */
+        .io-dropzone { min-height: 70px; min-width: 130px; border: 2px dashed #9ca3af; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: #f9fafb; transition: all 0.2s;}
+        .io-dropzone.drag-over { background: #e5e7eb; border-color: #16a34a; box-shadow: inset 0 0 10px rgba(22, 163, 74, 0.2);}
+        
+        .io-item { cursor: grab; transition: transform 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .io-item:active { cursor: grabbing; transform: scale(0.95); }
+        
+        .cat-dropzone { transition: background-color 0.2s ease; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #e5e7eb; }
+        ::-webkit-scrollbar-thumb { background: #10b981; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #059669; }
+
+        /* Retro Game Canvas */
+        #game-canvas {
+            background-color: #0f172a;
+            border: 4px solid #334155;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
+            max-width: 100%;
+            height: auto;
+            touch-action: none;
+        }
+
+        /* --- CERTIFICATE STYLES --- */
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .font-body { font-family: 'Lora', serif; }
+        .font-script { font-family: 'Qwitcher Grypen', cursive; }
+        
+        .cert-preview-container {
+            width: 100%;
+            overflow: auto;
+            display: flex;
+            justify-content: center;
+            background: #e5e7eb;
+            padding: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        #certificate {
+            width: 1056px !important;
+            height: 816px !important;
+            flex-shrink: 0;
+            background-color: #ffffff;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1056" height="816"><polygon points="0,0 250,0 0,650" fill="%23bae6fd"/><polygon points="0,0 350,0 0,900" fill="%230284c7" opacity="0.8"/><polygon points="0,0 120,0 0,300" fill="%23bae6fd"/><polygon points="0,450 650,816 0,816" fill="%23bae6fd"/><polygon points="0,550 450,816 0,816" fill="%230284c7" opacity="0.8"/><polygon points="800,0 1056,0 1056,256" fill="%23f3f4f6"/><polygon points="1056,500 1056,816 750,816" fill="%23f3f4f6"/></svg>');
+            background-size: cover;
+            border: 4px solid #e5e7eb;
+        }
+
+        .gold-seal {
+            position: absolute;
+            left: 110px;
+            top: 350px;
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c, #fcf6ba);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3), inset 0 0 15px rgba(255,255,255,0.7), inset 0 0 25px rgba(139,105,20,0.9);
+            z-index: 10;
+        }
+        .gold-seal::before {
+            content: '';
+            position: absolute;
+            top: -4px; bottom: -4px; left: -4px; right: -4px;
+            border-radius: 50%;
+            border: 6px dashed #d4af37;
+        }
+        .gold-seal-inner-1 {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 2px solid rgba(139, 105, 20, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #e8c678, #dbab46);
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.2), 0 2px 5px rgba(255,255,255,0.7);
+            z-index: 1;
+        }
+        .gold-seal-inner-2 {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: radial-gradient(circle, #fcf6ba, #d4af37);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            padding: 10px;
+        }
+        .embossed-text {
+            color: #b38728;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2);
+            font-family: 'Playfair Display', serif;
+            font-weight: 800;
+            line-height: 1.1;
+            text-transform: uppercase;
+        }
+        .embossed-text-large { font-size: 14px; letter-spacing: 1px; }
+        .embossed-text-small { font-size: 11px; letter-spacing: 2px; margin: 2px 0; }
+        .embossed-star { font-size: 12px; color: #b38728; text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2); margin: 2px 0; }
+
+        @media (max-width: 1100px) {
+            #certificate { transform: scale(0.7); transform-origin: top left; margin-bottom: -240px; margin-right: -310px; }
+        }
+        @media (max-width: 768px) {
+            #certificate { transform: scale(0.4); transform-origin: top left; margin-bottom: -490px; margin-right: -630px; }
+        }
+        
+        /* Lab Specific Styles */
+        .query-block { cursor: pointer; transition: transform 0.1s, background-color 0.2s; user-select: none; }
+        .query-block:active { transform: scale(0.95); }
+        .record-row { transition: background-color 0.2s; cursor: pointer; }
+        .record-row:hover { background-color: #bae6fd; }
+        .record-row.selected { background-color: #38bdf8; color: white; font-weight: bold;}
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
+    <nav class="bg-sky-800 text-white shadow-lg sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-database text-2xl text-sky-300"></i>
+                    <span class="font-bold text-xl tracking-wider hidden sm:inline-block">Tech+ Unit 06 Section 5.2.1</span>
+                    <span class="font-bold text-xl tracking-wider sm:hidden">5.2.1</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-2">
+                        <button onclick="switchTab('briefing')" class="nav-btn bg-sky-900 px-3 py-2 rounded-md text-sm font-medium hover:bg-sky-600 transition" id="nav-briefing"><i class="fa-solid fa-book-open mr-1"></i>Briefing</button>
+                        <button onclick="switchTab('activity')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-sky-600 transition" id="nav-activity"><i class="fa-solid fa-flask mr-1"></i>Lab Activity</button>
+                        <button onclick="switchTab('quiz')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-sky-600 transition" id="nav-quiz"><i class="fa-solid fa-clipboard-check mr-1"></i>Quiz</button>
+                        <button onclick="switchTab('game')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-gray-400 cursor-not-allowed transition" id="nav-game" disabled><i class="fa-solid fa-lock mr-1"></i>Game</button>
+                        <button onclick="switchTab('cert')" class="nav-btn hidden px-3 py-2 rounded-md text-sm font-medium text-yellow-300 hover:bg-sky-600 transition" id="nav-cert"><i class="fa-solid fa-award mr-1"></i>Certificate</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Nav -->
+        <div class="md:hidden flex flex-wrap justify-center gap-2 py-2 px-2 bg-sky-900">
+            <button onclick="switchTab('briefing')" class="nav-btn-mobile px-3 py-1 text-sm rounded bg-sky-700" id="nav-briefing-mobile">Briefing</button>
+            <button onclick="switchTab('activity')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-activity-mobile">Lab</button>
+            <button onclick="switchTab('quiz')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-quiz-mobile">Quiz</button>
+            <button onclick="switchTab('game')" class="nav-btn-mobile px-3 py-1 text-sm rounded text-gray-400 cursor-not-allowed" id="nav-game-mobile" disabled><i class="fa-solid fa-lock"></i></button>
+            <button onclick="switchTab('cert')" id="nav-cert-mobile" class="hidden px-2 py-1 text-sm text-yellow-300 rounded"><i class="fa-solid fa-award"></i></button>
+        </div>
+    </nav>
+
+    <main class="flex-grow w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <!-- BRIEFING SECTION -->
+        <div id="briefing-section" class="tab-content active no-print">
+            <div class="text-center mb-10">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">Database Fundamentals</h1>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">Discover the foundational concepts of databases. Learn how data is structured, stored, and accessed efficiently using Database Management Systems and SQL.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- Tile 1 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-blue-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-blue-700"><i class="fa-solid fa-server mr-2"></i>Database vs. Flat File</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Databases:</strong> Highly organized, multi-table digital storage systems that handle concurrent users and massive scalability.</li>
+                            <li><strong>Flat Files:</strong> Simple spreadsheets with rows and columns, best for small teams but prone to data corruption with multiple users.</li>
+                            <li><strong>Creation Process:</strong> Involves defining the schema, creating tables, establishing constraints, and importing data.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('db-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('db-usecase')" class="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 2 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-indigo-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-indigo-700"><i class="fa-solid fa-cloud-arrow-up mr-2"></i>Storage Types</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Local Storage:</strong> Data saved on physical devices directly connected to your network. Provides full control and speed.</li>
+                            <li><strong>Cloud Storage:</strong> Data saved on remote servers accessed via the internet. Offers unlimited scalability and automated backups.</li>
+                            <li><strong>Data Persistence:</strong> The ability of a system to maintain data integrity across sessions and unexpected reboots.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('storage-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('storage-usecase')" class="flex-1 bg-indigo-100 hover:bg-indigo-200 text-indigo-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 3 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-teal-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-teal-700"><i class="fa-solid fa-wifi mr-2"></i>Access Methods</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Online Access:</strong> Interacting with data through an active internet connection. Allows real-time collaboration.</li>
+                            <li><strong>Offline Access:</strong> Interacting with data stored locally on a device without requiring an internet connection.</li>
+                            <li><strong>Data Availability:</strong> Ensuring that essential data is accessible and functional exactly when it is needed.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('access-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('access-usecase')" class="flex-1 bg-teal-100 hover:bg-teal-200 text-teal-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 4 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-emerald-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-emerald-700"><i class="fa-solid fa-table-list mr-2"></i>SQL Queries & Records</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Records & Fields:</strong> A record (row) is a collection of fields (columns) containing data values about an entity.</li>
+                            <li><strong>Queries:</strong> Requests to retrieve, filter, sort, or aggregate data from a database (e.g., using SELECT).</li>
+                            <li><strong>Transactions:</strong> Using commands like BEGIN TRANSACTION, COMMIT, and ROLLBACK to safely track and apply changes.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('sql-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('sql-usecase')" class="flex-1 bg-emerald-100 hover:bg-emerald-200 text-emerald-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 flex justify-center">
+                <button onclick="switchTab('activity')" class="bg-sky-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-sky-500 shadow-lg transition transform hover:scale-105">Proceed to Lab Activity <i class="fa-solid fa-arrow-right ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- LAB ACTIVITY SECTION -->
+        <div id="activity-section" class="tab-content no-print">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Interactive Lab Activities</h1>
+                <p class="text-gray-600">Complete these 8 mini-labs to reinforce your understanding of Database Fundamentals.</p>
+            </div>
+
+            <!-- Concept 1: Databases vs Flat Files (Labs 1 & 2) -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-xl shadow-md border-l-4 border-blue-500">
+                    <h2 class="text-xl font-bold mb-2 text-blue-700">Lab 1: System Sorter</h2>
+                    <p class="text-sm text-gray-600 mb-4">Click an item below, then click the correct system type to categorize it.</p>
+                    
+                    <div class="flex flex-wrap gap-2 mb-4" id="lab1-items">
+                        <button class="lab1-btn bg-gray-200 px-3 py-1 rounded text-sm border border-gray-400" onclick="selectLab1Item(this)">High Scalability</button>
+                        <button class="lab1-btn bg-gray-200 px-3 py-1 rounded text-sm border border-gray-400" onclick="selectLab1Item(this)">Simple Rows & Columns</button>
+                        <button class="lab1-btn bg-gray-200 px-3 py-1 rounded text-sm border border-gray-400" onclick="selectLab1Item(this)">Limited Concurrent Access</button>
+                        <button class="lab1-btn bg-gray-200 px-3 py-1 rounded text-sm border border-gray-400" onclick="selectLab1Item(this)">Handles Data Variety</button>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-blue-50 border-2 border-blue-300 rounded p-4 text-center cursor-pointer hover:bg-blue-100" onclick="placeLab1Item('database', this)">
+                            <h3 class="font-bold text-blue-800 border-b border-blue-200 pb-2 mb-2">Database</h3>
+                            <div class="target-list min-h-[50px] text-sm text-blue-900"></div>
+                        </div>
+                        <div class="bg-gray-50 border-2 border-gray-300 rounded p-4 text-center cursor-pointer hover:bg-gray-100" onclick="placeLab1Item('flatfile', this)">
+                            <h3 class="font-bold text-gray-800 border-b border-gray-200 pb-2 mb-2">Flat File</h3>
+                            <div class="target-list min-h-[50px] text-sm text-gray-900"></div>
+                        </div>
+                    </div>
+                    <div id="lab1-feedback" class="text-center font-bold mt-2 h-6 text-sm"></div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-md border-l-4 border-blue-500">
+                    <h2 class="text-xl font-bold mb-2 text-blue-700">Lab 2: Schema Builder</h2>
+                    <p class="text-sm text-gray-600 mb-4">Define the schema by selecting the correct Data Type for each Field.</p>
+                    
+                    <div class="space-y-3 mb-4">
+                        <div class="flex justify-between items-center bg-gray-50 p-2 border rounded">
+                            <span class="font-bold text-gray-700">Employee ID</span>
+                            <select id="schema-id" class="border rounded p-1 text-sm bg-white"><option value="">Select...</option><option value="INTEGER">INTEGER</option><option value="TEXT">TEXT</option></select>
+                        </div>
+                        <div class="flex justify-between items-center bg-gray-50 p-2 border rounded">
+                            <span class="font-bold text-gray-700">Name</span>
+                            <select id="schema-name" class="border rounded p-1 text-sm bg-white"><option value="">Select...</option><option value="INTEGER">INTEGER</option><option value="TEXT">TEXT</option></select>
+                        </div>
+                        <div class="flex justify-between items-center bg-gray-50 p-2 border rounded">
+                            <span class="font-bold text-gray-700">Salary</span>
+                            <select id="schema-salary" class="border rounded p-1 text-sm bg-white"><option value="">Select...</option><option value="INTEGER">INTEGER</option><option value="TEXT">TEXT</option></select>
+                        </div>
+                    </div>
+                    <button onclick="checkLab2()" class="w-full bg-blue-600 text-white rounded py-2 font-bold hover:bg-blue-700">Create Table Constraints</button>
+                    <div id="lab2-feedback" class="text-center font-bold mt-2 h-6 text-sm"></div>
+                </div>
+            </div>
+
+            <!-- Concept 2: Storage Types (Labs 3 & 4) -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-xl shadow-md border-l-4 border-indigo-500">
+                    <h2 class="text-xl font-bold mb-2 text-indigo-700">Lab 3: Storage Solutions</h2>
+                    <p class="text-sm text-gray-600 mb-4">Read the scenario and assign the most appropriate storage type.</p>
+                    
+                    <div class="space-y-4 mb-4">
+                        <div class="bg-indigo-50 p-3 rounded border border-indigo-100 text-sm">
+                            <p class="mb-2 text-gray-800">"We need to schedule automated backups to prevent data loss from office hardware failure."</p>
+                            <select id="storage-1" class="border border-indigo-300 rounded p-1 w-full bg-white"><option value="">Select Storage...</option><option value="cloud">Cloud Storage</option><option value="local">Local Storage</option></select>
+                        </div>
+                        <div class="bg-indigo-50 p-3 rounded border border-indigo-100 text-sm">
+                            <p class="mb-2 text-gray-800">"We work with highly classified data that cannot be transmitted over the open internet."</p>
+                            <select id="storage-2" class="border border-indigo-300 rounded p-1 w-full bg-white"><option value="">Select Storage...</option><option value="cloud">Cloud Storage</option><option value="local">Local Storage</option></select>
+                        </div>
+                    </div>
+                    <button onclick="checkLab3()" class="w-full bg-indigo-600 text-white rounded py-2 font-bold hover:bg-indigo-700">Confirm Storage Strategy</button>
+                    <div id="lab3-feedback" class="text-center font-bold mt-2 h-6 text-sm"></div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-md border-l-4 border-indigo-500">
+                    <h2 class="text-xl font-bold mb-2 text-indigo-700">Lab 4: Data Persistence</h2>
+                    <p class="text-sm text-gray-600 mb-4">To ensure system persistence against failure, activate exactly 3 redundant backup drives.</p>
+                    
+                    <div class="flex flex-wrap justify-center gap-3 mb-4">
+                        <!-- Redundant Drives -->
+                        <div class="w-16 h-16 bg-gray-200 border-4 border-gray-400 rounded-lg flex items-center justify-center text-2xl cursor-pointer hover:bg-gray-300 transition" onclick="toggleDrive(this)"><i class="fa-solid fa-hard-drive text-gray-500"></i></div>
+                        <div class="w-16 h-16 bg-gray-200 border-4 border-gray-400 rounded-lg flex items-center justify-center text-2xl cursor-pointer hover:bg-gray-300 transition" onclick="toggleDrive(this)"><i class="fa-solid fa-hard-drive text-gray-500"></i></div>
+                        <div class="w-16 h-16 bg-gray-200 border-4 border-gray-400 rounded-lg flex items-center justify-center text-2xl cursor-pointer hover:bg-gray-300 transition" onclick="toggleDrive(this)"><i class="fa-solid fa-hard-drive text-gray-500"></i></div>
+                        <div class="w-16 h-16 bg-gray-200 border-4 border-gray-400 rounded-lg flex items-center justify-center text-2xl cursor-pointer hover:bg-gray-300 transition" onclick="toggleDrive(this)"><i class="fa-solid fa-hard-drive text-gray-500"></i></div>
+                        <div class="w-16 h-16 bg-gray-200 border-4 border-gray-400 rounded-lg flex items-center justify-center text-2xl cursor-pointer hover:bg-gray-300 transition" onclick="toggleDrive(this)"><i class="fa-solid fa-hard-drive text-gray-500"></i></div>
+                    </div>
+                    <div id="lab4-feedback" class="text-center font-bold mt-4 h-6 text-sm text-indigo-600">Drives active: 0/3</div>
+                </div>
+            </div>
+
+            <!-- Concept 3: Access Methods (Labs 5 & 6) -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-xl shadow-md border-l-4 border-teal-500">
+                    <h2 class="text-xl font-bold mb-2 text-teal-700">Lab 5: Access Configuration</h2>
+                    <p class="text-sm text-gray-600 mb-4">A user is exploring a city overseas where mobile data is expensive and Wi-Fi is spotty. Configure their device.</p>
+                    
+                    <div class="bg-teal-50 p-4 rounded border border-teal-200 mb-4">
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="font-bold text-gray-700"><i class="fa-solid fa-plane mr-2"></i>Airplane Mode</span>
+                            <button id="toggle-airplane" onclick="toggleSwitch('airplane')" class="w-12 h-6 bg-gray-300 rounded-full relative transition-colors"><div class="w-4 h-4 bg-white rounded-full absolute left-1 top-1 transition-transform"></div></button>
+                        </div>
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="font-bold text-gray-700"><i class="fa-solid fa-download mr-2"></i>Download Maps</span>
+                            <button id="toggle-maps" onclick="toggleSwitch('maps')" class="w-12 h-6 bg-gray-300 rounded-full relative transition-colors"><div class="w-4 h-4 bg-white rounded-full absolute left-1 top-1 transition-transform"></div></button>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-teal-200">
+                            <p class="text-sm font-bold text-gray-700 mb-2">Resulting Access Required:</p>
+                            <select id="access-type" class="border border-teal-300 rounded p-1 w-full bg-white text-sm"><option value="">Select...</option><option value="online">Online Access</option><option value="offline">Offline Access</option></select>
+                        </div>
+                    </div>
+                    <button onclick="checkLab5()" class="w-full bg-teal-600 text-white rounded py-2 font-bold hover:bg-teal-700">Apply Settings</button>
+                    <div id="lab5-feedback" class="text-center font-bold mt-2 h-6 text-sm"></div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-md border-l-4 border-teal-500">
+                    <h2 class="text-xl font-bold mb-2 text-teal-700">Lab 6: Data Synchronization</h2>
+                    <p class="text-sm text-gray-600 mb-4">You have regained internet connectivity. Click the "SYNC" button precisely when the network strength is in the green zone to upload your offline data.</p>
+                    
+                    <div class="relative w-full h-8 bg-gray-200 rounded border border-gray-400 overflow-hidden mb-4">
+                        <!-- Green Zone -->
+                        <div class="absolute h-full w-1/4 bg-green-400 left-[60%]"></div>
+                        <!-- Moving Bar -->
+                        <div id="sync-bar" class="absolute h-full w-2 bg-black left-0"></div>
+                    </div>
+                    
+                    <div class="flex gap-2">
+                        <button onclick="startSyncBar()" class="flex-1 bg-gray-600 text-white rounded py-2 font-bold hover:bg-gray-700">Start Network</button>
+                        <button onclick="attemptSync()" class="flex-1 bg-teal-600 text-white rounded py-2 font-bold hover:bg-teal-700">SYNC DATA</button>
+                    </div>
+                    <div id="lab6-feedback" class="text-center font-bold mt-4 h-6 text-sm"></div>
+                </div>
+            </div>
+
+            <!-- Concept 4: SQL Queries & Records (Labs 7 & 8) -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-xl shadow-md border-l-4 border-emerald-500">
+                    <h2 class="text-xl font-bold mb-2 text-emerald-700">Lab 7: Query Builder</h2>
+                    <p class="text-sm text-gray-600 mb-4">Click the SQL syntax blocks in the correct order to form a query that retrieves all records from the 'employees' table.</p>
+                    
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <div class="query-block bg-emerald-100 text-emerald-800 border border-emerald-400 px-3 py-2 rounded font-mono font-bold" onclick="addQueryBlock('FROM')">FROM</div>
+                        <div class="query-block bg-emerald-100 text-emerald-800 border border-emerald-400 px-3 py-2 rounded font-mono font-bold" onclick="addQueryBlock(';')">;</div>
+                        <div class="query-block bg-emerald-100 text-emerald-800 border border-emerald-400 px-3 py-2 rounded font-mono font-bold" onclick="addQueryBlock('employees')">employees</div>
+                        <div class="query-block bg-emerald-100 text-emerald-800 border border-emerald-400 px-3 py-2 rounded font-mono font-bold" onclick="addQueryBlock('*')">*</div>
+                        <div class="query-block bg-emerald-100 text-emerald-800 border border-emerald-400 px-3 py-2 rounded font-mono font-bold" onclick="addQueryBlock('SELECT')">SELECT</div>
+                    </div>
+                    
+                    <div class="w-full bg-gray-900 text-green-400 p-3 rounded font-mono text-sm min-h-[48px] flex items-center gap-2 mb-4" id="query-output">
+                        sqlite> <span id="built-query"></span><span class="animate-pulse">_</span>
+                    </div>
+                    
+                    <div class="flex gap-2">
+                        <button onclick="clearQuery()" class="flex-1 bg-gray-300 text-gray-800 rounded py-2 font-bold hover:bg-gray-400">Clear</button>
+                        <button onclick="executeLab7Query()" class="flex-1 bg-emerald-600 text-white rounded py-2 font-bold hover:bg-emerald-700">Execute Query</button>
+                    </div>
+                    <div id="lab7-feedback" class="text-center font-bold mt-2 h-6 text-sm"></div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-md border-l-4 border-emerald-500">
+                    <h2 class="text-xl font-bold mb-2 text-emerald-700">Lab 8: Record Deletion</h2>
+                    <p class="text-sm text-gray-600 mb-4">You have executed: <code>DELETE FROM employees WHERE Name='Steven Braun';</code>. Click the exact record in the table below that this query will remove.</p>
+                    
+                    <div class="border rounded border-gray-300 overflow-hidden text-sm mb-4">
+                        <div class="bg-gray-100 border-b border-gray-300 px-3 py-2 font-bold grid grid-cols-3">
+                            <div>ID</div><div>Name</div><div>Position</div>
+                        </div>
+                        <div class="record-row px-3 py-2 border-b border-gray-200 grid grid-cols-3" onclick="selectRecord(this, 'Debbie')">
+                            <div>1</div><div>Debbie Butler</div><div>IT Support</div>
+                        </div>
+                        <div class="record-row px-3 py-2 border-b border-gray-200 grid grid-cols-3" onclick="selectRecord(this, 'Steven')">
+                            <div>32</div><div>Steven Braun</div><div>Operations</div>
+                        </div>
+                        <div class="record-row px-3 py-2 grid grid-cols-3" onclick="selectRecord(this, 'Luis')">
+                            <div>57</div><div>Luis Lamb</div><div>Engineer</div>
+                        </div>
+                    </div>
+                    <button onclick="checkLab8()" class="w-full bg-red-600 text-white rounded py-2 font-bold hover:bg-red-700">Confirm Deletion</button>
+                    <div id="lab8-feedback" class="text-center font-bold mt-2 h-6 text-sm"></div>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <button onclick="switchTab('quiz')" class="bg-sky-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-sky-500 shadow-lg transition transform hover:scale-105">Take the Mastery Quiz <i class="fa-solid fa-clipboard-check ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- QUIZ SECTION -->
+        <div id="quiz-section" class="tab-content no-print">
+            <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-xl max-w-4xl mx-auto border-t-4 border-sky-600">
+                <div class="text-center mb-8 border-b pb-4">
+                    <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Unit 06 Section 5.2.1 Mastery Quiz</h1>
+                    <p class="text-gray-600">Score 90% or higher (18/20) to earn your Certificate of Mastery and unlock the Retro Game!</p>
+                </div>
+
+                <div id="quiz-container" class="space-y-8">
+                    <!-- Questions injected via JS -->
+                </div>
+
+                <div class="mt-10 text-center border-t pt-6 flex flex-col md:flex-row justify-center items-center gap-4">
+                    <button id="submit-quiz-btn" onclick="gradeQuiz()" class="bg-sky-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-sky-700 shadow-lg transition w-full md:w-auto">Submit Quiz</button>
+                    <button id="proceed-game-btn" onclick="switchTab('game')" class="hidden bg-emerald-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-emerald-700 shadow-lg transition w-full md:w-auto">Play Retro Game <i class="fa-solid fa-gamepad ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RETRO GAME SECTION -->
+        <div id="game-section" class="tab-content no-print">
+            <div class="bg-slate-900 p-6 sm:p-8 rounded-2xl shadow-xl max-w-4xl mx-auto border-4 border-slate-700 flex flex-col items-center">
+                <div class="text-center mb-4 w-full">
+                    <h1 class="text-3xl font-extrabold text-sky-400 mb-2 tracking-widest uppercase" style="font-family: monospace;">Query Defender</h1>
+                    <p class="text-slate-300 text-sm">Rogue data inputs are falling into the database! Quickly type the SQL commands or database terms to sanitize the inputs before they hit the server. If they reach the bottom, data corruption occurs!</p>
+                </div>
+                
+                <div class="flex justify-between items-center w-full max-w-[600px] mb-2 px-4 text-white font-mono text-xl">
+                    <div>Data Saved: <span id="game-score" class="text-emerald-400 font-bold">0</span></div>
+                    <div>Server Integrity: <span id="game-lives" class="text-red-400 font-bold">3</span></div>
+                </div>
+
+                <div class="relative flex justify-center w-full">
+                    <!-- Game Canvas -->
+                    <canvas id="game-canvas" width="600" height="450" class="w-full max-w-[600px]"></canvas>
+                    
+                    <!-- Overlay Start Button -->
+                    <div id="game-overlay" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-80 rounded-lg max-w-[600px] mx-auto z-10 flex-col">
+                        <h2 id="game-overlay-title" class="text-sky-400 font-mono text-3xl mb-4 font-bold">STANDBY</h2>
+                        <button id="start-game-btn" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold font-mono py-3 px-6 rounded-lg text-xl border-4 border-emerald-800 uppercase transform transition hover:scale-105">Boot Server (Start)</button>
+                    </div>
+                </div>
+                
+                <!-- Mobile Keyboard Input Input (Hidden but focusable) -->
+                <input type="text" id="mobile-keyboard-input" class="opacity-0 h-0 w-0 absolute pointer-events-none" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+                <p class="text-slate-400 text-xs mt-2 text-center md:hidden">Tap the game screen to open mobile keyboard.</p>
+
+                <div class="mt-8 text-center w-full border-t border-slate-700 pt-6">
+                    <button onclick="switchTab('cert')" class="bg-sky-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-sky-700 shadow-lg transition w-full md:w-auto">View Certificate <i class="fa-solid fa-award ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CERTIFICATE SECTION -->
+        <div id="cert-section" class="tab-content">
+            <div class="max-w-5xl mx-auto">
+                
+                <!-- Controls -->
+                <div class="bg-white p-6 rounded shadow mb-6 no-print text-center border border-gray-200">
+                    <h2 class="text-2xl font-bold text-sky-600 mb-2">🎉 Congratulations! 🎉</h2>
+                    <p class="text-gray-700 mb-4">You have achieved mastery of Database Fundamentals.</p>
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+                        <input type="text" id="student-name-input" value="Student" placeholder="Enter your first name" class="border-2 border-gray-300 rounded px-4 py-2 w-full md:w-64 focus:border-sky-500 focus:outline-none">
+                        <button onclick="updateCertName()" class="bg-sky-600 text-white px-4 py-2 rounded hover:bg-sky-700 transition">Update Name</button>
+                        <button id="download-btn" onclick="downloadCert()" class="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900 transition flex items-center justify-center">
+                            <i class="fa-solid fa-download mr-2"></i>Download PNG
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Certificate Render Container -->
+                <div class="cert-preview-container print:p-0 print:bg-white">
+                    <div id="certificate">
+                        <div class="gold-seal">
+                            <div class="gold-seal-inner-1">
+                                <div class="gold-seal-inner-2">
+                                     <span class="embossed-text embossed-text-large">Certificate</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-small">Of</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-large">Excellence</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="relative z-20 w-full h-full flex flex-col pt-[48px] pl-[380px] pr-[48px]">
+                            <h1 class="text-[#0c4a6e] text-[4.5rem] leading-none font-serif font-bold tracking-wide uppercase mb-2">CERTIFICATE</h1>
+                            <h2 class="text-gray-800 text-3xl font-serif tracking-widest uppercase mb-10">Of Achievement</h2>
+                            
+                            <p class="text-[1.4rem] font-body text-gray-800 mb-4">This is to certify that</p>
+                            
+                            <div class="relative mb-8 w-full">
+                                <h3 id="cert-student-name" class="text-[4rem] text-[#0c4a6e] font-serif italic leading-none pb-2 relative z-10 text-center w-full block">Student</h3>
+                                <div class="w-full border-b-[2px] border-[#0c4a6e] absolute bottom-[4px] left-0 z-0"></div>
+                                <div class="w-full border-b-[2px] border-dotted border-red-500 absolute bottom-[0px] left-0 z-0"></div>
+                            </div>
+                            
+                            <p class="text-[1.3rem] font-body text-gray-800 leading-relaxed w-full pr-4">
+                                Has successfully completed the assessment for 
+                                <strong class="text-[1.8rem] text-[#0c4a6e] block mt-4 mb-2 font-serif">Cyber.org Tech+ Unit 06 Section 5.2.1</strong>
+                                <strong class="text-[1.5rem] text-black block mb-4 font-serif italic">Database Fundamentals</strong>
+                                <span class="text-[1.1rem] text-gray-700 leading-snug block">Demonstrating proficiency in explaining database structures, records and fields, differentiating cloud vs. local storage, defining access types, and utilizing foundational SQL queries.</span>
+                            </p>
+                            
+                            <div class="flex justify-end gap-16 items-end mt-auto mb-[60px] w-full pr-8">
+                                <div class="w-64">
+                                    <div class="border-b border-gray-600 mb-2 h-20 flex items-end justify-center relative">
+                                        <span class="font-script text-[5rem] text-[#0c4a6e] absolute bottom-[-10px] transform -rotate-3 opacity-90">Dr. M. S</span>
+                                    </div>
+                                    <p class="font-serif text-xl text-gray-800 text-center">Administration</p>
+                                </div>
+                                
+                                <div class="w-64">
+                                    <div class="border-b border-gray-600 mb-2 text-center h-20 flex items-end justify-center">
+                                        <p id="cert-date" class="font-body text-2xl text-gray-800 pb-1">Date Here</p>
+                                    </div>
+                                    <p class="font-serif text-xl text-gray-800 text-center">Date</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Custom Modal for Alerts -->
+    <div id="custom-modal" class="fixed inset-0 bg-black bg-opacity-50 z-[100] hidden flex justify-center items-center backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all">
+            <div class="text-center">
+                <div id="modal-icon" class="text-5xl mb-4"></div>
+                <h3 id="modal-title" class="text-2xl font-bold mb-2 text-gray-900"></h3>
+                <p id="modal-msg" class="text-gray-600 mb-6"></p>
+                <button onclick="closeModal()" class="bg-sky-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-sky-700 transition w-full">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Briefing Modal -->
+    <div id="briefing-modal" class="fixed inset-0 bg-black bg-opacity-70 z-[120] hidden flex justify-center items-center backdrop-blur-sm p-4 sm:p-6">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col transform transition-all overflow-hidden border-4 border-sky-700">
+            <div class="p-6 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+                <div class="flex items-center gap-4">
+                    <div id="briefing-modal-icon" class="text-4xl"></div>
+                    <h3 id="briefing-modal-title" class="text-2xl md:text-3xl font-bold text-gray-900"></h3>
+                </div>
+                <button onclick="closeBriefing()" class="text-gray-400 hover:text-red-600 transition text-4xl leading-none">&times;</button>
+            </div>
+            <div id="briefing-modal-content" class="p-6 md:p-10 overflow-y-auto flex-grow text-gray-700 text-lg leading-relaxed bg-white">
+                <!-- Dynamic Content Injected Here -->
+            </div>
+            <div class="p-6 border-t border-gray-200 bg-gray-50 flex justify-end">
+                <button onclick="closeBriefing()" class="bg-sky-700 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-sky-800 transition shadow-md">Acknowledge & Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Extensive Briefing Content Data (Min 7 Paragraphs per detail, specific structure for Use Cases) ---
+        const briefingData = {
+            'db-details': {
+                title: 'Database vs. Flat File',
+                icon: '<i class="fa-solid fa-server text-blue-600"></i>',
+                html: `
+                    <p class="mb-5">In the modern digital landscape, information is power. However, raw data is only useful if it can be gathered, stored, and retrieved in a logical structure. A <strong>database</strong> is a highly organized, multi-table digital storage system specifically designed to hold massive amounts of information on a computer, making data manageable and actionable for businesses.</p>
+                    
+                    <p class="mb-5">To interact with a database, users rely on a <strong>Database Management System (DBMS)</strong>. Software like SQLite, MySQL, or Oracle acts as the bridge between the user and the raw data, enabling users to define the structure, create records, maintain the system, and tightly control who has access to specific pieces of information.</p>
+                    
+                    <p class="mb-5">Before databases became standard, organizations largely relied on <strong>flat files</strong>. A flat file, like a basic Microsoft Excel or Google Sheets spreadsheet, is a simple, two-dimensional structure of rows and columns. While flat files are incredibly easy to understand and require very little training, they suffer from severe limitations when scaled up.</p>
+                    
+                    <p class="mb-5">The primary limitation of a flat file is <strong>concurrent access</strong>. If a team of ten people needs to edit the same spreadsheet simultaneously, the file often becomes locked or data gets overwritten and corrupted. Furthermore, as data grows into the millions of rows, flat files experience extreme performance drops. Databases solve this by supporting multiple concurrent users and offering high scalability and optimized speed.</p>
+                    
+                    <p class="mb-5">Creating a database is a methodical process. It begins with designing the <strong>schema</strong>, which defines the exact rules and structure of the database. The schema dictates what tables exist (like an 'Employees' table and a 'Payroll' table), what fields they contain, and exactly how those tables logically relate to one another to prevent duplicate data entry.</p>
+                    
+                    <p class="mb-5">Once tables are created and constraints (rules enforcing data accuracy) are defined, data must be entered. While <em>data input</em> involves manually typing information directly into the system, it is prone to human error and is incredibly slow. Instead, organizations use <strong>data import</strong>, bringing structured data in from external sources (like uploading a massive CSV file), which is significantly faster and more accurate.</p>
+                    
+                    <p class="mb-5">Finally, once the data is accurately stored in the database, the true power of the system is realized through <strong>reports</strong>. Databases can quickly generate formatted summaries, custom dashboards, and data visualizations. This takes raw, unreadable lines of data and transforms them into meaningful charts and graphs that executives use to make critical business decisions.</p>
+                `
+            },
+            'db-usecase': {
+                title: 'Database vs. Flat File: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 1: Large-Scale Financial Transactions</h4>
+                        <p class="mb-2">A global bank processes thousands of transactions per second from ATMs, mobile apps, and teller stations worldwide. They require a system that guarantees data integrity and high-speed concurrent access.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Concurrency):</strong> A robust Database Management System (DBMS) allows thousands of users to withdraw money at the exact same millisecond without locking the entire system or corrupting the global ledger.</li>
+                            <li><strong>Example 2 (Scalability):</strong> As the bank acquires new customers, the database easily scales to hold billions of historical transaction records while maintaining lightning-fast query speeds, a task that would instantly crash a flat file spreadsheet.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 2: Small Team Event Planning</h4>
+                        <p class="mb-2">A small committee of three people is planning a local school bake sale and needs to keep track of volunteer names and what items they are bringing.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Flat File Simplicity):</strong> The committee uses a simple flat file spreadsheet to track the 30 volunteers. Because the data set is small and complex relationships aren't needed, the spreadsheet is faster to set up than a full database schema.</li>
+                            <li><strong>Example 2 (Data Variety):</strong> The spreadsheet allows them to quickly type unstructured notes next to a volunteer's name without needing to define strict database constraints for a new field.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Flat File Structure</p>
+                            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&h=350" alt="Spreadsheet data on a screen" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Massive Data Centers</p>
+                            <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=600&h=350" alt="Large server racks in a data center" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'storage-details': {
+                title: 'Storage Types & Data Persistence',
+                icon: '<i class="fa-solid fa-cloud-arrow-up text-indigo-600"></i>',
+                html: `
+                    <p class="mb-5">In the realm of databases, <strong>storage</strong> refers to the specific methods and physical infrastructure used to keep data available and intact. It is not just about having space to put files; it is about establishing a robust environment where data can survive unexpected events. This leads to the concept of <strong>data persistence</strong>, which is the ability of a system to maintain data across user sessions, system crashes, and physical power reboots.</p>
+                    
+                    <p class="mb-5">Without data persistence, any information entered into a computer is held only in temporary RAM (Random Access Memory). If the power goes out, the data vanishes forever. Therefore, databases utilize persistent storage mechanisms like Write-Ahead Logging (WAL) and ACID properties (Atomicity, Consistency, Isolation, Durability) to guarantee that once a database confirms a transaction is saved, it is permanently written to a drive and cannot be lost to a crash.</p>
+                    
+                    <p class="mb-5">When architecting a database, IT professionals must choose between two primary storage environments. The first is <strong>Local Storage</strong>. Local storage means the database files are saved on physical hard drives or servers that are physically located on the premises of the business, directly connected to the local network.</p>
+                    
+                    <p class="mb-5">The primary advantage of local storage is absolute control and speed. Because the data does not have to travel over the global internet, read and write speeds are exceptionally fast. Furthermore, organizations with highly sensitive data prefer local storage because it reduces the risk of external cyber breaches. However, it requires the company to manually purchase, install, and maintain expensive hardware.</p>
+                    
+                    <p class="mb-5">The modern alternative is <strong>Cloud Storage</strong>. In a cloud environment, data is saved on massive remote servers owned by third-party providers (like Amazon Web Services or Microsoft Azure) and is accessed by the user via the internet. The physical location of the hard drives could be thousands of miles away from the user.</p>
+                    
+                    <p class="mb-5">Cloud storage offers unparalleled <strong>scalability</strong>. If a business suddenly needs double the storage space, they simply click a button to upgrade their subscription, rather than waiting weeks to order and install physical servers. Additionally, cloud providers automatically handle hardware maintenance, security patching, and automated redundant backups, taking the burden off the local IT staff.</p>
+                    
+                    <p class="mb-5">Despite its advantages, cloud storage has notable drawbacks. It introduces an absolute <strong>dependence on internet connectivity</strong>; if the company's ISP goes down, they lose all access to their databases. Furthermore, storing data on external third-party servers can raise serious regulatory compliance issues for hospitals and government agencies that are legally barred from transmitting specific data over the open internet.</p>
+                `
+            },
+            'storage-usecase': {
+                title: 'Storage Types: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-indigo-800 mb-2 border-b-2 border-indigo-200 pb-1">Case 1: Remote Marketing Agency</h4>
+                        <p class="mb-2">A creative marketing agency has graphic designers, copywriters, and project managers spread across four different countries. They need to collaboratively edit large project files and database assets.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Cloud Storage):</strong> The agency utilizes a cloud-based database system, allowing team members in Tokyo and New York to instantly access, edit, and save changes to the exact same client file via their web browsers, regardless of their physical location.</li>
+                            <li><strong>Example 2 (Automated Backup):</strong> Because the agency relies on cloud storage, the cloud provider automatically replicates their database across multiple geographic server farms, ensuring that if a server goes down in one region, the agency's data persists without interruption.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-indigo-800 mb-2 border-b-2 border-indigo-200 pb-1">Case 2: Classified Government Operations</h4>
+                        <p class="mb-2">A national security agency is processing highly classified intelligence data. Federal regulations strictly prohibit this specific classification of data from ever touching the public internet.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Local Storage):</strong> The agency builds an "air-gapped" local storage server inside a secure facility. The database lives entirely on physical drives that are directly wired to internal terminals, ensuring no external cyber-attacker can access the data via the internet.</li>
+                            <li><strong>Example 2 (Total Control):</strong> By using local storage, the agency maintains absolute physical control over the hardware, allowing them to physically destroy the hard drives if the facility is compromised, an action impossible to guarantee with third-party cloud servers.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Local Hard Drives</p>
+                            <img src="https://images.unsplash.com/photo-1597852074816-d933c7d2b988?auto=format&fit=crop&w=600&h=350" alt="Physical hard drives representing local storage" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Cloud Infrastructure</p>
+                            <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=600&h=350" alt="Digital globe representing global cloud connectivity" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'access-details': {
+                title: 'Access Methods: Online vs. Offline',
+                icon: '<i class="fa-solid fa-wifi text-teal-600"></i>',
+                html: `
+                    <p class="mb-5">In data management, determining where data lives (Storage) is only half the battle. Organizations must also determine how users will interact with that data. This refers to <strong>Data Availability</strong>, which is the ability of a system to ensure that data is accessible and functional exactly when it is needed. Availability is primarily dictated by the chosen access method: Online or Offline.</p>
+                    
+                    <p class="mb-5">It is crucial to understand that storage and access are distinct concepts. You can have a local storage server in your office building, but if you connect to it from a coffee shop using a VPN, you are utilizing an <em>online access</em> method. Conversely, you could download a file from cloud storage onto your laptop and work on it during a flight, which is an <em>offline access</em> method.</p>
+                    
+                    <p class="mb-5"><strong>Online Access</strong> means the user is interacting with the data through an active, live internet or network connection. This is the standard for modern collaborative work environments. When accessing databases online, users benefit from immediate, real-time data retrieval. If an inventory manager in a warehouse updates stock levels, the sales team across the country sees that update instantly.</p>
+                    
+                    <p class="mb-5">Furthermore, online access allows for seamless integration. A company's online database can automatically feed live data into their website, their mobile app, and their accounting software simultaneously. It also ensures users are always working with the most up-to-date features and security patches provided by the software host.</p>
+                    
+                    <p class="mb-5">However, online access has a glaring weakness: <strong>Internet Dependency</strong>. If the user is in a location with a spotty mobile signal, or if their ISP experiences an outage, their ability to work grinds to an absolute halt. Additionally, transmitting sensitive database queries over public internet connections opens vectors for interception if the data is not properly encrypted.</p>
+                    
+                    <p class="mb-5">To combat this, users rely on <strong>Offline Access</strong>. Offline access allows a user to interact with data stored locally on their device without requiring any internet connection. This is vital for professionals working in remote locations, on airplanes, or in overseas areas where mobile data roaming charges are prohibitively expensive.</p>
+                    
+                    <p class="mb-5">The major drawback of offline access is the challenge of <strong>Synchronization</strong>. If a user modifies offline records on their laptop, those changes are not reflected in the main database. Once the user regains internet connectivity, they must manually sync their device. If another employee modified the same record while the first user was offline, the system will encounter complex version-control conflicts that must be resolved.</p>
+                `
+            },
+            'access-usecase': {
+                title: 'Access Methods: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-teal-800 mb-2 border-b-2 border-teal-200 pb-1">Case 1: Live Corporate Video Conference</h4>
+                        <p class="mb-2">A global tech company is hosting a live, all-hands meeting using a platform like Microsoft Teams or Zoom. Executives are presenting live quarterly data to 500 employees worldwide.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Online Access Required):</strong> The platform intrinsically requires online access. Video and audio packets must be transmitted and received in real-time over the internet so remote employees can participate in live Q&A sessions.</li>
+                            <li><strong>Example 2 (Integration):</strong> Because the meeting is online, the software can actively pull live charts from the company's online sales database and share them directly on the screen for all participants to see simultaneously.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-teal-800 mb-2 border-b-2 border-teal-200 pb-1">Case 2: Exploring a Foreign City</h4>
+                        <p class="mb-2">A tourist is backpacking through remote areas of Europe where their home cellular plan charges exorbitant fees for data roaming, and reliable Wi-Fi is rarely available outside of hotels.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Offline Preparation):</strong> While at the hotel (online), the tourist downloads high-resolution city maps and translation dictionaries directly to their phone's local storage for offline use.</li>
+                            <li><strong>Example 2 (Offline Execution):</strong> While navigating the city streets with no internet connection, the tourist successfully uses the offline GPS map to find a restaurant, avoiding high roaming fees and bypassing the spotty cellular network entirely.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Global Connectivity</p>
+                            <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=600&h=350" alt="People collaborating with laptops online" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Offline Navigation</p>
+                            <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=600&h=350" alt="Traveler looking at map offline" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'sql-details': {
+                title: 'SQL Queries & Database Records',
+                icon: '<i class="fa-solid fa-table-list text-emerald-600"></i>',
+                html: `
+                    <p class="mb-5">At a structural level, databases organize information into tables, and these tables are comprised of records and fields. A <strong>record</strong> (commonly known as a row) represents one complete, distinct entity. For example, in an 'Employees' table, a single record holds all the information for one specific person. A <strong>field</strong> (or column) represents a specific category of data across all records, such as the 'Salary' field. The individual piece of data inside a field (e.g., "$75,000") is the <strong>data value</strong>.</p>
+                    
+                    <p class="mb-5">To ensure accuracy, databases enforce strict characteristics on records. The most crucial is <strong>uniqueness</strong>, which is achieved through a Primary Key. A Primary Key is a specific field (like an Employee ID number) where no two records can have the same data value. This guarantees that even if two employees are named "John Smith", the database can tell them apart based on their unique Primary Key.</p>
+                    
+                    <p class="mb-5">When a user wants to interact with these records, they use a <strong>query</strong>. A query is essentially asking the database a structured question or giving it a command. Rather than manually scrolling through millions of records to find an answer, a user writes a query, and the Database Management System instantly returns the exact requested data.</p>
+                    
+                    <p class="mb-5">The standard language used to write these queries is <strong>SQL (Structured Query Language)</strong>. The most common SQL operation is Data Retrieval using the <code>SELECT</code> command. If a user types <code>SELECT * FROM employees;</code>, the system will return every record in the table. The asterisk (*) is a wildcard meaning "all fields".</p>
+                    
+                    <p class="mb-5">Queries become incredibly powerful when combined with filtering and aggregation. Using the <code>WHERE</code> clause, a user can filter data. For example, <code>SELECT Name FROM employees WHERE Position='IT Support';</code> will only return the names of the IT staff. Furthermore, users can use commands like <code>ORDER BY</code> to sort the results alphabetically or numerically before viewing them.</p>
+                    
+                    <p class="mb-5">SQL is also used to actively modify the database structure. Users can add brand new records using the <code>INSERT INTO</code> command. They can alter existing data values (like giving an employee a raise) using the <code>UPDATE</code> command. Finally, they can remove obsolete records entirely using the <code>DELETE FROM</code> command. Modifying data must be done carefully to maintain data integrity.</p>
+                    
+                    <p class="mb-5">Because modifying data is risky, professionals use transaction commands to track their changes. Initiating a <code>BEGIN TRANSACTION;</code> command tells the database to monitor all subsequent actions. If the user makes a terrible mistake (like accidentally deleting the whole table), they can issue a <code>ROLLBACK;</code> command to instantly undo the changes. If the changes are correct, they issue a <code>COMMIT;</code> command to permanently save them to the persistent storage.</p>
+                `
+            },
+            'sql-usecase': {
+                title: 'SQL Queries & Records: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-emerald-800 mb-2 border-b-2 border-emerald-200 pb-1">Case 1: HR Department Record Management</h4>
+                        <p class="mb-2">An HR specialist is responsible for maintaining the corporate database. An employee named Luis Lamb recently received a promotion to Software Engineer and a salary increase.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (UPDATE Query):</strong> The HR specialist uses the SQL query: <code>UPDATE employees SET Position='Software Engineer', Salary='75000' WHERE Name='Luis Lamb';</code> to precisely target Luis's record and alter his specific data values.</li>
+                            <li><strong>Example 2 (COMMIT & ROLLBACK):</strong> Before running the update, the specialist typed <code>BEGIN TRANSACTION;</code>. Upon realizing they accidentally typed the salary as $750,000 instead of $75,000, they issue a <code>ROLLBACK;</code> command to undo the error before it becomes permanently saved to the storage array.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-emerald-800 mb-2 border-b-2 border-emerald-200 pb-1">Case 2: Generating Financial Reports</h4>
+                        <p class="mb-2">The Chief Financial Officer (CFO) needs a report showing exactly how much the company is spending on the Customer Service department.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Filtering Data):</strong> A database administrator writes a query using the <code>WHERE</code> clause: <code>SELECT Salary FROM employees WHERE Position='Customer Service Rep';</code> to isolate only the relevant records from the massive company-wide table.</li>
+                            <li><strong>Example 2 (Aggregation):</strong> To save the CFO from doing manual math, the administrator uses an aggregation function in the query: <code>SELECT SUM(Salary) FROM employees WHERE Position='Customer Service Rep';</code>, which instantly calculates and returns a single total number for the report.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: SQL Code</p>
+                            <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=600&h=350" alt="Code on a computer screen representing SQL queries" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Analyzing Reports</p>
+                            <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=600&h=350" alt="Business analysis charts and graphs" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        // Modal Control Functions
+        function openBriefing(key) {
+            const modal = document.getElementById('briefing-modal');
+            const data = briefingData[key];
+            if(data) {
+                document.getElementById('briefing-modal-icon').innerHTML = data.icon;
+                document.getElementById('briefing-modal-title').innerText = data.title;
+                document.getElementById('briefing-modal-content').innerHTML = data.html;
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; 
+            }
+        }
+
+        function closeBriefing() {
+            document.getElementById('briefing-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto'; 
+        }
+
+        document.getElementById('briefing-modal').addEventListener('click', function(e) {
+            if(e.target === this) closeBriefing();
+        });
+        
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId + '-section').classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-sky-900'));
+            const activeBtn = document.getElementById('nav-' + tabId);
+            if(activeBtn && tabId !== 'cert') activeBtn.classList.add('bg-sky-900');
+            
+            document.querySelectorAll('.nav-btn-mobile').forEach(btn => btn.classList.remove('bg-sky-700'));
+            const activeMobileBtn = document.getElementById('nav-' + tabId + '-mobile');
+            if(activeMobileBtn && tabId !== 'cert') activeMobileBtn.classList.add('bg-sky-700');
+
+            window.scrollTo(0,0);
+
+            if (tabId === 'game' && !gameRunning) {
+                drawGameStatic();
+            }
+        }
+
+        function showModal(title, message, type = 'info') {
+            const modal = document.getElementById('custom-modal');
+            const icon = document.getElementById('modal-icon');
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-msg').innerText = message;
+            
+            if(type === 'success') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-500"></i>';
+            } else if (type === 'error') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500"></i>';
+            } else if (type === 'warning') {
+                icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-yellow-500"></i>';
+            } else {
+                icon.innerHTML = '<i class="fa-solid fa-circle-info text-sky-500"></i>';
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        // --- LAB 1: System Sorter ---
+        let selectedLab1Item = null;
+        let lab1Score = 0;
+
+        function selectLab1Item(btn) {
+            document.querySelectorAll('.lab1-btn').forEach(b => b.classList.remove('bg-blue-300', 'border-blue-500'));
+            btn.classList.add('bg-blue-300', 'border-blue-500');
+            selectedLab1Item = btn;
+        }
+
+        function placeLab1Item(targetType, container) {
+            if(!selectedLab1Item) return;
+            
+            const text = selectedLab1Item.innerText;
+            const targetList = container.querySelector('.target-list');
+            
+            let isCorrect = false;
+            if (targetType === 'database' && (text === 'High Scalability' || text === 'Handles Data Variety')) isCorrect = true;
+            if (targetType === 'flatfile' && (text === 'Simple Rows & Columns' || text === 'Limited Concurrent Access')) isCorrect = true;
+
+            if (isCorrect) {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'bg-white p-1 my-1 rounded border shadow-sm';
+                itemDiv.innerText = text;
+                targetList.appendChild(itemDiv);
+                
+                selectedLab1Item.style.display = 'none';
+                selectedLab1Item = null;
+                lab1Score++;
+                document.getElementById('lab1-feedback').innerText = "Correct Classification!";
+                document.getElementById('lab1-feedback').className = "text-center font-bold mt-2 h-6 text-sm text-emerald-600";
+                
+                if(lab1Score === 4) {
+                    setTimeout(() => showModal('Lab 1 Complete', 'You correctly identified the characteristics of Databases and Flat Files.', 'success'), 300);
+                }
+            } else {
+                document.getElementById('lab1-feedback').innerText = "Incorrect. Think about the limitations of each system.";
+                document.getElementById('lab1-feedback').className = "text-center font-bold mt-2 h-6 text-sm text-red-600";
+            }
+        }
+
+        // --- LAB 2: Schema Builder ---
+        function checkLab2() {
+            const id = document.getElementById('schema-id').value;
+            const name = document.getElementById('schema-name').value;
+            const salary = document.getElementById('schema-salary').value;
+            
+            if (id === 'INTEGER' && name === 'TEXT' && salary === 'INTEGER') {
+                document.getElementById('lab2-feedback').innerText = "Schema Validated: Table Constraints Created.";
+                document.getElementById('lab2-feedback').className = "text-center font-bold mt-2 h-6 text-sm text-emerald-600";
+                setTimeout(() => showModal('Lab 2 Complete', 'You successfully defined the schema and data constraints.', 'success'), 300);
+            } else {
+                document.getElementById('lab2-feedback').innerText = "Invalid Schema. Check your Data Type assignments.";
+                document.getElementById('lab2-feedback').className = "text-center font-bold mt-2 h-6 text-sm text-red-600";
+            }
+        }
+
+        // --- LAB 3: Storage Solutions ---
+        function checkLab3() {
+            const s1 = document.getElementById('storage-1').value;
+            const s2 = document.getElementById('storage-2').value;
+            
+            if (s1 === 'cloud' && s2 === 'local') {
+                document.getElementById('lab3-feedback').innerText = "Storage Strategy Approved.";
+                document.getElementById('lab3-feedback').className = "text-center font-bold mt-2 h-6 text-sm text-emerald-600";
+                setTimeout(() => showModal('Lab 3 Complete', 'You successfully allocated the correct storage architectures.', 'success'), 300);
+            } else {
+                document.getElementById('lab3-feedback').innerText = "Strategy Denied. Review the security and backup needs.";
+                document.getElementById('lab3-feedback').className = "text-center font-bold mt-2 h-6 text-sm text-red-600";
+            }
+        }
+
+        // --- LAB 4: Data Persistence ---
+        let activeDrives = 0;
+        let lab4Done = false;
+        function toggleDrive(element) {
+            if (lab4Done) return;
+            const icon = element.querySelector('i');
+            
+            if (element.classList.contains('bg-indigo-500')) {
+                element.classList.replace('bg-indigo-500', 'bg-gray-200');
+                element.classList.replace('border-indigo-700', 'border-gray-400');
+                icon.classList.replace('text-white', 'text-gray-500');
+                activeDrives--;
+            } else {
+                element.classList.replace('bg-gray-200', 'bg-indigo-500');
+                element.classList.replace('border-gray-400', 'border-indigo-700');
+                icon.classList.replace('text-gray-500', 'text-white');
+                activeDrives++;
+            }
+            
+            document.getElementById('lab4-feedback').innerText = `Drives active: ${activeDrives}/3`;
+            document.getElementById('lab4-feedback').className = "text-center font-bold mt-4 h-6 text-sm text-indigo-600";
+            
+            if (activeDrives === 3) {
+                lab4Done = true;
+                document.getElementById('lab4-feedback').innerText = "ACID Durability Achieved!";
+                document.getElementById('lab4-feedback').className = "text-center font-bold mt-4 h-6 text-sm text-emerald-600";
+                setTimeout(() => showModal('Lab 4 Complete', 'Redundant Write-Ahead Logging is active. Data persistence guaranteed.', 'success'), 300);
+            }
+            if (activeDrives > 3) {
+                document.getElementById('lab4-feedback').innerText = "Too many drives selected. Hardware budget exceeded.";
+                document.getElementById('lab4-feedback').className = "text-center font-bold mt-4 h-6 text-sm text-red-600";
+            }
+        }
+
+        // --- LAB 5: Access Configuration ---
+        const switchStates = { airplane: false, maps: false };
+        function toggleSwitch(id) {
+            switchStates[id] = !switchStates[id];
+            const btn = document.getElementById(`toggle-${id}`);
+            const circle = btn.querySelector('div');
+            
+            if (switchStates[id]) {
+                btn.classList.replace('bg-gray-300', 'bg-teal-500');
+                circle.classList.add('translate-x-6');
+            } else {
+                btn.classList.replace('bg-teal-500', 'bg-gray-300');
+                circle.classList.remove('translate-x-6');
+            }
+        }
+
+        function checkLab5() {
+            const requiredAccess = document.getElementById('access-type').value;
+            
+            if (switchStates.airplane && switchStates.maps && requiredAccess === 'offline') {
+                document.getElementById('lab5-feedback').innerText = "Device Configured for Travel.";
+                document.getElementById('lab5-feedback').className = "text-center font-bold mt-2 h-6 text-sm text-emerald-600";
+                setTimeout(() => showModal('Lab 5 Complete', 'You successfully configured the device for Offline Access without incurring roaming charges.', 'success'), 300);
+            } else {
+                document.getElementById('lab5-feedback').innerText = "Configuration Error. Review the travel scenario constraints.";
+                document.getElementById('lab5-feedback').className = "text-center font-bold mt-2 h-6 text-sm text-red-600";
+            }
+        }
+
+        // --- LAB 6: Data Synchronization ---
+        let syncInterval;
+        let barPosition = 0;
+        let barDirection = 1;
+        let syncRunning = false;
+        const syncBar = document.getElementById('sync-bar');
+
+        function startSyncBar() {
+            if (syncRunning) return;
+            syncRunning = true;
+            document.getElementById('lab6-feedback').innerText = "";
+            syncInterval = setInterval(() => {
+                barPosition += 2 * barDirection;
+                if (barPosition >= 98 || barPosition <= 0) barDirection *= -1;
+                syncBar.style.left = `${barPosition}%`;
+            }, 20);
+        }
+
+        function attemptSync() {
+            if (!syncRunning) return;
+            clearInterval(syncInterval);
+            syncRunning = false;
+            
+            // Green zone is between 60% and 85% width of container
+            if (barPosition >= 60 && barPosition <= 85) {
+                document.getElementById('lab6-feedback').innerText = "SYNC SUCCESSFUL: Data Integrity Maintained.";
+                document.getElementById('lab6-feedback').className = "text-center font-bold mt-4 h-6 text-sm text-emerald-600";
+                syncBar.classList.replace('bg-black', 'bg-emerald-600');
+                setTimeout(() => showModal('Lab 6 Complete', 'You successfully synchronized offline changes to the main database.', 'success'), 300);
+            } else {
+                document.getElementById('lab6-feedback').innerText = "SYNC FAILED: Packet Loss. Restart Network.";
+                document.getElementById('lab6-feedback').className = "text-center font-bold mt-4 h-6 text-sm text-red-600";
+                syncBar.classList.replace('bg-black', 'bg-red-600');
+                setTimeout(() => { syncBar.classList.replace('bg-red-600', 'bg-black'); }, 1000);
+            }
+        }
+
+        // --- LAB 7: Query Builder ---
+        let builtQueryArr = [];
+        
+        function addQueryBlock(word) {
+            builtQueryArr.push(word);
+            updateQueryDisplay();
+        }
+        
+        function clearQuery() {
+            builtQueryArr = [];
+            updateQueryDisplay();
+            document.getElementById('lab7-feedback').innerText = "";
+        }
+        
+        function updateQueryDisplay() {
+            document.getElementById('built-query').innerText = builtQueryArr.join(' ');
+        }
+        
+        function executeLab7Query() {
+            const qStr = builtQueryArr.join(' ').trim();
+            if (qStr === "SELECT * FROM employees ;" || qStr === "SELECT * FROM employees;") {
+                document.getElementById('lab7-feedback').innerText = "Query Executed: All records retrieved.";
+                document.getElementById('lab7-feedback').className = "text-center font-bold mt-2 h-6 text-sm text-emerald-600";
+                setTimeout(() => showModal('Lab 7 Complete', 'You successfully constructed a valid SQL Data Retrieval query.', 'success'), 300);
+            } else {
+                document.getElementById('lab7-feedback').innerText = "Syntax Error. The DBMS rejected your query.";
+                document.getElementById('lab7-feedback').className = "text-center font-bold mt-2 h-6 text-sm text-red-600";
+            }
+        }
+
+        // --- LAB 8: Record Deletion ---
+        let selectedRecordName = "";
+        function selectRecord(row, name) {
+            document.querySelectorAll('.record-row').forEach(r => r.classList.remove('selected', 'bg-sky-400', 'text-white', 'font-bold'));
+            row.classList.add('selected');
+            selectedRecordName = name;
+        }
+
+        function checkLab8() {
+            if (!selectedRecordName) {
+                document.getElementById('lab8-feedback').innerText = "Please select a record first.";
+                document.getElementById('lab8-feedback').className = "text-center font-bold mt-2 h-6 text-sm text-sky-600";
+                return;
+            }
+            if (selectedRecordName === 'Steven') {
+                document.getElementById('lab8-feedback').innerText = "Record Deleted Successfully.";
+                document.getElementById('lab8-feedback').className = "text-center font-bold mt-2 h-6 text-sm text-emerald-600";
+                setTimeout(() => showModal('Lab 8 Complete', 'You successfully executed the DELETE clause on the correct record based on the Primary Key/WHERE condition.', 'success'), 300);
+            } else {
+                document.getElementById('lab8-feedback').innerText = "CRITICAL ERROR: Wrong record targeted for deletion!";
+                document.getElementById('lab8-feedback').className = "text-center font-bold mt-2 h-6 text-sm text-red-600";
+            }
+        }
+
+        // --- QUIZ LOGIC (20 Questions) ---
+        const quizData = [
+            // 10 provided from Document
+            { q: "What software is used to create, manage, and access databases?", options: ["Word Processor", "Database Management Systems (DBMS)", "Spreadsheet", "Web Browser"], answer: 1 },
+            { q: "Which SQL command is used to retrieve data from a database?", options: ["DELETE", "SELECT", "INSERT INTO", "UPDATE"], answer: 1 },
+            { q: "What is a query?", options: ["A request to retrieve or modify data in a database.", "A record of stored data.", "A storage device.", "A flat file."], answer: 0 },
+            { q: "Which of the following best defines data persistence?", options: ["A tool for generating reports on data.", "A method for sharing data across various platforms.", "Data that remains available after a system reboot.", "Data that is temporarily stored on a device."], answer: 2 },
+            { q: "Which of the following is NOT a characteristic of a database record?", options: ["Uniqueness", "Integrity", "Completeness", "Randomness"], answer: 3 },
+            { q: "Which of the following is an advantage of cloud storage?", options: ["Requires no internet connection.", "Data is completely secure.", "Unlimited scalability and accessibility.", "Controlled only by personal devices."], answer: 2 },
+            { q: "In which situation would a flat file be a better choice than a database?", options: ["Managing a personal contact list.", "Handling millions of financial transactions.", "Creating complex data relationships.", "Allowing multiple users to work on a document at the same time."], answer: 0 },
+            { q: "What is the difference between a flat file and a database?", options: ["Flat files handle large, complex data better", "Databases can only store numbers.", "Flat files support concurrent users, databases do not.", "Databases manage relationships, flat files do not."], answer: 3 },
+            { q: "Which of the following is an advantage of offline data access?", options: ["Allows access to data without an internet connection.", "Always synchronizes with cloud services.", "Enables automatic updates.", "Requires constant internet access."], answer: 0 },
+            { q: "What type of query can be used to perform calculations on data?", options: ["Filtering", "Aggregation", "Sorting", "Data Retrieval"], answer: 1 },
+            
+            // 10 new questions based on briefing
+            { q: "What is the recommended method for bringing large amounts of external data into a database quickly and accurately?", options: ["Manual Data Input", "Data Import", "Flat File creation", "Keyboard Entry"], answer: 1 },
+            { q: "In a database table, what is another name for a row that represents one complete, distinct entity?", options: ["Field", "Data Value", "Record", "Schema"], answer: 2 },
+            { q: "In a database table, what represents a specific category of data across all records (e.g., 'Salary')?", options: ["Field (Column)", "Primary Key", "Query", "Transaction"], answer: 0 },
+            { q: "Which SQL command initiates a process to track changes so they can be carefully saved or undone?", options: ["BEGIN TRANSACTION", "SELECT *", "UPDATE DATA", "DELETE FROM"], answer: 0 },
+            { q: "If you make a mistake while modifying data in an active transaction, what command instantly undoes those changes?", options: ["RESTORE", "ROLLBACK", "COMMIT", "UNDELETE"], answer: 1 },
+            { q: "Once you have verified that data modifications are correct in an active transaction, what command permanently saves them?", options: ["COMMIT", "ROLLBACK", "SAVEPOINT", "END TASK"], answer: 0 },
+            { q: "What clause is used in an SQL query to filter data based on specific conditions (e.g., Position='IT Support')?", options: ["SORT BY", "FROM", "WHERE", "SELECT"], answer: 2 },
+            { q: "What clause is used in an SQL query to sort the returned results alphabetically or numerically?", options: ["SORT RESULT", "ORDER BY", "FILTER BY", "AGGREGATE"], answer: 1 },
+            { q: "Why might a photographer working in a remote, isolated location choose local storage over cloud storage?", options: ["Local storage offers infinite scalability.", "Local storage prevents computer viruses.", "Cloud storage is too fast.", "They have no reliable internet connection for cloud access."], answer: 3 },
+            { q: "What term refers to the specific, individual piece of information inside a field for a given record (e.g., '$75,000')?", options: ["Primary Key", "Data Value", "Schema Element", "Query Constraint"], answer: 1 }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        
+        quizData.forEach((item, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = "bg-gray-50 p-6 rounded-lg border border-gray-200 transition-all";
+            qDiv.id = `q-block-${index}`;
+            
+            const qTitle = document.createElement('h3');
+            qTitle.className = "font-bold text-lg text-gray-800 mb-4";
+            qTitle.innerText = `${index + 1}. ${item.q}`;
+            qDiv.appendChild(qTitle);
+            
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = "space-y-3";
+            
+            item.options.forEach((opt, optIndex) => {
+                const label = document.createElement('label');
+                label.className = "flex items-center space-x-3 p-3 rounded bg-white border border-gray-300 hover:bg-sky-50 cursor-pointer transition";
+                
+                const radio = document.createElement('input');
+                radio.type = "radio";
+                radio.name = `q${index}`;
+                radio.value = optIndex;
+                radio.className = "form-radio h-5 w-5 text-sky-600";
+                
+                const span = document.createElement('span');
+                span.className = "text-gray-700";
+                span.innerText = opt;
+                
+                label.appendChild(radio);
+                label.appendChild(span);
+                optionsDiv.appendChild(label);
+            });
+            
+            qDiv.appendChild(optionsDiv);
+            quizContainer.appendChild(qDiv);
+        });
+
+        function gradeQuiz() {
+            let score = 0;
+            let allAnswered = true;
+
+            for(let i = 0; i < quizData.length; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if(selected) {
+                    if(parseInt(selected.value) === quizData[i].answer) {
+                        score++;
+                    }
+                } else {
+                    allAnswered = false;
+                }
+            }
+            
+            if(!allAnswered) {
+                showModal('Incomplete Quiz', 'Please answer all 20 questions before submitting.', 'warning');
+                return;
+            }
+            
+            const percentage = (score / quizData.length) * 100;
+            
+            if(score >= 18) { 
+                const navGame = document.getElementById('nav-game');
+                const navGameMobile = document.getElementById('nav-game-mobile');
+                
+                navGame.classList.remove('text-gray-400', 'cursor-not-allowed');
+                navGame.classList.add('text-white', 'hover:bg-sky-600');
+                navGame.disabled = false;
+                navGame.innerHTML = '<i class="fa-solid fa-gamepad mr-1"></i>Game';
+                
+                navGameMobile.classList.remove('text-gray-400', 'cursor-not-allowed');
+                navGameMobile.classList.add('text-white', 'hover:bg-sky-700');
+                navGameMobile.disabled = false;
+                navGameMobile.innerHTML = '<i class="fa-solid fa-gamepad"></i> Game';
+
+                document.getElementById('nav-cert').classList.remove('hidden');
+                document.getElementById('nav-cert-mobile').classList.remove('hidden');
+                
+                document.getElementById('proceed-game-btn').classList.remove('hidden');
+                document.getElementById('submit-quiz-btn').classList.add('hidden');
+
+                showModal('Outstanding!', `You scored ${score}/20 (${percentage}%). You have unlocked your Certificate of Mastery AND the Retro Game!`, 'success');
+            } else {
+                quizData.forEach((_, i) => {
+                    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                    if(selected) selected.checked = false;
+                });
+                showModal('Keep Trying!', `You scored ${score}/20 (${percentage}%). You need 90% (18/20) to earn the certificate. Your answers have been reset so you can try again.`, 'error');
+                document.getElementById('quiz-section').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // --- RETRO GAME LOGIC: Query Defender (Typing Defense) ---
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        const mobileInput = document.getElementById('mobile-keyboard-input');
+        
+        let gameScore = 0;
+        let gameLives = 3;
+        let gameRunning = false;
+        let animationId;
+        
+        let words = [];
+        let activeWord = null;
+        let lastTime = 0;
+        let spawnTimer = 0;
+        let fallSpeedMultiplier = 1.0;
+        
+        const vocab = ["SELECT", "INSERT", "UPDATE", "DELETE", "SCHEMA", "RECORD", "TABLE", "QUERY", "COMMIT", "FIELD", "WHERE", "FROM", "CLOUD", "LOCAL", "OFFLINE"];
+        
+        const overlay = document.getElementById('game-overlay');
+        const overlayTitle = document.getElementById('game-overlay-title');
+        const startBtn = document.getElementById('start-game-btn');
+        startBtn.addEventListener('click', startGame);
+
+        // Click canvas to focus hidden input on mobile
+        canvas.addEventListener('click', () => {
+            if(gameRunning) mobileInput.focus();
+        });
+
+        class WordObj {
+            constructor() {
+                this.text = vocab[Math.floor(Math.random() * vocab.length)];
+                this.typed = 0;
+                ctx.font = '24px monospace';
+                let textWidth = ctx.measureText(this.text).width;
+                this.x = Math.random() * (canvas.width - textWidth - 20) + 10;
+                this.y = -30;
+                this.speed = (Math.random() * 0.8 + 0.5) * fallSpeedMultiplier;
+                this.color = '#e2e8f0'; // slate-200
+                this.activeColor = '#38bdf8'; // sky-400
+            }
+            
+            update(dt) {
+                this.y += this.speed;
+            }
+            
+            draw(ctx) {
+                ctx.font = 'bold 24px monospace';
+                ctx.textAlign = 'left';
+                
+                // Draw typed part
+                let typedText = this.text.substring(0, this.typed);
+                let untypedText = this.text.substring(this.typed);
+                
+                let typedWidth = ctx.measureText(typedText).width;
+                
+                ctx.fillStyle = this.activeColor;
+                ctx.fillText(typedText, this.x, this.y);
+                
+                ctx.fillStyle = this.color;
+                ctx.fillText(untypedText, this.x + typedWidth, this.y);
+            }
+        }
+
+        // Handle Keyboard Input
+        function handleKeypress(char) {
+            if(!gameRunning) return;
+            char = char.toUpperCase();
+            
+            if (activeWord) {
+                // Check if next letter matches
+                if (activeWord.text[activeWord.typed] === char) {
+                    activeWord.typed++;
+                    if (activeWord.typed === activeWord.text.length) {
+                        // Word destroyed
+                        gameScore += activeWord.text.length * 10;
+                        document.getElementById('game-score').innerText = gameScore;
+                        words = words.filter(w => w !== activeWord);
+                        activeWord = null;
+                        
+                        // Increase difficulty
+                        if(gameScore % 200 === 0) fallSpeedMultiplier += 0.2;
+                    }
+                } else {
+                    // Flash screen on error
+                    ctx.fillStyle = "rgba(239,68,68,0.2)"; // red
+                    ctx.fillRect(0,0,canvas.width,canvas.height);
+                }
+            } else {
+                // Find a word starting with char (prioritize lowest on screen)
+                let matches = words.filter(w => w.text[0] === char);
+                if (matches.length > 0) {
+                    matches.sort((a,b) => b.y - a.y);
+                    activeWord = matches[0];
+                    activeWord.typed = 1;
+                    activeWord.color = '#94a3b8'; // dim untyped part
+                }
+            }
+        }
+
+        window.addEventListener('keydown', (e) => {
+            // Only process alphabetic characters if game is running
+            if(gameRunning && e.key.length === 1 && /[a-zA-Z]/.test(e.key)) {
+                handleKeypress(e.key);
+            }
+        });
+
+        // Mobile input handler
+        mobileInput.addEventListener('input', (e) => {
+            if(gameRunning && mobileInput.value.length > 0) {
+                let char = mobileInput.value.slice(-1);
+                if(/[a-zA-Z]/.test(char)) {
+                    handleKeypress(char);
+                }
+                mobileInput.value = ""; // clear for next input
+            }
+        });
+
+        function resetGame() {
+            words = [];
+            activeWord = null;
+            gameScore = 0;
+            gameLives = 3;
+            fallSpeedMultiplier = 1.0;
+            document.getElementById('game-score').innerText = gameScore;
+            document.getElementById('game-lives').innerText = gameLives;
+            lastTime = Date.now();
+            mobileInput.value = "";
+        }
+
+        function startGame() {
+            overlay.classList.add('hidden');
+            if(!gameRunning) {
+                resetGame();
+                gameRunning = true;
+                mobileInput.focus();
+                requestAnimationFrame(gameLoop);
+            }
+        }
+
+        function gameLoop() {
+            if(!gameRunning) return;
+            
+            let now = Date.now();
+            let dt = now - lastTime;
+            lastTime = now;
+            
+            // Draw Background (Server Rack stylized)
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw grid lines
+            ctx.strokeStyle = '#1e293b';
+            ctx.lineWidth = 1;
+            for(let i=0; i<canvas.width; i+=40) { ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke(); }
+            for(let i=0; i<canvas.height; i+=40) { ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(canvas.width, i); ctx.stroke(); }
+            
+            // Draw Server Base
+            ctx.fillStyle = '#334155';
+            ctx.fillRect(0, canvas.height - 40, canvas.width, 40);
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = '16px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('DATABASE SERVER', canvas.width/2, canvas.height - 15);
+            
+            // Spawn logic
+            spawnTimer += dt;
+            let spawnRate = Math.max(800, 2000 - (fallSpeedMultiplier * 200)); 
+            if(spawnTimer > spawnRate) {
+                words.push(new WordObj());
+                spawnTimer = 0;
+            }
+            
+            // Update and draw words
+            for(let i = words.length - 1; i >= 0; i--) {
+                let w = words[i];
+                w.update(dt);
+                w.draw(ctx);
+                
+                // Check if hit bottom
+                if(w.y > canvas.height - 40) {
+                    if(w === activeWord) activeWord = null;
+                    words.splice(i, 1);
+                    loseLife();
+                }
+            }
+            
+            animationId = requestAnimationFrame(gameLoop);
+        }
+
+        function loseLife() {
+            gameLives--;
+            document.getElementById('game-lives').innerText = gameLives;
+            
+            // Visual red flash
+            ctx.fillStyle = "rgba(239,68,68,0.4)";
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            
+            if(gameLives <= 0) {
+                gameOver();
+            }
+        }
+
+        function gameOver() {
+            gameRunning = false;
+            cancelAnimationFrame(animationId);
+            overlay.classList.remove('hidden');
+            overlay.classList.add('flex');
+            overlayTitle.innerText = "DATA CORRUPTION DETECTED";
+            overlayTitle.classList.replace('text-sky-400', 'text-red-500');
+            startBtn.innerText = "Reboot Server (Try Again)";
+            startBtn.classList.replace('bg-emerald-600', 'bg-slate-700');
+            startBtn.classList.replace('border-emerald-800', 'border-slate-900');
+            mobileInput.blur();
+        }
+
+        function drawGameStatic() {
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle = '#38bdf8';
+            ctx.font = '24px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('AWAITING CONNECTION...', canvas.width/2, canvas.height/2);
+        }
+
+        // --- CERTIFICATE LOGIC ---
+        function updateCertName() {
+            let name = document.getElementById('student-name-input').value.trim();
+            if(name) {
+                if (name.includes(' ')) {
+                    name = name.split(' ')[0];
+                    document.getElementById('student-name-input').value = name;
+                    showModal('Notice', 'Only your first name has been applied to the certificate.', 'info');
+                }
+                document.getElementById('cert-student-name').innerText = name;
+            } else {
+                showModal('Wait!', 'Please enter your first name to update the certificate.', 'warning');
+            }
+        }
+
+        const today = new Date();
+        document.getElementById('cert-date').innerText = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        function downloadCert() {
+            const certEl = document.getElementById('certificate');
+            const name = document.getElementById('cert-student-name').innerText;
+            let filename = 'Certificate.png';
+            if (name && name !== 'Student') {
+                filename = `${name.replace(/\s+/g, '_')}_Certificate.png`;
+            }
+
+            const originalTransform = certEl.style.transform;
+            certEl.style.transform = 'none';
+
+            const btn = document.getElementById('download-btn');
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Generating...';
+            btn.disabled = true;
+
+            html2canvas(certEl, { 
+                scale: 2, 
+                useCORS: true,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+            }).catch(err => {
+                console.error(err);
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                showModal('Error', 'Failed to generate image. Try using a desktop browser.', 'error');
+            });
+        }
+
+        window.onload = () => {
+            drawGameStatic();
+        }
+    </script>
+</body>
+</html>
+```eof

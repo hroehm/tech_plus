@@ -1,0 +1,1490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 03 Section 2.1.1 - Different Computing Devices</title>
+    
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load HTML2Canvas for Certificate Download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- Load Google Fonts & FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Qwitcher+Grypen:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #1d4ed8; }
+
+        /* Retro Game Canvas */
+        #game-canvas {
+            background-color: #0f172a;
+            border: 4px solid #334155;
+            border-radius: 12px;
+            box-shadow: 0 0 25px rgba(59, 130, 246, 0.4);
+            max-width: 100%;
+            height: auto;
+            touch-action: none;
+            cursor: crosshair;
+        }
+
+        /* Certificate Styles */
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .font-body { font-family: 'Lora', serif; }
+        .font-script { font-family: 'Qwitcher Grypen', cursive; }
+        
+        .cert-preview-container {
+            width: 100%;
+            overflow: auto;
+            display: flex;
+            justify-content: center;
+            background: #e2e8f0;
+            padding: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        #certificate {
+            width: 1056px !important;
+            height: 816px !important;
+            flex-shrink: 0;
+            background-color: #ffffff;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            border: 4px solid #cbd5e1;
+        }
+
+        .gold-seal {
+            position: absolute;
+            left: 110px;
+            top: 350px;
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c, #fcf6ba);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3), inset 0 0 15px rgba(255,255,255,0.7);
+            z-index: 10;
+        }
+        .gold-seal::before {
+            content: '';
+            position: absolute;
+            top: -4px; bottom: -4px; left: -4px; right: -4px;
+            border-radius: 50%;
+            border: 6px dashed #d4af37;
+        }
+        .gold-seal-inner-1 {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 2px solid rgba(139, 105, 20, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #e8c678, #dbab46);
+        }
+        .gold-seal-inner-2 {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: radial-gradient(circle, #fcf6ba, #d4af37);
+            padding: 10px;
+        }
+        .embossed-text {
+            color: #b38728;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2);
+            font-family: 'Playfair Display', serif;
+            font-weight: 800;
+            line-height: 1.1;
+            text-transform: uppercase;
+        }
+        @media (max-width: 1100px) {
+            #certificate { transform: scale(0.7); transform-origin: top left; margin-bottom: -240px; margin-right: -310px; }
+        }
+        @media (max-width: 768px) {
+            #certificate { transform: scale(0.4); transform-origin: top left; margin-bottom: -490px; margin-right: -630px; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen flex flex-col">
+
+    <nav class="bg-blue-900 text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-laptop-code text-2xl text-blue-400"></i>
+                    <span class="font-bold text-xl tracking-wider hidden sm:inline-block">Tech+ Unit 03 Section 2.1.1</span>
+                    <span class="font-bold text-xl tracking-wider sm:hidden">3.2.1</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-2">
+                        <button onclick="switchTab('briefing')" class="nav-btn bg-blue-950 px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-800 transition" id="nav-briefing"><i class="fa-solid fa-book-open mr-1"></i>Briefing</button>
+                        <button onclick="switchTab('activity')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-800 transition" id="nav-activity"><i class="fa-solid fa-flask mr-1"></i>Lab Activity</button>
+                        <button onclick="switchTab('quiz')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-800 transition" id="nav-quiz"><i class="fa-solid fa-clipboard-check mr-1"></i>Quiz</button>
+                        <button onclick="switchTab('game')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-slate-400 cursor-not-allowed transition" id="nav-game" disabled><i class="fa-solid fa-lock mr-1"></i>Game</button>
+                        <button onclick="switchTab('cert')" class="nav-btn hidden px-3 py-2 rounded-md text-sm font-medium text-amber-300 hover:bg-blue-800 transition" id="nav-cert"><i class="fa-solid fa-award mr-1"></i>Certificate</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Navigation -->
+        <div class="md:hidden flex flex-wrap justify-center gap-2 py-2 px-2 bg-blue-950">
+            <button onclick="switchTab('briefing')" class="nav-btn-mobile px-3 py-1 text-sm rounded bg-blue-900" id="nav-briefing-mobile">Briefing</button>
+            <button onclick="switchTab('activity')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-activity-mobile">Lab</button>
+            <button onclick="switchTab('quiz')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-quiz-mobile">Quiz</button>
+            <button onclick="switchTab('game')" id="nav-game-mobile" class="nav-btn-mobile px-3 py-1 text-sm rounded text-slate-400 cursor-not-allowed" disabled><i class="fa-solid fa-lock"></i> Game</button>
+            <button onclick="switchTab('cert')" id="nav-cert-mobile" class="hidden px-2 py-1 text-sm text-amber-300 rounded"><i class="fa-solid fa-award"></i></button>
+        </div>
+    </nav>
+
+    <main class="flex-grow w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <!-- BRIEFING SECTION -->
+        <div id="briefing-section" class="tab-content active">
+            <div class="text-center mb-10">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4">Different Computing Devices</h1>
+                <p class="text-lg text-slate-600 max-w-3xl mx-auto">Explore the diverse ecosystem of modern computing hardware, ranging from pocket-sized mobile devices and powerful desktop workstations to cloud infrastructure and immersive AR/VR systems.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+                <!-- Tile 1: Mobile Devices -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-blue-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-blue-700"><i class="fa-solid fa-mobile-screen-button mr-2"></i>Mobile Devices</h2>
+                        <p class="text-slate-600 text-sm mb-4">Handheld computing devices engineered for maximum portability, featuring touchscreens, long-lasting rechargeable batteries, and wireless cellular connectivity.</p>
+                        <ul class="space-y-2 text-sm text-slate-700">
+                            <li><i class="fa-solid fa-check text-blue-500 mr-2"></i>Smartphones & Tablets</li>
+                            <li><i class="fa-solid fa-check text-blue-500 mr-2"></i>E-Readers & E-Ink Display</li>
+                            <li><i class="fa-solid fa-check text-blue-500 mr-2"></i>GPS & App Ecosystems</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-3">
+                            <button onclick="openBriefing('mobile-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-2.5 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('mobile-usecase')" class="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-900 py-2.5 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-amber-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 2: Computers (Laptops & Desktops) -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-indigo-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-indigo-700"><i class="fa-solid fa-laptop mr-2"></i>Laptops & Desktops</h2>
+                        <p class="text-slate-600 text-sm mb-4">Versatile general-purpose computers offering robust processing power, full operating systems, multiple peripheral connection ports, and expansive storage.</p>
+                        <ul class="space-y-2 text-sm text-slate-700">
+                            <li><i class="fa-solid fa-check text-indigo-500 mr-2"></i>Notebooks & Hybrids</li>
+                            <li><i class="fa-solid fa-check text-indigo-500 mr-2"></i>Peripherals & Expansion Ports</li>
+                            <li><i class="fa-solid fa-check text-indigo-500 mr-2"></i>Everyday Productivity & Media</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-3">
+                            <button onclick="openBriefing('laptop-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-2.5 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('laptop-usecase')" class="flex-1 bg-indigo-100 hover:bg-indigo-200 text-indigo-900 py-2.5 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-amber-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 3: Workstations -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-purple-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-purple-700"><i class="fa-solid fa-desktop mr-2"></i>Workstations</h2>
+                        <p class="text-slate-600 text-sm mb-4">High-performance desktop systems optimized for complex professional workloads, featuring professional-grade graphics cards and extreme expandability.</p>
+                        <ul class="space-y-2 text-sm text-slate-700">
+                            <li><i class="fa-solid fa-check text-purple-500 mr-2"></i>CAD & 3D Rendering</li>
+                            <li><i class="fa-solid fa-check text-purple-500 mr-2"></i>Precision Input Devices</li>
+                            <li><i class="fa-solid fa-check text-purple-500 mr-2"></i>Advanced Scientific Simulation</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-3">
+                            <button onclick="openBriefing('workstation-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-2.5 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('workstation-usecase')" class="flex-1 bg-purple-100 hover:bg-purple-200 text-purple-900 py-2.5 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-amber-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 4: Servers -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-emerald-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-emerald-700"><i class="fa-solid fa-server mr-2"></i>Servers</h2>
+                        <p class="text-slate-600 text-sm mb-4">Powerful centralized computers designed to host services, manage network resources, store shared data, and guarantee continuous fault-tolerant uptime.</p>
+                        <ul class="space-y-2 text-sm text-slate-700">
+                            <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i>Web & Database Hosting</li>
+                            <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i>Scalability (Up vs. Out)</li>
+                            <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i>Redundancy & RAID Storage</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-3">
+                            <button onclick="openBriefing('server-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-2.5 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('server-usecase')" class="flex-1 bg-emerald-100 hover:bg-emerald-200 text-emerald-900 py-2.5 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-amber-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 5: Gaming Consoles -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-amber-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-amber-700"><i class="fa-solid fa-gamepad mr-2"></i>Gaming Consoles</h2>
+                        <p class="text-slate-600 text-sm mb-4">Specialized computing systems dedicated to interactive entertainment, offering optimized hardware, gamepads, exclusive titles, and online multiplayer networks.</p>
+                        <ul class="space-y-2 text-sm text-slate-700">
+                            <li><i class="fa-solid fa-check text-amber-500 mr-2"></i>Optimized GPUs & Controllers</li>
+                            <li><i class="fa-solid fa-check text-amber-500 mr-2"></i>Online Stores & Communities</li>
+                            <li><i class="fa-solid fa-check text-amber-500 mr-2"></i>Backward Compatibility & VR</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-3">
+                            <button onclick="openBriefing('console-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-2.5 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('console-usecase')" class="flex-1 bg-amber-100 hover:bg-amber-200 text-amber-900 py-2.5 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-amber-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 6: VR & AR Systems -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-rose-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-rose-700"><i class="fa-solid fa-vr-cardboard mr-2"></i>VR & AR Systems</h2>
+                        <p class="text-slate-600 text-sm mb-4">Immersive technologies that either transport users into a fully simulated digital world (VR) or overlay interactive digital graphics onto physical reality (AR).</p>
+                        <ul class="space-y-2 text-sm text-slate-700">
+                            <li><i class="fa-solid fa-check text-rose-500 mr-2"></i>Head-Mounted Displays (HMDs)</li>
+                            <li><i class="fa-solid fa-check text-rose-500 mr-2"></i>Motion Tracking & Sensors</li>
+                            <li><i class="fa-solid fa-check text-rose-500 mr-2"></i>Simulation, Training & Retail</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-3">
+                            <button onclick="openBriefing('vr-ar-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-2.5 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('vr-ar-usecase')" class="flex-1 bg-rose-100 hover:bg-rose-200 text-rose-900 py-2.5 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-amber-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            
+            <div class="mt-10 text-center">
+                <button onclick="switchTab('activity')" class="bg-blue-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-blue-500 shadow-lg transition transform hover:scale-105">Proceed to Lab Activities <i class="fa-solid fa-arrow-right ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- LAB ACTIVITY SECTION -->
+        <div id="activity-section" class="tab-content">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-extrabold text-slate-900 mb-2">Interactive Lab Activities</h1>
+                <p class="text-slate-600">Complete 2 distinct interactive simulations for each computing device category to reinforce concept mastery.</p>
+            </div>
+
+            <!-- Concept 1: Mobile Devices Labs -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-slate-200">
+                <h2 class="text-2xl font-bold mb-2 text-blue-700"><i class="fa-solid fa-mobile-screen-button mr-2"></i>Concept 1: Mobile Devices</h2>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-4">
+                    <!-- Lab 1A: Mobile Sensor Sorter -->
+                    <div class="bg-slate-50 p-5 rounded-lg border border-slate-200 flex flex-col justify-between">
+                        <div>
+                            <span class="bg-blue-100 text-blue-800 text-xs font-bold px-2.5 py-0.5 rounded uppercase">Lab 1A: Sensor Matching</span>
+                            <h3 class="font-bold text-lg text-slate-800 mt-2">Smartphone Sensor Simulator</h3>
+                            <p class="text-sm text-slate-600 mb-4">Match the correct smartphone sensor or feature to the user scenario described below.</p>
+                            
+                            <div class="bg-white p-4 rounded border border-slate-300 mb-4 text-sm font-medium text-slate-700 shadow-sm" id="lab1a-scenario">
+                                Scenario: Unlocking the phone instantly using the owner's face.
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-2 mb-4" id="lab1a-options">
+                                <button onclick="checkLab1A('biometric')" class="p-3 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded text-sm font-semibold text-blue-900 transition">Facial Recognition</button>
+                                <button onclick="checkLab1A('gps')" class="p-3 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded text-sm font-semibold text-blue-900 transition">GPS & Compass</button>
+                                <button onclick="checkLab1A('accel')" class="p-3 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded text-sm font-semibold text-blue-900 transition">Accelerometer</button>
+                                <button onclick="checkLab1A('ambient')" class="p-3 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded text-sm font-semibold text-blue-900 transition">Ambient Light Sensor</button>
+                            </div>
+                        </div>
+                        <div id="lab1a-feedback" class="font-bold text-center text-sm h-6 text-emerald-600"></div>
+                    </div>
+
+                    <!-- Lab 1B: E-Reader Customizer -->
+                    <div class="bg-slate-50 p-5 rounded-lg border border-slate-200 flex flex-col justify-between">
+                        <div>
+                            <span class="bg-blue-100 text-blue-800 text-xs font-bold px-2.5 py-0.5 rounded uppercase">Lab 1B: E-Ink Simulator</span>
+                            <h3 class="font-bold text-lg text-slate-800 mt-2">E-Reader Accessibility Setup</h3>
+                            <p class="text-sm text-slate-600 mb-4">Configure the e-reader display settings for optimal reading in bright sunlight and reduced eye strain.</p>
+                            
+                            <div class="bg-[#fef9c3] p-4 rounded border border-amber-200 mb-4 text-sm text-slate-800 shadow-inner min-h-[80px] flex items-center justify-center font-body text-center" id="reader-preview">
+                                "The quick brown fox jumps over the lazy e-reader display."
+                            </div>
+
+                            <div class="flex flex-wrap gap-2 justify-center mb-4">
+                                <button onclick="setReaderTheme('sepia')" class="px-3 py-1.5 bg-amber-100 border border-amber-300 text-amber-900 rounded text-xs font-bold">Sepia Mode</button>
+                                <button onclick="setReaderTheme('dark')" class="px-3 py-1.5 bg-slate-800 text-white rounded text-xs font-bold">Dark E-Ink</button>
+                                <button onclick="setReaderSize('large')" class="px-3 py-1.5 bg-blue-100 border border-blue-300 text-blue-900 rounded text-xs font-bold">Large Font</button>
+                            </div>
+                        </div>
+                        <button onclick="completeLab1B()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded text-sm font-bold transition shadow">Verify Reader Configuration</button>
+                        <div id="lab1b-feedback" class="font-bold text-center text-sm h-6 text-emerald-600"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Concept 2: Laptops & Desktops Labs -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-slate-200">
+                <h2 class="text-2xl font-bold mb-2 text-indigo-700"><i class="fa-solid fa-laptop mr-2"></i>Concept 2: Laptops & Desktops</h2>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-4">
+                    <!-- Lab 2A: Port Identifier -->
+                    <div class="bg-slate-50 p-5 rounded-lg border border-slate-200 flex flex-col justify-between">
+                        <div>
+                            <span class="bg-indigo-100 text-indigo-800 text-xs font-bold px-2.5 py-0.5 rounded uppercase">Lab 2A: Peripheral Connectivity</span>
+                            <h3 class="font-bold text-lg text-slate-800 mt-2">Laptop Port & Cable Matcher</h3>
+                            <p class="text-sm text-slate-600 mb-4">Click the correct port on a laptop needed to connect an external 4K monitor.</p>
+                            
+                            <div class="flex justify-center gap-4 mb-4">
+                                <button onclick="checkLab2A('usb')" class="px-4 py-3 bg-white border-2 border-slate-300 rounded font-bold text-slate-700 hover:border-indigo-500">USB-A Port</button>
+                                <button onclick="checkLab2A('hdmi')" class="px-4 py-3 bg-indigo-50 border-2 border-indigo-500 rounded font-bold text-indigo-800 shadow">HDMI / DisplayPort</button>
+                                <button onclick="checkLab2A('audio')" class="px-4 py-3 bg-white border-2 border-slate-300 rounded font-bold text-slate-700 hover:border-indigo-500">3.5mm Audio</button>
+                            </div>
+                        </div>
+                        <div id="lab2a-feedback" class="font-bold text-center text-sm h-6 text-emerald-600"></div>
+                    </div>
+
+                    <!-- Lab 2B: Battery vs Power Profile -->
+                    <div class="bg-slate-50 p-5 rounded-lg border border-slate-200 flex flex-col justify-between">
+                        <div>
+                            <span class="bg-indigo-100 text-indigo-800 text-xs font-bold px-2.5 py-0.5 rounded uppercase">Lab 2B: Power Management</span>
+                            <h3 class="font-bold text-lg text-slate-800 mt-2">Laptop Power Profile Optimizer</h3>
+                            <p class="text-sm text-slate-600 mb-4">A user is traveling on a 6-hour flight with 15% battery remaining. Select the optimal OS power setting.</p>
+                            
+                            <div class="grid grid-cols-3 gap-2 mb-4">
+                                <button onclick="checkLab2B('high')" class="p-3 bg-white border rounded text-xs font-bold text-slate-700 hover:bg-red-50">High Performance</button>
+                                <button onclick="checkLab2B('balanced')" class="p-3 bg-white border rounded text-xs font-bold text-slate-700 hover:bg-yellow-50">Balanced</button>
+                                <button onclick="checkLab2B('saver')" class="p-3 bg-emerald-50 border-2 border-emerald-500 rounded text-xs font-bold text-emerald-900 shadow">Battery Saver</button>
+                            </div>
+                        </div>
+                        <div id="lab2b-feedback" class="font-bold text-center text-sm h-6 text-emerald-600"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Concept 3: Workstations Labs -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-slate-200">
+                <h2 class="text-2xl font-bold mb-2 text-purple-700"><i class="fa-solid fa-desktop mr-2"></i>Concept 3: Workstations</h2>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-4">
+                    <!-- Lab 3A: GPU Workload Matcher -->
+                    <div class="bg-slate-50 p-5 rounded-lg border border-slate-200 flex flex-col justify-between">
+                        <div>
+                            <span class="bg-purple-100 text-purple-800 text-xs font-bold px-2.5 py-0.5 rounded uppercase">Lab 3A: Hardware Specs</span>
+                            <h3 class="font-bold text-lg text-slate-800 mt-2">Workstation Component Upgrade</h3>
+                            <p class="text-sm text-slate-600 mb-4">An engineering firm needs a workstation for real-time 3D CAD modeling. Which hardware upgrade is most critical?</p>
+                            
+                            <div class="grid grid-cols-2 gap-2 mb-4">
+                                <button onclick="checkLab3A('gpu')" class="p-3 bg-white border rounded text-xs font-bold text-slate-700 hover:bg-purple-50">Professional GPU & ECC RAM</button>
+                                <button onclick="checkLab3A('mouse')" class="p-3 bg-white border rounded text-xs font-bold text-slate-700 hover:bg-purple-50">Ergonomic Mouse</button>
+                            </div>
+                        </div>
+                        <div id="lab3a-feedback" class="font-bold text-center text-sm h-6 text-emerald-600"></div>
+                    </div>
+
+                    <!-- Lab 3B: RAID Configuration Simulator -->
+                    <div class="bg-slate-50 p-5 rounded-lg border border-slate-200 flex flex-col justify-between">
+                        <div>
+                            <span class="bg-purple-100 text-purple-800 text-xs font-bold px-2.5 py-0.5 rounded uppercase">Lab 3B: Data Redundancy</span>
+                            <h3 class="font-bold text-lg text-slate-800 mt-2">Workstation Storage Array</h3>
+                            <p class="text-sm text-slate-600 mb-4">Select the RAID configuration that provides automatic data mirroring (fault tolerance) if a single drive fails.</p>
+                            
+                            <div class="grid grid-cols-2 gap-2 mb-4">
+                                <button onclick="checkLab3B('raid0')" class="p-3 bg-white border rounded text-xs font-bold text-slate-700">RAID 0 (Stripping)</button>
+                                <button onclick="checkLab3B('raid1')" class="p-3 bg-purple-50 border-2 border-purple-500 rounded text-xs font-bold text-purple-900 shadow">RAID 1 (Mirroring)</button>
+                            </div>
+                        </div>
+                        <div id="lab3b-feedback" class="font-bold text-center text-sm h-6 text-emerald-600"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Concept 4: Servers Labs -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-slate-200">
+                <h2 class="text-2xl font-bold mb-2 text-emerald-700"><i class="fa-solid fa-server mr-2"></i>Concept 4: Servers</h2>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-4">
+                    <!-- Lab 4A: Scaling Simulator -->
+                    <div class="bg-slate-50 p-5 rounded-lg border border-slate-200 flex flex-col justify-between">
+                        <div>
+                            <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2.5 py-0.5 rounded uppercase">Lab 4A: Network Scalability</span>
+                            <h3 class="font-bold text-lg text-slate-800 mt-2">Server Architecture Planning</h3>
+                            <p class="text-sm text-slate-600 mb-4">A company's e-commerce website traffic doubles. Adding more physical servers to the network cluster is known as:</p>
+                            
+                            <div class="grid grid-cols-2 gap-2 mb-4">
+                                <button onclick="checkLab4A('out')" class="p-3 bg-emerald-50 border-2 border-emerald-500 rounded text-xs font-bold text-emerald-900 shadow">Scaling Out (Horizontal)</button>
+                                <button onclick="checkLab4A('up')" class="p-3 bg-white border rounded text-xs font-bold text-slate-700">Scaling Up (Vertical)</button>
+                            </div>
+                        </div>
+                        <div id="lab4a-feedback" class="font-bold text-center text-sm h-6 text-emerald-600"></div>
+                    </div>
+
+                    <!-- Lab 4B: Redundancy Simulator -->
+                    <div class="bg-slate-50 p-5 rounded-lg border border-slate-200 flex flex-col justify-between">
+                        <div>
+                            <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2.5 py-0.5 rounded uppercase">Lab 4B: Uptime & Fault Tolerance</span>
+                            <h3 class="font-bold text-lg text-slate-800 mt-2">Data Center Redundancy</h3>
+                            <p class="text-sm text-slate-600 mb-4">To prevent power failure from crashing a critical financial server, data centers install:</p>
+                            
+                            <div class="grid grid-cols-2 gap-2 mb-4">
+                                <button onclick="checkLab4B('psu')" class="p-3 bg-emerald-50 border-2 border-emerald-500 rounded text-xs font-bold text-emerald-900 shadow">Redundant Power Supplies (PSUs)</button>
+                                <button onclick="checkLab4B('rgb')" class="p-3 bg-white border rounded text-xs font-bold text-slate-700">RGB Chassis Lighting</button>
+                            </div>
+                        </div>
+                        <div id="lab4b-feedback" class="font-bold text-center text-sm h-6 text-emerald-600"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Concept 5: Gaming Consoles Labs -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-slate-200">
+                <h2 class="text-2xl font-bold mb-2 text-amber-700"><i class="fa-solid fa-gamepad mr-2"></i>Concept 5: Gaming Consoles</h2>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-4">
+                    <!-- Lab 5A: Console Feature Matcher -->
+                    <div class="bg-slate-50 p-5 rounded-lg border border-slate-200 flex flex-col justify-between">
+                        <div>
+                            <span class="bg-amber-100 text-amber-800 text-xs font-bold px-2.5 py-0.5 rounded uppercase">Lab 5A: Hardware Architecture</span>
+                            <h3 class="font-bold text-lg text-slate-800 mt-2">Console vs. PC Design</h3>
+                            <p class="text-sm text-slate-600 mb-4">What primary architectural design sets gaming consoles apart from standard office PCs?</p>
+                            
+                            <div class="grid grid-cols-2 gap-2 mb-4">
+                                <button onclick="checkLab5A('dedicated')" class="p-3 bg-amber-50 border-2 border-amber-500 rounded text-xs font-bold text-amber-900 shadow">Dedicated, Streamlined Hardware</button>
+                                <button onclick="checkLab5A('excel')" class="p-3 bg-white border rounded text-xs font-bold text-slate-700">Spreadsheet Optimization</button>
+                            </div>
+                        </div>
+                        <div id="lab5a-feedback" class="font-bold text-center text-sm h-6 text-emerald-600"></div>
+                    </div>
+
+                    <!-- Lab 5B: Backward Compatibility -->
+                    <div class="bg-slate-50 p-5 rounded-lg border border-slate-200 flex flex-col justify-between">
+                        <div>
+                            <span class="bg-amber-100 text-amber-800 text-xs font-bold px-2.5 py-0.5 rounded uppercase">Lab 5B: Software Support</span>
+                            <h3 class="font-bold text-lg text-slate-800 mt-2">Backward Compatibility</h3>
+                            <p class="text-sm text-slate-600 mb-4">Playing games released for previous generations of the same console family is called:</p>
+                            
+                            <div class="grid grid-cols-2 gap-2 mb-4">
+                                <button onclick="checkLab5B('compat')" class="p-3 bg-amber-50 border-2 border-amber-500 rounded text-xs font-bold text-amber-900 shadow">Backward Compatibility</button>
+                                <button onclick="checkLab5B('overclock')" class="p-3 bg-white border rounded text-xs font-bold text-slate-700">CPU Overclocking</button>
+                            </div>
+                        </div>
+                        <div id="lab5b-feedback" class="font-bold text-center text-sm h-6 text-emerald-600"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Concept 6: VR & AR Systems Labs -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-slate-200">
+                <h2 class="text-2xl font-bold mb-2 text-rose-700"><i class="fa-solid fa-vr-cardboard mr-2"></i>Concept 6: VR & AR Systems</h2>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-4">
+                    <!-- Lab 6A: AR vs VR Differentiation -->
+                    <div class="bg-slate-50 p-5 rounded-lg border border-slate-200 flex flex-col justify-between">
+                        <div>
+                            <span class="bg-rose-100 text-rose-800 text-xs font-bold px-2.5 py-0.5 rounded uppercase">Lab 6A: Immersive Tech</span>
+                            <h3 class="font-bold text-lg text-slate-800 mt-2">AR vs. VR Classification</h3>
+                            <p class="text-sm text-slate-600 mb-4">A mechanic wearing smart glasses that overlay repair instructions onto a physical engine is using:</p>
+                            
+                            <div class="grid grid-cols-2 gap-2 mb-4">
+                                <button onclick="checkLab6A('ar')" class="p-3 bg-rose-50 border-2 border-rose-500 rounded text-xs font-bold text-rose-900 shadow">Augmented Reality (AR)</button>
+                                <button onclick="checkLab6A('vr')" class="p-3 bg-white border rounded text-xs font-bold text-slate-700">Virtual Reality (VR)</button>
+                            </div>
+                        </div>
+                        <div id="lab6a-feedback" class="font-bold text-center text-sm h-6 text-emerald-600"></div>
+                    </div>
+
+                    <!-- Lab 6B: HMD Sensor Matcher -->
+                    <div class="bg-slate-50 p-5 rounded-lg border border-slate-200 flex flex-col justify-between">
+                        <div>
+                            <span class="bg-rose-100 text-rose-800 text-xs font-bold px-2.5 py-0.5 rounded uppercase">Lab 6B: VR Hardware</span>
+                            <h3 class="font-bold text-lg text-slate-800 mt-2">Head-Mounted Display (HMD)</h3>
+                            <p class="text-sm text-slate-600 mb-4">What device is worn on a user's head to display the simulated virtual environment in VR systems?</p>
+                            
+                            <div class="grid grid-cols-2 gap-2 mb-4">
+                                <button onclick="checkLab6B('hmd')" class="p-3 bg-rose-50 border-2 border-rose-500 rounded text-xs font-bold text-rose-900 shadow">Head-Mounted Display (HMD)</button>
+                                <button onclick="checkLab6B('modem')" class="p-3 bg-white border rounded text-xs font-bold text-slate-700">DSL Modem</button>
+                            </div>
+                        </div>
+                        <div id="lab6b-feedback" class="font-bold text-center text-sm h-6 text-emerald-600"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <button onclick="switchTab('quiz')" class="bg-blue-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-blue-500 shadow-lg transition transform hover:scale-105">Take the Mastery Quiz <i class="fa-solid fa-clipboard-check ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- QUIZ SECTION -->
+        <div id="quiz-section" class="tab-content">
+            <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-xl max-w-4xl mx-auto">
+                <div class="text-center mb-8 border-b pb-4">
+                    <h1 class="text-3xl font-extrabold text-slate-900 mb-2">Unit 03 Section 2.1.1 Mastery Quiz</h1>
+                    <p class="text-slate-600">Score 90% or higher (18/20) to earn your Certificate of Mastery and unlock the "Malware Whack" Retro Game!</p>
+                </div>
+
+                <div id="quiz-container" class="space-y-8">
+                    <!-- Questions injected via JS -->
+                </div>
+
+                <div class="mt-10 text-center border-t pt-6 flex flex-col md:flex-row justify-center items-center gap-4">
+                    <button id="submit-quiz-btn" onclick="gradeQuiz()" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">Submit Quiz</button>
+                    <button id="proceed-game-btn" onclick="switchTab('game')" class="hidden bg-purple-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-purple-700 shadow-lg transition w-full md:w-auto">Play "Malware Whack" <i class="fa-solid fa-gamepad ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RETRO GAME SECTION (MALWARE WHACK) -->
+        <div id="game-section" class="tab-content">
+            <div class="bg-slate-900 p-6 sm:p-8 rounded-2xl shadow-xl max-w-4xl mx-auto border-4 border-slate-700 flex flex-col items-center">
+                <div class="text-center mb-4 w-full">
+                    <h1 class="text-3xl font-extrabold text-red-500 mb-2 tracking-widest uppercase" style="font-family: monospace;">Malware Whack!</h1>
+                    <p class="text-slate-300 text-sm">Based on Whack-a-Mole! Click or tap on the rogue malware processes (<span class="text-red-400 font-bold">Trojans, Ransomware, Adware</span>) that pop up from the system holes. Do <strong class="text-emerald-400">NOT</strong> whack the system files (<span class="text-emerald-400 font-bold">System32, Kernel</span>) or you will lose system stability!</p>
+                </div>
+                
+                <div class="flex justify-between items-center w-full max-w-[500px] mb-4 px-4 text-white font-mono text-xl">
+                    <div>Score: <span id="game-score" class="text-emerald-400 font-bold">0</span></div>
+                    <div>System Health: <span id="game-lives" class="text-red-400 font-bold">3</span></div>
+                </div>
+
+                <div class="relative flex justify-center w-full">
+                    <!-- Game Canvas -->
+                    <canvas id="game-canvas" width="500" height="400" class="w-full max-w-[500px] bg-slate-950 border-2 border-slate-700 rounded-xl shadow-2xl"></canvas>
+                    
+                    <!-- Overlay Start Button -->
+                    <div id="game-overlay" class="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-80 rounded-xl max-w-[500px] mx-auto z-10">
+                        <h2 class="text-2xl font-bold text-red-500 mb-4 uppercase font-mono">System Infected!</h2>
+                        <button id="start-game-btn" class="bg-red-600 hover:bg-red-500 text-white font-bold font-mono py-3 px-6 rounded-lg text-xl border-4 border-red-800 uppercase transform transition hover:scale-105">Start Malware Whack</button>
+                    </div>
+                </div>
+
+                <div class="mt-8 text-center w-full border-t border-slate-800 pt-6">
+                    <button onclick="switchTab('cert')" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">View Certificate <i class="fa-solid fa-award ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CERTIFICATE SECTION -->
+        <div id="cert-section" class="tab-content">
+            <div class="max-w-5xl mx-auto">
+                <div class="bg-white p-6 rounded shadow mb-6 text-center border border-slate-200">
+                    <h2 class="text-2xl font-bold text-emerald-600 mb-2">🎉 Congratulations! 🎉</h2>
+                    <p class="text-slate-700 mb-4">You have mastered Unit 03 Section 2.1.1 - Different Computing Devices.</p>
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+                        <input type="text" id="student-name-input" value="Student" placeholder="Enter first name" class="border-2 border-slate-300 rounded px-4 py-2 w-full md:w-64 focus:border-blue-500 focus:outline-none">
+                        <button onclick="updateCertName()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition font-bold">Update Name</button>
+                        <button id="download-btn" onclick="downloadCert()" class="bg-slate-800 text-white px-4 py-2 rounded hover:bg-slate-900 transition flex items-center justify-center font-bold">
+                            <i class="fa-solid fa-download mr-2"></i>Download PNG
+                        </button>
+                    </div>
+                </div>
+
+                <div class="cert-preview-container">
+                    <div id="certificate">
+                        <div class="gold-seal">
+                            <div class="gold-seal-inner-1">
+                                <div class="gold-seal-inner-2">
+                                     <span class="embossed-text" style="font-size: 14px;">Certificate</span>
+                                     <i class="fa-solid fa-star" style="font-size: 12px; color: #b38728; margin: 2px 0;"></i>
+                                     <span class="embossed-text" style="font-size: 11px;">Of</span>
+                                     <i class="fa-solid fa-star" style="font-size: 12px; color: #b38728; margin: 2px 0;"></i>
+                                     <span class="embossed-text" style="font-size: 14px;">Excellence</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="relative z-20 w-full h-full flex flex-col pt-[48px] pl-[380px] pr-[48px]">
+                            <h1 class="text-[#1e3a8a] text-[4.5rem] leading-none font-serif font-bold tracking-wide uppercase mb-2">CERTIFICATE</h1>
+                            <h2 class="text-slate-700 text-3xl font-serif tracking-widest uppercase mb-8">Of Achievement</h2>
+                            
+                            <p class="text-[1.4rem] font-body text-slate-800 mb-4">This is to certify that</p>
+                            
+                            <div class="relative mb-6 w-full">
+                                <h3 id="cert-student-name" class="text-[3.5rem] text-[#1e3a8a] font-serif italic leading-none pb-2 relative z-10 text-center w-full block">Student</h3>
+                                <div class="w-full border-b-[2px] border-[#1e3a8a] absolute bottom-[4px] left-0 z-0"></div>
+                            </div>
+                            
+                            <p class="text-[1.2rem] font-body text-slate-800 leading-relaxed w-full pr-4">
+                                Has successfully completed the assessment for 
+                                <strong class="text-[1.6rem] text-[#1e3a8a] block mt-3 mb-1 font-serif">Tech+ Unit 03 Section 2.1.1</strong>
+                                <strong class="text-[1.3rem] text-slate-900 block mb-3 font-serif italic">Different Computing Devices</strong>
+                                <span class="text-[1.0rem] text-slate-600 leading-snug block">Demonstrating comprehensive proficiency in identifying purposes, key features, and use cases of mobile devices, computers, workstations, servers, gaming consoles, and immersive AR/VR systems.</span>
+                            </p>
+                            
+                            <div class="flex justify-end gap-16 items-end mt-auto mb-[50px] w-full pr-8">
+                                <div class="w-64">
+                                    <div class="border-b border-slate-600 mb-2 h-16 flex items-end justify-center relative">
+                                        <span class="font-script text-[4rem] text-[#1e3a8a] absolute bottom-[-10px] transform -rotate-3 opacity-90">Dr. M. S</span>
+                                    </div>
+                                    <p class="font-serif text-lg text-slate-800 text-center">Instructor</p>
+                                </div>
+                                
+                                <div class="w-64">
+                                    <div class="border-b border-slate-600 mb-2 text-center h-16 flex items-end justify-center">
+                                        <p id="cert-date" class="font-body text-xl text-slate-800 pb-1">Date Here</p>
+                                    </div>
+                                    <p class="font-serif text-lg text-slate-800 text-center">Date</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Custom Modal for Alerts -->
+    <div id="custom-modal" class="fixed inset-0 bg-black bg-opacity-50 z-[100] hidden flex justify-center items-center backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all">
+            <div class="text-center">
+                <div id="modal-icon" class="text-5xl mb-4"></div>
+                <h3 id="modal-title" class="text-2xl font-bold mb-2 text-slate-900"></h3>
+                <p id="modal-msg" class="text-slate-600 mb-6"></p>
+                <button onclick="closeModal()" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-700 transition w-full">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Briefing Modal (Separate Details & Use Cases) -->
+    <div id="briefing-modal" class="fixed inset-0 bg-black bg-opacity-70 z-[120] hidden flex justify-center items-center backdrop-blur-sm p-4 sm:p-6">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col transform transition-all overflow-hidden border-4 border-blue-900">
+            <div class="p-6 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+                <div class="flex items-center gap-4">
+                    <div id="briefing-modal-icon" class="text-4xl"></div>
+                    <h3 id="briefing-modal-title" class="text-2xl md:text-3xl font-bold text-slate-900"></h3>
+                </div>
+                <button onclick="closeBriefing()" class="text-slate-400 hover:text-red-600 transition text-4xl leading-none">&times;</button>
+            </div>
+            <div id="briefing-modal-content" class="p-6 md:p-10 overflow-y-auto flex-grow text-slate-700 text-lg leading-relaxed bg-white">
+                <!-- Dynamic Content Injected Here -->
+            </div>
+            <div class="p-6 border-t border-slate-200 bg-slate-50 flex justify-end">
+                <button onclick="closeBriefing()" class="bg-blue-900 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-800 transition shadow-md">Acknowledge & Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Separated Details (7+ paragraphs) and Use Cases data ---
+        const briefingDetails = {
+            'mobile-details': {
+                title: 'Mobile Devices: Conceptual Details',
+                icon: '<i class="fa-solid fa-mobile-screen-button text-blue-600"></i>',
+                html: `
+                    <p class="mb-4">Mobile devices, frequently described as handheld computers or pocket-sized powerhouses, represent one of the most ubiquitous technological revolutions in human history. At their architectural foundation, mobile devices integrate a system-on-a-chip (SoC) combining CPU, GPU, memory controller, and wireless radios into an ultra-compact form factor designed specifically for energy efficiency and continuous mobility.</p>
+                    
+                    <p class="mb-4">The defining characteristic of modern mobile devices is the intuitive capacitive touchscreen interface. Unlike traditional mechanical keyboards and mice, touchscreens allow users to interact directly with graphical user interface elements using multi-touch gestures such as pinching to zoom, swiping, and tapping. This tactile immediacy transforms complex software operations into natural human movements.</p>
+                    
+                    <p class="mb-4">Beneath the user interface lies the mobile operating system (such as Android or iOS). The mobile OS strictly manages hardware resources, power consumption, memory allocation, and security sandboxing. Unlike desktop operating systems where users can install software from any source with root privileges, mobile OS architectures rely heavily on curated app stores that vet applications for security and hardware compatibility.</p>
+                    
+                    <p class="mb-4">Smartphones stand out as the primary nexus of modern personal communication. They combine advanced cellular radio transceivers (supporting 4G LTE and 5G networks) with high-resolution digital cameras, optical image stabilization, and sophisticated sensor arrays. These sensors include accelerometers, gyroscopes, ambient light detectors, magnetometers, and biometric fingerprint or facial scanners.</p>
+                    
+                    <p class="mb-4">Tablets occupy the versatile middle ground between smartphones and laptop computers. Featuring larger displays ranging from 8 to 13 inches, tablets provide enhanced screen estate for media consumption, digital artwork creation, and document editing while maintaining exceptional portability. They frequently support active styluses and detachable keyboard docks to bridge the gap into productivity.</p>
+                    
+                    <p class="mb-4">E-readers represent a specialized branch of mobile devices optimized entirely for digital reading. Utilizing electronic paper (E-Ink) technology, e-readers reflect ambient light from the environment just like real paper rather than emitting harsh LED light. This drastically reduces eye strain during prolonged reading sessions and provides exceptional battery longevity lasting weeks on a single charge.</p>
+                    
+                    <p class="mb-4">Across all mobile device categories, advanced wireless connectivity standards such as Wi-Fi, Bluetooth, and cellular data ensure that users remain constantly connected to global cloud networks, email, GPS navigation services, and streaming entertainment platforms regardless of their physical location.</p>
+                `
+            },
+            'mobile-usecase': {
+                title: 'Mobile Devices: Practical Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-amber-500"></i>',
+                html: `
+                    <h4 class="text-xl font-bold text-blue-800 mb-3">Use Cases & Practical Examples</h4>
+                    <p class="mb-2"><strong>Case 1: Field Navigation and Communication</strong></p>
+                    <p class="text-slate-600 mb-2">Mobile devices provide instant global connectivity and real-time location tracking for traveling professionals.</p>
+                    <ul class="list-disc pl-5 mb-4 text-slate-700 text-base">
+                        <li><strong>Example 1:</strong> A delivery driver uses a smartphone GPS app to calculate real-time turn-by-turn routing around traffic congestion.</li>
+                        <li><strong>Example 2:</strong> A field engineer uses a cellular-enabled tablet to make video calls back to headquarters while inspecting remote utility towers.</li>
+                    </ul>
+                    
+                    <p class="mb-2"><strong>Case 2: Digital Education and Reading</strong></p>
+                    <p class="text-slate-600 mb-2">Students and avid readers leverage portable form factors to carry entire libraries in their backpacks.</p>
+                    <ul class="list-disc pl-5 mb-4 text-slate-700 text-base">
+                        <li><strong>Example 1:</strong> A university student uses an e-reader loaded with thousands of pages of academic journals while commuting on public transit.</li>
+                        <li><strong>Example 2:</strong> An elementary student uses an educational tablet touchscreen app to practice interactive math problems with instant feedback.</li>
+                    </ul>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Mobile Touchscreen Interface</p>
+                            <img src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=600&h=350" alt="Mobile device touchscreen interaction" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Field Navigation & Productivity</p>
+                            <img src="https://images.unsplash.com/photo-1526738549149-8e07eca6c147?auto=format&fit=crop&w=600&h=350" alt="Person using mobile device outdoors" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'laptop-details': {
+                title: 'Laptops & Desktops: Conceptual Details',
+                icon: '<i class="fa-solid fa-laptop text-indigo-600"></i>',
+                html: `
+                    <p class="mb-4">Computers represent the foundational hardware category upon which modern digital workflows are built. Unlike mobile devices that feature locked mobile operating systems and integrated screens, computers offer robust operating systems (such as Windows, macOS, or Linux), expansive storage capabilities, high processing performance, and flexible connection options.</p>
+                    
+                    <p class="mb-4">The defining architectural feature of traditional computers is their extensive support for peripheral expansion ports. Motherboards are equipped with USB-A, USB-C, HDMI, DisplayPort, Ethernet, and audio jacks. These ports allow users to connect external monitors, full-sized keyboards, mice, printers, and external storage arrays, transforming a portable or desktop base into an expansive productivity workstation.</p>
+                    
+                    <p class="mb-4">Laptops (also known as notebook computers) successfully miniaturize the full power of a desktop computer into a clamshell form factor with integrated screens, keyboards, trackpads, and rechargeable batteries. Hybrid laptops take this further by incorporating 360-degree hinges or detachable touchscreens, giving users the best of both traditional laptop typing and tablet touch navigation.</p>
+                    
+                    <p class="mb-4">Desktop computers provide stationary performance advantages. Because they are not restricted by strict battery constraints or tight thermal envelopes, desktops can house larger, more powerful multi-core processors, dedicated graphics cards, and extensive cooling fans capable of sustaining heavy processing loads indefinitely without thermal throttling.</p>
+                    
+                    <p class="mb-4">Operating system choice on computers is critical. Professional operating systems provide deep administrative control, file-level access permissions, advanced networking configurations, and full compatibility with legacy enterprise applications that cannot run on mobile environments.</p>
+                    
+                    <p class="mb-4">Hardware upgradability is another hallmark of traditional computer design. While laptops are compact and difficult to modify, desktop computers allow users to easily open the chassis and upgrade RAM modules, swap out storage drives, or install faster graphics cards as technology advances.</p>
+                    
+                    <p class="mb-4">Ultimately, computers provide the optimal balance of processing horsepower, user input precision, and display real estate required for complex multi-app multitasking, software development, video editing, and academic research.</p>
+                `
+            },
+            'laptop-usecase': {
+                title: 'Laptops & Desktops: Practical Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-amber-500"></i>',
+                html: `
+                    <h4 class="text-xl font-bold text-indigo-800 mb-3">Use Cases & Practical Examples</h4>
+                    <p class="mb-2"><strong>Case 1: Remote Work and Higher Education Study</strong></p>
+                    <p class="text-slate-600 mb-2">Students and professionals require portable computing power to complete reports and attend virtual meetings.</p>
+                    <ul class="list-disc pl-5 mb-4 text-slate-700 text-base">
+                        <li><strong>Example 1:</strong> A college student uses a laptop in the library to type research papers in Microsoft Word while simultaneously researching sources in a web browser.</li>
+                        <li><strong>Example 2:</strong> A remote financial analyst uses a laptop connected via HDMI to an external monitor at home to review spreadsheets.</li>
+                    </ul>
+                    
+                    <p class="mb-2"><strong>Case 2: Creative Multimedia Editing</strong></p>
+                    <p class="text-slate-600 mb-2">Media professionals rely on desktop computers with multiple high-resolution displays and fast peripheral connections.</p>
+                    <ul class="list-disc pl-5 mb-4 text-slate-700 text-base">
+                        <li><strong>Example 1:</strong> A video editor connects high-speed external SSDs via USB-C to a desktop computer to transfer 4K raw video footage.</li>
+                        <li><strong>Example 2:</strong> A music producer plugs a USB MIDI keyboard into a laptop running digital audio workstation software to record multi-track music.</li>
+                    </ul>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Laptop Peripheral Connectivity</p>
+                            <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=600&h=350" alt="Laptop computer on desk" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Professional Office Productivity</p>
+                            <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=600&h=350" alt="Person working on computer setup" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'workstation-details': {
+                title: 'Workstations: Conceptual Details',
+                icon: '<i class="fa-solid fa-desktop text-purple-600"></i>',
+                html: `
+                    <p class="mb-4">Workstations are elite, high-performance desktop computers engineered specifically for technical, scientific, and professional applications that demand extreme computing power, mathematical precision, and absolute hardware reliability. While a standard office PC handles word processing and web browsing with ease, a workstation is built to tackle multi-threaded computational workloads that would cause standard computers to freeze or crash.</p>
+                    
+                    <p class="mb-4">The defining hardware feature of a workstation is its inclusion of professional-grade graphics processing units (GPUs) and Error-Correcting Code (ECC) RAM. ECC memory automatically detects and corrects internal data corruption in real time, guaranteeing that a 72-hour scientific calculation or architectural rendering does not fail due to a stray memory bit flip.</p>
+                    
+                    <p class="mb-4">Professional GPUs in workstations are certified by software vendors (such as Autodesk or Adobe) to run complex computer-aided design (CAD), 3D modeling, and finite element analysis software flawlessly. They feature massive VRAM capacities capable of loading millions of polygons and complex lighting shaders simultaneously.</p>
+                    
+                    <p class="mb-4">Workstations also excel in physical expandability. Their robust motherboards feature multiple PCIe expansion slots, high-wattage power supplies, and internal bays supporting redundant array of independent disks (RAID) storage configurations for blazing-fast read/write speeds and data safety.</p>
+                    
+                    <p class="mb-4">Input peripherals paired with workstations are equally specialized. Professionals often use high-precision mice, ergonomic mechanical keyboards, and digital graphics tablets with stylus pressure sensitivity to achieve millimeter accuracy in design work.</p>
+                    
+                    <p class="mb-4">Despite their immense computing power, workstations can still function as daily office machines, but their high cost and heavy hardware footprint make them specialized tools deployed strictly where heavy computing performance is mandatory.</p>
+                    
+                    <p class="mb-4">System administrators and engineers depend on workstations to simulate physical reality before building it in the real world, saving millions of dollars in physical prototyping costs.</p>
+                `
+            },
+            'workstation-usecase': {
+                title: 'Workstations: Practical Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-amber-500"></i>',
+                html: `
+                    <h4 class="text-xl font-bold text-purple-800 mb-3">Use Cases & Practical Examples</h4>
+                    <p class="mb-2"><strong>Case 1: Architectural Engineering and CAD Modeling</strong></p>
+                    <p class="text-slate-600 mb-2">Engineers construct full 3D building simulations that require massive GPU rendering performance.</p>
+                    <ul class="list-disc pl-5 mb-4 text-slate-700 text-base">
+                        <li><strong>Example 1:</strong> An aeronautical engineer uses a workstation running CAD software to simulate structural wind stress on a new airplane wing design.</li>
+                        <li><strong>Example 2:</strong> An architect renders a photorealistic 3D walkthrough of a skyscraper complete with ray-traced lighting calculations.</li>
+                    </ul>
+                    
+                    <p class="mb-2"><strong>Case 2: Scientific Research and Data Analysis</strong></p>
+                    <p class="text-slate-600 mb-2">Researchers process colossal datasets and complex mathematical simulations.</p>
+                    <ul class="list-disc pl-5 mb-4 text-slate-700 text-base">
+                        <li><strong>Example 1:</strong> A geneticist analyzes millions of DNA sequencing data points using multi-threaded CPU processing on an enterprise workstation.</li>
+                        <li><strong>Example 2:</strong> A meteorologist runs climate prediction models that require massive ECC memory error protection to ensure data integrity.</li>
+                    </ul>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: High-Performance Workstation Hardware</p>
+                            <img src="https://images.unsplash.com/photo-1587202372775-e229f172b9d7?auto=format&fit=crop&w=600&h=350" alt="High performance workstation computer" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: 3D Modeling & CAD Engineering</p>
+                            <img src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=600&h=350" alt="Engineer working on 3D CAD design" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'server-details': {
+                title: 'Servers: Conceptual Details',
+                icon: '<i class="fa-solid fa-server text-emerald-600"></i>',
+                html: `
+                    <p class="mb-4">Servers are powerhouse computers designed specifically to provide network services, manage centralized resources, host websites, and store massive repositories of shared data for other computers (clients) across a Local Area Network (LAN) or the global Internet. Unlike personal computers built for single human users, servers operate autonomously in climate-controlled data centers, designed for continuous, uninterrupted 24/7/365 operation.</p>
+                    
+                    <p class="mb-4">A critical architectural feature of servers is Scalability. Servers can be scaled vertically (scaling up) by adding more RAM, faster CPUs, and larger drives to a single machine, or scaled horizontally (scaling out) by connecting dozens of independent servers into a cohesive network cluster to share heavy workloads.</p>
+                    
+                    <p class="mb-4">Reliability and Fault Tolerance are paramount in server engineering. To prevent unexpected crashes from halting business operations, servers feature redundant components. This includes hot-swappable dual power supplies, multiple cooling fans, and mirrored RAID disk arrays so that if a single hardware component fails, the server continues running without missing a beat.</p>
+                    
+                    <p class="mb-4">Servers run specialized server operating systems (such as Windows Server, Ubuntu Server, or Red Hat Enterprise Linux) that prioritize network packet routing, user authorization, database transaction processing, and rigorous cybersecurity firewalls over graphical user interfaces.</p>
+                    
+                    <p class="mb-4">Dedicated servers are assigned to perform one specific network task with maximum efficiency (such as hosting a corporate email gateway or managing domain controller logins), while non-dedicated servers may manage multiple services simultaneously while allowing local administrative access.</p>
+                    
+                    <p class="mb-4">Modern cloud computing relies entirely on server virtualization. Using hypervisor software, a single physical server can host dozens of isolated virtual machines (VMs), allowing organizations to maximize hardware efficiency and spin up new servers in seconds.</p>
+                    
+                    <p class="mb-4">Without servers managing DNS resolution, cloud file storage, database queries, and web page delivery, modern internet connectivity and enterprise business operations would instantly collapse.</p>
+                `
+            },
+            'server-usecase': {
+                title: 'Servers: Practical Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-amber-500"></i>',
+                html: `
+                    <h4 class="text-xl font-bold text-emerald-800 mb-3">Use Cases & Practical Examples</h4>
+                    <p class="mb-2"><strong>Case 1: Web Hosting and E-Commerce</strong></p>
+                    <p class="text-slate-600 mb-2">Web servers process millions of concurrent user requests to deliver web pages instantly across the globe.</p>
+                    <ul class="list-disc pl-5 mb-4 text-slate-700 text-base">
+                        <li><strong>Example 1:</strong> An online retail store uses a cluster of web servers behind a load balancer to handle massive customer traffic spikes during Black Friday sales.</li>
+                        <li><strong>Example 2:</strong> A cloud server hosts an organization's centralized database, processing thousands of secure SQL transactions per second.</li>
+                    </ul>
+                    
+                    <p class="mb-2"><strong>Case 2: Enterprise File Storage and Virtualization</strong></p>
+                    <p class="text-slate-600 mb-2">Corporate file servers provide secure, centralized storage and backup repositories for employees.</p>
+                    <ul class="list-disc pl-5 mb-4 text-slate-700 text-base">
+                        <li><strong>Example 1:</strong> An employee saves a Word document to the corporate network share folder, where it is automatically backed up on the enterprise server array.</li>
+                        <li><strong>Example 2:</strong> An IT department runs a hypervisor on a physical rack server to host 10 virtual servers for different corporate departments.</li>
+                    </ul>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Enterprise Data Center Server Racks</p>
+                            <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=600&h=350" alt="Server room data center" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Cloud Infrastructure & Web Hosting</p>
+                            <img src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=600&h=350" alt="Server lights and network connectivity" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'console-details': {
+                title: 'Gaming Consoles: Conceptual Details',
+                icon: '<i class="fa-solid fa-gamepad text-amber-600"></i>',
+                html: `
+                    <p class="mb-4">Gaming consoles represent a highly specialized category of computing devices engineered explicitly for interactive digital entertainment. While general-purpose computers require complex operating system configurations, driver updates, and background utility management, gaming consoles provide a streamlined, plug-and-play gaming experience optimized for maximum visual fidelity and responsive frame rates.</p>
+                    
+                    <p class="mb-4">The core architecture of a gaming console revolves around dedicated hardware integration. Consoles feature custom system-on-a-chip (SoC) designs developed in close collaboration with semiconductor giants like AMD, combining high-speed CPU cores with powerful custom graphics processors and unified GDDR memory pools that allow both CPU and GPU to access game assets instantly.</p>
+                    
+                    <p class="mb-4">Primary input on gaming consoles is handled via dedicated handheld gamepads or controllers. These controllers incorporate advanced tactile feedback technologies, including dual-rumble haptic actuators, adaptive triggers with variable tension, motion gyroscopes, and precision analog thumbsticks that give players granular control over virtual characters.</p>
+                    
+                    <p class="mb-4">Software distribution for modern consoles is heavily centered around integrated online stores and digital services. Players can purchase, download, and patch games directly over high-speed internet connections while managing friend lists, cloud game saves, and cross-platform multiplayer matchmaking.</p>
+                    
+                    <p class="mb-4">Exclusive games represent a major driver of console adoption. Game studios develop titles tailored specifically to leverage a particular console's unique hardware architecture, extracting incredible graphical performance that rivals high-end PC hardware.</p>
+                    
+                    <p class="mb-4">Backward compatibility is another valued console feature, allowing users to play games purchased on previous generations of the same console family, preserving gaming libraries across hardware upgrades.</p>
+                    
+                    <p class="mb-4">Beyond gaming, modern consoles function as comprehensive home entertainment hubs, offering integrated streaming apps (Netflix, Disney+, YouTube), 4K Blu-ray playback, and optional virtual reality headset support.</p>
+                `
+            },
+            'console-usecase': {
+                title: 'Gaming Consoles: Practical Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-amber-500"></i>',
+                html: `
+                    <h4 class="text-xl font-bold text-amber-800 mb-3">Use Cases & Practical Examples</h4>
+                    <p class="mb-2"><strong>Case 1: Immersive Home Entertainment and Gaming</strong></p>
+                    <p class="text-slate-600 mb-2">Families and gamers connect consoles directly to living room 4K HDR televisions for high-performance entertainment.</p>
+                    <ul class="list-disc pl-5 mb-4 text-slate-700 text-base">
+                        <li><strong>Example 1:</strong> Friends connect two wireless controllers to a home console to play a local split-screen cooperative multiplayer racing game.</li>
+                        <li><strong>Example 2:</strong> A user opens an integrated streaming app on their gaming console to watch movies in 4K Dolby Vision surround sound.</li>
+                    </ul>
+                    
+                    <p class="mb-2"><strong>Case 2: Online Multiplayer Community Interaction</strong></p>
+                    <p class="text-slate-600 mb-2">Consoles facilitate global online communities through integrated voice chat and multiplayer matchmaking servers.</p>
+                    <ul class="list-disc pl-5 mb-4 text-slate-700 text-base">
+                        <li><strong>Example 1:</strong> A gamer joins an online party chat with teammates across different continents to strategize during a competitive online match.</li>
+                        <li><strong>Example 2:</strong> A player purchases an expansion add-on pack from the console's digital storefront using stored credit card credentials.</li>
+                    </ul>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Gaming Console & Controller Hardware</p>
+                            <img src="https://images.unsplash.com/photo-1605901309584-818e2596098f?auto=format&fit=crop&w=600&h=350" alt="Gaming console and controller setup" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Interactive Entertainment & Gaming</p>
+                            <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=600&h=350" alt="Person playing video games with controller" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'vr-ar-details': {
+                title: 'VR & AR Systems: Conceptual Details',
+                icon: '<i class="fa-solid fa-vr-cardboard text-rose-600"></i>',
+                html: `
+                    <p class="mb-4">Virtual Reality (VR) and Augmented Reality (AR) systems represent the cutting edge of immersive computing, transforming how humans interact with digital information by bridging the gap between physical reality and digital simulation.</p>
+                    
+                    <p class="mb-4">Virtual Reality (VR) systems immerse the user completely within a simulated digital environment. By wearing a Head-Mounted Display (HMD) equipped with high-refresh-rate stereoscopic screens and enclosed lenses, the user's field of view is entirely occupied by the virtual world, shutting out physical surroundings and creating a profound psychological sense of presence.</p>
+                    
+                    <p class="mb-4">To track movement in VR, systems rely on external cameras or inside-out sensor arrays that monitor the precise 6 Degrees of Freedom (6DoF) position of the headset and hand-held motion controllers, allowing users to reach out and physically manipulate virtual objects.</p>
+                    
+                    <p class="mb-4">Augmented Reality (AR) systems take a fundamentally different approach. Instead of replacing the real world, AR systems enhance the user's perception of their actual physical environment by overlaying digital graphics, holograms, contextual data, and audio directly onto the real-world view.</p>
+                    
+                    <p class="mb-4">AR systems can be experienced via specialized smart glasses, lightweight headsets, or through the cameras and screens of smartphones and tablets. They utilize advanced computer vision, depth sensors, and spatial mapping algorithms to anchor digital objects securely onto physical surfaces in real time.</p>
+                    
+                    <p class="mb-4">Both VR and AR demand extreme processing power and ultra-low motion-to-photon latency to prevent motion sickness. High frame rates (90fps+) are mandatory to ensure smooth visual tracking during rapid head turns.</p>
+                    
+                    <p class="mb-4">These immersive technologies have expanded far beyond entertainment, finding critical applications in surgical medical training, industrial equipment repair, military flight simulation, remote education, and interactive retail shopping.</p>
+                `
+            },
+            'vr-ar-usecase': {
+                title: 'VR & AR Systems: Practical Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-amber-500"></i>',
+                html: `
+                    <h4 class="text-xl font-bold text-rose-800 mb-3">Use Cases & Practical Examples</h4>
+                    <p class="mb-2"><strong>Case 1: Professional Training and Medical Simulation</strong></p>
+                    <p class="text-slate-600 mb-2">Trainees practice high-risk procedures in risk-free simulated virtual environments.</p>
+                    <ul class="list-disc pl-5 mb-4 text-slate-700 text-base">
+                        <li><strong>Example 1:</strong> Medical students use VR headsets to practice complex surgical procedures on simulated patients before operating in a real hospital.</li>
+                        <li><strong>Example 2:</strong> Aviation cadets train in VR flight simulators that replicate emergency weather conditions and mechanical instrument failures.</li>
+                    </ul>
+                    
+                    <p class="mb-2"><strong>Case 2: Retail Shopping and Field Maintenance AR</strong></p>
+                    <p class="text-slate-600 mb-2">AR overlays digital guidance onto physical environments to assist consumers and technicians.</p>
+                    <ul class="list-disc pl-5 mb-4 text-slate-700 text-base">
+                        <li><strong>Example 1:</strong> A customer uses an AR smartphone app to preview how a 3D digital sofa will look and fit inside their living room before purchasing.</li>
+                        <li><strong>Example 2:</strong> A field technician wearing AR smart glasses views step-by-step repair schematics floating directly over a broken factory machine.</li>
+                    </ul>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Virtual Reality Headset (VR)</p>
+                            <img src="https://images.unsplash.com/photo-1593508512255-86ab42a8e620?auto=format&fit=crop&w=600&h=350" alt="Person wearing virtual reality headset" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Augmented Reality Holographic Display (AR)</p>
+                            <img src="https://images.unsplash.com/photo-1626379953822-baec19c3accd?auto=format&fit=crop&w=600&h=350" alt="Augmented reality interface visualization" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        function openBriefing(key) {
+            const modal = document.getElementById('briefing-modal');
+            const data = briefingDetails[key];
+            if(data) {
+                document.getElementById('briefing-modal-icon').innerHTML = data.icon;
+                document.getElementById('briefing-modal-title').innerText = data.title;
+                document.getElementById('briefing-modal-content').innerHTML = data.html;
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeBriefing() {
+            document.getElementById('briefing-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        document.getElementById('briefing-modal').addEventListener('click', function(e) {
+            if(e.target === this) closeBriefing();
+        });
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId + '-section').classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-blue-950'));
+            const activeBtn = document.getElementById('nav-' + tabId);
+            if(activeBtn && tabId !== 'cert') activeBtn.classList.add('bg-blue-950');
+            
+            document.querySelectorAll('.nav-btn-mobile').forEach(btn => btn.classList.remove('bg-blue-950'));
+            const activeMobileBtn = document.getElementById('nav-' + tabId + '-mobile');
+            if(activeMobileBtn && tabId !== 'cert') activeMobileBtn.classList.add('bg-blue-950');
+
+            window.scrollTo(0,0);
+
+            if (tabId === 'game' && !gameRunning) {
+                resetGame();
+                drawGame();
+            }
+        }
+
+        function showModal(title, message, type = 'info') {
+            const modal = document.getElementById('custom-modal');
+            const icon = document.getElementById('modal-icon');
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-msg').innerText = message;
+            
+            if(type === 'success') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-500"></i>';
+            } else if (type === 'error') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500"></i>';
+            } else if (type === 'warning') {
+                icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-amber-500"></i>';
+            } else {
+                icon.innerHTML = '<i class="fa-solid fa-circle-info text-blue-500"></i>';
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        // --- LAB INTERACTIVE FUNCTIONS ---
+        const lab1AScenarios = [
+            { text: "Scenario: Unlocking the phone instantly using the owner's face.", answer: "biometric" },
+            { text: "Scenario: Calculating turn-by-turn driving directions to a destination.", answer: "gps" },
+            { text: "Scenario: Automatically switching the screen orientation from portrait to landscape.", answer: "accel" },
+            { text: "Scenario: Dimming the display brightness automatically in a dark room.", answer: "ambient" }
+        ];
+        let lab1AIndex = 0;
+        function checkLab1A(type) {
+            if(type === lab1AScenarios[lab1AIndex].answer) {
+                lab1AIndex++;
+                if(lab1AIndex < lab1AScenarios.length) {
+                    document.getElementById('lab1a-scenario').innerText = lab1AScenarios[lab1AIndex].text;
+                    document.getElementById('lab1a-feedback').innerText = "Correct! Next scenario loaded.";
+                } else {
+                    document.getElementById('lab1a-feedback').innerText = "Lab 1A Complete: All smartphone sensors identified!";
+                    showModal('Lab 1A Complete!', 'You successfully matched all mobile sensors to their user scenarios.', 'success');
+                }
+            } else {
+                document.getElementById('lab1a-feedback').innerText = "Incorrect sensor match. Try again.";
+            }
+        }
+
+        function setReaderTheme(theme) {
+            const preview = document.getElementById('reader-preview');
+            if(theme === 'sepia') preview.style.backgroundColor = '#fef3c7';
+            if(theme === 'dark') { preview.style.backgroundColor = '#1e293b'; preview.style.color = '#f8fafc'; }
+        }
+        function setReaderSize(size) {
+            const preview = document.getElementById('reader-preview');
+            if(size === 'large') preview.style.fontSize = '1.25rem';
+        }
+        function completeLab1B() {
+            document.getElementById('lab1b-feedback').innerText = "E-Reader accessibility profile configured successfully!";
+            showModal('Lab 1B Complete!', 'You configured the e-reader E-Ink display settings for optimal reading comfort.', 'success');
+        }
+
+        function checkLab2A(port) {
+            if(port === 'hdmi') {
+                document.getElementById('lab2a-feedback').innerText = "Correct! HDMI/DisplayPort connects external 4K monitors.";
+                showModal('Lab 2A Complete!', 'You identified the correct video output port on the laptop.', 'success');
+            } else {
+                document.getElementById('lab2a-feedback').innerText = "Incorrect port for an external monitor.";
+            }
+        }
+
+        function checkLab2B(mode) {
+            if(mode === 'saver') {
+                document.getElementById('lab2b-feedback').innerText = "Correct! Battery Saver maximizes longevity on low charge.";
+                showModal('Lab 2B Complete!', 'You selected the optimal power profile for extended mobile use.', 'success');
+            } else {
+                document.getElementById('lab2b-feedback').innerText = "Incorrect power profile for conserving battery life.";
+            }
+        }
+
+        function checkLab3A(comp) {
+            if(comp === 'gpu') {
+                document.getElementById('lab3a-feedback').innerText = "Correct! Professional GPUs and ECC RAM handle heavy CAD rendering.";
+                showModal('Lab 3A Complete!', 'You selected the essential workstation hardware upgrade.', 'success');
+            } else {
+                document.getElementById('lab3a-feedback').innerText = "An ergonomic mouse does not provide 3D CAD rendering power.";
+            }
+        }
+
+        function checkLab3B(raid) {
+            if(raid === 'raid1') {
+                document.getElementById('lab3b-feedback').innerText = "Correct! RAID 1 provides disk mirroring for fault tolerance.";
+                showModal('Lab 3B Complete!', 'You successfully configured data redundancy for the workstation.', 'success');
+            } else {
+                document.getElementById('lab3b-feedback').innerText = "RAID 0 offers no fault tolerance if a drive fails.";
+            }
+        }
+
+        function checkLab4A(scale) {
+            if(scale === 'out') {
+                document.getElementById('lab4a-feedback').innerText = "Correct! Adding more servers to a network cluster is scaling out.";
+                showModal('Lab 4A Complete!', 'You mastered server scalability principles.', 'success');
+            } else {
+                document.getElementById('lab4a-feedback').innerText = "Adding physical servers to a network is scaling out, not up.";
+            }
+        }
+
+        function checkLab4B(red) {
+            if(red === 'psu') {
+                document.getElementById('lab4b-feedback').innerText = "Correct! Redundant PSUs prevent power failures from crashing servers.";
+                showModal('Lab 4B Complete!', 'You configured data center fault tolerance successfully.', 'success');
+            } else {
+                document.getElementById('lab4b-feedback').innerText = "RGB lighting is cosmetic and does not prevent power outages.";
+            }
+        }
+
+        function checkLab5A(arch) {
+            if(arch === 'dedicated') {
+                document.getElementById('lab5a-feedback').innerText = "Correct! Consoles use dedicated, streamlined hardware architectures.";
+                showModal('Lab 5A Complete!', 'You identified the core feature of gaming consoles.', 'success');
+            } else {
+                document.getElementById('lab5a-feedback').innerText = "Consoles are not optimized for office spreadsheets.";
+            }
+        }
+
+        function checkLab5B(comp) {
+            if(comp === 'compat') {
+                document.getElementById('lab5b-feedback').innerText = "Correct! Backward compatibility allows playing older generation games.";
+                showModal('Lab 5B Complete!', 'You defined console software support correctly.', 'success');
+            } else {
+                document.getElementById('lab5b-feedback').innerText = "That is not backward compatibility.";
+            }
+        }
+
+        function checkLab6A(tech) {
+            if(tech === 'ar') {
+                document.getElementById('lab6a-feedback').innerText = "Correct! Overlaying digital instructions onto physical reality is AR.";
+                showModal('Lab 6A Complete!', 'You successfully differentiated between AR and VR.', 'success');
+            } else {
+                document.getElementById('lab6a-feedback').innerText = "That is Augmented Reality (AR), not Virtual Reality.";
+            }
+        }
+
+        function checkLab6B(hmd) {
+            if(hmd === 'hmd') {
+                document.getElementById('lab6b-feedback').innerText = "Correct! HMD stands for Head-Mounted Display.";
+                showModal('Lab 6B Complete!', 'You identified the core VR hardware component.', 'success');
+            } else {
+                document.getElementById('lab6b-feedback').innerText = "Incorrect VR hardware component.";
+            }
+        }
+
+
+        // --- QUIZ LOGIC (20 Questions) ---
+        const quizData = [
+            { q: "Which is a common type of mobile device?", options: ["Gaming Consoles", "Servers", "Laptops", "E-readers"], answer: 3 },
+            { q: "GPS and location functionality are key features of which computing devices?", options: ["Tablets", "Smartphones", "Workstations", "VR systems"], answer: 1 },
+            { q: "Which computing devices manage resources and stores data for other devices over a network?", options: ["AR systems", "Workstations", "Servers", "Laptops"], answer: 2 },
+            { q: "Which computing devices combine the power of a desktop with portability?", options: ["Tablets", "Laptops", "Smartphones", "Gaming consoles"], answer: 1 },
+            { q: "Which computing devices can bring the user into a realistic, interactive virtual world?", options: ["VR Systems", "Gaming consoles", "AR systems", "Workstations"], answer: 0 },
+            { q: "Which computing device offers multiple connection options to enhance their functionality?", options: ["VR systems", "E-Readers", "Laptop Computers", "Tablets"], answer: 2 },
+            { q: "Which computing devices are stationary, high-performing, and can be utilized for everyday professional and personal needs?", options: ["Laptops", "Servers", "Workstations", "Tablets"], answer: 2 },
+            { q: "Which of the following is a key feature of gaming consoles?", options: ["Integrated controllers", "Head-mounted display", "Cameras and sensors", "Networking"], answer: 0 },
+            { q: "Which computing devices are a happy medium between smartphones and laptops?", options: ["E-readers", "Tablets", "Workstations", "Servers"], answer: 1 },
+            { q: "Which computing devices allow a user to try on clothes virtually?", options: ["Smartphones", "Tablets", "VR systems", "AR systems"], answer: 3 },
+            { q: "What technology do e-readers use to mimic paper and reduce eye strain in bright sunlight?", options: ["OLED matrix", "E-Ink display", "Plasma grid", "Cathode ray tube"], answer: 1 },
+            { q: "What does scaling out refer to when managing server infrastructure?", options: ["Adding physical servers to a network cluster", "Upgrading RAM on a single server", "Lowering server power consumption", "Installing water cooling"], answer: 0 },
+            { q: "Which hardware component is specifically utilized in workstations to automatically detect and correct memory data corruption?", options: ["ECC RAM", "RGB Heatsink", "HDMI Switch", "Lithium Battery"], answer: 0 },
+            { q: "What type of storage configuration is used on workstations or servers to provide data mirroring and fault tolerance?", options: ["RAID 1", "FAT32", "USB Bus", "BIOS ROM"], answer: 0 },
+            { q: "What does HMD stand for in Virtual Reality systems?", options: ["Hardware Main Drive", "Head-Mounted Display", "Hybrid Memory Device", "High Media Decoder"], answer: 1 },
+            { q: "Which computing devices are specifically designed to provide a streamlined, optimized gaming experience with custom SoCs and gamepads?", options: ["Gaming Consoles", "Servers", "E-readers", "Workstations"], answer: 0 },
+            { q: "What is the primary difference between Virtual Reality (VR) and Augmented Reality (AR)?", options: ["VR immerses the user in a simulated digital world, while AR overlays digital graphics onto the real world.", "AR only works without electricity.", "VR is used exclusively for spreadsheets.", "AR requires no screen."], answer: 0 },
+            { q: "Which mobile devices feature screens typically ranging from 8 to 13 inches and support active styluses for creative tasks?", options: ["Tablets", "Smartphones", "Servers", "Routers"], answer: 0 },
+            { q: "Why do enterprise servers require redundant dual power supplies and cooling fans?", options: ["To guarantee continuous 24/7 fault-tolerant uptime", "To run mobile apps faster", "To reduce internet billing costs", "To generate Wi-Fi signals"], answer: 0 },
+            { q: "Playing video games released for previous generations of the same hardware family is known as:", options: ["Backward compatibility", "Cloud streaming", "CPU overclocking", "Disk partitioning"], answer: 0 }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        quizData.forEach((item, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = "bg-slate-50 p-6 rounded-lg border border-slate-200";
+            
+            const qTitle = document.createElement('h3');
+            qTitle.className = "font-bold text-lg text-slate-800 mb-4";
+            qTitle.innerText = `${index + 1}. ${item.q}`;
+            qDiv.appendChild(qTitle);
+            
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = "space-y-3";
+            
+            item.options.forEach((opt, optIndex) => {
+                const label = document.createElement('label');
+                label.className = "flex items-center space-x-3 p-3 rounded bg-white border border-slate-300 hover:bg-blue-50 cursor-pointer transition";
+                
+                const radio = document.createElement('input');
+                radio.type = "radio";
+                radio.name = `q${index}`;
+                radio.value = optIndex;
+                radio.className = "form-radio h-5 w-5 text-blue-600";
+                
+                const span = document.createElement('span');
+                span.className = "text-slate-700";
+                span.innerText = opt;
+                
+                label.appendChild(radio);
+                label.appendChild(span);
+                optionsDiv.appendChild(label);
+            });
+            
+            qDiv.appendChild(optionsDiv);
+            quizContainer.appendChild(qDiv);
+        });
+
+        function gradeQuiz() {
+            let score = 0;
+            let allAnswered = true;
+
+            for(let i = 0; i < quizData.length; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if(selected) {
+                    if(parseInt(selected.value) === quizData[i].answer) score++;
+                } else {
+                    allAnswered = false;
+                }
+            }
+            
+            if(!allAnswered) {
+                showModal('Incomplete Quiz', 'Please answer all 20 questions before submitting.', 'warning');
+                return;
+            }
+            
+            const percentage = (score / quizData.length) * 100;
+            
+            if(score >= 18) { // 90% threshold
+                const navGame = document.getElementById('nav-game');
+                const navGameMobile = document.getElementById('nav-game-mobile');
+                
+                navGame.classList.remove('text-slate-400', 'cursor-not-allowed');
+                navGame.classList.add('text-white', 'hover:bg-blue-800');
+                navGame.disabled = false;
+                navGame.innerHTML = '<i class="fa-solid fa-gamepad mr-1"></i>Game';
+                
+                navGameMobile.classList.remove('text-slate-400', 'cursor-not-allowed');
+                navGameMobile.classList.add('text-white', 'hover:bg-blue-800');
+                navGameMobile.disabled = false;
+                navGameMobile.innerHTML = '<i class="fa-solid fa-gamepad"></i> Game';
+
+                document.getElementById('nav-cert').classList.remove('hidden');
+                document.getElementById('nav-cert-mobile').classList.remove('hidden');
+                
+                document.getElementById('proceed-game-btn').classList.remove('hidden');
+                document.getElementById('submit-quiz-btn').classList.add('hidden');
+
+                showModal('Mastery Achieved!', `You scored ${score}/20 (${percentage}%). You have unlocked your Certificate of Mastery AND the "Malware Whack" Retro Game!`, 'success');
+            } else {
+                quizData.forEach((_, i) => {
+                    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                    if(selected) selected.checked = false;
+                });
+                showModal('Keep Trying!', `You scored ${score}/20 (${percentage}%). You need 90% (18/20) to earn the certificate. Your answers have been reset so you can try again.`, 'error');
+                document.getElementById('quiz-section').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+
+        // --- RETRO GAME LOGIC: Malware Whack ---
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let score = 0;
+        let lives = 3;
+        let gameRunning = false;
+        let animationId;
+        let holes = [
+            {x: 100, y: 120}, {x: 250, y: 120}, {x: 400, y: 120},
+            {x: 100, y: 280}, {x: 250, y: 280}, {x: 400, y: 280}
+        ];
+        let activeEntity = null;
+        let spawnTimer = 0;
+        let entityDuration = 0;
+
+        const overlay = document.getElementById('game-overlay');
+        const startBtn = document.getElementById('start-game-btn');
+        startBtn.addEventListener('click', startGame);
+
+        function resetGame() {
+            score = 0;
+            lives = 3;
+            document.getElementById('game-score').innerText = score;
+            document.getElementById('game-lives').innerText = lives;
+            activeEntity = null;
+            spawnTimer = 0;
+        }
+
+        function startGame() {
+            overlay.classList.add('hidden');
+            resetGame();
+            gameRunning = true;
+            drawGame();
+        }
+
+        canvas.addEventListener('click', function(e) {
+            if(!gameRunning || !activeEntity) return;
+            
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const mouseX = (e.clientX - rect.left) * scaleX;
+            const mouseY = (e.clientY - rect.top) * scaleY;
+            
+            const targetHole = holes[activeEntity.holeIndex];
+            const dist = Math.hypot(mouseX - targetHole.x, mouseY - targetHole.y);
+            
+            if(dist < 45) {
+                if(activeEntity.type === 'malware') {
+                    score += 50;
+                    document.getElementById('game-score').innerText = score;
+                    activeEntity = null;
+                } else {
+                    lives--;
+                    document.getElementById('game-lives').innerText = lives;
+                    activeEntity = null;
+                    if(lives <= 0) gameOver();
+                }
+            }
+        });
+
+        function drawGame() {
+            if(!gameRunning) return;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.strokeStyle = '#1e293b';
+            ctx.lineWidth = 1;
+            for(let i=0; i<canvas.width; i+=50) {
+                ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke();
+            }
+            for(let i=0; i<canvas.height; i+=50) {
+                ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(canvas.width, i); ctx.stroke();
+            }
+
+            holes.forEach(h => {
+                ctx.beginPath();
+                ctx.arc(h.x, h.y + 15, 45, 0, Math.PI * 2);
+                ctx.fillStyle = '#020617';
+                ctx.fill();
+                ctx.strokeStyle = '#334155';
+                ctx.lineWidth = 4;
+                ctx.stroke();
+            });
+
+            spawnTimer++;
+            if(!activeEntity && spawnTimer > 45) {
+                const holeIdx = Math.floor(Math.random() * holes.length);
+                const isMalware = Math.random() < 0.75;
+                const labels = isMalware ? ['TROJAN', 'RANSOM', 'ADWARE', 'WORM'] : ['SYS32', 'KERNEL'];
+                const label = labels[Math.floor(Math.random() * labels.length)];
+                
+                activeEntity = {
+                    holeIndex: holeIdx,
+                    type: isMalware ? 'malware' : 'system',
+                    label: label,
+                    timer: 0
+                };
+                spawnTimer = 0;
+                entityDuration = Math.floor(Math.random() * 40) + 40;
+            }
+
+            if(activeEntity) {
+                activeEntity.timer++;
+                const h = holes[activeEntity.holeIndex];
+                
+                ctx.beginPath();
+                ctx.arc(h.x, h.y - 10, 40, 0, Math.PI * 2);
+                ctx.fillStyle = activeEntity.type === 'malware' ? '#ef4444' : '#10b981';
+                ctx.fill();
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 11px monospace';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(activeEntity.label, h.x, h.y - 10);
+
+                if(activeEntity.timer > entityDuration) {
+                    if(activeEntity.type === 'malware') {
+                        lives--;
+                        document.getElementById('game-lives').innerText = lives;
+                        if(lives <= 0) gameOver();
+                    }
+                    activeEntity = null;
+                }
+            }
+
+            animationId = requestAnimationFrame(drawGame);
+        }
+
+        function gameOver() {
+            gameRunning = false;
+            cancelAnimationFrame(animationId);
+            overlay.classList.remove('hidden');
+            startBtn.innerText = "System Failure! Reboot";
+            startBtn.classList.replace('bg-red-600', 'bg-slate-700');
+        }
+
+
+        // --- CERTIFICATE GENERATOR ---
+        function updateCertName() {
+            let name = document.getElementById('student-name-input').value.trim();
+            if(name) {
+                if(name.includes(' ')) name = name.split(' ')[0];
+                document.getElementById('student-name-input').value = name;
+                document.getElementById('cert-student-name').innerText = name;
+            } else {
+                showModal('Wait!', 'Please enter your first name.', 'warning');
+            }
+        }
+
+        const today = new Date();
+        document.getElementById('cert-date').innerText = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        function downloadCert() {
+            const certEl = document.getElementById('certificate');
+            const name = document.getElementById('cert-student-name').innerText;
+            let filename = 'TechPlus_Certificate.png';
+            if(name && name !== 'Student') filename = `${name}_Certificate.png`;
+
+            const originalTransform = certEl.style.transform;
+            certEl.style.transform = 'none';
+
+            const btn = document.getElementById('download-btn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Generating...';
+            btn.disabled = true;
+
+            html2canvas(certEl, { scale: 2, useCORS: true, backgroundColor: '#ffffff' }).then(canvas => {
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            }).catch(err => {
+                console.error(err);
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                showModal('Error', 'Failed to generate certificate image.', 'error');
+            });
+        }
+    </script>
+</body>
+</html>

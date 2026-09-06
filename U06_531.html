@@ -1,0 +1,1464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 06 Section 5.3.1 Mastery - Database Structures</title>
+    
+    <!-- Load Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load HTML2Canvas for Certificate Download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- Load Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Qwitcher+Grypen:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; 
+            color: #0f172a;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        /* Interactive Elements CSS */
+        .io-dropzone { min-height: 80px; min-width: 140px; border: 2px dashed #94a3b8; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 0.5rem; background: #f1f5f9; transition: all 0.2s;}
+        .io-dropzone.drag-over { background: #e2e8f0; border-color: #0ea5e9; box-shadow: inset 0 0 10px rgba(14, 165, 233, 0.2);}
+        
+        .io-item { cursor: grab; transition: transform 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 100%; text-align: center; margin-bottom: 0.5rem;}
+        .io-item:active { cursor: grabbing; transform: scale(0.95); }
+        
+        .cat-dropzone { transition: background-color 0.2s ease; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #e2e8f0; }
+        ::-webkit-scrollbar-thumb { background: #0284c7; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #0369a1; }
+
+        /* Retro Game Canvas */
+        #game-canvas {
+            background-color: #0f172a;
+            border: 4px solid #334155;
+            border-radius: 8px;
+            box-shadow: 0 0 25px rgba(14, 165, 233, 0.4);
+            max-width: 100%;
+            height: auto;
+            touch-action: none; 
+            cursor: pointer;
+        }
+        
+        .sql-slot {
+            display: inline-block;
+            min-width: 100px;
+            height: 28px;
+            border-bottom: 2px dashed #94a3b8;
+            margin: 0 5px;
+            text-align: center;
+            color: #0369a1;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .sql-slot:hover { background-color: #e0f2fe; }
+        .sql-slot.filled { border-bottom: 2px solid #16a34a; color: #16a34a; }
+
+        /* --- CERTIFICATE STYLES --- */
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .font-body { font-family: 'Lora', serif; }
+        .font-script { font-family: 'Qwitcher Grypen', cursive; }
+        
+        .cert-preview-container {
+            width: 100%;
+            overflow: auto;
+            display: flex;
+            justify-content: center;
+            background: #e2e8f0;
+            padding: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        #certificate {
+            width: 1056px !important;
+            height: 816px !important;
+            flex-shrink: 0;
+            background-color: #ffffff;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1056" height="816"><polygon points="0,0 250,0 0,650" fill="%23cbd5e1"/><polygon points="0,0 350,0 0,900" fill="%230284c7" opacity="0.8"/><polygon points="0,0 120,0 0,300" fill="%230f172a"/><polygon points="0,450 650,816 0,816" fill="%23cbd5e1"/><polygon points="0,550 450,816 0,816" fill="%230284c7" opacity="0.8"/><polygon points="800,0 1056,0 1056,256" fill="%23f8fafc"/><polygon points="1056,500 1056,816 750,816" fill="%23f8fafc"/></svg>');
+            background-size: cover;
+            border: 4px solid #e2e8f0;
+        }
+
+        .gold-seal {
+            position: absolute;
+            left: 110px;
+            top: 350px;
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c, #fcf6ba);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3), inset 0 0 15px rgba(255,255,255,0.7), inset 0 0 25px rgba(139,105,20,0.9);
+            z-index: 10;
+        }
+        .gold-seal::before {
+            content: '';
+            position: absolute;
+            top: -4px; bottom: -4px; left: -4px; right: -4px;
+            border-radius: 50%;
+            border: 6px dashed #d4af37;
+        }
+        .gold-seal-inner-1 {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 2px solid rgba(139, 105, 20, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #e8c678, #dbab46);
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.2), 0 2px 5px rgba(255,255,255,0.7);
+            z-index: 1;
+        }
+        .gold-seal-inner-2 {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: radial-gradient(circle, #fcf6ba, #d4af37);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            padding: 10px;
+        }
+        .embossed-text {
+            color: #b38728;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2);
+            font-family: 'Playfair Display', serif;
+            font-weight: 800;
+            line-height: 1.1;
+            text-transform: uppercase;
+        }
+        .embossed-text-large { font-size: 14px; letter-spacing: 1px; }
+        .embossed-text-small { font-size: 11px; letter-spacing: 2px; margin: 2px 0; }
+        .embossed-star { font-size: 12px; color: #b38728; text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2); margin: 2px 0; }
+
+        @media (max-width: 1100px) {
+            #certificate { transform: scale(0.7); transform-origin: top left; margin-bottom: -240px; margin-right: -310px; }
+        }
+        @media (max-width: 768px) {
+            #certificate { transform: scale(0.4); transform-origin: top left; margin-bottom: -490px; margin-right: -630px; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen flex flex-col">
+
+    <nav class="bg-sky-800 text-white shadow-lg sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-database text-2xl"></i>
+                    <span class="font-bold text-xl tracking-wider hidden sm:inline-block">Tech+ Unit 06 Section 5.3.1</span>
+                    <span class="font-bold text-xl tracking-wider sm:hidden">5.3.1</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-2">
+                        <button onclick="switchTab('briefing')" class="nav-btn bg-sky-950 px-3 py-2 rounded-md text-sm font-medium hover:bg-sky-600 transition" id="nav-briefing"><i class="fa-solid fa-book-open mr-1"></i>Briefing</button>
+                        <button onclick="switchTab('activity')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-sky-600 transition" id="nav-activity"><i class="fa-solid fa-flask mr-1"></i>Lab Activity</button>
+                        <button onclick="switchTab('quiz')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-sky-600 transition" id="nav-quiz"><i class="fa-solid fa-clipboard-check mr-1"></i>Quiz</button>
+                        <button onclick="switchTab('game')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-gray-400 cursor-not-allowed transition" id="nav-game" disabled><i class="fa-solid fa-lock mr-1"></i>Game</button>
+                        <button onclick="switchTab('cert')" class="nav-btn hidden px-3 py-2 rounded-md text-sm font-medium text-yellow-300 hover:bg-sky-600 transition" id="nav-cert"><i class="fa-solid fa-award mr-1"></i>Certificate</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Nav -->
+        <div class="md:hidden flex flex-wrap justify-center gap-2 py-2 px-2 bg-sky-900">
+            <button onclick="switchTab('briefing')" class="nav-btn-mobile px-3 py-1 text-sm rounded bg-sky-950" id="nav-briefing-mobile">Briefing</button>
+            <button onclick="switchTab('activity')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-activity-mobile">Lab</button>
+            <button onclick="switchTab('quiz')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-quiz-mobile">Quiz</button>
+            <button onclick="switchTab('game')" class="nav-btn-mobile px-3 py-1 text-sm rounded text-gray-400 cursor-not-allowed" id="nav-game-mobile" disabled><i class="fa-solid fa-lock"></i></button>
+            <button onclick="switchTab('cert')" id="nav-cert-mobile" class="hidden px-2 py-1 text-sm text-yellow-300 rounded"><i class="fa-solid fa-award"></i></button>
+        </div>
+    </nav>
+
+    <main class="flex-grow w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <!-- BRIEFING SECTION -->
+        <div id="briefing-section" class="tab-content active no-print">
+            <div class="text-center mb-10">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4">Database Structures</h1>
+                <p class="text-lg text-slate-600 max-w-3xl mx-auto">Explore how data is organized, from the rigid architecture of structured tables to the flexible expanses of non-structured documents.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- Tile 1 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-indigo-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-indigo-700"><i class="fa-solid fa-cubes mr-2"></i>Data Structures</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>Structured Data:</strong> Organized logically, easy to read, and adheres to a predefined schema.</li>
+                            <li><strong>Semi-Structured Data:</strong> Does not conform to a rigid schema but uses tags and metadata for some organization.</li>
+                            <li><strong>Non-Structured Data:</strong> Lacks predefined structure, often complex multimedia, making it challenging to process.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('structures-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('structures-usecase')" class="flex-1 bg-indigo-100 hover:bg-indigo-200 text-indigo-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 2 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-sky-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-sky-700"><i class="fa-solid fa-table mr-2"></i>Relational Databases</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>Tables & Records:</strong> Stores data in a structured format utilizing rows (records) and columns (fields).</li>
+                            <li><strong>Primary Keys (PK):</strong> Fields that uniquely identify each independent record within a table.</li>
+                            <li><strong>Foreign Keys (FK):</strong> Fields that establish crucial relationships or links across different tables.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('relational-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('relational-usecase')" class="flex-1 bg-sky-100 hover:bg-sky-200 text-sky-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 3 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-emerald-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-emerald-700"><i class="fa-solid fa-sitemap mr-2"></i>Schema & Data Models</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>Schema Rules:</strong> The foundational rules that define data organization and enforce data integrity constraints.</li>
+                            <li><strong>Logical Data Models:</strong> Outline the database structure abstractly, identifying tables, relationships, and constraints.</li>
+                            <li><strong>Physical Data Models:</strong> The exact code and syntax required to create the database in a specific DBMS (like SQLite).</li>
+                        </ul>
+                    </div>
+                     <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('schema-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('schema-usecase')" class="flex-1 bg-emerald-100 hover:bg-emerald-200 text-emerald-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 4 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-amber-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-amber-700"><i class="fa-solid fa-file-code mr-2"></i>Non-Relational Databases</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>NoSQL Flexibility:</strong> Provides various ways to store and manage data lacking rigid predefined structure.</li>
+                            <li><strong>Key-Value Stores:</strong> Utilizes a unique key identifier to rapidly retrieve associated data values without a schema.</li>
+                            <li><strong>Document Databases:</strong> Stores independent units of data (documents) which often include nested files or arrays.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('nonrelational-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('nonrelational-usecase')" class="flex-1 bg-amber-100 hover:bg-amber-200 text-amber-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 flex justify-center">
+                <button onclick="switchTab('activity')" class="bg-sky-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-sky-500 shadow-lg transition transform hover:scale-105">Proceed to Lab Activity <i class="fa-solid fa-arrow-right ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- LAB ACTIVITY SECTION -->
+        <div id="activity-section" class="tab-content no-print">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-extrabold text-slate-900 mb-2">Interactive Lab Activity</h1>
+                <p class="text-slate-600">Apply your knowledge of Database Structures across these 4 distinct simulations to achieve mastery.</p>
+            </div>
+
+            <!-- Concept 1 Labs: Relational & Schema -->
+            <div class="mb-10">
+                <h2 class="text-2xl font-bold border-b-2 border-slate-300 pb-2 mb-6 text-slate-800">Concept 1: Relational Architecture & Schema</h2>
+                
+                <!-- Lab 1: ER Builder -->
+                <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-slate-200">
+                    <h3 class="text-xl font-bold mb-4 text-sky-700"><i class="fa-solid fa-project-diagram mr-2"></i>Lab 1: Logical Data Model Builder</h3>
+                    <p class="text-sm text-slate-600 mb-4">Establish the correct One-to-Many relationships. Select the appropriate Foreign Key (FK) in the Enrollment and Grades tables to properly link them to the Students and Courses tables.</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6 text-sm">
+                        <div class="border-2 border-slate-300 rounded p-3 bg-slate-50">
+                            <h4 class="font-bold text-center border-b border-slate-300 pb-1 mb-2 bg-slate-200 rounded">Table: students</h4>
+                            <p class="text-blue-700 font-bold mb-1"><i class="fa-solid fa-key text-yellow-500 mr-1"></i>student_id (PK)</p>
+                            <p>first_name</p>
+                            <p>last_name</p>
+                        </div>
+                        <div class="border-2 border-slate-300 rounded p-3 bg-slate-50">
+                            <h4 class="font-bold text-center border-b border-slate-300 pb-1 mb-2 bg-slate-200 rounded">Table: courses</h4>
+                            <p class="text-blue-700 font-bold mb-1"><i class="fa-solid fa-key text-yellow-500 mr-1"></i>course_id (PK)</p>
+                            <p>course_name</p>
+                        </div>
+                        <div class="border-2 border-emerald-300 rounded p-3 bg-emerald-50">
+                            <h4 class="font-bold text-center border-b border-emerald-300 pb-1 mb-2 bg-emerald-200 rounded">Table: enrollment</h4>
+                            <p class="text-blue-700 font-bold mb-1"><i class="fa-solid fa-key text-yellow-500 mr-1"></i>enrollment_id (PK)</p>
+                            <div class="my-2">
+                                <label class="block text-xs font-bold text-slate-600 mb-1">Link to Student (FK):</label>
+                                <select id="fk-student" class="w-full border rounded p-1 text-sm bg-white">
+                                    <option value="">-- Select Field --</option>
+                                    <option value="student_id">student_id</option>
+                                    <option value="course_id">course_id</option>
+                                    <option value="enrollment_id">enrollment_id</option>
+                                </select>
+                            </div>
+                            <div class="my-2">
+                                <label class="block text-xs font-bold text-slate-600 mb-1">Link to Course (FK):</label>
+                                <select id="fk-course" class="w-full border rounded p-1 text-sm bg-white">
+                                    <option value="">-- Select Field --</option>
+                                    <option value="first_name">first_name</option>
+                                    <option value="student_id">student_id</option>
+                                    <option value="course_id">course_id</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <button class="bg-sky-600 text-white px-6 py-2 rounded font-bold hover:bg-sky-700" onclick="checkLab1()">Establish Relationships</button>
+                    </div>
+                    <div id="lab1-feedback" class="text-center font-bold mt-4 h-6 text-emerald-600"></div>
+                </div>
+
+                <!-- Lab 2: SQL Constraints -->
+                <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-slate-200">
+                    <h3 class="text-xl font-bold mb-4 text-emerald-700"><i class="fa-solid fa-terminal mr-2"></i>Lab 2: Physical Schema Implementation</h3>
+                    <p class="text-sm text-slate-600 mb-4">A database engineer forgot to add constraints to the SQLite code! Click the missing constraints from the toolbox below to insert them into the correct dashed slots in the physical schema query to ensure data integrity.</p>
+                    
+                    <div class="flex flex-wrap justify-center gap-3 mb-6" id="constraint-toolbox">
+                        <button class="bg-slate-200 border-2 border-slate-400 px-3 py-1 rounded font-bold text-slate-700 hover:bg-slate-300" onclick="selectConstraint(this, 'PRIMARY KEY')">PRIMARY KEY</button>
+                        <button class="bg-slate-200 border-2 border-slate-400 px-3 py-1 rounded font-bold text-slate-700 hover:bg-slate-300" onclick="selectConstraint(this, 'NOT NULL')">NOT NULL</button>
+                        <button class="bg-slate-200 border-2 border-slate-400 px-3 py-1 rounded font-bold text-slate-700 hover:bg-slate-300" onclick="selectConstraint(this, 'UNIQUE')">UNIQUE</button>
+                    </div>
+
+                    <div class="bg-slate-900 text-green-400 p-4 rounded font-mono text-sm mb-4 leading-loose overflow-x-auto">
+                        sqlite> CREATE TABLE patients (<br>
+                        ...> patient_id INTEGER <span class="sql-slot" data-expected="PRIMARY KEY" onclick="fillSlot(this)">[ Select ]</span>,<br>
+                        ...> first_name TEXT <span class="sql-slot" data-expected="NOT NULL" onclick="fillSlot(this)">[ Select ]</span>,<br>
+                        ...> last_name TEXT NOT NULL,<br>
+                        ...> email TEXT <span class="sql-slot" data-expected="UNIQUE" onclick="fillSlot(this)">[ Select ]</span> NOT NULL<br>
+                        ...> );
+                    </div>
+                    
+                    <div class="text-center">
+                        <button class="bg-emerald-600 text-white px-6 py-2 rounded font-bold hover:bg-emerald-700" onclick="checkLab2()">Execute Query</button>
+                    </div>
+                    <div id="lab2-feedback" class="text-center font-bold mt-4 h-6 text-emerald-600"></div>
+                </div>
+            </div>
+
+            <!-- Concept 2 Labs: Data Types & Non-Relational -->
+            <div class="mb-10">
+                <h2 class="text-2xl font-bold border-b-2 border-slate-300 pb-2 mb-6 text-slate-800">Concept 2: Data Types & Non-Relational Systems</h2>
+                
+                <!-- Lab 3: Data Sorter -->
+                <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-slate-200">
+                    <h3 class="text-xl font-bold mb-4 text-indigo-700"><i class="fa-solid fa-layer-group mr-2"></i>Lab 3: Data Classification Simulator</h3>
+                    <p class="text-sm text-slate-600 mb-4">Different database structures handle different data types. Drag and drop the data examples below into their correct structural classification.</p>
+                    
+                    <div class="flex flex-wrap gap-2 mb-6 justify-center" id="data-items">
+                        <div class="io-item px-3 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold text-xs w-auto" draggable="true" data-type="structured">Financial Ledger Table</div>
+                        <div class="io-item px-3 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold text-xs w-auto" draggable="true" data-type="non-structured">Raw MP4 Video File</div>
+                        <div class="io-item px-3 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold text-xs w-auto" draggable="true" data-type="semi-structured">Tagged Web Email</div>
+                        <div class="io-item px-3 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold text-xs w-auto" draggable="true" data-type="structured">Customer CRM Row</div>
+                        <div class="io-item px-3 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold text-xs w-auto" draggable="true" data-type="semi-structured">JSON Data File</div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="cat-dropzone border-2 border-dashed border-sky-400 bg-sky-50 rounded-lg p-2 min-h-[120px] flex flex-col items-center" data-target="structured">
+                            <h4 class="font-bold text-sky-800 mb-2 border-b border-sky-200 w-full text-center pb-1">Structured Data</h4>
+                        </div>
+                        <div class="cat-dropzone border-2 border-dashed border-indigo-400 bg-indigo-50 rounded-lg p-2 min-h-[120px] flex flex-col items-center" data-target="semi-structured">
+                            <h4 class="font-bold text-indigo-800 mb-2 border-b border-indigo-200 w-full text-center pb-1">Semi-Structured</h4>
+                        </div>
+                        <div class="cat-dropzone border-2 border-dashed border-amber-400 bg-amber-50 rounded-lg p-2 min-h-[120px] flex flex-col items-center" data-target="non-structured">
+                            <h4 class="font-bold text-amber-800 mb-2 border-b border-amber-200 w-full text-center pb-1">Non-Structured</h4>
+                        </div>
+                    </div>
+                    <div id="lab3-feedback" class="text-center font-bold mt-4 h-6 text-emerald-600"></div>
+                </div>
+                
+                <!-- Lab 4: Document DB Builder -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                    <h3 class="text-xl font-bold mb-4 text-amber-700"><i class="fa-solid fa-file-lines mr-2"></i>Lab 4: Document Database Architect</h3>
+                    <p class="text-sm text-slate-600 mb-4">Non-relational document databases allow flexible schemas. You need to query the database for <strong>"Dogs that are vaccinated and have behavior notes."</strong> Toggle the required fields in the JSON document below to ensure this document is successfully retrieved by that query.</p>
+                    
+                    <div class="bg-slate-100 border border-slate-300 rounded p-4 font-mono text-sm text-slate-800 mb-6 max-w-lg mx-auto">
+                        {<br>
+                        &nbsp;&nbsp;"Name": "Sadie",<br>
+                        &nbsp;&nbsp;"Species": "Dog",<br>
+                        &nbsp;&nbsp;"Age": 8,<br>
+                        &nbsp;&nbsp;<button id="doc-btn-vac" class="bg-red-200 hover:bg-red-300 px-2 rounded border border-red-400 transition" onclick="toggleDocField('vac', this)">+ Add Vaccinated Field</button><span id="doc-span-vac" class="hidden text-emerald-600">"Vaccinated": true,</span><br>
+                        &nbsp;&nbsp;"Adopted": true,<br>
+                        &nbsp;&nbsp;<button id="doc-btn-beh" class="bg-red-200 hover:bg-red-300 px-2 rounded border border-red-400 transition" onclick="toggleDocField('beh', this)">+ Add Behavior Array</button><span id="doc-span-beh" class="hidden text-emerald-600">"Behavior Notes": ["Barks when left alone"]</span><br>
+                        }
+                    </div>
+                    
+                    <div class="text-center">
+                        <button class="bg-amber-600 text-white px-6 py-2 rounded font-bold hover:bg-amber-700" onclick="checkLab4()">Run Query Simulation</button>
+                    </div>
+                    <div id="lab4-feedback" class="text-center font-bold mt-4 h-6 text-emerald-600"></div>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <button onclick="switchTab('quiz')" class="bg-sky-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-sky-500 shadow-lg transition transform hover:scale-105">Take the Mastery Quiz <i class="fa-solid fa-clipboard-check ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- QUIZ SECTION -->
+        <div id="quiz-section" class="tab-content no-print">
+            <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-xl max-w-4xl mx-auto">
+                <div class="text-center mb-8 border-b pb-4">
+                    <h1 class="text-3xl font-extrabold text-slate-900 mb-2">Unit 06 Section 5.3.1 Mastery Quiz</h1>
+                    <p class="text-slate-600">Score 90% or higher (18/20) to earn your Certificate of Mastery and unlock the Retro Game!</p>
+                </div>
+
+                <div id="quiz-container" class="space-y-8">
+                    <!-- Questions injected via JS -->
+                </div>
+
+                <div class="mt-10 text-center border-t pt-6 flex flex-col md:flex-row justify-center items-center gap-4">
+                    <button id="submit-quiz-btn" onclick="gradeQuiz()" class="bg-sky-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-sky-700 shadow-lg transition w-full md:w-auto">Submit Quiz</button>
+                    <button id="proceed-game-btn" onclick="switchTab('game')" class="hidden bg-indigo-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-indigo-700 shadow-lg transition w-full md:w-auto">Play Retro Game <i class="fa-solid fa-gamepad ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RETRO GAME SECTION -->
+        <div id="game-section" class="tab-content no-print">
+            <div class="bg-slate-900 p-6 sm:p-8 rounded-2xl shadow-xl max-w-4xl mx-auto border-4 border-slate-700 flex flex-col items-center">
+                <div class="text-center mb-4 w-full">
+                    <h1 class="text-3xl font-extrabold text-cyan-400 mb-2 tracking-widest uppercase" style="font-family: monospace; text-shadow: 0 0 10px cyan;">Data Flow: Schema Connector</h1>
+                    <p class="text-slate-300 text-sm">Relational databases rely on connecting paths! Click the schema pipe tiles to rotate them. Connect the Database (Start) on the left to the Application (End) on the right before the data flow completes! <br><strong class="text-amber-400">Time is ticking! Connect the path!</strong></p>
+                </div>
+                
+                <div class="flex justify-between items-center w-full max-w-[500px] mb-2 px-4 text-white font-mono text-xl">
+                    <div>Level: <span id="game-level" class="text-cyan-400 font-bold">1</span></div>
+                    <div>Stability: <span id="game-lives" class="text-red-400 font-bold">3</span></div>
+                </div>
+
+                <div class="w-full max-w-[500px] bg-slate-800 h-4 rounded-full mb-4 overflow-hidden border border-slate-600">
+                    <div id="game-timer-bar" class="h-full bg-cyan-500 w-0 transition-all duration-100"></div>
+                </div>
+
+                <div class="relative flex justify-center w-full">
+                    <!-- Game Canvas -->
+                    <canvas id="game-canvas" width="500" height="500" class="w-full max-w-[500px] bg-slate-800 border-2 border-slate-600 rounded shadow-lg"></canvas>
+                    
+                    <!-- Overlay Start Button -->
+                    <div id="game-overlay" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-80 rounded-lg max-w-[500px] mx-auto z-10">
+                        <button id="start-game-btn" class="bg-cyan-600 hover:bg-cyan-500 text-white font-bold font-mono py-3 px-6 rounded-lg text-xl border-4 border-cyan-800 uppercase transform transition hover:scale-105 shadow-[0_0_15px_rgba(6,182,212,0.6)]">Initialize Flow (Start)</button>
+                    </div>
+                </div>
+
+                <div class="mt-8 text-center w-full border-t border-slate-700 pt-6">
+                    <button onclick="switchTab('cert')" class="bg-sky-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-sky-700 shadow-lg transition w-full md:w-auto">View Certificate <i class="fa-solid fa-award ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CERTIFICATE SECTION -->
+        <div id="cert-section" class="tab-content">
+            <div class="max-w-5xl mx-auto">
+                <div class="bg-white p-6 rounded shadow mb-6 no-print text-center border border-slate-200">
+                    <h2 class="text-2xl font-bold text-emerald-600 mb-2">🎉 Congratulations! 🎉</h2>
+                    <p class="text-slate-700 mb-4">You have achieved mastery of Database Structures.</p>
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+                        <input type="text" id="student-name-input" value="Student" placeholder="Enter your first name" class="border-2 border-slate-300 rounded px-4 py-2 w-full md:w-64 focus:border-sky-500 focus:outline-none">
+                        <button onclick="updateCertName()" class="bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700 transition">Update Name</button>
+                        <button id="download-btn" onclick="downloadCert()" class="bg-slate-800 text-white px-4 py-2 rounded hover:bg-slate-900 transition flex items-center justify-center">
+                            <i class="fa-solid fa-download mr-2"></i>Download PNG
+                        </button>
+                    </div>
+                </div>
+
+                <div class="cert-preview-container print:p-0 print:bg-white">
+                    <div id="certificate">
+                        <div class="gold-seal">
+                            <div class="gold-seal-inner-1">
+                                <div class="gold-seal-inner-2">
+                                     <span class="embossed-text embossed-text-large">Certificate</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-small">Of</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-large">Excellence</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="relative z-20 w-full h-full flex flex-col pt-[48px] pl-[380px] pr-[48px]">
+                            <h1 class="text-[#0ea5e9] text-[4.5rem] leading-none font-serif font-bold tracking-wide uppercase mb-2">CERTIFICATE</h1>
+                            <h2 class="text-slate-800 text-3xl font-serif tracking-widest uppercase mb-10">Of Achievement</h2>
+                            
+                            <p class="text-[1.4rem] font-body text-slate-800 mb-4">This is to certify that</p>
+                            
+                            <div class="relative mb-8 w-full">
+                                <h3 id="cert-student-name" class="text-[4rem] text-[#0ea5e9] font-serif italic leading-none pb-2 relative z-10 text-center w-full block">Student</h3>
+                                <div class="w-full border-b-[2px] border-[#0ea5e9] absolute bottom-[4px] left-0 z-0"></div>
+                                <div class="w-full border-b-[2px] border-dotted border-amber-500 absolute bottom-[0px] left-0 z-0"></div>
+                            </div>
+                            
+                            <p class="text-[1.3rem] font-body text-slate-800 leading-relaxed w-full pr-4">
+                                Has successfully completed the assessment for 
+                                <strong class="text-[1.8rem] text-[#0ea5e9] block mt-4 mb-2 font-serif">Cyber.org Tech+ Unit 06 Section 5.3.1</strong>
+                                <strong class="text-[1.5rem] text-black block mb-4 font-serif italic">Database Structures</strong>
+                                <span class="text-[1.1rem] text-slate-700 leading-snug block">Demonstrating profound comprehension of structured, semi-structured, and unstructured data, as well as the architectural differences between relational schema models and flexible non-relational document databases.</span>
+                            </p>
+                            
+                            <div class="flex justify-end gap-16 items-end mt-auto mb-[60px] w-full pr-8">
+                                <div class="w-64">
+                                    <div class="border-b border-slate-600 mb-2 h-20 flex items-end justify-center relative">
+                                        <span class="font-script text-[5rem] text-[#0ea5e9] absolute bottom-[-10px] transform -rotate-3 opacity-90">Dr. M. S</span>
+                                    </div>
+                                    <p class="font-serif text-xl text-slate-800 text-center">Administration</p>
+                                </div>
+                                
+                                <div class="w-64">
+                                    <div class="border-b border-slate-600 mb-2 text-center h-20 flex items-end justify-center">
+                                        <p id="cert-date" class="font-body text-2xl text-slate-800 pb-1">Date Here</p>
+                                    </div>
+                                    <p class="font-serif text-xl text-slate-800 text-center">Date</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Custom Modal for Alerts -->
+    <div id="custom-modal" class="fixed inset-0 bg-black bg-opacity-50 z-[100] hidden flex justify-center items-center backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all">
+            <div class="text-center">
+                <div id="modal-icon" class="text-5xl mb-4"></div>
+                <h3 id="modal-title" class="text-2xl font-bold mb-2 text-slate-900"></h3>
+                <p id="modal-msg" class="text-slate-600 mb-6"></p>
+                <button onclick="closeModal()" class="bg-sky-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-sky-700 transition w-full">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Briefing Modal -->
+    <div id="briefing-modal" class="fixed inset-0 bg-black bg-opacity-70 z-[120] hidden flex justify-center items-center backdrop-blur-sm p-4 sm:p-6">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col transform transition-all overflow-hidden border-4 border-sky-700">
+            <div class="p-6 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+                <div class="flex items-center gap-4">
+                    <div id="briefing-modal-icon" class="text-4xl"></div>
+                    <h3 id="briefing-modal-title" class="text-2xl md:text-3xl font-bold text-slate-900"></h3>
+                </div>
+                <button onclick="closeBriefing()" class="text-slate-400 hover:text-red-600 transition text-4xl leading-none">&times;</button>
+            </div>
+            <div id="briefing-modal-content" class="p-6 md:p-10 overflow-y-auto flex-grow text-slate-700 text-lg leading-relaxed bg-white">
+                <!-- Dynamic Content Injected Here -->
+            </div>
+            <div class="p-6 border-t border-slate-200 bg-slate-50 flex justify-end">
+                <button onclick="closeBriefing()" class="bg-sky-700 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-sky-800 transition shadow-md">Acknowledge & Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Extensive Briefing Content Data (Min 7 Paragraphs per detail, 2 Use cases, 2 examples, 2 images) ---
+        const briefingData = {
+            'structures-details': {
+                title: 'Data Structures: Structured vs. Unstructured',
+                icon: '<i class="fa-solid fa-cubes text-indigo-600"></i>',
+                html: `
+                    <p class="mb-5">In the modern digital landscape, the volume of data generated every second is staggering. However, not all data is created equal. To effectively harness this information, computer scientists classify data into distinct structures. The foundational concept of a <strong>Data Structure</strong> refers to the organizational principles applied to information to make it easier to store, manage, and retrieve.</p>
+                    
+                    <p class="mb-5">The most traditional form is <strong>Structured Data</strong>. Structured data is highly organized and formatted in a specific, predefined manner. It is highly quantitative, making it easily searchable by basic, straightforward search engine algorithms. Think of an excel spreadsheet with clearly labeled columns; every entry perfectly fits into a designated slot, leaving no ambiguity for the database management system regarding what the data represents.</p>
+                    
+                    <p class="mb-5">The primary advantage of structured data is its efficiency. Data retrieval is incredibly quick due to its predefined schema and indexing. Data integrity is strictly enforced through constraints (like ensuring a phone number field only accepts digits). Furthermore, because the schema is well-defined, it is much easier for data analysts to understand, query, and manipulate the data using standard languages like SQL.</p>
+                    
+                    <p class="mb-5">However, structured data has significant disadvantages. It is notoriously inflexible. If a business suddenly wants to track a new metric, the entire database schema may need to be carefully altered. Furthermore, it is less scalable as data volume and schema complexity grow exponentially. Not everything fits neatly into rows and columns, leading to the rise of alternative data structures.</p>
+                    
+                    <p class="mb-5">Bridging the gap is <strong>Semi-Structured Data</strong>. Semi-structured data does not conform to a rigid, tabular schema, but it still maintains some level of organization. It achieves this by using internal tags and metadata to define characteristics and hierarchies. For example, an email contains a sender, recipient, and time-stamp (structured elements) alongside a free-flowing message body (unstructured). Because it is not locked into a rigid table, it can easily adapt to varied and evolving data requirements.</p>
+                    
+                    <p class="mb-5">Finally, the vast majority of data generated today is <strong>Non-Structured Data</strong> (or Unstructured Data). Non-structured data has absolutely no predefined structure or schema. It does not fit into a database table. Examples include raw text files, audio recordings, video files, and rich multimedia content. While this allows for the storage of incredibly diverse information, it presents a massive challenge for computer systems.</p>
+                    
+                    <p>Because non-structured data lacks formatting, it is exceedingly difficult to process, analyze, and query using traditional methods. Searching for a specific concept within a 2-hour long raw video file requires far more computational power and advanced AI algorithms than simply running a query against a structured spreadsheet. Understanding these three classifications is the critical first step in determining what type of database a project requires.</p>
+                `
+            },
+            'structures-usecase': {
+                title: 'Data Structures: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-indigo-800 mb-2 border-b-2 border-indigo-200 pb-1">Case 1: Enterprise Financial Auditing</h4>
+                        <p class="mb-2">When large corporations undergo financial audits, precision and mathematical accuracy are paramount. They must rely heavily on perfectly formatted information.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Structured):</strong> The accounting department utilizes a rigid SQL database where every single transaction is logged with a specific date, exact monetary amount, and an authorized employee ID. The structured nature prevents anyone from accidentally typing letters into the monetary column.</li>
+                            <li><strong>Example 2 (Querying):</strong> Because the data is structured, auditors can instantly run a query to calculate the sum of all expenses in Q3 that exceeded $10,000, retrieving the exact mathematical answer in milliseconds.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-indigo-800 mb-2 border-b-2 border-indigo-200 pb-1">Case 2: Digital Marketing and Sentiment Analysis</h4>
+                        <p class="mb-2">Marketing firms must analyze human emotions and public opinion across the internet, which rarely fits neatly into spreadsheets.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Semi-Structured):</strong> Marketers scrape thousands of tagged web emails and JSON documents from customer feedback forms. The tags allow them to sort feedback by 'Date' or 'Product Line', even if the customer's actual message is long and varied.</li>
+                            <li><strong>Example 2 (Non-Structured):</strong> The firm uses advanced AI to process massive, non-structured MP4 video files from TikTok and YouTube to gauge positive or negative sentiment on a new product launch, processing raw audio and visual data that lacks any predefined schema.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Structured Arrays</p>
+                            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&h=350" alt="Structured data graphs and spreadsheets" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Processing Unstructured Media</p>
+                            <img src="https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?auto=format&fit=crop&w=600&h=350" alt="Social media application icons representing unstructured multimedia" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'relational-details': {
+                title: 'Relational Databases',
+                icon: '<i class="fa-solid fa-table text-sky-600"></i>',
+                html: `
+                    <p class="mb-5">A <strong>Relational Database</strong> is the undisputed workhorse of the modern data landscape. Designed to handle structured data, a relational database stores information in a highly organized, mathematical format using tables. The concept was first proposed by E.F. Codd in 1970 and revolutionized computing by separating the logical organization of data from its physical storage mechanism.</p>
+                    
+                    <p class="mb-5">The fundamental building blocks of a relational database are <strong>Tables</strong>. A table is designed to hold information about a single, specific entity, such as 'Students', 'Inventory', or 'Orders'. A well-designed database will avoid putting all company information into one massive, bloated table. Instead, it breaks the data down into numerous smaller, focused tables that work together.</p>
+                    
+                    <p class="mb-5">Within these tables, data is organized into horizontal <strong>Records (or Rows)</strong> and vertical <strong>Fields (or Columns)</strong>. Every record is a complete, individual entry—like the complete file for a single student. Every field represents a specific attribute of that record—such as the student's 'First Name', 'Date of Birth', or 'Email Address'. Fields strictly enforce what type of data can be entered (e.g., ensuring the 'Date' field only accepts calendar dates).</p>
+                    
+                    <p class="mb-5">The true power of this system comes from its relational nature. To ensure that every single record can be specifically identified without any confusion, every table must have a <strong>Primary Key (PK)</strong>. A primary key is a field that contains a completely unique value for every record. For example, two students might share the exact same first and last name, but they will be assigned different Student ID numbers (the Primary Key).</p>
+                    
+                    <p class="mb-5">Once tables have Primary Keys, they can be linked together using <strong>Foreign Keys (FK)</strong>. A foreign key is simply a field in one table that points exactly to the primary key in another table. If you have a 'Grades' table, you don't need to retype the student's full name, address, and email for every single grade. Instead, the 'Grades' table just stores the student's unique ID number as a Foreign Key, instantly linking the grade to the master 'Students' table.</p>
+                    
+                    <p class="mb-5">These keys establish <strong>Relationships</strong>. The most common is the One-to-Many relationship. For instance, one specific student (identified by one Primary Key) can be enrolled in multiple different courses (generating many records in an enrollment table). This eliminates data redundancy, saves storage space, and ensures that if a student's address changes, it only needs to be updated in one single place.</p>
+                    
+                    <p>Finally, relational databases manage this complex web of tables using Structured Query Language (SQL). When a user needs information that spans across multiple tables—like wanting a list of all students taking a specific instructor's course—they can write a SQL 'JOIN' query. The database engine uses the Foreign Keys to rapidly traverse the relationships and output a clean, unified dataset for the user.</p>
+                `
+            },
+            'relational-usecase': {
+                title: 'Relational Databases: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-sky-800 mb-2 border-b-2 border-sky-200 pb-1">Case 1: Banking and Transactions</h4>
+                        <p class="mb-2">Banks require the absolute highest level of data integrity. They cannot afford errors, duplicated data, or lost records. Relational databases are the standard for financial institutions.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Tables):</strong> A bank separates its data logically. It has a 'Customers' table (storing names/addresses), an 'Accounts' table (storing balance/type), and a 'Transactions' table (storing deposits/withdrawals).</li>
+                            <li><strong>Example 2 (Foreign Keys):</strong> When John deposits $50, the transaction record does not store John's name. It stores John's unique Account Number as a Foreign Key. This links the deposit directly to his account balance, ensuring perfect relational accuracy even if John changes his legal name later.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-sky-800 mb-2 border-b-2 border-sky-200 pb-1">Case 2: University Information Systems</h4>
+                        <p class="mb-2">Universities manage tens of thousands of students, courses, and grades. A relational system prevents massive data duplication.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Primary Keys):</strong> Every student is assigned a unique Student ID (Primary Key) upon admission. This ensures that even if there are five students named "Sarah Smith," the database never assigns a biology grade to the wrong Sarah.</li>
+                            <li><strong>Example 2 (One-to-Many):</strong> A single professor (One) can teach multiple classes (Many). The database establishes a One-to-Many relationship, allowing the administration to easily run a JOIN query to see exactly how many total students are under a specific professor's instruction across all their distinct classes.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Relational Links</p>
+                            <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=600&h=350" alt="Server racks representing relational database connections" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Financial Transactions</p>
+                            <img src="https://images.unsplash.com/photo-1601597111158-2fceff292cdc?auto=format&fit=crop&w=600&h=350" alt="Banking app on phone representing strict relational records" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'schema-details': {
+                title: 'Schema & Data Models',
+                icon: '<i class="fa-solid fa-sitemap text-emerald-600"></i>',
+                html: `
+                    <p class="mb-5">If a relational database is a well-organized city, the <strong>Schema</strong> is the meticulously drawn blueprint of that city. Schema refers to the strict rules or structure that defines exactly how data is organized within a relational database. It dictates what tables exist, what fields are inside those tables, what type of data those fields accept, and how all the tables are connected to one another.</p>
+                    
+                    <p class="mb-5">A critical function of the schema is enforcing <strong>Constraints</strong>. Constraints are rules applied to fields to maintain data integrity. For example, a <em>NOT NULL</em> constraint prevents a field from being left empty (ensuring every user must provide an email). A <em>UNIQUE</em> constraint ensures no duplicate values exist in a column (preventing two users from registering the same username). Without these schema constraints, a structured database would quickly descend into chaotic, useless data.</p>
+                    
+                    <p class="mb-5">Because designing a database schema is incredibly complex, database engineers do not simply start writing code. They go through a multi-step design process utilizing <strong>Data Models</strong>. Data modeling is the act of visually or logically outlining the database before it is physically built. This process helps architects spot missing data points, eliminate redundant information, and understand the flow of data through an organization.</p>
+                    
+                    <p class="mb-5">The first step is creating a <strong>Conceptual Data Model</strong>. This is a very high-level, abstract view of the database. It is usually designed for business managers, not programmers. It identifies the main entities (e.g., 'Students', 'Courses', 'Instructors') and draws simple lines to show that a relationship exists between them. It completely ignores technical details like primary keys or specific data types.</p>
+                    
+                    <p class="mb-5">The next phase is the <strong>Logical Data Model</strong> (or Logical Schema). This is where the technical structure begins to take shape. The logical model outlines the exact tables, lists all the specific fields (attributes) within those tables, and clearly defines which fields will serve as Primary Keys (PK) and Foreign Keys (FK). It also maps out the specific nature of the relationships, denoting whether they are one-to-one or one-to-many.</p>
+                    
+                    <p class="mb-5">The final step is the <strong>Physical Data Model</strong> (or Physical Schema). This translates the logical blueprint into the exact syntax and code required by a specific Database Management System (DBMS), such as SQLite, MySQL, or Oracle. The physical model specifies the exact SQL code (e.g., <code>CREATE TABLE students (id INT PRIMARY KEY, name TEXT)</code>) needed to actually generate the tables on the physical server hard drive.</p>
+                    
+                    <p>This phased approach to schema design is vital in the software development lifecycle. By moving from conceptual ideas to logical frameworks and finally to physical code, database administrators ensure that the final architecture perfectly aligns with business needs while maintaining the strict, mathematical integrity required by relational database systems.</p>
+                `
+            },
+            'schema-usecase': {
+                title: 'Schema & Data Models: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-emerald-800 mb-2 border-b-2 border-emerald-200 pb-1">Case 1: Building a Custom E-Commerce Platform</h4>
+                        <p class="mb-2">When a startup decides to build their own online store from scratch, they cannot just start storing customer data haphazardly. They must carefully plan the architecture.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Conceptual to Logical):</strong> The founders draw circles on a whiteboard representing "Users", "Products", and "Shopping Carts" (Conceptual). The lead engineer then creates a Logical Data Model, determining that "Cart_ID" will be a Foreign Key inside the "Users" table.</li>
+                            <li><strong>Example 2 (Constraints):</strong> In the physical schema, the engineer applies a UNIQUE constraint to the "Product_SKU" field and a NOT NULL constraint to the "Price" field, ensuring the system can never accidentally list a product with no price or duplicate inventory codes.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-emerald-800 mb-2 border-b-2 border-emerald-200 pb-1">Case 2: Corporate Database Migration</h4>
+                        <p class="mb-2">An older hospital is upgrading their legacy record system to a modern SQL database. The transition requires meticulous schema planning to ensure no patient data is lost.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Physical Schema):</strong> The database administrators write a detailed Physical Data Model using SQL syntax specifically tailored for Microsoft SQL Server, defining exactly how large the text fields for "Patient History" are allowed to be before the migration scripts are run.</li>
+                            <li><strong>Example 2 (Data Integrity):</strong> Because the new schema includes strict Primary and Foreign Key constraints, when the old data is imported, the system automatically rejects any orphaned "Appointment" records that try to import without a valid link to a registered "Patient_ID".</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: System Architecture</p>
+                            <img src="https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?auto=format&fit=crop&w=600&h=350" alt="Whiteboard with diagrams and charts representing data models" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Physical Schema Coding</p>
+                            <img src="https://images.unsplash.com/photo-1542831371-29b0f74f9713?auto=format&fit=crop&w=600&h=350" alt="Programmer typing SQL code on multiple monitors" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'nonrelational-details': {
+                title: 'Non-Relational Databases',
+                icon: '<i class="fa-solid fa-file-code text-amber-600"></i>',
+                html: `
+                    <p class="mb-5">While relational databases are excellent for highly structured, predictable data, they struggle when dealing with massive volumes of varied, rapidly changing, or unstructured information. To solve this problem, <strong>Non-Relational Databases</strong> (often referred to as NoSQL databases) were developed. They provide various, highly flexible ways to store and manage data without relying on rigid tables, rows, and columns.</p>
+                    
+                    <p class="mb-5">The defining characteristic of a non-relational database is its lack of a rigid schema. In a relational database, if you want to add a "Favorite Color" field to a user profile, you must alter the entire table structure for every single user. In a non-relational database, you can simply append that information to one user's file without affecting any other user in the system. This schema flexibility allows for incredibly rapid software development and iteration.</p>
+                    
+                    <p class="mb-5">One common type of non-relational structure is the <strong>Key-Value Database</strong>. This is the simplest and often the fastest type of database. It stores data as a massive collection of "Key-Value" pairs. The "Key" is a unique identifier (like a specialized URL or session ID), and the "Value" is the data associated with it. The value does not conform to any schema; it could be a single number, a string of text, or an entire HTML page.</p>
+                    
+                    <p class="mb-5">Key-Value databases are optimized for speed. Because they do not need to process complex SQL JOIN queries or traverse relationships, accessing data is nearly instantaneous. They are exceptionally efficient for retrieving large sets of simple data quickly and scale horizontally across multiple servers with ease, making them perfect for internet-scale applications.</p>
+                    
+                    <p class="mb-5">Another highly popular type is the <strong>Document Database</strong>. Instead of storing data in tables, it stores data in the form of documents (often formatted in JSON, BSON, or XML). Each document is considered an independent, self-contained unit of data. If a document represents a "Customer Profile," it will contain all the customer's information inside that single document, rather than spreading it across five different relational tables.</p>
+                    
+                    <p class="mb-5">Document databases excel at handling semi-structured data because they support nested files and arrays. A single document can contain a list of multiple phone numbers, nested addresses, or an array of recent purchases. Even though documents in the same database folder might represent similar things, they can have entirely different internal structures, providing ultimate flexibility to developers.</p>
+                    
+                    <p>Because non-relational databases can handle unstructured and semi-structured data, and because they can easily scale by adding more commodity servers rather than relying on one massive, expensive mainframe, they have become the backbone of modern Big Data applications, social media platforms, and real-time mobile applications.</p>
+                `
+            },
+            'nonrelational-usecase': {
+                title: 'Non-Relational Databases: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-amber-800 mb-2 border-b-2 border-amber-200 pb-1">Case 1: Modern Web Application Profiles</h4>
+                        <p class="mb-2">Social media networks and mobile apps handle millions of users whose profile data is constantly changing and rarely uniform.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Document DB):</strong> A social media app uses a Document Database to store user profiles as JSON documents. User A's document might have an array of 5 "Hobbies," while User B's document might lack the "Hobbies" field entirely but include a nested "Gaming_Stats" object. The database handles this variance effortlessly.</li>
+                            <li><strong>Example 2 (Flexibility):</strong> When the developers push an update allowing users to add "Pronouns" to their profile, they do not need to take the database offline to run a complex schema migration. They simply allow the app to append the new tag to individual documents as users update them.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-amber-800 mb-2 border-b-2 border-amber-200 pb-1">Case 2: High-Speed Web Caching and Gaming</h4>
+                        <p class="mb-2">Systems that require instantaneous response times, like massive multiplayer games or e-commerce shopping carts, cannot wait for complex SQL queries to resolve.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Key-Value Speed):</strong> An online video game uses a Key-Value database to manage active player sessions. The "Key" is the player's unique session token, and the "Value" is their current health, location, and inventory. Because it's a simple Key-Value lookup, the game server can read and write this data hundreds of times a second without lag.</li>
+                            <li><strong>Example 2 (E-Commerce):</strong> A massive online retailer uses a Key-Value store to hold users' temporary shopping carts. It is incredibly fast and easily scales during holiday rushes, ensuring millions of concurrent shoppers don't crash a central relational database.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Non-Relational Nodes</p>
+                            <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=600&h=350" alt="Code on a screen showing JSON document structures" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Big Data Scaling</p>
+                            <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=600&h=350" alt="Massive glowing server farm representing big data scaling" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        function openBriefing(key) {
+            const modal = document.getElementById('briefing-modal');
+            const data = briefingData[key];
+            if(data) {
+                document.getElementById('briefing-modal-icon').innerHTML = data.icon;
+                document.getElementById('briefing-modal-title').innerText = data.title;
+                document.getElementById('briefing-modal-content').innerHTML = data.html;
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; 
+            }
+        }
+
+        function closeBriefing() {
+            document.getElementById('briefing-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto'; 
+        }
+
+        document.getElementById('briefing-modal').addEventListener('click', function(e) {
+            if(e.target === this) closeBriefing();
+        });
+        
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId + '-section').classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-sky-950'));
+            const activeBtn = document.getElementById('nav-' + tabId);
+            if(activeBtn && tabId !== 'cert') activeBtn.classList.add('bg-sky-950');
+            
+            document.querySelectorAll('.nav-btn-mobile').forEach(btn => btn.classList.remove('bg-sky-950'));
+            const activeMobileBtn = document.getElementById('nav-' + tabId + '-mobile');
+            if(activeMobileBtn && tabId !== 'cert') activeMobileBtn.classList.add('bg-sky-950');
+
+            window.scrollTo(0,0);
+
+            if (tabId === 'game' && !gameRunning && !gameInitialized) {
+                initGame();
+            }
+        }
+
+        function showModal(title, message, type = 'info') {
+            const modal = document.getElementById('custom-modal');
+            const icon = document.getElementById('modal-icon');
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-msg').innerText = message;
+            
+            if(type === 'success') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-500"></i>';
+            } else if (type === 'error') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500"></i>';
+            } else if (type === 'warning') {
+                icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-yellow-500"></i>';
+            } else {
+                icon.innerHTML = '<i class="fa-solid fa-circle-info text-sky-500"></i>';
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        // --- LAB 1: Logical Model Builder ---
+        function checkLab1() {
+            const fkStudent = document.getElementById('fk-student').value;
+            const fkCourse = document.getElementById('fk-course').value;
+            const feedback = document.getElementById('lab1-feedback');
+
+            if(fkStudent === 'student_id' && fkCourse === 'course_id') {
+                feedback.innerText = "Relationships Successfully Established!";
+                feedback.className = "text-center font-bold mt-4 h-6 text-emerald-600";
+                setTimeout(() => showModal('Lab 1 Complete!', 'You successfully identified the correct Foreign Keys to link the tables together in a One-to-Many relationship.', 'success'), 400);
+            } else {
+                feedback.innerText = "Incorrect. Foreign keys must explicitly match the Primary Key of the target table.";
+                feedback.className = "text-center font-bold mt-4 h-6 text-red-600";
+            }
+        }
+
+        // --- LAB 2: Physical Schema Implementation ---
+        let currentConstraint = null;
+
+        function selectConstraint(btn, constraint) {
+            document.querySelectorAll('#constraint-toolbox button').forEach(b => {
+                b.classList.remove('bg-emerald-200', 'border-emerald-500', 'text-emerald-800');
+                b.classList.add('bg-slate-200', 'border-slate-400', 'text-slate-700');
+            });
+            btn.classList.remove('bg-slate-200', 'border-slate-400', 'text-slate-700');
+            btn.classList.add('bg-emerald-200', 'border-emerald-500', 'text-emerald-800');
+            currentConstraint = constraint;
+        }
+
+        function fillSlot(slot) {
+            if(currentConstraint) {
+                slot.innerText = currentConstraint;
+                slot.classList.add('filled');
+            } else {
+                document.getElementById('lab2-feedback').innerText = "Select a constraint from the toolbox first.";
+                document.getElementById('lab2-feedback').className = "text-center font-bold mt-4 h-6 text-yellow-600";
+            }
+        }
+
+        function checkLab2() {
+            let allCorrect = true;
+            let anyEmpty = false;
+            
+            document.querySelectorAll('.sql-slot').forEach(slot => {
+                if(slot.innerText === '[ Select ]') {
+                    anyEmpty = true;
+                } else if(slot.innerText !== slot.dataset.expected) {
+                    allCorrect = false;
+                    slot.classList.remove('filled');
+                    slot.style.borderBottomColor = '#ef4444';
+                    slot.style.color = '#ef4444';
+                } else {
+                    slot.style.borderBottomColor = '#16a34a';
+                    slot.style.color = '#16a34a';
+                }
+            });
+
+            const feedback = document.getElementById('lab2-feedback');
+            if(anyEmpty) {
+                feedback.innerText = "Error: Missing syntax. Fill all slots before executing.";
+                feedback.className = "text-center font-bold mt-4 h-6 text-red-600";
+            } else if (allCorrect) {
+                feedback.innerText = "Query Executed Successfully! Table Created.";
+                feedback.className = "text-center font-bold mt-4 h-6 text-emerald-600";
+                setTimeout(() => showModal('Lab 2 Complete!', 'You applied the correct schema constraints to enforce data integrity at the physical level.', 'success'), 400);
+            } else {
+                feedback.innerText = "Execution Failed. Constraints applied to incorrect fields.";
+                feedback.className = "text-center font-bold mt-4 h-6 text-red-600";
+            }
+        }
+
+        // --- LAB 3: Data Categorization ---
+        let draggedCatItem = null;
+        let lab3Count = 0;
+
+        document.querySelectorAll('#data-items .io-item').forEach(item => {
+            item.addEventListener('dragstart', function() {
+                draggedCatItem = this;
+                setTimeout(() => this.classList.add('opacity-50'), 0);
+            });
+            item.addEventListener('dragend', function() {
+                setTimeout(() => this.classList.remove('opacity-50'), 0);
+                draggedCatItem = null;
+            });
+        });
+
+        document.querySelectorAll('.cat-dropzone').forEach(zone => {
+            zone.addEventListener('dragover', e => e.preventDefault());
+            zone.addEventListener('dragenter', function(e) { e.preventDefault(); this.classList.add('brightness-95'); });
+            zone.addEventListener('dragleave', function() { this.classList.remove('brightness-95'); });
+            zone.addEventListener('drop', function() {
+                this.classList.remove('brightness-95');
+                if(draggedCatItem) {
+                    if(draggedCatItem.dataset.type === this.dataset.target) {
+                        this.appendChild(draggedCatItem);
+                        draggedCatItem.classList.remove('bg-indigo-100', 'cursor-grab');
+                        draggedCatItem.classList.add('bg-emerald-100', 'text-emerald-800', 'cursor-default', 'mt-2', 'w-[90%]');
+                        draggedCatItem.setAttribute('draggable', 'false');
+                        lab3Count++;
+                        
+                        document.getElementById('lab3-feedback').innerText = "Data Classified Correctly!";
+                        document.getElementById('lab3-feedback').className = "text-center font-bold mt-4 h-6 text-emerald-600";
+                        
+                        if(lab3Count === 5) {
+                            setTimeout(() => showModal('Lab 3 Complete!', 'You successfully classified structured, semi-structured, and non-structured data types.', 'success'), 400);
+                        }
+                    } else {
+                        document.getElementById('lab3-feedback').innerText = "Incorrect classification. Review how the data is organized.";
+                        document.getElementById('lab3-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
+                    }
+                }
+            });
+        });
+
+        // --- LAB 4: Document Database Builder ---
+        let docState = { vac: false, beh: false };
+
+        function toggleDocField(field, btn) {
+            const span = document.getElementById(`doc-span-${field}`);
+            if(!docState[field]) {
+                span.classList.remove('hidden');
+                btn.classList.add('hidden');
+                docState[field] = true;
+            }
+        }
+
+        function checkLab4() {
+            const feedback = document.getElementById('lab4-feedback');
+            if(docState.vac && docState.beh) {
+                feedback.innerText = "Query Successful! 1 Document Retrieved.";
+                feedback.className = "text-center font-bold mt-4 h-6 text-emerald-600";
+                setTimeout(() => showModal('Lab 4 Complete!', 'You utilized the flexible schema of a Document Database to append nested fields and arrays, making the data instantly queryable without altering a master table.', 'success'), 400);
+            } else {
+                feedback.innerText = "Query Returned 0 Results. The document is missing required fields.";
+                feedback.className = "text-center font-bold mt-4 h-6 text-red-600";
+            }
+        }
+
+        // --- QUIZ LOGIC (20 Questions) ---
+        const quizData = [
+            // 10 provided from Document
+            { q: "Which database structure has a flexible schema?", options: ["Non-structured", "Structured", "Semi-structured", "None of the above"], answer: 2 },
+            { q: "Which of the following best defines schema?", options: ["The diagram showing how everything should fit together in a database.", "The rules and structure that define how data is organized in a database.", "The records and fields that store data in a database.", "The unique identifier of a record in a database."], answer: 1 },
+            { q: "What is the primary function of a non-relational database?", options: ["It follows a predefined schema to enforce data integrity.", "It connects multiple tables through creating relationships.", "It stores and manages data in various ways and different formats.", "It stores data using tables made of records and fields."], answer: 2 },
+            { q: "All of the following are constraints EXCEPT:", options: ["SCHEMA", "FOREIGN KEY", "PRIMARY KEY", "UNIQUE"], answer: 0 },
+            { q: "Which element of a relational database uniquely identifies a record?", options: ["Tables", "Primary key", "Schema", "Foreign key"], answer: 1 },
+            { q: "What is an advantage of non-structured data?", options: ["It can have challenges extracting meaningful information.", "It requires complex storage methods.", "It has well-defined schema.", "It can store a wide range of data types and formats."], answer: 3 },
+            { q: "Which data model shows the code used to create a database using a specific database management system?", options: ["Logical data model", "Conceptual data model", "Physical data model", "All of the above"], answer: 2 },
+            { q: "Which SQL command is used to define a constraint that will ensure a field cannot be left blank?", options: ["CHECK", "DEFAULT", "NOT NULL", "UNIQUE"], answer: 2 },
+            { q: "How do foreign keys impact a relational database?", options: ["They create links between tables and keep data accurate and consistent.", "They store data in the form of documents.", "They uniquely identify records in a table.", "They store data as a collection of key-value pairs."], answer: 0 },
+            { q: "Which database structure follows a predefined schema?", options: ["Structured", "Non-structured", "Semi-structured", "None of the above"], answer: 0 },
+            
+            // 10 new questions based on briefing
+            { q: "Semi-structured data is typically stored in what type of system?", options: ["Relational Database", "Non-relational Database", "Physical Hard Drive Only", "CPU Cache"], answer: 1 },
+            { q: "What type of data model focuses on high-level ideas and entities without using primary or foreign keys?", options: ["Conceptual Data Model", "Logical Data Model", "Physical Data Model", "Relational Data Model"], answer: 0 },
+            { q: "In a relational table, what is another name for a horizontal row that contains complete data about a single entity?", options: ["Field", "Column", "Record", "Schema"], answer: 2 },
+            { q: "Which constraint explicitly ensures that no duplicate values exist in a specific column?", options: ["NOT NULL", "UNIQUE", "FOREIGN KEY", "DEFAULT"], answer: 1 },
+            { q: "What type of database stores information as a collection of simple identifiers paired with variable data?", options: ["Key-Value Database", "Relational Database", "Tabular Database", "Logical Database"], answer: 0 },
+            { q: "Which data structure relies on tags and metadata to organize data, despite lacking a rigid tabular schema?", options: ["Structured Data", "Non-structured Data", "Semi-structured Data", "Physical Data"], answer: 2 },
+            { q: "What specific command is used to save any changes made to a database during a transaction?", options: ["SAVE", "COMMIT", "UPDATE", "PUSH"], answer: 1 },
+            { q: "In a document database, data is often stored in formats like JSON and can uniquely include which of the following?", options: ["Foreign Keys only", "Nested files and arrays", "Strict tabular constraints", "Physical hardware schematics"], answer: 1 },
+            { q: "What is a primary disadvantage of purely structured data?", options: ["It is highly organized.", "It is easily searchable.", "It enforces data integrity.", "It is less flexible when handling rapidly changing data requirements."], answer: 3 },
+            { q: "A 'One-to-Many' relationship in a relational database usually connects a primary key in one table to what in another table?", options: ["A Document tag", "A Constraint", "A Foreign Key", "A Logic Gate"], answer: 2 }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        
+        quizData.forEach((item, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = "bg-slate-50 p-6 rounded-lg border border-slate-200 transition-all";
+            qDiv.id = `q-block-${index}`;
+            
+            const qTitle = document.createElement('h3');
+            qTitle.className = "font-bold text-lg text-slate-800 mb-4";
+            qTitle.innerText = `${index + 1}. ${item.q}`;
+            qDiv.appendChild(qTitle);
+            
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = "space-y-3";
+            
+            item.options.forEach((opt, optIndex) => {
+                const label = document.createElement('label');
+                label.className = "flex items-center space-x-3 p-3 rounded bg-white border border-slate-300 hover:bg-sky-50 cursor-pointer transition";
+                
+                const radio = document.createElement('input');
+                radio.type = "radio";
+                radio.name = `q${index}`;
+                radio.value = optIndex;
+                radio.className = "form-radio h-5 w-5 text-sky-600";
+                
+                const span = document.createElement('span');
+                span.className = "text-slate-700";
+                span.innerText = opt;
+                
+                label.appendChild(radio);
+                label.appendChild(span);
+                optionsDiv.appendChild(label);
+            });
+            
+            qDiv.appendChild(optionsDiv);
+            quizContainer.appendChild(qDiv);
+        });
+
+        function gradeQuiz() {
+            let score = 0;
+            let allAnswered = true;
+
+            for(let i = 0; i < quizData.length; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if(selected) {
+                    if(parseInt(selected.value) === quizData[i].answer) {
+                        score++;
+                    }
+                } else {
+                    allAnswered = false;
+                }
+            }
+            
+            if(!allAnswered) {
+                showModal('Incomplete Quiz', 'Please answer all 20 questions before submitting.', 'warning');
+                return;
+            }
+            
+            const percentage = (score / quizData.length) * 100;
+            
+            if(score >= 18) { 
+                const navGame = document.getElementById('nav-game');
+                const navGameMobile = document.getElementById('nav-game-mobile');
+                
+                navGame.classList.remove('text-gray-400', 'cursor-not-allowed');
+                navGame.classList.add('text-white', 'hover:bg-sky-600');
+                navGame.disabled = false;
+                navGame.innerHTML = '<i class="fa-solid fa-gamepad mr-1"></i>Game';
+                
+                navGameMobile.classList.remove('text-gray-400', 'cursor-not-allowed');
+                navGameMobile.classList.add('text-white', 'hover:bg-sky-600');
+                navGameMobile.disabled = false;
+                navGameMobile.innerHTML = '<i class="fa-solid fa-gamepad"></i> Game';
+
+                document.getElementById('nav-cert').classList.remove('hidden');
+                document.getElementById('nav-cert-mobile').classList.remove('hidden');
+                
+                document.getElementById('proceed-game-btn').classList.remove('hidden');
+                document.getElementById('submit-quiz-btn').classList.add('hidden');
+
+                showModal('Outstanding!', `You scored ${score}/20 (${percentage}%). You have unlocked your Certificate of Mastery AND the Retro Game!`, 'success');
+            } else {
+                quizData.forEach((_, i) => {
+                    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                    if(selected) selected.checked = false;
+                });
+                showModal('Keep Trying!', `You scored ${score}/20 (${percentage}%). You need 90% (18/20) to earn the certificate. Your answers have been reset so you can try again.`, 'error');
+                document.getElementById('quiz-section').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // --- RETRO GAME LOGIC: Data Flow - Schema Connector (Pipe Mania Clone) ---
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let gameRunning = false;
+        let gameInitialized = false;
+        let animationId;
+        
+        let level = 1;
+        let lives = 3;
+        
+        const gridSize = 5;
+        const tileSize = canvas.width / gridSize;
+        let grid = [];
+        
+        let flowTimer = 0;
+        let flowMax = 10000; // 10 seconds to flow
+        let flowActive = false;
+        
+        let flowPath = [];
+        let flowProgress = 0; // 0 to 1 per tile
+        
+        const overlay = document.getElementById('game-overlay');
+        const startBtn = document.getElementById('start-game-btn');
+        const timerBar = document.getElementById('game-timer-bar');
+
+        startBtn.addEventListener('click', startGame);
+
+        // Tile types: 0 = straight, 1 = corner, 2 = cross (for later levels)
+        function generateGrid() {
+            grid = [];
+            for(let r=0; r<gridSize; r++) {
+                let row = [];
+                for(let c=0; c<gridSize; c++) {
+                    row.push({
+                        type: Math.random() > 0.5 ? 0 : 1, // 0 straight, 1 corner
+                        rotation: Math.floor(Math.random() * 4) * 90,
+                        filled: false,
+                        isStart: (r===2 && c===0),
+                        isEnd: (r===2 && c===gridSize-1)
+                    });
+                }
+                grid.push(row);
+            }
+            // Ensure start and end are straight horizontal
+            grid[2][0].type = 0; grid[2][0].rotation = 0;
+            grid[2][gridSize-1].type = 0; grid[2][gridSize-1].rotation = 0;
+        }
+
+        function drawGrid() {
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            
+            // Grid Lines
+            ctx.strokeStyle = '#334155';
+            ctx.lineWidth = 2;
+            for(let i=0; i<=gridSize; i++) {
+                ctx.beginPath(); ctx.moveTo(i*tileSize, 0); ctx.lineTo(i*tileSize, canvas.height); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(0, i*tileSize); ctx.lineTo(canvas.width, i*tileSize); ctx.stroke();
+            }
+            
+            for(let r=0; r<gridSize; r++) {
+                for(let c=0; c<gridSize; c++) {
+                    drawTile(r, c, grid[r][c]);
+                }
+            }
+            
+            // Draw Start/End labels
+            ctx.fillStyle = '#10b981';
+            ctx.font = '12px monospace'; ctx.textAlign = 'left';
+            ctx.fillText('DB_START', 5, 2*tileSize + 15);
+            ctx.fillStyle = '#f59e0b'; ctx.textAlign = 'right';
+            ctx.fillText('APP_END', canvas.width - 5, 2*tileSize + 15);
+        }
+
+        function drawPipe(type, rotation, isFilled) {
+            ctx.strokeStyle = isFilled ? '#06b6d4' : '#64748b'; // Cyan if filled, slate if empty
+            ctx.lineWidth = 14;
+            ctx.lineCap = 'butt';
+            
+            if(isFilled) {
+                ctx.shadowColor = '#06b6d4';
+                ctx.shadowBlur = 10;
+            } else {
+                ctx.shadowBlur = 0;
+            }
+
+            ctx.save();
+            ctx.translate(tileSize/2, tileSize/2);
+            ctx.rotate(rotation * Math.PI / 180);
+            
+            ctx.beginPath();
+            if(type === 0) { // Straight
+                ctx.moveTo(-tileSize/2, 0);
+                ctx.lineTo(tileSize/2, 0);
+            } else if (type === 1) { // Corner (Bottom to Right)
+                ctx.arc(tileSize/2, tileSize/2, tileSize/2, Math.PI, 1.5*Math.PI);
+            }
+            ctx.stroke();
+            ctx.restore();
+            ctx.shadowBlur = 0;
+        }
+
+        function drawTile(r, c, cell) {
+            ctx.save();
+            ctx.translate(c*tileSize, r*tileSize);
+            
+            // Highlight Start/End
+            if(cell.isStart) {
+                ctx.fillStyle = 'rgba(16, 185, 129, 0.1)'; ctx.fillRect(0,0,tileSize,tileSize);
+            } else if (cell.isEnd) {
+                ctx.fillStyle = 'rgba(245, 158, 11, 0.1)'; ctx.fillRect(0,0,tileSize,tileSize);
+            }
+            
+            drawPipe(cell.type, cell.rotation, cell.filled);
+            ctx.restore();
+        }
+
+        // Map physical rotation to connection ports (Top:0, Right:1, Bottom:2, Left:3)
+        function getConnections(type, rotation) {
+            let normalizedRot = ((rotation % 360) + 360) % 360; // 0, 90, 180, 270
+            
+            if (type === 0) { // Straight
+                if (normalizedRot === 0 || normalizedRot === 180) return [1, 3]; // Left-Right
+                if (normalizedRot === 90 || normalizedRot === 270) return [0, 2]; // Top-Bottom
+            } else if (type === 1) { // Corner (default is bottom-right arc, meaning connects Right(1) and Bottom(2))
+                if (normalizedRot === 0) return [1, 2];   // Right-Bottom
+                if (normalizedRot === 90) return [2, 3];  // Bottom-Left
+                if (normalizedRot === 180) return [3, 0]; // Left-Top
+                if (normalizedRot === 270) return [0, 1]; // Top-Right
+            }
+            return [];
+        }
+
+        function getOppositeDir(dir) {
+            return (dir + 2) % 4; // 0->2, 1->3, 2->0, 3->1
+        }
+
+        canvas.addEventListener('mousedown', function(e) {
+            if(!gameRunning || flowActive) return;
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            const c = Math.floor(x / tileSize);
+            const r = Math.floor(y / tileSize);
+            
+            if(r >= 0 && r < gridSize && c >= 0 && c < gridSize) {
+                // Don't rotate start and end
+                if(!grid[r][c].isStart && !grid[r][c].isEnd) {
+                    grid[r][c].rotation += 90;
+                    drawGrid();
+                }
+            }
+        });
+
+        function initGame() {
+            gameInitialized = true;
+            generateGrid();
+            drawGrid();
+            ctx.fillStyle = 'rgba(0,0,0,0.5)';
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+        }
+
+        function startGame() {
+            overlay.classList.add('hidden');
+            if(!gameRunning) {
+                gameRunning = true;
+                flowActive = false;
+                flowTimer = 0;
+                flowPath = [];
+                flowMax = Math.max(3000, 10000 - (level * 1000)); // Gets faster
+                generateGrid();
+                drawGrid();
+                lastTime = Date.now();
+                gameLoop();
+            }
+        }
+
+        let lastTime = 0;
+        function gameLoop() {
+            if(!gameRunning) return;
+            
+            let now = Date.now();
+            let dt = now - lastTime;
+            lastTime = now;
+            
+            if(!flowActive) {
+                flowTimer += dt;
+                let pct = (flowTimer / flowMax) * 100;
+                timerBar.style.width = Math.min(pct, 100) + '%';
+                
+                if(flowTimer >= flowMax) {
+                    flowActive = true;
+                    // Start flow at start tile, entering from Left(3)
+                    startFlow(2, 0, 3);
+                }
+            } else {
+                // Animate flow (simplified for single file - instantly calculate path, visually fill)
+                // Since this runs fast, we just fill the path sequentially
+                if(flowPath.length > 0) {
+                    let current = flowPath[flowProgress];
+                    grid[current.r][current.c].filled = true;
+                    drawGrid();
+                    
+                    flowProgress++;
+                    if(flowProgress >= flowPath.length) {
+                        flowActive = false; // Finished evaluating
+                        checkWinCondition();
+                    }
+                } else {
+                    checkWinCondition(); // Failed instantly
+                }
+            }
+            
+            if(gameRunning) {
+                animationId = requestAnimationFrame(gameLoop);
+            }
+        }
+
+        function startFlow(startR, startC, entryDir) {
+            flowPath = [];
+            flowProgress = 0;
+            
+            let r = startR;
+            let c = startC;
+            let incomingDir = entryDir; // Where flow is coming FROM relative to the tile
+            
+            while(r >= 0 && r < gridSize && c >= 0 && c < gridSize) {
+                flowPath.push({r: r, c: c});
+                let cell = grid[r][c];
+                let connections = getConnections(cell.type, cell.rotation);
+                
+                // If it doesn't have a connection matching the incoming direction, flow stops (leak)
+                if(!connections.includes(incomingDir)) {
+                    break;
+                }
+                
+                // Flow exits out the OTHER connection
+                let exitDir = connections[0] === incomingDir ? connections[1] : connections[0];
+                
+                if(cell.isEnd) {
+                    // Win!
+                    break;
+                }
+                
+                // Move to next tile
+                if(exitDir === 0) { r -= 1; incomingDir = 2; }      // Go Up, enters next from Bottom
+                else if(exitDir === 1) { c += 1; incomingDir = 3; } // Go Right, enters next from Left
+                else if(exitDir === 2) { r += 1; incomingDir = 0; } // Go Down, enters next from Top
+                else if(exitDir === 3) { c -= 1; incomingDir = 1; } // Go Left, enters next from Right
+            }
+        }
+
+        function checkWinCondition() {
+            gameRunning = false;
+            cancelAnimationFrame(animationId);
+            overlay.classList.remove('hidden');
+            
+            let lastCellInPath = flowPath[flowPath.length-1];
+            if(lastCellInPath && grid[lastCellInPath.r][lastCellInPath.c].isEnd) {
+                // Victory
+                level++;
+                document.getElementById('game-level').innerText = level;
+                startBtn.innerText = `Data Synced! Start Level ${level}`;
+                startBtn.classList.replace('bg-red-600', 'bg-cyan-600');
+                startBtn.classList.replace('border-red-800', 'border-cyan-800');
+                timerBar.style.width = '0%';
+            } else {
+                // Leak
+                lives--;
+                document.getElementById('game-lives').innerText = lives;
+                if(lives <= 0) {
+                    startBtn.innerText = "System Failure. Reboot.";
+                    level = 1;
+                    lives = 3;
+                    document.getElementById('game-level').innerText = level;
+                    document.getElementById('game-lives').innerText = lives;
+                    startBtn.classList.replace('bg-cyan-600', 'bg-red-600');
+                    startBtn.classList.replace('border-cyan-800', 'border-red-800');
+                } else {
+                    startBtn.innerText = "Data Leaked! Retry Level";
+                    startBtn.classList.replace('bg-cyan-600', 'bg-red-600');
+                    startBtn.classList.replace('border-cyan-800', 'border-red-800');
+                }
+                timerBar.style.width = '0%';
+            }
+        }
+
+        // --- CERTIFICATE LOGIC ---
+        function updateCertName() {
+            let name = document.getElementById('student-name-input').value.trim();
+            if(name) {
+                if (name.includes(' ')) {
+                    name = name.split(' ')[0];
+                    document.getElementById('student-name-input').value = name;
+                    showModal('Notice', 'Only your first name has been applied to the certificate.', 'info');
+                }
+                document.getElementById('cert-student-name').innerText = name;
+            } else {
+                showModal('Wait!', 'Please enter your first name to update the certificate.', 'warning');
+            }
+        }
+
+        const today = new Date();
+        document.getElementById('cert-date').innerText = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        function downloadCert() {
+            const certEl = document.getElementById('certificate');
+            const name = document.getElementById('cert-student-name').innerText;
+            let filename = 'Certificate.png';
+            if (name && name !== 'Student') {
+                filename = `${name.replace(/\s+/g, '_')}_Certificate.png`;
+            }
+
+            const originalTransform = certEl.style.transform;
+            certEl.style.transform = 'none';
+
+            const btn = document.getElementById('download-btn');
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Generating...';
+            btn.disabled = true;
+
+            html2canvas(certEl, { 
+                scale: 2, 
+                useCORS: true,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+            }).catch(err => {
+                console.error(err);
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                showModal('Error', 'Failed to generate image. Try using a desktop browser.', 'error');
+            });
+        }
+
+        window.onload = () => {
+            // Draw static background for game preview
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle = '#64748b';
+            ctx.font = '20px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('DBMS INITIALIZING', canvas.width/2, canvas.height/2);
+        }
+    </script>
+</body>
+</html>

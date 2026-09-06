@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 03 Section 1.3.1 Mastery - Storage Units</title>
+    
+    <!-- Load Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load HTML2Canvas for Certificate Download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- Load Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Qwitcher+Grypen:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0fdf4; 
+            color: #1f2937;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        /* Interactive Elements CSS */
+        .io-dropzone { min-height: 70px; min-width: 130px; border: 2px dashed #9ca3af; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: #f9fafb; transition: all 0.2s;}
+        .io-dropzone.drag-over { background: #e5e7eb; border-color: #16a34a; box-shadow: inset 0 0 10px rgba(22, 163, 74, 0.2);}
+        
+        .io-item { cursor: grab; transition: transform 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .io-item:active { cursor: grabbing; transform: scale(0.95); }
+        
+        .cat-dropzone { transition: background-color 0.2s ease; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #e5e7eb; }
+        ::-webkit-scrollbar-thumb { background: #10b981; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #059669; }
+
+        /* Retro Game Canvas */
+        #game-canvas {
+            background-color: #0b0f19;
+            border: 4px solid #374151;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+            max-width: 100%;
+            height: auto;
+            touch-action: none;
+            cursor: crosshair;
+        }
+        .game-btn { touch-action: manipulation; user-select: none; }
+
+        /* --- CERTIFICATE STYLES --- */
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .font-body { font-family: 'Lora', serif; }
+        .font-script { font-family: 'Qwitcher Grypen', cursive; }
+        
+        .cert-preview-container {
+            width: 100%;
+            overflow: auto;
+            display: flex;
+            justify-content: center;
+            background: #e5e7eb;
+            padding: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        #certificate {
+            width: 1056px !important;
+            height: 816px !important;
+            flex-shrink: 0;
+            background-color: #ffffff;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1056" height="816"><polygon points="0,0 250,0 0,650" fill="%23fcd34d"/><polygon points="0,0 350,0 0,900" fill="%23d97706" opacity="0.8"/><polygon points="0,0 120,0 0,300" fill="%23fcd34d"/><polygon points="0,450 650,816 0,816" fill="%23fcd34d"/><polygon points="0,550 450,816 0,816" fill="%23d97706" opacity="0.8"/><polygon points="800,0 1056,0 1056,256" fill="%23f3f4f6"/><polygon points="1056,500 1056,816 750,816" fill="%23f3f4f6"/></svg>');
+            background-size: cover;
+            border: 4px solid #e5e7eb;
+        }
+
+        .gold-seal {
+            position: absolute;
+            left: 110px;
+            top: 350px;
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c, #fcf6ba);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3), inset 0 0 15px rgba(255,255,255,0.7), inset 0 0 25px rgba(139,105,20,0.9);
+            z-index: 10;
+        }
+        .gold-seal::before {
+            content: '';
+            position: absolute;
+            top: -4px; bottom: -4px; left: -4px; right: -4px;
+            border-radius: 50%;
+            border: 6px dashed #d4af37;
+        }
+        .gold-seal-inner-1 {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 2px solid rgba(139, 105, 20, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #e8c678, #dbab46);
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.2), 0 2px 5px rgba(255,255,255,0.7);
+            z-index: 1;
+        }
+        .gold-seal-inner-2 {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: radial-gradient(circle, #fcf6ba, #d4af37);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            padding: 10px;
+        }
+        .embossed-text {
+            color: #b38728;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2);
+            font-family: 'Playfair Display', serif;
+            font-weight: 800;
+            line-height: 1.1;
+            text-transform: uppercase;
+        }
+        .embossed-text-large { font-size: 14px; letter-spacing: 1px; }
+        .embossed-text-small { font-size: 11px; letter-spacing: 2px; margin: 2px 0; }
+        .embossed-star { font-size: 12px; color: #b38728; text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2); margin: 2px 0; }
+
+        @media (max-width: 1100px) {
+            #certificate { transform: scale(0.7); transform-origin: top left; margin-bottom: -240px; margin-right: -310px; }
+        }
+        @media (max-width: 768px) {
+            #certificate { transform: scale(0.4); transform-origin: top left; margin-bottom: -490px; margin-right: -630px; }
+        }
+        
+        .disk-block { transition: all 0.2s; }
+        .disk-block.allocated { background-color: #3b82f6; border-color: #1e3a8a; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
+    <nav class="bg-green-700 text-white shadow-lg sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-hard-drive text-2xl"></i>
+                    <span class="font-bold text-xl tracking-wider hidden sm:inline-block">Tech+ Unit 03 Section 1.3.1</span>
+                    <span class="font-bold text-xl tracking-wider sm:hidden">1.3.1</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-2">
+                        <button onclick="switchTab('briefing')" class="nav-btn bg-green-900 px-3 py-2 rounded-md text-sm font-medium hover:bg-green-600 transition" id="nav-briefing"><i class="fa-solid fa-book-open mr-1"></i>Briefing</button>
+                        <button onclick="switchTab('activity')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-green-600 transition" id="nav-activity"><i class="fa-solid fa-flask mr-1"></i>Lab Activity</button>
+                        <button onclick="switchTab('quiz')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-green-600 transition" id="nav-quiz"><i class="fa-solid fa-clipboard-check mr-1"></i>Quiz</button>
+                        <button onclick="switchTab('game')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-gray-400 cursor-not-allowed transition" id="nav-game" disabled><i class="fa-solid fa-lock mr-1"></i>Game</button>
+                        <button onclick="switchTab('cert')" class="nav-btn hidden px-3 py-2 rounded-md text-sm font-medium text-yellow-300 hover:bg-green-600 transition" id="nav-cert"><i class="fa-solid fa-award mr-1"></i>Certificate</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Nav -->
+        <div class="md:hidden flex flex-wrap justify-center gap-2 py-2 px-2 bg-green-800">
+            <button onclick="switchTab('briefing')" class="nav-btn-mobile px-3 py-1 text-sm rounded bg-green-900" id="nav-briefing-mobile">Briefing</button>
+            <button onclick="switchTab('activity')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-activity-mobile">Lab</button>
+            <button onclick="switchTab('quiz')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-quiz-mobile">Quiz</button>
+            <button onclick="switchTab('game')" class="nav-btn-mobile px-3 py-1 text-sm rounded text-gray-400 cursor-not-allowed" id="nav-game-mobile" disabled><i class="fa-solid fa-lock"></i></button>
+            <button onclick="switchTab('cert')" id="nav-cert-mobile" class="hidden px-2 py-1 text-sm text-yellow-300 rounded"><i class="fa-solid fa-award"></i></button>
+        </div>
+    </nav>
+
+    <main class="flex-grow w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <!-- BRIEFING SECTION -->
+        <div id="briefing-section" class="tab-content active no-print">
+            <div class="text-center mb-10">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">Storage Units & Data Measurement</h1>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">Explore how computing devices store data from binary bits to petabyte cloud infrastructures, and how scale units dictate modern digital design.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                
+                <!-- Tile 1: Bits & Bytes -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-blue-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-xl font-bold mb-3 text-blue-700"><i class="fa-solid fa-binary mr-2"></i>Bits & Bytes (Micro Level)</h2>
+                        <ul class="space-y-2 text-gray-700 mb-4 text-sm">
+                            <li><strong>Bit (b):</strong> Smallest data unit representing binary 0 or 1.</li>
+                            <li><strong>Byte (B):</strong> Group of 8 bits; encodes a single alphanumeric character.</li>
+                            <li><strong>Review Summary:</strong> Forms the basic transistor and voltage foundation for hardware signal pathways and text representation.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-2">
+                            <button onclick="openBriefing('bits-bytes-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded text-xs font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-1"></i> Details</button>
+                            <button onclick="openBriefing('bits-bytes-usecase')" class="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-900 py-2 rounded text-xs font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-1"></i> Uses</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 2: KB & MB -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-green-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-xl font-bold mb-3 text-green-700"><i class="fa-solid fa-file-lines mr-2"></i>Kilobytes & Megabytes</h2>
+                        <ul class="space-y-2 text-gray-700 mb-4 text-sm">
+                            <li><strong>Kilobyte (KB):</strong> 1,024 bytes; text emails and documents.</li>
+                            <li><strong>Megabyte (MB):</strong> 1,024 KB; smartphone photos and PDF files.</li>
+                            <li><strong>Review Summary:</strong> Intermediate productivity units bridging raw binary code with human-readable files.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-2">
+                            <button onclick="openBriefing('kb-mb-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded text-xs font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-1"></i> Details</button>
+                            <button onclick="openBriefing('kb-mb-usecase')" class="flex-1 bg-green-100 hover:bg-green-200 text-green-900 py-2 rounded text-xs font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-1"></i> Uses</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 3: GB & TB -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-purple-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-xl font-bold mb-3 text-purple-700"><i class="fa-solid fa-film mr-2"></i>Gigabytes & Terabytes</h2>
+                        <ul class="space-y-2 text-gray-700 mb-4 text-sm">
+                            <li><strong>Gigabyte (GB):</strong> 1,024 MB; standard metric for movies and apps.</li>
+                            <li><strong>Terabyte (TB):</strong> 1,024 GB; modern PC & console storage.</li>
+                            <li><strong>Review Summary:</strong> High-capacity metrics essential for multimedia storage, large gaming libraries, and virtual memory swap files.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-2">
+                            <button onclick="openBriefing('gb-tb-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded text-xs font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-1"></i> Details</button>
+                            <button onclick="openBriefing('gb-tb-usecase')" class="flex-1 bg-purple-100 hover:bg-purple-200 text-purple-900 py-2 rounded text-xs font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-1"></i> Uses</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 4: PB & Beyond -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-red-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-xl font-bold mb-3 text-red-700"><i class="fa-solid fa-cloud-arrow-up mr-2"></i>Petabytes & Cloud Scale</h2>
+                        <ul class="space-y-2 text-gray-700 mb-4 text-sm">
+                            <li><strong>Petabyte (PB):</strong> 1,024 terabytes; used by major tax agencies and cloud hubs.</li>
+                            <li><strong>Exabytes (EB):</strong> Global streaming & data totals.</li>
+                            <li><strong>Review Summary:</strong> Institutional scale repositories requiring distributed RAID networks and redundant data-center mirroring.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-2">
+                            <button onclick="openBriefing('pb-cloud-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded text-xs font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-1"></i> Details</button>
+                            <button onclick="openBriefing('pb-cloud-usecase')" class="flex-1 bg-red-100 hover:bg-red-200 text-red-900 py-2 rounded text-xs font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-1"></i> Uses</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            
+            <div class="mt-8 flex justify-center">
+                <button onclick="switchTab('activity')" class="bg-green-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-green-500 shadow-lg transition transform hover:scale-105">Proceed to Lab Activity <i class="fa-solid fa-arrow-right ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- LAB ACTIVITY SECTION -->
+        <div id="activity-section" class="tab-content no-print">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Interactive Storage Labs</h1>
+                <p class="text-gray-600">Complete 2 unique interactive lab activities for each storage concept tile.</p>
+            </div>
+
+            <!-- Lab Category 1: Bits & Bytes Labs -->
+            <div class="space-y-8 mb-10">
+                <div class="bg-white p-6 rounded-xl shadow-md border border-blue-200">
+                    <h2 class="text-xl font-bold mb-2 text-blue-700"><i class="fa-solid fa-binary mr-2"></i>Lab 1.1: Binary Nibble Encoder</h2>
+                    <p class="text-sm text-gray-600 mb-4">Click the binary bit toggles (0 or 1) to form a valid 8-bit byte representing character values in computer memory.</p>
+                    <div class="flex flex-wrap justify-center gap-2 mb-4" id="bit-toggles">
+                        <button onclick="toggleBit(0)" id="bit-0" class="w-12 h-16 bg-gray-100 border-2 border-gray-400 rounded text-xl font-mono font-bold text-blue-800">0</button>
+                        <button onclick="toggleBit(1)" id="bit-1" class="w-12 h-16 bg-gray-100 border-2 border-gray-400 rounded text-xl font-mono font-bold text-blue-800">0</button>
+                        <button onclick="toggleBit(2)" id="bit-2" class="w-12 h-16 bg-gray-100 border-2 border-gray-400 rounded text-xl font-mono font-bold text-blue-800">0</button>
+                        <button onclick="toggleBit(3)" id="bit-3" class="w-12 h-16 bg-gray-100 border-2 border-gray-400 rounded text-xl font-mono font-bold text-blue-800">0</button>
+                        <span class="text-2xl font-bold flex items-center px-2"> </span>
+                        <button onclick="toggleBit(4)" id="bit-4" class="w-12 h-16 bg-gray-100 border-2 border-gray-400 rounded text-xl font-mono font-bold text-blue-800">0</button>
+                        <button onclick="toggleBit(5)" id="bit-5" class="w-12 h-16 bg-gray-100 border-2 border-gray-400 rounded text-xl font-mono font-bold text-blue-800">0</button>
+                        <button onclick="toggleBit(6)" id="bit-6" class="w-12 h-16 bg-gray-100 border-2 border-gray-400 rounded text-xl font-mono font-bold text-blue-800">0</button>
+                        <button onclick="toggleBit(7)" id="bit-7" class="w-12 h-16 bg-gray-100 border-2 border-gray-400 rounded text-xl font-mono font-bold text-blue-800">0</button>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-sm font-bold text-gray-700 mb-2">Decimal Value: <span id="bit-decimal" class="text-blue-600">0</span> | Encoded ASCII: <span id="bit-ascii" class="text-green-600 font-mono">NUL</span></p>
+                        <button onclick="verifyByteLab()" class="bg-blue-600 text-white px-6 py-2 rounded font-bold hover:bg-blue-700">Check Byte Value (Target: 66 for 'B')</button>
+                    </div>
+                    <div id="lab1-1-feedback" class="text-center font-bold mt-3 h-6 text-green-600"></div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-md border border-blue-200">
+                    <h2 class="text-xl font-bold mb-2 text-blue-700"><i class="fa-solid fa-code-merge mr-2"></i>Lab 1.2: Data Scale Sorter</h2>
+                    <p class="text-sm text-gray-600 mb-4">Drag and drop the items into correct ascending sequence from smallest to largest digital footprint.</p>
+                    <div class="flex flex-wrap gap-3 mb-4 justify-center" id="sort-items-container">
+                        <div class="io-item px-4 py-2 bg-blue-50 border border-blue-300 rounded font-bold text-sm" draggable="true" data-order="3">Short video (~100MB)</div>
+                        <div class="io-item px-4 py-2 bg-blue-50 border border-blue-300 rounded font-bold text-sm" draggable="true" data-order="1">Text message (~1KB)</div>
+                        <div class="io-item px-4 py-2 bg-blue-50 border border-blue-300 rounded font-bold text-sm" draggable="true" data-order="5">4K movie (~50GB)</div>
+                        <div class="io-item px-4 py-2 bg-blue-50 border border-blue-300 rounded font-bold text-sm" draggable="true" data-order="2">Photo (~2MB)</div>
+                        <div class="io-item px-4 py-2 bg-blue-50 border border-blue-300 rounded font-bold text-sm" draggable="true" data-order="4">Mobile game (~400MB)</div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-5 gap-2" id="sort-dropzones">
+                        <div class="cat-dropzone border-2 border-dashed border-gray-400 bg-gray-50 rounded p-3 min-h-[70px] flex items-center justify-center text-xs font-bold text-gray-500" data-pos="1">1. Smallest</div>
+                        <div class="cat-dropzone border-2 border-dashed border-gray-400 bg-gray-50 rounded p-3 min-h-[70px] flex items-center justify-center text-xs font-bold text-gray-500" data-pos="2">2. Second</div>
+                        <div class="cat-dropzone border-2 border-dashed border-gray-400 bg-gray-50 rounded p-3 min-h-[70px] flex items-center justify-center text-xs font-bold text-gray-500" data-pos="3">3. Middle</div>
+                        <div class="cat-dropzone border-2 border-dashed border-gray-400 bg-gray-50 rounded p-3 min-h-[70px] flex items-center justify-center text-xs font-bold text-gray-500" data-pos="4">4. Fourth</div>
+                        <div class="cat-dropzone border-2 border-dashed border-gray-400 bg-gray-50 rounded p-3 min-h-[70px] flex items-center justify-center text-xs font-bold text-gray-500" data-pos="5">5. Largest</div>
+                    </div>
+                    <div id="lab1-2-feedback" class="text-center font-bold mt-3 h-6 text-green-600"></div>
+                </div>
+            </div>
+
+            <!-- Lab Category 2: KB & MB Labs -->
+            <div class="space-y-8 mb-10">
+                <div class="bg-white p-6 rounded-xl shadow-md border border-green-200">
+                    <h2 class="text-xl font-bold mb-2 text-green-700"><i class="fa-solid fa-file-lines mr-2"></i>Lab 2.1: Nano Text Editor Size Monitor</h2>
+                    <p class="text-sm text-gray-600 mb-4">Type text into the simulator below and watch how character counts map directly to byte/kilobyte allocations.</p>
+                    <textarea id="nano-textarea" oninput="updateNanoSize()" class="w-full h-24 p-3 border border-gray-300 rounded font-mono text-sm focus:outline-none focus:border-green-500" placeholder="Type your sentence here..."></textarea>
+                    <div class="flex justify-between items-center mt-3 text-sm font-bold text-gray-700">
+                        <div>Character Count: <span id="nano-chars" class="text-green-600 font-mono">0</span> bytes</div>
+                        <button onclick="verifyNanoLab()" class="bg-green-600 text-white px-4 py-2 rounded text-xs hover:bg-green-700">Verify 30+ Bytes Target</button>
+                    </div>
+                    <div id="lab2-1-feedback" class="text-center font-bold mt-3 h-6 text-green-600"></div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-md border border-green-200">
+                    <h2 class="text-xl font-bold mb-2 text-green-700"><i class="fa-solid fa-calculator mr-2"></i>Lab 2.2: Unit Conversion Calculator</h2>
+                    <p class="text-sm text-gray-600 mb-4">Convert Megabytes into Kilobytes using the 1,024 multiplier rule (e.g. 3 MB = ? KB).</p>
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                        <div class="text-lg font-bold"><span id="conv-mb-val">5</span> MB =</div>
+                        <input type="number" id="conv-input" placeholder="Enter KB" class="border-2 border-gray-300 rounded px-4 py-2 w-48 text-center font-bold focus:border-green-500 focus:outline-none">
+                        <button onclick="checkConversion()" class="bg-green-600 text-white px-6 py-2 rounded font-bold hover:bg-green-700">Check Calculation</button>
+                    </div>
+                    <div id="lab2-2-feedback" class="text-center font-bold mt-3 h-6 text-green-600"></div>
+                </div>
+            </div>
+
+            <!-- Lab Category 3: GB & TB Labs -->
+            <div class="space-y-8 mb-10">
+                <div class="bg-white p-6 rounded-xl shadow-md border border-purple-200">
+                    <h2 class="text-xl font-bold mb-2 text-purple-700"><i class="fa-solid fa-hard-drive mr-2"></i>Lab 3.1: Partition Allocation Builder</h2>
+                    <p class="text-sm text-gray-600 mb-4">Click exactly 3 unallocated 50GB blocks to format a 150GB logical drive partition for heavy files.</p>
+                    <div class="flex flex-wrap gap-2 justify-center" id="disk-grid"></div>
+                    <div id="lab3-1-feedback" class="text-center font-bold mt-3 h-6 text-green-600"></div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-md border border-purple-200">
+                    <h2 class="text-xl font-bold mb-2 text-purple-700"><i class="fa-solid fa-gamepad mr-2"></i>Lab 3.2: Gaming Storage Budgeting</h2>
+                    <p class="text-sm text-gray-600 mb-4">Select items to fill a 1TB (1,000 GB) SSD without exceeding capacity while hitting at least 800 GB utilized.</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+                        <div class="p-3 border rounded bg-gray-50 flex flex-col justify-between">
+                            <div><strong>AAA Game 1</strong><br><span class="text-xs text-gray-500">150 GB</span></div>
+                            <button onclick="toggleGameItem(150, this)" class="mt-2 bg-purple-600 text-white py-1 rounded text-xs font-bold hover:bg-purple-700">Add (150 GB)</button>
+                        </div>
+                        <div class="p-3 border rounded bg-gray-50 flex flex-col justify-between">
+                            <div><strong>Open World RPG</strong><br><span class="text-xs text-gray-500">250 GB</span></div>
+                            <button onclick="toggleGameItem(250, this)" class="mt-2 bg-purple-600 text-white py-1 rounded text-xs font-bold hover:bg-purple-700">Add (250 GB)</button>
+                        </div>
+                        <div class="p-3 border rounded bg-gray-50 flex flex-col justify-between">
+                            <div><strong>OS & System Files</strong><br><span class="text-xs text-gray-500">100 GB</span></div>
+                            <button onclick="toggleGameItem(100, this)" class="mt-2 bg-purple-600 text-white py-1 rounded text-xs font-bold hover:bg-purple-700">Add (100 GB)</button>
+                        </div>
+                        <div class="p-3 border rounded bg-gray-50 flex flex-col justify-between">
+                            <div><strong>Simulator Suite</strong><br><span class="text-xs text-gray-500">300 GB</span></div>
+                            <button onclick="toggleGameItem(300, this)" class="mt-2 bg-purple-600 text-white py-1 rounded text-xs font-bold hover:bg-purple-700">Add (300 GB)</button>
+                        </div>
+                        <div class="p-3 border rounded bg-gray-50 flex flex-col justify-between">
+                            <div><strong>Media & Movies</strong><br><span class="text-xs text-gray-500">200 GB</span></div>
+                            <button onclick="toggleGameItem(200, this)" class="mt-2 bg-purple-600 text-white py-1 rounded text-xs font-bold hover:bg-purple-700">Add (200 GB)</button>
+                        </div>
+                        <div class="p-3 border rounded bg-gray-50 flex flex-col justify-between">
+                            <div><strong>Productivity Apps</strong><br><span class="text-xs text-gray-500">100 GB</span></div>
+                            <button onclick="toggleGameItem(100, this)" class="mt-2 bg-purple-600 text-white py-1 rounded text-xs font-bold hover:bg-purple-700">Add (100 GB)</button>
+                        </div>
+                    </div>
+                    <div class="text-center font-bold text-gray-800">
+                        Total Allocated: <span id="game-alloc-val" class="text-purple-600">0</span> GB / 1000 GB Limit
+                        <div class="mt-3">
+                            <button onclick="verifyGameLab()" class="bg-purple-600 text-white px-6 py-2 rounded font-bold hover:bg-purple-700">Submit Storage Plan</button>
+                        </div>
+                    </div>
+                    <div id="lab3-2-feedback" class="text-center font-bold mt-3 h-6 text-green-600"></div>
+                </div>
+            </div>
+
+            <!-- Lab Category 4: PB & Cloud Labs -->
+            <div class="space-y-8 mb-10">
+                <div class="bg-white p-6 rounded-xl shadow-md border border-red-200">
+                    <h2 class="text-xl font-bold mb-2 text-red-700"><i class="fa-solid fa-cloud mr-2"></i>Lab 4.1: Cloud Data Center Hierarchy Match</h2>
+                    <p class="text-sm text-gray-600 mb-4">Match the data workload scale to its correct corresponding cloud tier.</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+                        <select id="cloud-match-1" class="border p-2 rounded text-sm"><option value="">Select Scale...</option><option value="KB">Kilobytes</option><option value="TB">Terabytes</option><option value="PB">Petabytes</option></select>
+                        <select id="cloud-match-2" class="border p-2 rounded text-sm"><option value="">Select Scale...</option><option value="KB">Kilobytes</option><option value="TB">Terabytes</option><option value="PB">Petabytes</option></select>
+                        <select id="cloud-match-3" class="border p-2 rounded text-sm"><option value="">Select Scale...</option><option value="KB">Kilobytes</option><option value="TB">Terabytes</option><option value="PB">Petabytes</option></select>
+                    </div>
+                    <div class="text-xs text-gray-600 mb-4 bg-gray-50 p-3 rounded space-y-1">
+                        <div>1. Single email message / receipt: <strong>[ Select above ]</strong></div>
+                        <div>2. High-end personal gaming laptop: <strong>[ Select above ]</strong></div>
+                        <div>3. IRS nationwide tax record repository: <strong>[ Select above ]</strong></div>
+                    </div>
+                    <div class="text-center">
+                        <button onclick="verifyCloudMatch()" class="bg-red-600 text-white px-6 py-2 rounded font-bold hover:bg-red-700">Verify Cloud Hierarchy</button>
+                    </div>
+                    <div id="lab4-1-feedback" class="text-center font-bold mt-3 h-6 text-green-600"></div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-md border border-red-200">
+                    <h2 class="text-xl font-bold mb-2 text-red-700"><i class="fa-solid fa-server mr-2"></i>Lab 4.2: Exabyte Scale Estimator</h2>
+                    <p class="text-sm text-gray-600 mb-4">Calculate how many Petabytes are in 3 Exabytes given that 1 Exabyte = 1,024 Petabytes.</p>
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                        <div class="text-sm font-bold">3 Exabytes =</div>
+                        <input type="number" id="eb-input" placeholder="Enter Petabytes" class="border-2 border-gray-300 rounded px-4 py-2 w-48 text-center font-bold focus:border-red-500 focus:outline-none">
+                        <button onclick="checkExabyte()" class="bg-red-600 text-white px-6 py-2 rounded font-bold hover:bg-red-700">Check Calculation</button>
+                    </div>
+                    <div id="lab4-2-feedback" class="text-center font-bold mt-3 h-6 text-green-600"></div>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <button onclick="switchTab('quiz')" class="bg-green-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-green-500 shadow-lg transition transform hover:scale-105">Take the Mastery Quiz <i class="fa-solid fa-clipboard-check ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- QUIZ SECTION -->
+        <div id="quiz-section" class="tab-content no-print">
+            <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-xl max-w-4xl mx-auto">
+                <div class="text-center mb-8 border-b pb-4">
+                    <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Unit 03 Section 1.3.1 Mastery Quiz</h1>
+                    <p class="text-gray-600">Score 90% or higher (18/20) to earn your Certificate of Mastery and unlock the Retro "Data Asteroids" Game!</p>
+                </div>
+
+                <div id="quiz-container" class="space-y-8">
+                    <!-- Questions injected via JS -->
+                </div>
+
+                <div class="mt-10 text-center border-t pt-6 flex flex-col md:flex-row justify-center items-center gap-4">
+                    <button id="submit-quiz-btn" onclick="gradeQuiz()" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">Submit Quiz</button>
+                    <button id="proceed-game-btn" onclick="switchTab('game')" class="hidden bg-purple-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-purple-700 shadow-lg transition w-full md:w-auto">Play Retro Game <i class="fa-solid fa-gamepad ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RETRO GAME SECTION -->
+        <div id="game-section" class="tab-content no-print">
+            <div class="bg-gray-900 p-6 sm:p-8 rounded-2xl shadow-xl max-w-4xl mx-auto border-4 border-gray-700 flex flex-col items-center">
+                <div class="text-center mb-4 w-full">
+                    <h1 class="text-3xl font-extrabold text-green-400 mb-2 tracking-widest uppercase" style="font-family: monospace;">Data Asteroids</h1>
+                    <p class="text-gray-300 text-sm">Control your storage spaceship using <strong class="text-blue-400">Arrow Keys</strong> (Left/Right to rotate, Up to thrust) and press <strong class="text-yellow-400">Spacebar</strong> to laser blast incoming data block asteroids! Destroy all fragments to clear memory.</p>
+                </div>
+                
+                <div class="flex justify-between items-center w-full max-w-[600px] mb-2 px-4 text-white font-mono text-xl">
+                    <div>Score: <span id="game-score" class="text-green-400 font-bold">0</span></div>
+                    <div>Lives: <span id="game-lives" class="text-red-400 font-bold">3</span></div>
+                </div>
+
+                <div class="relative flex justify-center w-full">
+                    <canvas id="game-canvas" width="600" height="450" class="w-full max-w-[600px] bg-gray-950 border-2 border-gray-600 rounded shadow-lg"></canvas>
+                    
+                    <div id="game-overlay" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-80 rounded-lg max-w-[600px] mx-auto z-10">
+                        <button id="start-game-btn" class="bg-green-600 hover:bg-green-500 text-white font-bold font-mono py-3 px-6 rounded-lg text-xl border-4 border-green-800 uppercase transform transition hover:scale-105">Launch Ship (Start)</button>
+                    </div>
+                </div>
+
+                <div class="mt-8 text-center w-full border-t border-gray-700 pt-6">
+                    <button onclick="switchTab('cert')" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">View Certificate <i class="fa-solid fa-award ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CERTIFICATE SECTION -->
+        <div id="cert-section" class="tab-content">
+            <div class="max-w-5xl mx-auto">
+                
+                <div class="bg-white p-6 rounded shadow mb-6 no-print text-center border border-gray-200">
+                    <h2 class="text-2xl font-bold text-green-600 mb-2">🎉 Congratulations! 🎉</h2>
+                    <p class="text-gray-700 mb-4">You have achieved mastery of Storage Units and Data Measurement.</p>
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+                        <input type="text" id="student-name-input" value="Student" placeholder="Enter your first name" class="border-2 border-gray-300 rounded px-4 py-2 w-full md:w-64 focus:border-green-500 focus:outline-none">
+                        <button onclick="updateCertName()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">Update Name</button>
+                        <button id="download-btn" onclick="downloadCert()" class="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900 transition flex items-center justify-center">
+                            <i class="fa-solid fa-download mr-2"></i>Download PNG
+                        </button>
+                    </div>
+                </div>
+
+                <div class="cert-preview-container print:p-0 print:bg-white">
+                    <div id="certificate">
+                        <div class="gold-seal">
+                            <div class="gold-seal-inner-1">
+                                <div class="gold-seal-inner-2">
+                                     <span class="embossed-text embossed-text-large">Certificate</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-small">Of</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-large">Excellence</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="relative z-20 w-full h-full flex flex-col pt-[48px] pl-[380px] pr-[48px]">
+                            <h1 class="text-[#1e3a8a] text-[4.5rem] leading-none font-serif font-bold tracking-wide uppercase mb-2">CERTIFICATE</h1>
+                            <h2 class="text-gray-800 text-3xl font-serif tracking-widest uppercase mb-10">Of Achievement</h2>
+                            
+                            <p class="text-[1.4rem] font-body text-gray-800 mb-4">This is to certify that</p>
+                            
+                            <div class="relative mb-8 w-full">
+                                <h3 id="cert-student-name" class="text-[4rem] text-[#1e3a8a] font-serif italic leading-none pb-2 relative z-10 text-center w-full block">Student</h3>
+                                <div class="w-full border-b-[2px] border-[#1e3a8a] absolute bottom-[4px] left-0 z-0"></div>
+                                <div class="w-full border-b-[2px] border-dotted border-red-500 absolute bottom-[0px] left-0 z-0"></div>
+                            </div>
+                            
+                            <p class="text-[1.3rem] font-body text-gray-800 leading-relaxed w-full pr-4">
+                                Has successfully completed the assessment for 
+                                <strong class="text-[1.8rem] text-[#1e3a8a] block mt-4 mb-2 font-serif">Cyber.org Tech+ Unit 03 Section 1.3.1</strong>
+                                <strong class="text-[1.5rem] text-black block mb-4 font-serif italic">Storage Units</strong>
+                                <span class="text-[1.1rem] text-gray-700 leading-snug block">Demonstrating proficiency in comparing common units of measure (Bit, Byte, Kilobyte, Megabyte, Gigabyte, Terabyte, Petabyte) and converting between storage scales.</span>
+                            </p>
+                            
+                            <div class="flex justify-end gap-16 items-end mt-auto mb-[60px] w-full pr-8">
+                                <div class="w-64">
+                                    <div class="border-b border-gray-600 mb-2 h-20 flex items-end justify-center relative">
+                                        <span class="font-script text-[5rem] text-[#1e3a8a] absolute bottom-[-10px] transform -rotate-3 opacity-90">Dr. M. S</span>
+                                    </div>
+                                    <p class="font-serif text-xl text-gray-800 text-center">Administration</p>
+                                </div>
+                                
+                                <div class="w-64">
+                                    <div class="border-b border-gray-600 mb-2 text-center h-20 flex items-end justify-center">
+                                        <p id="cert-date" class="font-body text-2xl text-gray-800 pb-1">Date Here</p>
+                                    </div>
+                                    <p class="font-serif text-xl text-gray-800 text-center">Date</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Custom Modal for Alerts -->
+    <div id="custom-modal" class="fixed inset-0 bg-black bg-opacity-50 z-[100] hidden flex justify-center items-center backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all">
+            <div class="text-center">
+                <div id="modal-icon" class="text-5xl mb-4"></div>
+                <h3 id="modal-title" class="text-2xl font-bold mb-2 text-gray-900"></h3>
+                <p id="modal-msg" class="text-gray-600 mb-6"></p>
+                <button onclick="closeModal()" class="bg-green-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-green-700 transition w-full">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Briefing Modal -->
+    <div id="briefing-modal" class="fixed inset-0 bg-black bg-opacity-70 z-[120] hidden flex justify-center items-center backdrop-blur-sm p-4 sm:p-6">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col transform transition-all overflow-hidden border-4 border-green-700">
+            <div class="p-6 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+                <div class="flex items-center gap-4">
+                    <div id="briefing-modal-icon" class="text-4xl"></div>
+                    <h3 id="briefing-modal-title" class="text-2xl md:text-3xl font-bold text-gray-900"></h3>
+                </div>
+                <button onclick="closeBriefing()" class="text-gray-400 hover:text-red-600 transition text-4xl leading-none">&times;</button>
+            </div>
+            <div id="briefing-modal-content" class="p-6 md:p-10 overflow-y-auto flex-grow text-gray-700 text-lg leading-relaxed bg-white">
+                <!-- Dynamic Content Injected Here -->
+            </div>
+            <div class="p-6 border-t border-gray-200 bg-gray-50 flex justify-end">
+                <button onclick="closeBriefing()" class="bg-green-700 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-green-800 transition shadow-md">Acknowledge & Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 7+ Paragraph Briefing Data with Clean Exponent HTML & 2+ Cases ---
+        const briefingData = {
+            'bits-bytes-details': {
+                title: 'Bits & Bytes: The Micro Foundation of Digital Storage',
+                icon: '<i class="fa-solid fa-binary text-blue-600"></i>',
+                html: `
+                    <p class="mb-5">At the absolute foundational level of all digital computing and electronic architecture lies the binary digit, universally abbreviated as the <strong>bit</strong>. A bit represents the smallest possible unit of information that a computing device can store, process, or transmit. Mechanically and electronically, a bit exists in one of two mutually exclusive states: binary 0 (representing an open circuit, low voltage, or off state) or binary 1 (representing a closed circuit, high voltage, or on state). Because individual bits carry so little contextual meaning on their own, they are rarely used by themselves as standalone file storage units, though they govern hardware signal pathways and pixel color channels in monochrome imagery.</p>
+                    
+                    <p class="mb-5">To create meaningful data that human beings can interact with, computer scientists group bits into larger structured collections. The primary collection unit is the <strong>byte</strong>, which traditionally consists of exactly eight adjacent bits (often referred to mathematically as 2<sup>3</sup> bits). The byte serves as the fundamental addressable unit of memory in modern computer architecture. A single byte possesses 2<sup>8</sup> (or 256) possible unique binary combinations (ranging from 00000000 to 11111111), which is more than enough distinct combinations to represent every uppercase letter, lowercase letter, punctuation mark, and Arabic numeral in the standard ASCII character set.</p>
+                    
+                    <p class="mb-5">When examining character encoding, a single alphabetical character such as the uppercase letter 'B' requires precisely 1 byte (or 8 bits) of storage space inside RAM or on a hard disk drive. However, when multiple characters are combined to form words, strings, or sentences, the total storage requirement scales linearly with character length. For example, the four-letter word "Byte" requires 4 bytes of storage capacity, which translates to exactly 32 individual bits (4 × 8 = 32). This precise mathematical relationship is vital for programmers and cybersecurity professionals when calculating network packet sizes, memory buffers, and memory leak vulnerabilities.</p>
+                    
+                    <p class="mb-5">Moving beyond basic binary definitions, the engineering of electronic storage requires precise voltage thresholds and transistor states. In dynamic RAM (DRAM) chips, billions of microscopic capacitors store bits as electrical charges representing 1s and 0s. Because these capacitors naturally leak electrical charge over time, the CPU memory controller must continually refresh every capacitor millions of times per second. This reveals that digital storage is not merely a static physical inscription, but an active, continuously sustained electrical state maintained by underlying operating system drivers and hardware clock cycles.</p>
+                    
+                    <p class="mb-5">In addition to standard text representation, bits and bytes govern digital color theory and pixel graphics. In a basic 1-bit monochrome image, each pixel corresponds to exactly 1 bit of data (0 for pure black, 1 for pure white). As graphical fidelity evolved, systems adopted 8-bit color palettes (providing 256 simultaneous colors) and 24-bit TrueColor systems (allocating 8 bits each for Red, Green, and Blue color channels). Understanding how individual bits map to graphical frames allows technicians to diagnose video corruption, driver display mismatches, and graphics memory buffer overflows.</p>
+                    
+                    <p class="mb-5">In networking and data transmission environments, data rates are frequently measured in bits per second (bps), whereas file storage capacities on disks are measured in bytes (B). This distinction is a frequent point of confusion for students and technicians alike. Internet service providers advertise connection speeds in Megabits per second (Mbps), while file downloads measure in Megabytes per second (MBps). Because there are 8 bits in a single byte, a consumer downloading a file must divide their connection speed in megabits by 8 to determine their actual theoretical file transfer speed in megabytes per second.</p>
+                    
+                    <p>Mastering the micro-level mechanics of bits and bytes provides the essential analytical foundation required for all advanced IT certifications, including CompTIA Tech+. Whether analyzing network frames, debugging character encoding errors (such as UTF-8 versus ASCII mismatches), or examining hexadecimal memory dumps, technicians rely daily on their understanding of how basic binary states translate into complex digital files.</p>
+                `
+            },
+            'bits-bytes-usecase': {
+                title: 'Bits & Bytes: Use Cases & Practical Applications',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 1: Analyzing Network Packet Captures (Wireshark)</h4>
+                        <p class="mb-2">Network engineers frequently inspect raw data packets traveling across enterprise local area networks to troubleshoot connectivity issues or detect malicious intrusions.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Bit-Level Inspection):</strong> A security analyst uses Wireshark to inspect the TCP header flags of an incoming packet, verifying whether the SYN bit is set to 1 during a handshake initiation.</li>
+                            <li><strong>Example 2 (Byte Calculation):</strong> The engineer calculates the exact payload length by examining hexadecimal byte offsets in the packet hex dump, ensuring no trailing padding bytes corrupt the transmission.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 2: Low-Level Programming & Embedded Systems</h4>
+                        <p class="mb-2">Software developers writing firmware for microcontrollers (such as Arduino or IoT sensors) must manage memory allocation at the exact bit and byte level.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Bitmasking):</strong> A developer uses bitwise operators (& and |) to turn individual status flags on or off inside a single 8-bit configuration register, conserving precious RAM on a constrained device.</li>
+                            <li><strong>Example 2 (Character Storage):</strong> An engineer transmits sensor telemetry strings where each ASCII character is strictly encoded into 1 byte to minimize wireless radio broadcast transmission times.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Binary Microstructure</p>
+                            <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=600&h=350" alt="Binary code matrix representing bits and bytes" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Network Packet Analysis</p>
+                            <img src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=600&h=350" alt="IT security dashboard inspecting data packets" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'kb-mb-details': {
+                title: 'Kilobytes & Megabytes: Everyday Productivity Scales',
+                icon: '<i class="fa-solid fa-file-lines text-green-600"></i>',
+                html: `
+                    <p class="mb-5">As digital information expands beyond single characters and basic binary registers, human-readable storage units must scale up to describe everyday school and office files. The first major scaling step is the <strong>kilobyte (KB)</strong>. Due to the binary nature of computer addressing, one kilobyte does not equal 1,000 bytes; instead, it consists of exactly 1,024 bytes (derived from 2<sup>10</sup>). A kilobyte represents a very compact data footprint, roughly equivalent in size to a short text email, a standard plain-text paragraph, a basic word processing document, or a small application toolbar icon.</p>
+                    
+                    <p class="mb-5">Scaling further by another factor of 1,024 brings us to the <strong>megabyte (MB)</strong>. One megabyte consists of 1,024 kilobytes, which equals 1,048,576 total bytes. Megabytes represent the standard unit of measurement for everyday personal media and formatted documents. For instance, a single high-resolution photograph captured with a modern smartphone camera typically occupies between 2 MB and 4 MB of storage space. Similarly, standard PDF reports containing embedded graphics, PowerPoint slide decks, and short uncompressed audio clips are routinely measured and evaluated in megabytes.</p>
+                    
+                    <p class="mb-5">Understanding kilobytes and megabytes is essential when managing email attachments and cloud storage quotas. Most enterprise email servers enforce strict attachment limits (commonly 25 MB per message). If a user attempts to attach a 30 MB high-resolution video clip directly to an email, the mail client or server will immediately reject the transmission, requiring the user to compress the file into a ZIP archive or upload it to a cloud sharing link. Technicians must understand these unit thresholds to troubleshoot attachment failures and storage quota errors.</p>
+                    
+                    <p class="mb-5">File compression algorithms play a critical role in managing KB and MB scales. Lossless compression formats (such as ZIP, GZIP, or PNG) reduce file sizes without discarding any underlying data by encoding repetitive sequences more efficiently. Conversely, lossy compression formats (such as JPEG for images or MP3 for audio) permanently discard imperceptible data frequencies to achieve massive reductions in file size, shrinking a 50 MB raw audio track down into a compact 4 MB MP3 file suitable for streaming.</p>
+                    
+                    <p class="mb-5">When working within command-line environments such as Ubuntu Linux, system administrators rely heavily on utilities like <code class="bg-gray-100 px-1 py-0.5 rounded text-sm">ls -l</code> and <code class="bg-gray-100 px-1 py-0.5 rounded text-sm">ls -lh</code> to inspect file sizes. By default, standard directory listings display file sizes in raw bytes, which can be immensely difficult for human operators to parse when comparing large directories. Adding the human-readable flag (<code class="bg-gray-100 px-1 py-0.5 rounded text-sm">-h</code>) automatically converts those raw byte counts into clean Kilobyte (K) and Megabyte (M) summaries.</p>
+                    
+                    <p class="mb-5">The distinction between allocated file space and actual disk usage becomes apparent at the KB and MB scale. When a file is modified or created, the operating system's file system allocates storage in clusters or blocks (typically 4 KB sectors). A tiny text file containing only 15 characters (roughly 15 bytes) will still consume an entire 4 KB block on the hard drive because the file system cannot allocate fractional sectors. Understanding block allocation prevents confusion when directory disk usage reports disagree with raw character byte counts.</p>
+                    
+                    <p>In summary, kilobytes and megabytes form the familiar backbone of everyday computing. From saving homework assignments in word processors to emailing corporate spreadsheets and viewing smartphone pictures, these intermediate storage units provide the intuitive measuring stick that bridges micro-level binary code with human productivity.</p>
+                `
+            },
+            'kb-mb-usecase': {
+                title: 'Kilobytes & Megabytes: Use Cases & Practical Applications',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-green-800 mb-2 border-b-2 border-green-200 pb-1">Case 1: Managing Email Server Attachment Quotas</h4>
+                        <p class="mb-2">Enterprise IT administrators configure mail exchange servers to enforce strict size thresholds to ensure smooth message delivery across corporate networks.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Attachment Rejection):</strong> An employee tries emailing a 45 MB corporate presentation slide deck; the mail server rejects it because it exceeds the 25 MB MB-limit threshold.</li>
+                            <li><strong>Example 2 (File Compression):</strong> The employee compresses the PowerPoint deck into a 12 MB ZIP archive, allowing the email to pass successfully through the server filters.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-green-800 mb-2 border-b-2 border-green-200 pb-1">Case 2: Linux Command-Line File Auditing</h4>
+                        <p class="mb-2">System administrators audit server storage directories to identify bloated log files or uncompressed images consuming precious disk space.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Using ls -lh):</strong> An admin runs <code class="bg-gray-100 px-1 py-0.5 rounded text-sm">ls -lh</code> in an Ubuntu terminal to instantly view JPEG images formatted neatly in Megabytes rather than raw multi-million byte strings.</li>
+                            <li><strong>Example 2 (Checking Text Logs):</strong> They inspect a system log file measuring 450 KB, confirming it is well within safe operating limits.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Document & Photo Scale</p>
+                            <img src="https://images.unsplash.com/photo-1517842645767-c639042777db?auto=format&fit=crop&w=600&h=350" alt="Smartphone capturing a photo measured in megabytes" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Linux Terminal Auditing</p>
+                            <img src="https://images.unsplash.com/photo-1629654297299-c8506221ca97?auto=format&fit=crop&w=600&h=350" alt="Linux terminal window displaying file sizes" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'gb-tb-details': {
+                title: 'Gigabytes & Terabytes: Modern Consumer & Gaming Capacities',
+                icon: '<i class="fa-solid fa-film text-purple-600"></i>',
+                html: `
+                    <p class="mb-5">As multimedia content, high-definition video streaming, and immersive 3D gaming applications expanded over the past two decades, megabytes became insufficient for describing modern workloads. This necessitated a shift to the <strong>gigabyte (GB)</strong>. One gigabyte consists of exactly 1,024 megabytes (or over 1 billion bytes). Gigabytes serve as the primary metric for measuring full-length standard-definition movies (roughly 1 to 2 GB), high-definition feature films (4 to 8 GB), complete music albums, and mobile operating system distributions.</p>
+                    
+                    <p class="mb-5">Scaling up by another factor of 1,024 brings us to the <strong>terabyte (TB)</strong>. One terabyte consists of 1,024 gigabytes, which equates to roughly one trillion bytes (10<sup>12</sup> bytes). Terabyte-scale storage has become the standard benchmark for modern consumer personal computers, high-end laptops, and dedicated gaming consoles like the PlayStation 5 and Xbox Series X. To put a terabyte into perspective, a single 1 TB solid-state drive (SSD) is capable of storing approximately 250,000 digital photographs, 500 hours of standard video, or dozens of massive modern video game installations.</p>
+                    
+                    <p class="mb-5">The gaming industry has been one of the primary drivers accelerating consumer adoption of terabyte-scale storage. Modern AAA video games frequently incorporate ultra-high-definition texture packs, massive open-world environments, and uncompressed audio assets, resulting in individual game installations that consume between 100 GB and 250 GB of disk space. A gaming enthusiast with a library of ten contemporary titles can easily saturate a standard 1 TB drive, requiring careful storage management, drive partitioning, or hardware upgrades.</p>
+                    
+                    <p class="mb-5">Operating system architectures and virtual memory swap files also rely heavily on gigabyte and terabyte allocations. Modern personal computers routinely feature 16 GB to 64 GB of physical RAM to maintain smooth multitasking performance. When physical RAM fills up during heavy workloads, the operating system creates a virtual memory paging file (or swap space) on the local storage drive, utilizing gigabytes of fast NVMe SSD storage as overflow memory to prevent application crashes.</p>
+                    
+                    <p class="mb-5">Hardware purchasing decisions for IT professionals and consumers depend heavily on understanding these storage tiers. When buying a laptop for everyday office productivity and web browsing, a 256 GB or 512 GB SSD is generally sufficient. However, workstations dedicated to 4K video editing, software development virtual machines, or local AI model execution demand multi-terabyte NVMe storage arrays with high read/write throughput to prevent data bottlenecks.</p>
+                    
+                    <p class="mb-5">When managing local machine storage, administrators utilize the Linux command <code class="bg-gray-100 px-1 py-0.5 rounded text-sm">df -h</code> (Disk Free Human-Readable). This command queries the file system mount points and reports total storage capacity, used space, available space, and percentage utilization across all mounted partitions (such as <code class="bg-gray-100 px-1 py-0.5 rounded text-sm">/dev/root</code>). Monitoring <code class="bg-gray-100 px-1 py-0.5 rounded text-sm">df -h</code> is critical for preventing drive exhaustion, which causes system freezes, failed updates, and data corruption.</p>
+                    
+                    <p>In conclusion, gigabytes and terabytes represent the robust operational scales of modern personal computing. Whether evaluating smartphone storage tiers, purchasing solid-state drives, or managing enterprise workstation backups, these units provide the precise measurement required for high-capacity digital preservation.</p>
+                `
+            },
+            'gb-tb-usecase': {
+                title: 'Gigabytes & Terabytes: Use Cases & Practical Applications',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Case 1: Upgrading Gaming Workstation Storage</h4>
+                        <p class="mb-2">A gamer notices their PC is running out of space because several modern AAA game titles each consume over 150 GB of disk space.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (SSD Installation):</strong> The user installs a new 2 TB NVMe M.2 solid-state drive, expanding their total storage capacity to accommodate dozens of massive game libraries.</li>
+                            <li><strong>Example 2 (Disk Partitioning):</strong> They partition the new drive into a 500 GB OS drive (C:) and a 1.5 TB game library drive (D:) to isolate system files from user apps.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Case 2: Monitoring Filesystem Capacity in Linux (<code class="text-sm">df -h</code>)</h4>
+                        <p class="mb-2">An IT administrator reviews server disk health to ensure automated log backups will not cause storage exhaustion.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Checking Mount Points):</strong> Running <code class="bg-gray-100 px-1 py-0.5 rounded text-sm">df -h</code> reveals that the root partition (<code class="bg-gray-100 px-1 py-0.5 rounded text-sm">/dev/root</code>) has a total capacity of 16 GB with 9.5 GB used (62% utilization).</li>
+                            <li><strong>Example 2 (Preventing Crashes):</strong> Seeing that available space is shrinking, the administrator purges old cache files before utilization hits 90%, preventing system failure.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Terabyte SSD Storage</p>
+                            <img src="https://images.unsplash.com/photo-1597852074816-d933c7d2b988?auto=format&fit=crop&w=600&h=350" alt="Solid state drive hardware representing gigabytes and terabytes" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: System Capacity Monitoring</p>
+                            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&h=350" alt="Monitoring data storage graphs and capacity dashboards" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'pb-cloud-details': {
+                title: 'Petabytes & Cloud Scale: Enterprise & Global Repositories',
+                icon: '<i class="fa-solid fa-cloud-arrow-up text-red-600"></i>',
+                html: `
+                    <p class="mb-5">When digital storage requirements scale beyond individual personal computers and local workstations into massive institutional servers, humanity enters the realm of large-scale cloud infrastructure. The baseline unit for these colossal repositories is the <strong>petabyte (PB)</strong>. One petabyte consists of 1,024 terabytes, which translates to an astonishing one quadrillion bytes (10<sup>15</sup> bytes). Petabyte-scale storage arrays are not housed in desktop towers; instead, they require dedicated enterprise server racks, specialized cooling systems, and redundant power grids.</p>
+                    
+                    <p class="mb-5">Petabyte-scale storage is deployed by organizations managing massive national datasets. For example, the Internal Revenue Service (IRS) and federal tax agencies utilize petabyte storage clusters to archive decades of citizen tax returns, financial audits, and electronic filing records. Similarly, major cloud service providers (such as Google Drive, Microsoft OneDrive, and Amazon Web Services) manage hundreds of petabytes—and cumulative exabytes—to provide scalable backup and file hosting services for millions of global subscribers.</p>
+                    
+                    <p class="mb-5">Beyond petabytes lie even grander theoretical and practical storage scales. An <strong>exabyte (EB)</strong> equals 1,024 petabytes. Industry analysts estimate that major media platforms like YouTube store over 3 to 4 exabytes of video content across their global content delivery networks. Beyond exabytes lies the <strong>zettabyte (ZB)</strong>, equal to 1,024 exabytes. Landmark digital studies estimated that all human-generated digital data combined surpassed 1 zettabyte in the early 2010s, and today global data creation scales in multiple zettabytes annually.</p>
+                    
+                    <p class="mb-5">Managing petabyte and exabyte data centers introduces monumental engineering challenges regarding data redundancy, fault tolerance, and power consumption. If a single hard drive failed in a petabyte array, losing data would be catastrophic. Therefore, cloud providers utilize advanced RAID configurations, erasure coding, and distributed file systems (such as Hadoop HDFS) that automatically replicate data across multiple geographically separated server clusters to guarantee 99.999% uptime.</p>
+                    
+                    <p class="mb-5">Cloud storage solutions fundamentally alter how modern society thinks about file sizes and physical disk limits. Historically, users were constrained by the physical capacity of their local hard drive. If a computer had a 256 GB drive, the user could not store a 300 GB file collection locally. Cloud storage decouples file storage from physical machine constraints, allowing users to offload multi-terabyte photo archives and video projects to remote cloud data centers while accessing them seamlessly on-demand.</p>
+                    
+                    <p class="mb-5">However, relying on cloud storage introduces critical cybersecurity and networking considerations. While cloud providers encrypt data both in transit and at rest, users must maintain robust authentication (such as Multi-Factor Authentication) to prevent unauthorized access. Furthermore, transferring petabytes of enterprise data across wide-area networks requires high-speed dedicated fiber optic links to prevent severe bandwidth bottlenecks.</p>
+                    
+                    <p>In conclusion, petabytes and cloud scale represent the bleeding edge of modern digital information management. As artificial intelligence, global IoT sensor networks, and 8K streaming continue to expand, understanding these massive storage units is essential for enterprise architects, cloud administrators, and cybersecurity professionals alike.</p>
+                `
+            },
+            'pb-cloud-usecase': {
+                title: 'Petabytes & Cloud Scale: Use Cases & Practical Applications',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-red-800 mb-2 border-b-2 border-red-200 pb-1">Case 1: Federal Government Tax Archiving (IRS)</h4>
+                        <p class="mb-2">National tax collection agencies must securely archive electronic financial records for hundreds of millions of citizens over multiple decades.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Petabyte Storage Arrays):</strong> The agency deploys enterprise storage area networks (SANs) totaling multiple petabytes of capacity to house encrypted PDF tax returns and audit histories.</li>
+                            <li><strong>Example 2 (Redundant Backups):</strong> Automated mirroring duplicates petabytes of citizen data across coast-to-coast subterranean data centers to protect against natural disasters.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-red-800 mb-2 border-b-2 border-red-200 pb-1">Case 2: Global Cloud File Hosting (Google / Microsoft)</h4>
+                        <p class="mb-2">Major cloud providers offer scalable storage infrastructure that allows enterprise clients to store massive data lakes without purchasing physical servers.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Enterprise Data Lakes):</strong> A multinational corporation uploads 500 TB of customer telemetry data to a cloud storage bucket, scaling their repository instantly without hardware lead times.</li>
+                            <li><strong>Example 2 (Decoupling Local Limits):</strong> A video production team edits 4K footage directly from cloud storage mount points, bypassing local laptop storage constraints entirely.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Enterprise Cloud Data Center</p>
+                            <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=600&h=350" alt="Server racks in a massive cloud data center" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Global Cloud Storage Infrastructure</p>
+                            <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=600&h=350" alt="Global digital network representing cloud scale data" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        function openBriefing(key) {
+            const modal = document.getElementById('briefing-modal');
+            const data = briefingData[key];
+            if(data) {
+                document.getElementById('briefing-modal-icon').innerHTML = data.icon;
+                document.getElementById('briefing-modal-title').innerText = data.title;
+                document.getElementById('briefing-modal-content').innerHTML = data.html;
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; 
+            }
+        }
+
+        function closeBriefing() {
+            document.getElementById('briefing-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto'; 
+        }
+
+        document.getElementById('briefing-modal').addEventListener('click', function(e) {
+            if(e.target === this) closeBriefing();
+        });
+        
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId + '-section').classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-green-900'));
+            const activeBtn = document.getElementById('nav-' + tabId);
+            if(activeBtn && tabId !== 'cert') activeBtn.classList.add('bg-green-900');
+            
+            document.querySelectorAll('.nav-btn-mobile').forEach(btn => btn.classList.remove('bg-green-900'));
+            const activeMobileBtn = document.getElementById('nav-' + tabId + '-mobile');
+            if(activeMobileBtn && tabId !== 'cert') activeMobileBtn.classList.add('bg-green-900');
+
+            window.scrollTo(0,0);
+
+            if (tabId === 'game' && !gameRunning) {
+                resetGame();
+                drawGame();
+            }
+        }
+
+        function showModal(title, message, type = 'info') {
+            const modal = document.getElementById('custom-modal');
+            const icon = document.getElementById('modal-icon');
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-msg').innerText = message;
+            
+            if(type === 'success') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-check text-green-500"></i>';
+            } else if (type === 'error') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500"></i>';
+            } else if (type === 'warning') {
+                icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-yellow-500"></i>';
+            } else {
+                icon.innerHTML = '<i class="fa-solid fa-circle-info text-blue-500"></i>';
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        // --- LAB 1.1: Binary Nibble Encoder ---
+        let bits = [0,0,0,0, 0,0,0,0];
+        function toggleBit(index) {
+            bits[index] = bits[index] === 0 ? 1 : 0;
+            const btn = document.getElementById('bit-' + index);
+            btn.innerText = bits[index];
+            if(bits[index] === 1) {
+                btn.classList.add('bg-blue-100', 'border-blue-600');
+            } else {
+                btn.classList.remove('bg-blue-100', 'border-blue-600');
+            }
+            
+            // Calculate decimal
+            let dec = 0;
+            for(let i=0; i<8; i++) {
+                dec += bits[7-i] * Math.pow(2, i);
+            }
+            document.getElementById('bit-decimal').innerText = dec;
+            let char = dec >= 32 && dec <= 126 ? String.fromCharCode(dec) : 'NUL';
+            document.getElementById('bit-ascii').innerText = char;
+        }
+
+        function verifyByteLab() {
+            let dec = parseInt(document.getElementById('bit-decimal').innerText);
+            if(dec === 66) {
+                document.getElementById('lab1-1-feedback').innerText = "Correct! 01000010 binary equals 66 decimal ('B').";
+                document.getElementById('lab1-1-feedback').className = "text-center font-bold mt-3 h-6 text-green-600";
+                showModal('Lab 1.1 Complete!', 'You successfully encoded character ' + String.fromCharCode(dec) + ' using binary bits!', 'success');
+            } else {
+                document.getElementById('lab1-1-feedback').innerText = "Incorrect. Set bits to equal decimal 66 (01000010).";
+                document.getElementById('lab1-1-feedback').className = "text-center font-bold mt-3 h-6 text-red-600";
+            }
+        }
+
+        // --- LAB 1.2: Data Scale Sorter ---
+        let draggedSortItem = null;
+        document.querySelectorAll('#sort-items-container .io-item').forEach(item => {
+            item.addEventListener('dragstart', function() { draggedSortItem = this; });
+        });
+        document.querySelectorAll('#sort-dropzones .cat-dropzone').forEach(zone => {
+            zone.addEventListener('dragover', e => e.preventDefault());
+            zone.addEventListener('drop', function() {
+                if(draggedSortItem) {
+                    this.innerHTML = '';
+                    this.appendChild(draggedSortItem);
+                    draggedSortItem.classList.add('w-full', 'text-center');
+                    
+                    // Check if all placed correctly
+                    let correct = true;
+                    document.querySelectorAll('#sort-dropzones .cat-dropzone').forEach(z => {
+                        let itm = z.querySelector('.io-item');
+                        if(!itm || itm.dataset.order !== z.dataset.pos) correct = false;
+                    });
+                    if(correct) {
+                        document.getElementById('lab1-2-feedback').innerText = "Perfect ascending order!";
+                        showModal('Lab 1.2 Complete!', 'Successfully ordered storage sizes from smallest to largest.', 'success');
+                    }
+                }
+            });
+        });
+
+        // --- LAB 2.1: Nano Text Editor Size Monitor ---
+        function updateNanoSize() {
+            let text = document.getElementById('nano-textarea').value;
+            document.getElementById('nano-chars').innerText = text.length;
+        }
+        function verifyNanoLab() {
+            let len = document.getElementById('nano-textarea').value.length;
+            if(len >= 30) {
+                document.getElementById('lab2-1-feedback').innerText = `Valid! ${len} bytes captured.`;
+                showModal('Lab 2.1 Complete!', 'Successfully created a text file meeting the 30+ byte threshold.', 'success');
+            } else {
+                document.getElementById('lab2-1-feedback').innerText = `Too short (${len}/30 bytes). Add more text.`;
+                document.getElementById('lab2-1-feedback').className = "text-center font-bold mt-3 h-6 text-red-600";
+            }
+        }
+
+        // --- LAB 2.2: Unit Conversion Calculator ---
+        function checkConversion() {
+            let val = parseInt(document.getElementById('conv-input').value);
+            if(val === 5120) {
+                document.getElementById('lab2-2-feedback').innerText = "Correct! 5 MB × 1,024 = 5,120 KB.";
+                showModal('Lab 2.2 Complete!', 'Successfully converted Megabytes to Kilobytes!', 'success');
+            } else {
+                document.getElementById('lab2-2-feedback').innerText = "Incorrect. Remember 1 MB = 1,024 KB (5 * 1024).";
+                document.getElementById('lab2-2-feedback').className = "text-center font-bold mt-3 h-6 text-red-600";
+            }
+        }
+
+        // --- LAB 3.1: Partition Allocation Builder ---
+        const diskGrid = document.getElementById('disk-grid');
+        let selectedBlocks = 0;
+        let lab3Solved = false;
+        for(let i=0; i<10; i++) {
+            let block = document.createElement('div');
+            block.className = "disk-block w-12 h-16 bg-gray-300 border-2 border-gray-400 rounded cursor-pointer flex items-center justify-center text-xs font-bold text-gray-500";
+            block.innerText = "50G";
+            block.onclick = function() {
+                if(lab3Solved) return;
+                if(this.classList.contains('allocated')) {
+                    this.classList.remove('allocated', 'text-white');
+                    this.classList.add('text-gray-500');
+                    selectedBlocks--;
+                } else {
+                    if(selectedBlocks < 3) {
+                        this.classList.add('allocated', 'text-white');
+                        this.classList.remove('text-gray-500');
+                        selectedBlocks++;
+                    } else {
+                        document.getElementById('lab3-1-feedback').innerText = "Target is 150GB (3 blocks). Deselect a block first.";
+                        return;
+                    }
+                }
+                if(selectedBlocks === 3) {
+                    lab3Solved = true;
+                    document.getElementById('lab3-1-feedback').innerText = "Partition Formatted successfully (150GB)!";
+                    showModal('Lab 3.1 Complete!', 'Successfully allocated the logical disk partition.', 'success');
+                } else {
+                    document.getElementById('lab3-1-feedback').innerText = `Selected: ${selectedBlocks * 50}GB / 150GB`;
+                }
+            };
+            diskGrid.appendChild(block);
+        }
+
+        // --- LAB 3.2: Gaming Storage Budgeting ---
+        let totalAlloc = 0;
+        function toggleGameItem(size, btn) {
+            if(btn.classList.contains('bg-green-600')) {
+                btn.classList.replace('bg-green-600', 'bg-purple-600');
+                btn.innerText = `Add (${size} GB)`;
+                totalAlloc -= size;
+            } else {
+                btn.classList.replace('bg-purple-600', 'bg-green-600');
+                btn.innerText = `Remove`;
+                totalAlloc += size;
+            }
+            document.getElementById('game-alloc-val').innerText = totalAlloc;
+        }
+        function verifyGameLab() {
+            if(totalAlloc >= 800 && totalAlloc <= 1000) {
+                document.getElementById('lab3-2-feedback').innerText = `Valid! ${totalAlloc} GB allocated within 1TB limit.`;
+                showModal('Lab 3.2 Complete!', 'Successfully budgeted SSD storage without overflowing 1TB!', 'success');
+            } else {
+                document.getElementById('lab3-2-feedback').innerText = `Invalid (${totalAlloc} GB). Must be between 800 GB and 1,000 GB.`;
+                document.getElementById('lab3-2-feedback').className = "text-center font-bold mt-3 h-6 text-red-600";
+            }
+        }
+
+        // --- LAB 4.1 & 4.2 ---
+        function verifyCloudMatch() {
+            let m1 = document.getElementById('cloud-match-1').value;
+            let m2 = document.getElementById('cloud-match-2').value;
+            let m3 = document.getElementById('cloud-match-3').value;
+            if(m1 === 'KB' && m2 === 'TB' && m3 === 'PB') {
+                document.getElementById('lab4-1-feedback').innerText = "Correct! Email=KB, Laptop=TB, IRS=PB.";
+                showModal('Lab 4.1 Complete!', 'Successfully matched cloud storage hierarchy scales.', 'success');
+            } else {
+                document.getElementById('lab4-1-feedback').innerText = "Incorrect matches. Review scale definitions.";
+                document.getElementById('lab4-1-feedback').className = "text-center font-bold mt-3 h-6 text-red-600";
+            }
+        }
+
+        function checkExabyte() {
+            let val = parseInt(document.getElementById('eb-input').value);
+            if(val === 3072) {
+                document.getElementById('lab4-2-feedback').innerText = "Correct! 3 EB × 1,024 = 3,072 PB.";
+                showModal('Lab 4.2 Complete!', 'Successfully calculated Exabyte to Petabyte conversion!', 'success');
+            } else {
+                document.getElementById('lab4-2-feedback').innerText = "Incorrect. Remember 1 EB = 1,024 PB (3 * 1024).";
+                document.getElementById('lab4-2-feedback').className = "text-center font-bold mt-3 h-6 text-red-600";
+            }
+        }
+
+        // --- QUIZ DATA (20 Questions: 10 original + 10 extended) ---
+        const quizData = [
+            // 10 Original from Assessment
+            { q: "Which of the following data types typically has the smallest file size?", options: ["4K movie", "Mobile game application", "Text message", "Social media website"], answer: 2 },
+            { q: "How many bits are in the word “Byte”?", options: ["4", "8", "16", "32"], answer: 3 },
+            { q: "What is the correct order of storage units from smallest to largest?", options: ["Byte, Bit, Kilobyte, Megabyte", "Bit, Byte, Kilobyte, Megabyte", "Kilobyte, Bit, Byte, Megabyte", "Bit, Kilobyte, Byte, Megabyte"], answer: 1 },
+            { q: "How many bytes are in a kilobyte (KB)?", options: ["100", "500", "1,000", "1,024"], answer: 3 },
+            { q: "Which of the following is closest in size to a high-definition movie?", options: ["2 KB", "3-5 GB", "10 MB", "1 TB"], answer: 1 },
+            { q: "A social media website is most likely measured in which unit of storage?", options: ["Megabytes", "Gigabytes", "Petabytes", "Kilobytes"], answer: 2 },
+            { q: "Which storage unit is approximately equal to 1 trillion bytes?", options: ["Gigabyte", "Megabyte", "Terabyte", "Petabyte"], answer: 2 },
+            { q: "Why do we use different units like KB, MB, GB, and PB for measuring storage?", options: ["To make storage units sound more impressive", "Because different types of files require different devices", "To use the most reasonable unit for the size of the data", "Because storage capacity is always changing"], answer: 2 },
+            { q: "Which of these storage amounts would most likely be used by a cloud service like Google?", options: ["1 MB", "1 GB", "1 TB", "1 PB"], answer: 3 },
+            { q: "How many kilobytes (KB) are in one megabyte (MB)?", options: ["100", "512", "1,000", "1,024"], answer: 3 },
+            // 10 Extended from Briefing Details
+            { q: "What is the smallest unit of measurement in computing, consisting of a value of either 0 or 1?", options: ["Byte", "Bit", "Kilobyte", "Nibble"], answer: 1 },
+            { q: "How many individual bits comprise a standard byte?", options: ["4 bits", "8 bits", "16 bits", "32 bits"], answer: 1 },
+            { q: "Which Linux command displays file sizes in human-readable units such as KB and MB?", options: ["ls -l", "ls -lh", "du fields.jpg", "df -a"], answer: 1 },
+            { q: "What Linux command is used to check overall filesystem capacity and disk usage?", options: ["ls -lh", "du", "df -h", "nano"], answer: 2 },
+            { q: "Approximately how many bytes are in a Megabyte (MB)?", options: ["1,024 bytes", "1,048,576 bytes", "1 billion bytes", "1 trillion bytes"], answer: 1 },
+            { q: "Which storage unit is roughly equivalent to a smartphone photo?", options: ["Kilobyte", "Megabyte", "Gigabyte", "Terabyte"], answer: 1 },
+            { q: "Which storage unit is approaching the capacity limit of a modern high-end personal laptop or gaming console?", options: ["Megabyte", "Gigabyte", "Terabyte", "Petabyte"], answer: 2 },
+            { q: "How many petabytes are in one exabyte (EB)?", options: ["1,024 KB", "1,024 MB", "1,024 GB", "1,024 PB"], answer: 3 },
+            { q: "Why do file systems allocate disk space in fixed blocks (such as 4 KB sectors) rather than exact byte counts?", options: ["To save electricity", "To manage file indexing and cluster allocation efficiently", "To prevent text files from opening", "To compress movies automatically"], answer: 1 },
+            { q: "What primary advantage do cloud storage solutions provide over local physical hard drives?", options: ["They eliminate electricity bills", "They decouple file storage from local physical device limits", "They make CPUs run twice as fast", "They prevent internet disconnections"], answer: 1 }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        quizData.forEach((item, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = "bg-gray-50 p-6 rounded-lg border border-gray-200 transition-all";
+            
+            const qTitle = document.createElement('h3');
+            qTitle.className = "font-bold text-lg text-gray-800 mb-4";
+            qTitle.innerText = `${index + 1}. ${item.q}`;
+            qDiv.appendChild(qTitle);
+            
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = "space-y-3";
+            
+            item.options.forEach((opt, optIndex) => {
+                const label = document.createElement('label');
+                label.className = "flex items-center space-x-3 p-3 rounded bg-white border border-gray-300 hover:bg-green-50 cursor-pointer transition";
+                
+                const radio = document.createElement('input');
+                radio.type = "radio";
+                radio.name = `q${index}`;
+                radio.value = optIndex;
+                radio.className = "form-radio h-5 w-5 text-green-600";
+                
+                const span = document.createElement('span');
+                span.className = "text-gray-700";
+                span.innerText = opt;
+                
+                label.appendChild(radio);
+                label.appendChild(span);
+                optionsDiv.appendChild(label);
+            });
+            qDiv.appendChild(optionsDiv);
+            quizContainer.appendChild(qDiv);
+        });
+
+        function gradeQuiz() {
+            let score = 0;
+            let allAnswered = true;
+            for(let i = 0; i < quizData.length; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if(selected) {
+                    if(parseInt(selected.value) === quizData[i].answer) score++;
+                } else {
+                    allAnswered = false;
+                }
+            }
+            if(!allAnswered) {
+                showModal('Incomplete Quiz', 'Please answer all 20 questions before submitting.', 'warning');
+                return;
+            }
+            let percentage = (score / quizData.length) * 100;
+            if(score >= 18) {
+                const navGame = document.getElementById('nav-game');
+                const navGameMobile = document.getElementById('nav-game-mobile');
+                navGame.classList.remove('text-gray-400', 'cursor-not-allowed');
+                navGame.classList.add('text-white', 'hover:bg-green-600');
+                navGame.disabled = false;
+                navGame.innerHTML = '<i class="fa-solid fa-gamepad mr-1"></i>Game';
+                
+                navGameMobile.classList.remove('text-gray-400', 'cursor-not-allowed');
+                navGameMobile.classList.add('text-white', 'hover:bg-green-600');
+                navGameMobile.disabled = false;
+                navGameMobile.innerHTML = '<i class="fa-solid fa-gamepad"></i> Game';
+
+                document.getElementById('nav-cert').classList.remove('hidden');
+                document.getElementById('nav-cert-mobile').classList.remove('hidden');
+                document.getElementById('proceed-game-btn').classList.remove('hidden');
+                document.getElementById('submit-quiz-btn').classList.add('hidden');
+
+                showModal('Outstanding!', `You scored ${score}/20 (${percentage}%). You have unlocked your Certificate of Mastery AND the "Data Asteroids" Retro Game!`, 'success');
+            } else {
+                quizData.forEach((_, i) => {
+                    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                    if(selected) selected.checked = false;
+                });
+                showModal('Keep Trying!', `You scored ${score}/20 (${percentage}%). You need 90% (18/20) to earn the certificate. Your answers have been reset to try again.`, 'error');
+                document.getElementById('quiz-section').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // --- RETRO GAME: "Data Asteroids" ---
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let score = 0;
+        let lives = 3;
+        let gameRunning = false;
+        let animationId;
+        
+        let ship = { x: 300, y: 225, r: 12, angle: -Math.PI/2, rot: 0, thrusting: false, vx: 0, vy: 0 };
+        let bullets = [];
+        let asteroids = [];
+        let keys = {};
+
+        window.addEventListener('keydown', e => { keys[e.code] = true; if(e.code === 'Space' && gameRunning) shootBullet(); });
+        window.addEventListener('keyup', e => { keys[e.code] = false; });
+
+        function shootBullet() {
+            bullets.push({
+                x: ship.x + Math.cos(ship.angle) * ship.r,
+                y: ship.y + Math.sin(ship.angle) * ship.r,
+                vx: Math.cos(ship.angle) * 7 + ship.vx,
+                vy: Math.sin(ship.angle) * 7 + ship.vy,
+                life: 50
+            });
+        }
+
+        function spawnAsteroids() {
+            asteroids = [];
+            for(let i=0; i<4; i++) {
+                let x, y;
+                do {
+                    x = Math.random() * canvas.width;
+                    y = Math.random() * canvas.height;
+                } while(Math.hypot(x - ship.x, y - ship.y) < 100);
+                
+                asteroids.push({
+                    x: x, y: y,
+                    vx: (Math.random() - 0.5) * 2.5,
+                    vy: (Math.random() - 0.5) * 2.5,
+                    r: 35,
+                    label: ['KB', 'MB', 'GB', 'TB'][Math.floor(Math.random()*4)]
+                });
+            }
+        }
+
+        function resetGame() {
+            score = 0;
+            lives = 3;
+            document.getElementById('game-score').innerText = score;
+            document.getElementById('game-lives').innerText = lives;
+            ship = { x: canvas.width/2, y: canvas.height/2, r: 12, angle: -Math.PI/2, rot: 0, thrusting: false, vx: 0, vy: 0 };
+            bullets = [];
+            spawnAsteroids();
+        }
+
+        const overlay = document.getElementById('game-overlay');
+        const startBtn = document.getElementById('start-game-btn');
+        startBtn.addEventListener('click', () => {
+            overlay.classList.add('hidden');
+            resetGame();
+            gameRunning = true;
+            gameLoop();
+        });
+
+        function gameLoop() {
+            if(!gameRunning) return;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw Starfield grid background
+            ctx.strokeStyle = '#1f2937';
+            ctx.lineWidth = 1;
+            for(let i=0; i<canvas.width; i+=50) {
+                ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke();
+            }
+            for(let i=0; i<canvas.height; i+=50) {
+                ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(canvas.width, i); ctx.stroke();
+            }
+
+            // Ship Rotation & Thrust
+            if(keys['ArrowLeft'] || keys['KeyA']) ship.angle -= 0.06;
+            if(keys['ArrowRight'] || keys['KeyD']) ship.angle += 0.06;
+            if(keys['ArrowUp'] || keys['KeyW']) {
+                ship.vx += Math.cos(ship.angle) * 0.15;
+                ship.vy += Math.sin(ship.angle) * 0.15;
+                ship.thrusting = true;
+            } else {
+                ship.thrusting = false;
+            }
+
+            ship.vx *= 0.98; // friction
+            ship.vy *= 0.98;
+            ship.x += ship.vx;
+            ship.y += ship.vy;
+
+            // Screen wrapping
+            if(ship.x < 0) ship.x = canvas.width;
+            if(ship.x > canvas.width) ship.x = 0;
+            if(ship.y < 0) ship.y = canvas.height;
+            if(ship.y > canvas.height) ship.y = 0;
+
+            // Draw Ship
+            ctx.save();
+            ctx.translate(ship.x, ship.y);
+            ctx.rotate(ship.angle);
+            ctx.strokeStyle = '#22c55e';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(15, 0);
+            ctx.lineTo(-10, -10);
+            ctx.lineTo(-5, 0);
+            ctx.lineTo(-10, 10);
+            ctx.closePath();
+            ctx.stroke();
+            if(ship.thrusting) {
+                ctx.strokeStyle = '#ef4444';
+                ctx.beginPath();
+                ctx.moveTo(-5, 0);
+                ctx.lineTo(-15, -4);
+                ctx.lineTo(-12, 0);
+                ctx.lineTo(-15, 4);
+                ctx.closePath();
+                ctx.stroke();
+            }
+            ctx.restore();
+
+            // Update Bullets
+            for(let i = bullets.length - 1; i >= 0; i--) {
+                let b = bullets[i];
+                b.x += b.vx;
+                b.y += b.vy;
+                b.life--;
+                
+                if(b.x < 0) b.x = canvas.width; if(b.x > canvas.width) b.x = 0;
+                if(b.y < 0) b.y = canvas.height; if(b.y > canvas.height) b.y = 0;
+
+                ctx.fillStyle = '#facc15';
+                ctx.beginPath();
+                ctx.arc(b.x, b.y, 3, 0, Math.PI*2);
+                ctx.fill();
+
+                if(b.life <= 0) {
+                    bullets.splice(i, 1);
+                    continue;
+                }
+
+                // Bullet collision with asteroids
+                for(let j = asteroids.length - 1; j >= 0; j--) {
+                    let ast = asteroids[j];
+                    if(Math.hypot(b.x - ast.x, b.y - ast.y) < ast.r) {
+                        bullets.splice(i, 1);
+                        score += 50;
+                        document.getElementById('game-score').innerText = score;
+                        
+                        // Split or remove asteroid
+                        if(ast.r > 20) {
+                            asteroids.push({ x: ast.x, y: ast.y, vx: (Math.random()-0.5)*3, vy: (Math.random()-0.5)*3, r: ast.r/2, label: 'KB' });
+                            asteroids.push({ x: ast.x, y: ast.y, vx: (Math.random()-0.5)*3, vy: (Math.random()-0.5)*3, r: ast.r/2, label: 'MB' });
+                        }
+                        asteroids.splice(j, 1);
+                        
+                        if(asteroids.length === 0) spawnAsteroids();
+                        break;
+                    }
+                }
+            }
+
+            // Update Asteroids
+            for(let ast of asteroids) {
+                ast.x += ast.vx;
+                ast.y += ast.vy;
+                if(ast.x < -ast.r) ast.x = canvas.width + ast.r;
+                if(ast.x > canvas.width + ast.r) ast.x = -ast.r;
+                if(ast.y < -ast.r) ast.y = canvas.height + ast.r;
+                if(ast.y > canvas.height + ast.r) ast.y = -ast.r;
+
+                ctx.strokeStyle = '#38bdf8';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(ast.x, ast.y, ast.r, 0, Math.PI*2);
+                ctx.stroke();
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '11px monospace';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(ast.label, ast.x, ast.y);
+
+                // Ship collision
+                if(Math.hypot(ship.x - ast.x, ship.y - ast.y) < ship.r + ast.r) {
+                    lives--;
+                    document.getElementById('game-lives').innerText = lives;
+                    ship.x = canvas.width/2; ship.y = canvas.height/2;
+                    ship.vx = 0; ship.vy = 0;
+                    if(lives <= 0) {
+                        gameRunning = false;
+                        overlay.classList.remove('hidden');
+                        startBtn.innerText = "System Crash! Reboot";
+                    }
+                }
+            }
+
+            animationId = requestAnimationFrame(gameLoop);
+        }
+
+        // --- CERTIFICATE LOGIC ---
+        function updateCertName() {
+            let name = document.getElementById('student-name-input').value.trim();
+            if(name) {
+                if(name.includes(' ')) name = name.split(' ')[0];
+                document.getElementById('student-name-input').value = name;
+                document.getElementById('cert-student-name').innerText = name;
+            } else {
+                showModal('Wait!', 'Please enter your first name to update the certificate.', 'warning');
+            }
+        }
+
+        const today = new Date();
+        document.getElementById('cert-date').innerText = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        function downloadCert() {
+            const certEl = document.getElementById('certificate');
+            const name = document.getElementById('cert-student-name').innerText;
+            let filename = `${name !== 'Student' ? name : 'Student'}_Storage_Certificate.png`;
+            const originalTransform = certEl.style.transform;
+            certEl.style.transform = 'none';
+
+            const btn = document.getElementById('download-btn');
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Generating...';
+            btn.disabled = true;
+
+            html2canvas(certEl, { scale: 2, useCORS: true, backgroundColor: '#ffffff' }).then(canvas => {
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            }).catch(err => {
+                console.error(err);
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                showModal('Error', 'Failed to generate image.', 'error');
+            });
+        }
+    </script>
+</body>
+</html>

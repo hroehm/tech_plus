@@ -1,0 +1,1515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 07 Section 6.1.6 Mastery - AAA Authorization</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Qwitcher+Grypen:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f4f9; 
+            color: #1f2937;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        /* Interactive Drag and Drop Elements */
+        .io-dropzone { min-height: 70px; min-width: 130px; border: 2px dashed #9ca3af; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: #f9fafb; transition: all 0.2s;}
+        .io-dropzone.drag-over { background: #e5e7eb; border-color: #3b82f6; box-shadow: inset 0 0 10px rgba(59, 130, 246, 0.2);}
+        
+        .io-item { cursor: grab; transition: transform 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .io-item:active { cursor: grabbing; transform: scale(0.95); }
+        .cat-dropzone { transition: background-color 0.2s ease; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #e5e7eb; }
+        ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #2563eb; }
+
+        /* Retro Game Canvas */
+        #game-canvas {
+            background-color: #0f172a;
+            border: 4px solid #334155;
+            border-radius: 8px;
+            box-shadow: 0 0 25px rgba(59, 130, 246, 0.4);
+            max-width: 100%;
+            height: auto;
+            touch-action: none; 
+            image-rendering: pixelated;
+        }
+
+        /* --- CERTIFICATE STYLES --- */
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .font-body { font-family: 'Lora', serif; }
+        .font-script { font-family: 'Qwitcher Grypen', cursive; }
+        
+        .cert-preview-container {
+            width: 100%;
+            overflow: auto;
+            display: flex;
+            justify-content: center;
+            background: #e5e7eb;
+            padding: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        #certificate {
+            width: 1056px !important;
+            height: 816px !important;
+            flex-shrink: 0;
+            background-color: #ffffff;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1056" height="816"><polygon points="0,0 250,0 0,650" fill="%2360a5fa"/><polygon points="0,0 350,0 0,900" fill="%231e3a8a" opacity="0.8"/><polygon points="0,0 120,0 0,300" fill="%2360a5fa"/><polygon points="0,450 650,816 0,816" fill="%2360a5fa"/><polygon points="0,550 450,816 0,816" fill="%231e3a8a" opacity="0.8"/><polygon points="800,0 1056,0 1056,256" fill="%23f3f4f6"/><polygon points="1056,500 1056,816 750,816" fill="%23f3f4f6"/></svg>');
+            background-size: cover;
+            border: 4px solid #e5e7eb;
+        }
+
+        .gold-seal {
+            position: absolute;
+            left: 110px;
+            top: 350px;
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c, #fcf6ba);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3), inset 0 0 15px rgba(255,255,255,0.7), inset 0 0 25px rgba(139,105,20,0.9);
+            z-index: 10;
+        }
+        .gold-seal::before {
+            content: '';
+            position: absolute;
+            top: -4px; bottom: -4px; left: -4px; right: -4px;
+            border-radius: 50%;
+            border: 6px dashed #d4af37;
+        }
+        .gold-seal-inner-1 {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 2px solid rgba(139, 105, 20, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #e8c678, #dbab46);
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.2), 0 2px 5px rgba(255,255,255,0.7);
+            z-index: 1;
+        }
+        .gold-seal-inner-2 {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: radial-gradient(circle, #fcf6ba, #d4af37);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            padding: 10px;
+        }
+        .embossed-text {
+            color: #b38728;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2);
+            font-family: 'Playfair Display', serif;
+            font-weight: 800;
+            line-height: 1.1;
+            text-transform: uppercase;
+        }
+        .embossed-text-large { font-size: 14px; letter-spacing: 1px; }
+        .embossed-text-small { font-size: 11px; letter-spacing: 2px; margin: 2px 0; }
+        .embossed-star { font-size: 12px; color: #b38728; text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2); margin: 2px 0; }
+
+        @media (max-width: 1100px) {
+            #certificate { transform: scale(0.7); transform-origin: top left; margin-bottom: -240px; margin-right: -310px; }
+        }
+        @media (max-width: 768px) {
+            #certificate { transform: scale(0.4); transform-origin: top left; margin-bottom: -490px; margin-right: -630px; }
+        }
+        
+        /* Lab Specific Styles */
+        .lab-interactive { transition: all 0.3s; }
+        .lab-btn-active { background-color: #3b82f6; color: white; border-color: #1d4ed8; }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ccc; transition: .4s; border-radius: 24px;
+        }
+        .slider:before {
+            position: absolute; content: ""; height: 16px; width: 16px; left: 4px; bottom: 4px;
+            background-color: white; transition: .4s; border-radius: 50%;
+        }
+        input:checked + .slider { background-color: #3b82f6; }
+        input:checked + .slider:before { transform: translateX(26px); }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+
+    <nav class="bg-blue-800 text-white shadow-lg sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-shield-check text-2xl"></i>
+                    <span class="font-bold text-xl tracking-wider hidden sm:inline-block">Tech+ Unit 07 Section 6.1.6</span>
+                    <span class="font-bold text-xl tracking-wider sm:hidden">6.1.6</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-2">
+                        <button onclick="switchTab('briefing')" class="nav-btn bg-blue-900 px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition" id="nav-briefing"><i class="fa-solid fa-book-open mr-1"></i>Briefing</button>
+                        <button onclick="switchTab('activity')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition" id="nav-activity"><i class="fa-solid fa-flask mr-1"></i>Lab Activity</button>
+                        <button onclick="switchTab('quiz')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition" id="nav-quiz"><i class="fa-solid fa-clipboard-check mr-1"></i>Quiz</button>
+                        <button onclick="switchTab('game')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-gray-400 cursor-not-allowed transition" id="nav-game" disabled><i class="fa-solid fa-lock mr-1"></i>Game</button>
+                        <button onclick="switchTab('cert')" class="nav-btn hidden px-3 py-2 rounded-md text-sm font-medium text-yellow-300 hover:bg-blue-700 transition" id="nav-cert"><i class="fa-solid fa-award mr-1"></i>Certificate</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Nav -->
+        <div class="md:hidden flex flex-wrap justify-center gap-2 py-2 px-2 bg-blue-900">
+            <button onclick="switchTab('briefing')" class="nav-btn-mobile px-3 py-1 text-sm rounded bg-blue-800" id="nav-briefing-mobile">Briefing</button>
+            <button onclick="switchTab('activity')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-activity-mobile">Lab</button>
+            <button onclick="switchTab('quiz')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-quiz-mobile">Quiz</button>
+            <button onclick="switchTab('game')" class="nav-btn-mobile px-3 py-1 text-sm rounded text-gray-400 cursor-not-allowed" id="nav-game-mobile" disabled><i class="fa-solid fa-lock"></i></button>
+            <button onclick="switchTab('cert')" id="nav-cert-mobile" class="hidden px-2 py-1 text-sm text-yellow-300 rounded"><i class="fa-solid fa-award"></i></button>
+        </div>
+    </nav>
+
+    <main class="flex-grow w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <div id="briefing-section" class="tab-content active no-print">
+            <div class="text-center mb-10">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">AAA Authorization</h1>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">Explore how systems determine exactly what you are allowed to do after you log in, ensuring data confidentiality and system integrity through robust Access Control.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- Tile 1: Basics -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-indigo-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-indigo-700"><i class="fa-solid fa-id-badge mr-2"></i>AAA Triad & Authorization</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Authentication:</strong> Proving who you are (e.g., entering a password).</li>
+                            <li><strong>Authorization:</strong> Determining what actions you are permitted to take.</li>
+                            <li><strong>Accounting:</strong> Tracking and logging user actions for accountability.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('triad-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('triad-usecase')" class="flex-1 bg-indigo-100 hover:bg-indigo-200 text-indigo-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 2: Methods -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-emerald-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-emerald-700"><i class="fa-solid fa-sitemap mr-2"></i>Access Control Methods</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>MAC (Mandatory):</strong> Strict control by a central authority or system.</li>
+                            <li><strong>DAC (Discretionary):</strong> The data owner decides who gets access.</li>
+                            <li><strong>RBAC (Role-Based):</strong> Access depends on your job role/title.</li>
+                            <li><strong>Rule-Based:</strong> Access depends on system rules (time, location).</li>
+                        </ul>
+                    </div>
+                     <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('methods-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('methods-usecase')" class="flex-1 bg-emerald-100 hover:bg-emerald-200 text-emerald-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 3: Permissions -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-orange-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-orange-700"><i class="fa-solid fa-file-shield mr-2"></i>Permission Types</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Read:</strong> Allows viewing the contents of a file or folder.</li>
+                            <li><strong>Write:</strong> Allows modifying or saving changes to a file.</li>
+                            <li><strong>Execute:</strong> Allows running a program, script, or application.</li>
+                            <li><strong>Delete:</strong> Allows completely removing a file or resource.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('perms-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('perms-usecase')" class="flex-1 bg-orange-100 hover:bg-orange-200 text-orange-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 4: Admin/User -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-rose-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-rose-700"><i class="fa-solid fa-user-shield mr-2"></i>Accounts & Least Privilege</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Administrator:</strong> Elevated privileges with full system control.</li>
+                            <li><strong>User Accounts:</strong> Limited access restricted to personal tasks/data.</li>
+                            <li><strong>Least Privilege Model:</strong> Granting users *only* the minimum access needed to do their jobs.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('accounts-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('accounts-usecase')" class="flex-1 bg-rose-100 hover:bg-rose-200 text-rose-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-10 flex justify-center">
+                <button onclick="switchTab('activity')" class="bg-blue-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-blue-500 shadow-lg transition transform hover:scale-105">Proceed to Lab Activity <i class="fa-solid fa-arrow-right ml-2"></i></button>
+            </div>
+        </div>
+
+        <div id="activity-section" class="tab-content no-print">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Interactive Lab Activities</h1>
+                <p class="text-gray-600 mb-6">Complete all 8 interactive scenarios to reinforce your understanding of Authorization.</p>
+            </div>
+
+            <!-- Labs for Concept 1 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <!-- Lab 1 -->
+                <div class="bg-white p-6 rounded-xl shadow border border-gray-200">
+                    <h2 class="text-lg font-bold mb-3 text-indigo-700"><i class="fa-solid fa-flask mr-2"></i>Lab 1: Authn vs Authz Sorter</h2>
+                    <p class="text-sm text-gray-600 mb-4">Drag the scenario into the correct AAA category.</p>
+                    
+                    <div class="flex flex-wrap gap-2 mb-4 justify-center" id="lab1-items">
+                        <div class="io-item px-3 py-1 bg-indigo-50 border border-indigo-200 rounded text-xs font-bold" draggable="true" data-target="authz">Access Denied to Folder</div>
+                        <div class="io-item px-3 py-1 bg-indigo-50 border border-indigo-200 rounded text-xs font-bold" draggable="true" data-target="authn">Entering Password</div>
+                        <div class="io-item px-3 py-1 bg-indigo-50 border border-indigo-200 rounded text-xs font-bold" draggable="true" data-target="authn">Fingerprint Scan</div>
+                        <div class="io-item px-3 py-1 bg-indigo-50 border border-indigo-200 rounded text-xs font-bold" draggable="true" data-target="authz">Granted 'Read' Rights</div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="flex-1 cat-dropzone border-2 border-dashed border-gray-300 rounded p-2 min-h-[80px] flex flex-col items-center" data-type="authn">
+                            <span class="text-xs font-bold text-gray-400 mb-1">Authentication (Who)</span>
+                        </div>
+                        <div class="flex-1 cat-dropzone border-2 border-dashed border-gray-300 rounded p-2 min-h-[80px] flex flex-col items-center" data-type="authz">
+                            <span class="text-xs font-bold text-gray-400 mb-1">Authorization (What)</span>
+                        </div>
+                    </div>
+                    <div id="lab1-feedback" class="text-xs font-bold mt-2 h-4 text-center"></div>
+                </div>
+
+                <!-- Lab 2 -->
+                <div class="bg-white p-6 rounded-xl shadow border border-gray-200">
+                    <h2 class="text-lg font-bold mb-3 text-indigo-700"><i class="fa-solid fa-flask mr-2"></i>Lab 2: The Door Guard</h2>
+                    <p class="text-sm text-gray-600 mb-4">Act as the Authorization system. A user has authenticated. Should you grant access?</p>
+                    <div class="bg-gray-50 p-4 rounded border border-gray-200 text-center mb-4">
+                        <p class="text-sm"><strong>Role:</strong> Student</p>
+                        <p class="text-sm mb-3"><strong>Request:</strong> Change Final Grades</p>
+                        <div class="flex justify-center gap-4">
+                            <button onclick="checkLab2(false)" class="bg-green-500 text-white px-4 py-1 rounded text-sm font-bold hover:bg-green-600">Grant Access</button>
+                            <button onclick="checkLab2(true)" class="bg-red-500 text-white px-4 py-1 rounded text-sm font-bold hover:bg-red-600">Deny Access</button>
+                        </div>
+                    </div>
+                    <div id="lab2-feedback" class="text-xs font-bold mt-2 h-4 text-center"></div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <!-- Lab 3 -->
+                <div class="bg-white p-6 rounded-xl shadow border border-gray-200">
+                    <h2 class="text-lg font-bold mb-3 text-emerald-700"><i class="fa-solid fa-flask mr-2"></i>Lab 3: Access Control Matcher</h2>
+                    <p class="text-sm text-gray-600 mb-4">Select the correct model for the scenario.</p>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between text-sm">
+                            <span>Owner assigns file rights:</span>
+                            <select id="lab3-s1" class="border rounded p-1" onchange="checkLab3()">
+                                <option value="">Select...</option>
+                                <option value="mac">MAC</option>
+                                <option value="dac">DAC</option>
+                                <option value="rbac">RBAC</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center justify-between text-sm">
+                            <span>Rights based on Job Title:</span>
+                            <select id="lab3-s2" class="border rounded p-1" onchange="checkLab3()">
+                                <option value="">Select...</option>
+                                <option value="mac">MAC</option>
+                                <option value="dac">DAC</option>
+                                <option value="rbac">RBAC</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="lab3-feedback" class="text-xs font-bold mt-4 h-4 text-center"></div>
+                </div>
+
+                <!-- Lab 4 -->
+                <div class="bg-white p-6 rounded-xl shadow border border-gray-200">
+                    <h2 class="text-lg font-bold mb-3 text-emerald-700"><i class="fa-solid fa-flask mr-2"></i>Lab 4: Rule-Based Time Lock</h2>
+                    <p class="text-sm text-gray-600 mb-4">Rule: Users can only login between 8:00 AM and 5:00 PM (17:00). Slide to test.</p>
+                    <div class="text-center">
+                        <input type="range" min="0" max="24" value="2" class="w-full mb-2" id="lab4-slider" oninput="updateLab4()">
+                        <p class="font-mono font-bold text-lg" id="lab4-time">02:00 AM</p>
+                        <div id="lab4-status" class="mt-2 py-2 px-4 rounded font-bold bg-red-100 text-red-700 border border-red-300">
+                            <i class="fa-solid fa-lock mr-2"></i>ACCESS DENIED
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <!-- Lab 5 -->
+                <div class="bg-white p-6 rounded-xl shadow border border-gray-200">
+                    <h2 class="text-lg font-bold mb-3 text-orange-700"><i class="fa-solid fa-flask mr-2"></i>Lab 5: Permission Matrix</h2>
+                    <p class="text-sm text-gray-600 mb-4">Assign correct permissions for a "Student" on the "Exam Answers.pdf" file.</p>
+                    <div class="flex justify-center gap-6 mb-4">
+                        <label class="flex items-center gap-2 text-sm"><input type="checkbox" id="l5-r"> Read</label>
+                        <label class="flex items-center gap-2 text-sm"><input type="checkbox" id="l5-w"> Write</label>
+                        <label class="flex items-center gap-2 text-sm"><input type="checkbox" id="l5-x"> Execute</label>
+                    </div>
+                    <div class="text-center">
+                        <button onclick="checkLab5()" class="bg-orange-500 text-white px-4 py-1 rounded text-sm font-bold hover:bg-orange-600">Apply Policy</button>
+                    </div>
+                    <div id="lab5-feedback" class="text-xs font-bold mt-2 h-4 text-center"></div>
+                </div>
+
+                <!-- Lab 6 -->
+                <div class="bg-white p-6 rounded-xl shadow border border-gray-200">
+                    <h2 class="text-lg font-bold mb-3 text-orange-700"><i class="fa-solid fa-flask mr-2"></i>Lab 6: Execution Sandbox</h2>
+                    <p class="text-sm text-gray-600 mb-4">A downloaded file attempts to run. Check its permissions to decide.</p>
+                    <div class="bg-gray-100 p-3 rounded mb-3 text-sm font-mono text-center border border-gray-300">
+                        File: unknown_app.exe<br>
+                        Permissions: [Read, Write]
+                    </div>
+                    <div class="flex justify-center gap-4">
+                        <button onclick="checkLab6(false)" class="bg-gray-700 text-white px-4 py-1 rounded text-sm font-bold hover:bg-gray-800">Allow Run</button>
+                        <button onclick="checkLab6(true)" class="bg-blue-600 text-white px-4 py-1 rounded text-sm font-bold hover:bg-blue-700">Block (No Exec)</button>
+                    </div>
+                    <div id="lab6-feedback" class="text-xs font-bold mt-2 h-4 text-center"></div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Lab 7 -->
+                <div class="bg-white p-6 rounded-xl shadow border border-gray-200">
+                    <h2 class="text-lg font-bold mb-3 text-rose-700"><i class="fa-solid fa-flask mr-2"></i>Lab 7: Privilege Escalation</h2>
+                    <p class="text-sm text-gray-600 mb-4">Select a role and try to "Install Global Software".</p>
+                    <div class="flex justify-center gap-4 mb-4">
+                        <label class="text-sm"><input type="radio" name="lab7role" value="user" checked> Standard User</label>
+                        <label class="text-sm"><input type="radio" name="lab7role" value="admin"> Administrator</label>
+                    </div>
+                    <div class="text-center">
+                        <button onclick="checkLab7()" class="bg-purple-600 text-white px-4 py-1 rounded text-sm font-bold hover:bg-purple-700">Install Software</button>
+                    </div>
+                    <div id="lab7-feedback" class="text-xs font-bold mt-3 h-4 text-center"></div>
+                </div>
+
+                <!-- Lab 8 -->
+                <div class="bg-white p-6 rounded-xl shadow border border-gray-200">
+                    <h2 class="text-lg font-bold mb-3 text-rose-700"><i class="fa-solid fa-flask mr-2"></i>Lab 8: Least Privilege Auditor</h2>
+                    <p class="text-sm text-gray-600 mb-3">Job: "Data Viewer". Turn off unnecessary access toggles.</p>
+                    <div class="space-y-2 mb-4 pl-4">
+                        <div class="flex items-center gap-3">
+                            <label class="toggle-switch"><input type="checkbox" id="l8-read" checked disabled><span class="slider bg-gray-300"></span></label>
+                            <span class="text-sm">Read Data (Required)</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <label class="toggle-switch"><input type="checkbox" id="l8-write" checked><span class="slider"></span></label>
+                            <span class="text-sm">Write/Edit Data</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <label class="toggle-switch"><input type="checkbox" id="l8-del" checked><span class="slider"></span></label>
+                            <span class="text-sm">Delete Data</span>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <button onclick="checkLab8()" class="bg-rose-500 text-white px-4 py-1 rounded text-sm font-bold hover:bg-rose-600">Audit Account</button>
+                    </div>
+                    <div id="lab8-feedback" class="text-xs font-bold mt-2 h-4 text-center"></div>
+                </div>
+            </div>
+
+            <div class="mt-8 text-center">
+                <button onclick="switchTab('quiz')" class="bg-blue-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-blue-500 shadow-lg transition transform hover:scale-105">Take the Mastery Quiz <i class="fa-solid fa-clipboard-check ml-2"></i></button>
+            </div>
+        </div>
+
+        <div id="quiz-section" class="tab-content no-print">
+            <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-xl max-w-4xl mx-auto border-t-8 border-blue-600">
+                <div class="text-center mb-8 border-b pb-4">
+                    <h1 class="text-3xl font-extrabold text-gray-900 mb-2">AAA Authorization Mastery Quiz</h1>
+                    <p class="text-gray-600">Score 90% or higher (18/20) to earn your Certificate of Mastery and unlock the Retro Game!</p>
+                </div>
+
+                <div id="quiz-container" class="space-y-6">
+                    <!-- Questions injected via JS -->
+                </div>
+
+                <div class="mt-10 text-center border-t pt-6 flex flex-col md:flex-row justify-center items-center gap-4">
+                    <button id="submit-quiz-btn" onclick="gradeQuiz()" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">Submit Quiz</button>
+                    <button id="proceed-game-btn" onclick="switchTab('game')" class="hidden bg-emerald-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-emerald-700 shadow-lg transition w-full md:w-auto">Play Stealth Access <i class="fa-solid fa-gamepad ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <div id="game-section" class="tab-content no-print">
+            <div class="bg-slate-900 p-6 sm:p-8 rounded-2xl shadow-xl max-w-4xl mx-auto border-4 border-slate-700 flex flex-col items-center">
+                <div class="text-center mb-4 w-full">
+                    <h1 class="text-3xl font-extrabold text-emerald-400 mb-2 tracking-widest uppercase" style="font-family: monospace;">Stealth Access</h1>
+                    <p class="text-gray-300 text-sm max-w-2xl mx-auto">Navigate the network. You are the Blue Packet. Avoid the Red Security Sweepers and their yellow vision cones. Collect the Green Access Token to unlock the Server Door!</p>
+                    <p class="text-gray-400 text-xs mt-2">Controls: Arrow Keys or WASD to move. Touch/Swipe on mobile.</p>
+                </div>
+                
+                <div class="flex justify-between items-center w-full max-w-[600px] mb-2 px-4 text-white font-mono text-lg">
+                    <div>Level: <span id="game-level" class="text-blue-400 font-bold">1</span></div>
+                    <div>Status: <span id="game-status" class="text-emerald-400 font-bold">UNAUTHORIZED</span></div>
+                </div>
+
+                <div class="relative flex justify-center w-full">
+                    <!-- Game Canvas -->
+                    <canvas id="game-canvas" width="600" height="400" class="w-full max-w-[600px] bg-slate-800 border-2 border-slate-600 rounded shadow-lg"></canvas>
+                    
+                    <!-- Overlay Start Button -->
+                    <div id="game-overlay" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-80 rounded-lg max-w-[600px] mx-auto z-10">
+                        <button id="start-game-btn" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold font-mono py-3 px-6 rounded-lg text-xl border-4 border-emerald-800 uppercase transform transition hover:scale-105">Initiate Breach (Start)</button>
+                    </div>
+                </div>
+
+                <div class="mt-8 text-center w-full border-t border-slate-700 pt-6">
+                    <button onclick="switchTab('cert')" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">View Certificate <i class="fa-solid fa-award ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <div id="cert-section" class="tab-content">
+            <div class="max-w-5xl mx-auto">
+                <div class="bg-white p-6 rounded shadow mb-6 no-print text-center border border-gray-200">
+                    <h2 class="text-2xl font-bold text-blue-600 mb-2">🎉 Congratulations! 🎉</h2>
+                    <p class="text-gray-700 mb-4">You have achieved mastery of AAA Authorization.</p>
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+                        <input type="text" id="student-name-input" value="Student" placeholder="Enter your first name" class="border-2 border-gray-300 rounded px-4 py-2 w-full md:w-64 focus:border-blue-500 focus:outline-none">
+                        <button onclick="updateCertName()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">Update Name</button>
+                        <button id="download-btn" onclick="downloadCert()" class="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900 transition flex items-center justify-center">
+                            <i class="fa-solid fa-download mr-2"></i>Download PNG
+                        </button>
+                    </div>
+                </div>
+
+                <div class="cert-preview-container print:p-0 print:bg-white">
+                    <div id="certificate">
+                        <div class="gold-seal">
+                            <div class="gold-seal-inner-1">
+                                <div class="gold-seal-inner-2">
+                                     <span class="embossed-text embossed-text-large">Certificate</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-small">Of</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-large">Excellence</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="relative z-20 w-full h-full flex flex-col pt-[48px] pl-[380px] pr-[48px]">
+                            <h1 class="text-[#1e3a8a] text-[4.5rem] leading-none font-serif font-bold tracking-wide uppercase mb-2">CERTIFICATE</h1>
+                            <h2 class="text-gray-800 text-3xl font-serif tracking-widest uppercase mb-10">Of Achievement</h2>
+                            
+                            <p class="text-[1.4rem] font-body text-gray-800 mb-4">This is to certify that</p>
+                            
+                            <div class="relative mb-8 w-full">
+                                <h3 id="cert-student-name" class="text-[4rem] text-[#1e3a8a] font-serif italic leading-none pb-2 relative z-10 text-center w-full block">Student</h3>
+                                <div class="w-full border-b-[2px] border-[#1e3a8a] absolute bottom-[4px] left-0 z-0"></div>
+                                <div class="w-full border-b-[2px] border-dotted border-blue-500 absolute bottom-[0px] left-0 z-0"></div>
+                            </div>
+                            
+                            <p class="text-[1.3rem] font-body text-gray-800 leading-relaxed w-full pr-4">
+                                Has successfully completed the assessment for 
+                                <strong class="text-[1.8rem] text-[#1e3a8a] block mt-4 mb-2 font-serif">Tech+ Unit 07 Section 6.1.6</strong>
+                                <strong class="text-[1.5rem] text-black block mb-4 font-serif italic">AAA Authorization</strong>
+                                <span class="text-[1.1rem] text-gray-700 leading-snug block">Demonstrating proficiency in explaining the foundational role of authorization, differentiating between MAC, DAC, and RBAC, understanding permission sets, and applying the Principle of Least Privilege.</span>
+                            </p>
+                            
+                            <div class="flex justify-end gap-16 items-end mt-auto mb-[60px] w-full pr-8">
+                                <div class="w-64">
+                                    <div class="border-b border-gray-600 mb-2 h-20 flex items-end justify-center relative">
+                                        <span class="font-script text-[5rem] text-[#1e3a8a] absolute bottom-[-10px] transform -rotate-3 opacity-90">Dr. M. S</span>
+                                    </div>
+                                    <p class="font-serif text-xl text-gray-800 text-center">Administration</p>
+                                </div>
+                                
+                                <div class="w-64">
+                                    <div class="border-b border-gray-600 mb-2 text-center h-20 flex items-end justify-center">
+                                        <p id="cert-date" class="font-body text-2xl text-gray-800 pb-1">Date Here</p>
+                                    </div>
+                                    <p class="font-serif text-xl text-gray-800 text-center">Date</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Custom Modal for Alerts -->
+    <div id="custom-modal" class="fixed inset-0 bg-black bg-opacity-50 z-[100] hidden flex justify-center items-center backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all">
+            <div class="text-center">
+                <div id="modal-icon" class="text-5xl mb-4"></div>
+                <h3 id="modal-title" class="text-2xl font-bold mb-2 text-gray-900"></h3>
+                <p id="modal-msg" class="text-gray-600 mb-6"></p>
+                <button onclick="closeModal()" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-700 transition w-full">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Briefing Modal -->
+    <div id="briefing-modal" class="fixed inset-0 bg-black bg-opacity-70 z-[120] hidden flex justify-center items-center backdrop-blur-sm p-4 sm:p-6">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col transform transition-all overflow-hidden border-4 border-blue-700">
+            <div class="p-6 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+                <div class="flex items-center gap-4">
+                    <div id="briefing-modal-icon" class="text-4xl"></div>
+                    <h3 id="briefing-modal-title" class="text-2xl md:text-3xl font-bold text-gray-900"></h3>
+                </div>
+                <button onclick="closeBriefing()" class="text-gray-400 hover:text-red-600 transition text-4xl leading-none">&times;</button>
+            </div>
+            <div id="briefing-modal-content" class="p-6 md:p-10 overflow-y-auto flex-grow text-gray-700 text-lg leading-relaxed bg-white">
+                <!-- Dynamic Content Injected Here -->
+            </div>
+            <div class="p-6 border-t border-gray-200 bg-gray-50 flex justify-end">
+                <button onclick="closeBriefing()" class="bg-blue-700 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-800 transition shadow-md">Acknowledge & Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Extensive Briefing Content Data (Min 7 Paragraphs per detail, 2 Use Cases, 2 Examples each, 2 Images) ---
+        const briefingData = {
+            'triad-details': {
+                title: 'AAA Triad & Authorization Basics',
+                icon: '<i class="fa-solid fa-id-badge text-indigo-600"></i>',
+                html: `
+                    <p class="mb-5">In the realm of digital security, organizations rely on a foundational framework known as the AAA Triad. This acronym stands for Authentication, Authorization, and Accounting. Together, these three pillars form a comprehensive system designed to secure access to computer networks, internal systems, and highly sensitive data, ensuring that only trusted individuals can interact with valuable digital assets.</p>
+                    
+                    <p class="mb-5">The first step in this process is <strong>Authentication</strong>. Authentication is the security mechanism used to verify that a user is exactly who they claim to be. This is typically achieved by requiring the user to provide a secret credential, such as typing a complex password, scanning a fingerprint on a biometric reader, or entering a one-time code sent to their mobile device. If the credential matches the system's records, the user's identity is authenticated.</p>
+                    
+                    <p class="mb-5">However, proving your identity does not automatically grant you unlimited access to the entire network. This is where <strong>Authorization</strong>—the second A in the triad—takes over. Authorization is the critical process of determining exactly what an authenticated user is permitted to do once they are logged in. It sets strict boundaries on which files they can read, which settings they can change, and which applications they can run based on their specific role within the organization.</p>
+                    
+                    <p class="mb-5">To understand the difference, consider a physical school building. When a student shows their ID badge to the security guard at the front door and is allowed inside, that is Authentication. The student has proven they belong at the school. However, if that student tries to walk into the principal's private office or open a locked filing cabinet containing test answers, they will find the doors locked. The rules deciding which rooms the student's key works on represent Authorization.</p>
+                    
+                    <p class="mb-5">Robust authorization is vital because it actively protects sensitive information from unauthorized eyes. Without authorization checks, a newly hired intern who successfully authenticates into the corporate network could casually browse through the CEO's private emails or download the company's confidential financial spreadsheets. Authorization ensures that sensitive data is strictly partitioned and only available to those who absolutely need it.</p>
+                    
+                    <p class="mb-5">Furthermore, authorization prevents catastrophic mistakes and malicious misuse of system resources. If every user had authorization to delete system files or format hard drives, an accidental click by an untrained employee could wipe out a critical database. By heavily restricting who is authorized to execute destructive commands, the operating system safeguards its own integrity and availability.</p>
+                    
+                    <p>The final pillar, <strong>Accounting</strong>, ties everything together by recording a trail of evidence. Accounting involves logging every action a user takes on the network. If a file is deleted, the accounting logs will show exactly which authenticated user performed the deletion and at what time. This guarantees accountability, discouraging internal misuse and providing essential clues during forensic investigations after a security incident.</p>
+                `
+            },
+            'triad-usecase': {
+                title: 'AAA Triad: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-indigo-800 mb-2 border-b-2 border-indigo-200 pb-1">Case 1: Hospital Patient Records System</h4>
+                        <p class="mb-2">A hospital must strictly govern how digital patient health records are accessed to comply with privacy laws (like HIPAA). They rely heavily on the difference between authentication and authorization.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Authentication):</strong> A nurse and a receptionist both scan their smart ID badges at a terminal and type a PIN to log into the hospital's central computer network, proving their identities to the system.</li>
+                            <li><strong>Example 2 (Authorization):</strong> The system's authorization rules allow the nurse to open the medical history and prescribe medication for a specific patient, but completely blocks the receptionist from viewing anything other than the patient's billing address and appointment time.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-indigo-800 mb-2 border-b-2 border-indigo-200 pb-1">Case 2: Online Retail Banking</h4>
+                        <p class="mb-2">Banks use the AAA triad to protect millions of dollars while still allowing customers convenient access to their funds through web portals and mobile applications.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Authentication via MFA):</strong> A customer logs into their banking app using a password and a fingerprint scan, confirming their identity.</li>
+                            <li><strong>Example 2 (Accounting):</strong> After the authorized customer transfers $500 to a friend, the bank's accounting system generates a permanent log containing the exact timestamp, IP address, and transaction amount to prevent future disputes.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: ID Verification</p>
+                            <img src="https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&w=600&h=350" alt="Typing password" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Medical Authorization</p>
+                            <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=600&h=350" alt="Doctor looking at digital records" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'methods-details': {
+                title: 'Access Control Methods',
+                icon: '<i class="fa-solid fa-sitemap text-emerald-600"></i>',
+                html: `
+                    <p class="mb-5">While the concept of authorization tells a system *what* a user is allowed to do, the system needs a structured way to implement and manage those rules across thousands of users and files. These structured systems are known as Access Control Methods. Different organizations choose different methods based on their specific needs for security, flexibility, and administrative overhead.</p>
+                    
+                    <p class="mb-5">The most rigid and secure method is <strong>Mandatory Access Control (MAC)</strong>. In a MAC system, access is strictly controlled by a central authority, usually the operating system or a dedicated security administrator, using a system of labels and security clearances. The user has absolutely no ability to change permissions on files, even if the user originally created the file themselves.</p>
+                    
+                    <p class="mb-5">MAC is primarily used in military, intelligence, and highly classified government environments. For example, a file might be labeled "Top Secret." Only users who have been explicitly granted a "Top Secret" clearance by the central authority can read it. If a user with "Secret" clearance attempts to open it, the system mandates a denial, regardless of what department they work in or who their manager is.</p>
+                    
+                    <p class="mb-5">On the opposite end of the spectrum is <strong>Discretionary Access Control (DAC)</strong>. Under DAC, the person who creates a file or folder is considered its "owner." The owner has the full discretion to decide exactly who is allowed to view or edit their data. They can manually add colleagues to an access list or share the file publicly. This is the model used in most personal operating systems, like Windows or macOS home editions.</p>
+                    
+                    <p class="mb-5">While DAC is highly flexible and encourages collaboration, it is inherently vulnerable in enterprise environments. Because control is decentralized, a careless user might accidentally grant "Write" access on a sensitive document to the entire company. Furthermore, if a user's account is compromised by malware, the malware inherits the user's discretion and can destroy all the files that user owns.</p>
+                    
+                    <p class="mb-5">To balance security and flexibility, most modern businesses use <strong>Role-Based Access Control (RBAC)</strong>. In RBAC, permissions are not assigned directly to individual people. Instead, permissions are assigned to specific job titles or "roles" (e.g., "HR Manager", "Sales Rep", "Student"). When a person is hired, their user account is simply added to the appropriate role, and they automatically inherit all the necessary permissions. If they change jobs, their old role is removed and a new one is applied, vastly simplifying IT management.</p>
+                    
+                    <p>Finally, systems often employ <strong>Rule-Based Access Control</strong> to add dynamic conditions to the authorization process. Instead of just checking *who* is asking, the system checks *contextual rules* defined by administrators. A common rule is time restriction: a student might have the RBAC role allowing them to access the grading portal, but a Rule-Based control dictates they can only do so between 8:00 AM and 3:00 PM on weekdays.</p>
+                `
+            },
+            'methods-usecase': {
+                title: 'Access Control Methods: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-emerald-800 mb-2 border-b-2 border-emerald-200 pb-1">Case 1: Military Intelligence Base</h4>
+                        <p class="mb-2">A high-security government facility requires absolute control over data flow to prevent espionage and leaks, utilizing strict centralized models.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (MAC):</strong> An intelligence analyst creates a report and labels it "Classified." Because the system uses Mandatory Access Control, the analyst cannot share this file with their un-cleared friend; the central operating system absolutely blocks the transfer.</li>
+                            <li><strong>Example 2 (Rule-Based):</strong> Even if an analyst has Top Secret clearance, a Rule-Based access control policy dictates that Top Secret files cannot be opened from a terminal located in the cafeteria; they can only be opened from terminals physically located inside the secure vault.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-emerald-800 mb-2 border-b-2 border-emerald-200 pb-1">Case 2: Corporate Office Environment</h4>
+                        <p class="mb-2">A standard marketing firm needs to allow employees to collaborate on creative projects rapidly without constantly asking IT for permission.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (DAC):</strong> A graphic designer finishes a logo on their workstation and uses Discretionary Access Control to manually share the folder with two specific copywriters so they can review it together.</li>
+                            <li><strong>Example 2 (RBAC):</strong> The IT department uses Role-Based Access Control to automatically grant everyone with the "Manager" role access to the employee performance review software, saving IT from having to manually assign permissions every time someone is promoted.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Access Control Matrix</p>
+                            <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=600&h=350" alt="Cyber security lock" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Corporate Collaboration (DAC/RBAC)</p>
+                            <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&h=350" alt="Team working together" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'perms-details': {
+                title: 'Permission Types',
+                icon: '<i class="fa-solid fa-file-shield text-orange-600"></i>',
+                html: `
+                    <p class="mb-5">At the granular level of a file system, authorization is enforced through specific sets of rules known as permissions. Permissions dictate the exact actions a user or a group of users can perform on a specific file, folder, or system resource. Understanding how to configure these permissions is a fundamental skill for any IT professional or system administrator.</p>
+                    
+                    <p class="mb-5">The most basic and common permission is the <strong>Read</strong> permission. When a user is granted Read access to a file, they are allowed to open the file and view its contents. However, they are strictly prohibited from altering the data in any way. If a student has Read permission on a syllabus document, they can read the text on their screen, but if they try to delete a paragraph and save the file, the operating system will block the action.</p>
+                    
+                    <p class="mb-5">The next level of access is the <strong>Write</strong> permission. Write access allows a user to modify the contents of a file, add new data to it, and save those changes. In the context of a folder or directory, Write permission usually allows a user to create entirely new files within that folder. This permission is essential for collaboration, as it allows multiple team members to edit a shared spreadsheet.</p>
+                    
+                    <p class="mb-5">A highly critical, and potentially dangerous, permission is the <strong>Execute</strong> permission. This permission allows a user to run a file as a program, application, or script. If a file is a software installer (like an .exe or .sh file), it cannot be launched unless the user has Execute permissions. Security administrators heavily restrict Execute permissions to prevent users from accidentally launching malicious software or unapproved games on company machines.</p>
+                    
+                    <p class="mb-5">Finally, the <strong>Delete</strong> permission (sometimes bundled as part of Full Control or Write permissions depending on the OS) dictates whether a user can permanently remove a file or empty a directory. Deletion rights are usually reserved for the original creator of the file or high-level administrators, to prevent disgruntled employees from wiping out shared departmental data.</p>
+                    
+                    <p class="mb-5">These fundamental permission types are rarely used in isolation. Instead, they are combined to create nuanced access levels. For instance, an employee might have "Read & Execute" permission on a corporate training application (allowing them to open and use the software), but they lack "Write" permission, meaning they cannot tamper with the software's internal configuration files.</p>
+                    
+                    <p>Operating systems enforce these rules by attaching an invisible Access Control List (ACL) to every single file on the hard drive. When a user double-clicks a file, the OS instantaneously checks the user's ID against the file's ACL. If the ACL shows that the user's assigned group only has "Read" permission, the OS will open the file in a locked, read-only state, effectively enforcing the authorization policy at the lowest level of the machine.</p>
+                `
+            },
+            'perms-usecase': {
+                title: 'Permission Types: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-orange-800 mb-2 border-b-2 border-orange-200 pb-1">Case 1: School Educational Network</h4>
+                        <p class="mb-2">A high school network administrator uses file permissions to ensure students can access learning materials without altering them or breaking the system.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Read & Write):</strong> A student is granted <em>Read</em> and <em>Write</em> permissions to their own personal "My Documents" folder, allowing them to create, edit, and save their English essays.</li>
+                            <li><strong>Example 2 (Execute Denied):</strong> A student downloads an unapproved video game (.exe file) from the internet. Because the student's role is explicitly denied <em>Execute</em> permissions on the school's hard drive, the operating system blocks the game from running.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-orange-800 mb-2 border-b-2 border-orange-200 pb-1">Case 2: Web Server File Management</h4>
+                        <p class="mb-2">A web developer must carefully configure permissions on a web server so that visitors can view the website, but hackers cannot tamper with the underlying code.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Read Only):</strong> The public "Guest" group (anyone browsing the internet) is granted strict <em>Read</em> permission to the index.html file so their browser can display the website's homepage, but they cannot alter the text.</li>
+                            <li><strong>Example 2 (Delete Denied):</strong> To protect against accidental data loss, even junior web developers are denied <em>Delete</em> permissions on the server's main database folder; only the Lead Architect can permanently remove database files.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Locked Files</p>
+                            <img src="https://images.unsplash.com/photo-1614064641913-a520f16e2f10?auto=format&fit=crop&w=600&h=350" alt="Folders with lock icons" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Web Server Security</p>
+                            <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=600&h=350" alt="Server racks in a data center" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'accounts-details': {
+                title: 'Accounts & Least Privilege',
+                icon: '<i class="fa-solid fa-user-shield text-rose-600"></i>',
+                html: `
+                    <p class="mb-5">At the core of an operating system's security architecture is the distinction between different types of user accounts. Not all accounts are created equal. Organizations utilize varying levels of account power to ensure that everyday tasks can be completed efficiently while locking down critical system infrastructure against unauthorized tampering.</p>
+                    
+                    <p class="mb-5">The most powerful account on any system is the <strong>Administrator Account</strong> (often called "Root" in Linux or macOS). Administrator accounts possess elevated privileges that bypass standard security restrictions. An administrator can install new software globally, alter deep network settings, view files belonging to any other user, and even delete the operating system itself. They have full, unadulterated control over the machine.</p>
+                    
+                    <p class="mb-5">Because of this massive power, Administrator accounts represent the highest security risk in any organization. If a cybercriminal manages to guess the password of an Administrator account, or if an administrator accidentally opens a malware-infected email, the malware inherits those ultimate privileges. The virus can then silently turn off the antivirus software, steal all data, and spread across the entire network undetected.</p>
+                    
+                    <p class="mb-5">To combat this risk, organizations deploy standard <strong>User Accounts</strong>. A standard user account has significantly limited permissions. A user can browse the internet, check email, use pre-installed software like Microsoft Word, and save files within their own specific user profile folder. However, they are fundamentally blocked from making system-wide changes, altering the firewall, or viewing files belonging to their coworkers.</p>
+                    
+                    <p class="mb-5">Standard user accounts act as a natural quarantine. If a standard user accidentally clicks a malicious link, the resulting malware only has standard user rights. The malware might damage the user's personal files, but it will be denied permission when it attempts to embed itself in the core Windows system folder or alter the system registry, effectively halting the infection's spread.</p>
+                    
+                    <p class="mb-5">This strategy of restricting access is formalized in the <strong>Least Privilege Model</strong>. The Principle of Least Privilege is a foundational rule in cybersecurity which states that a user, program, or process should be granted only the absolute minimum permissions necessary to perform its assigned function, and nothing more. It is a philosophy of "default deny."</p>
+                    
+                    <p>In practice, the Least Privilege Model means that even highly trained IT professionals should log into standard User Accounts for their daily work (like checking email and writing reports). They should only elevate their privileges and use an Administrator Account for the brief 5-minute window when they specifically need to install a new server patch, immediately returning to their restricted account afterward to minimize their vulnerability window.</p>
+                `
+            },
+            'accounts-usecase': {
+                title: 'Accounts & Least Privilege: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-rose-800 mb-2 border-b-2 border-rose-200 pb-1">Case 1: IT Support Desk</h4>
+                        <p class="mb-2">An IT department implements strict account separation to protect themselves and the network while helping employees fix computer issues.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (User Account limitation):</strong> A teacher calls IT complaining they cannot install a new web browser. The IT technician explains that the teacher is using a standard <em>User Account</em>, which is intentionally blocked from installing software to prevent malware infections.</li>
+                            <li><strong>Example 2 (Admin Elevation):</strong> The IT technician connects remotely to the teacher's computer and enters their specific <em>Administrator Account</em> credentials into a security prompt. This temporarily elevates privileges, allowing the safe installation of the browser.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-rose-800 mb-2 border-b-2 border-rose-200 pb-1">Case 2: Software Development Team</h4>
+                        <p class="mb-2">A tech company applies the Principle of Least Privilege to ensure their software engineers don't accidentally break the live production servers.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Least Privilege application):</strong> A junior developer's job is to write code for the website's front-end. Applying the <em>Least Privilege Model</em>, they are granted Write access to the coding repository, but are completely denied access to the customer billing database, as they do not need it to do their job.</li>
+                            <li><strong>Example 2 (Preventing lateral movement):</strong> A developer's standard account is compromised by a phishing attack. Because the account operates under Least Privilege, the hacker is trapped; they cannot pivot to the core administrative servers because the compromised account lacks the authorization to even view those servers.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Admin Privilege</p>
+                            <img src="https://images.unsplash.com/photo-1563206767-5b18f218e8de?auto=format&fit=crop&w=600&h=350" alt="IT Administrator fixing system" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Software Development</p>
+                            <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=600&h=350" alt="Developer coding on laptop" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        function openBriefing(key) {
+            const modal = document.getElementById('briefing-modal');
+            const data = briefingData[key];
+            if(data) {
+                document.getElementById('briefing-modal-icon').innerHTML = data.icon;
+                document.getElementById('briefing-modal-title').innerText = data.title;
+                document.getElementById('briefing-modal-content').innerHTML = data.html;
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; 
+            }
+        }
+
+        function closeBriefing() {
+            document.getElementById('briefing-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto'; 
+        }
+
+        document.getElementById('briefing-modal').addEventListener('click', function(e) {
+            if(e.target === this) closeBriefing();
+        });
+        
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId + '-section').classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-blue-900'));
+            const activeBtn = document.getElementById('nav-' + tabId);
+            if(activeBtn && tabId !== 'cert') activeBtn.classList.add('bg-blue-900');
+            
+            document.querySelectorAll('.nav-btn-mobile').forEach(btn => btn.classList.remove('bg-blue-800'));
+            const activeMobileBtn = document.getElementById('nav-' + tabId + '-mobile');
+            if(activeMobileBtn && tabId !== 'cert') activeMobileBtn.classList.add('bg-blue-800');
+
+            window.scrollTo(0,0);
+
+            if (tabId === 'game' && !gameRunning && !gameWon) {
+                resetGame();
+                drawGame();
+            }
+        }
+
+        function showModal(title, message, type = 'info') {
+            const modal = document.getElementById('custom-modal');
+            const icon = document.getElementById('modal-icon');
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-msg').innerText = message;
+            
+            if(type === 'success') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-500"></i>';
+            } else if (type === 'error') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-xmark text-rose-500"></i>';
+            } else if (type === 'warning') {
+                icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-yellow-500"></i>';
+            } else {
+                icon.innerHTML = '<i class="fa-solid fa-circle-info text-blue-500"></i>';
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        let draggedCatItem = null;
+        let lab1Count = 0;
+
+        document.querySelectorAll('#lab1-items .io-item').forEach(item => {
+            item.addEventListener('dragstart', function() {
+                draggedCatItem = this;
+                setTimeout(() => this.classList.add('opacity-50'), 0);
+            });
+            item.addEventListener('dragend', function() {
+                setTimeout(() => this.classList.remove('opacity-50'), 0);
+                draggedCatItem = null;
+            });
+        });
+
+        document.querySelectorAll('#activity-section .cat-dropzone').forEach(zone => {
+            zone.addEventListener('dragover', e => e.preventDefault());
+            zone.addEventListener('dragenter', function(e) { e.preventDefault(); this.classList.add('drag-over'); });
+            zone.addEventListener('dragleave', function() { this.classList.remove('drag-over'); });
+            zone.addEventListener('drop', function() {
+                this.classList.remove('drag-over');
+                if(draggedCatItem) {
+                    if(draggedCatItem.dataset.target === this.dataset.type) {
+                        this.appendChild(draggedCatItem);
+                        draggedCatItem.classList.remove('bg-indigo-50', 'cursor-grab');
+                        draggedCatItem.classList.add('bg-emerald-100', 'text-emerald-800', 'cursor-default', 'mt-2', 'w-[90%]');
+                        draggedCatItem.setAttribute('draggable', 'false');
+                        lab1Count++;
+                        
+                        const fb = document.getElementById('lab1-feedback');
+                        fb.innerText = "Correct Classification!";
+                        fb.className = "text-center text-xs font-bold mt-2 h-4 text-emerald-600";
+                        
+                        if(lab1Count === 4) {
+                            setTimeout(() => showModal('Lab 1 Complete', 'You correctly separated Identity (Authn) from Permissions (Authz).', 'success'), 300);
+                        }
+                    } else {
+                        const fb = document.getElementById('lab1-feedback');
+                        fb.innerText = "Incorrect. Is this proving WHO they are, or WHAT they can do?";
+                        fb.className = "text-center text-xs font-bold mt-2 h-4 text-rose-600";
+                    }
+                }
+            });
+        });
+
+        let lab2Solved = false;
+        function checkLab2(isDeny) {
+            if(lab2Solved) return;
+            const fb = document.getElementById('lab2-feedback');
+            if(isDeny) {
+                lab2Solved = true;
+                fb.innerText = "Correct! A Student role should not be authorized to write to Final Grades.";
+                fb.className = "text-center text-xs font-bold mt-2 h-4 text-emerald-600";
+                setTimeout(() => showModal('Lab 2 Complete', 'Good job enforcing authorization boundaries.', 'success'), 300);
+            } else {
+                fb.innerText = "Security Breach! You granted unauthorized access.";
+                fb.className = "text-center text-xs font-bold mt-2 h-4 text-rose-600";
+            }
+        }
+
+        let lab3Solved = false;
+        function checkLab3() {
+            if(lab3Solved) return;
+            const s1 = document.getElementById('lab3-s1').value;
+            const s2 = document.getElementById('lab3-s2').value;
+            const fb = document.getElementById('lab3-feedback');
+            
+            if(s1 === 'dac' && s2 === 'rbac') {
+                lab3Solved = true;
+                fb.innerText = "Match Complete! Owner control is DAC, Job Title is RBAC.";
+                fb.className = "text-center text-xs font-bold mt-4 h-4 text-emerald-600";
+                setTimeout(() => showModal('Lab 3 Complete', 'You successfully identified the Access Control models.', 'success'), 300);
+            } else if (s1 !== '' && s2 !== '') {
+                fb.innerText = "Incorrect matches. Try again.";
+                fb.className = "text-center text-xs font-bold mt-4 h-4 text-rose-600";
+            }
+        }
+
+        let lab4Solved = false;
+        function updateLab4() {
+            const val = parseInt(document.getElementById('lab4-slider').value);
+            const display = document.getElementById('lab4-time');
+            const status = document.getElementById('lab4-status');
+            
+            let ampm = val >= 12 ? 'PM' : 'AM';
+            let hour = val % 12;
+            if (hour === 0) hour = 12;
+            let timeStr = `${hour < 10 ? '0'+hour : hour}:00 ${ampm}`;
+            display.innerText = timeStr;
+
+            if (val >= 8 && val <= 17) {
+                status.innerHTML = '<i class="fa-solid fa-unlock mr-2"></i>ACCESS GRANTED';
+                status.className = "mt-2 py-2 px-4 rounded font-bold bg-emerald-100 text-emerald-700 border border-emerald-300";
+                if(!lab4Solved && val === 12) { // Just require them to slide into valid range
+                    lab4Solved = true;
+                    setTimeout(() => showModal('Lab 4 Complete', 'The Rule-Based policy successfully evaluated the time context.', 'success'), 300);
+                }
+            } else {
+                status.innerHTML = '<i class="fa-solid fa-lock mr-2"></i>ACCESS DENIED';
+                status.className = "mt-2 py-2 px-4 rounded font-bold bg-red-100 text-red-700 border border-red-300";
+            }
+        }
+
+        let lab5Solved = false;
+        function checkLab5() {
+            if(lab5Solved) return;
+            const r = document.getElementById('l5-r').checked;
+            const w = document.getElementById('l5-w').checked;
+            const x = document.getElementById('l5-x').checked;
+            const fb = document.getElementById('lab5-feedback');
+
+            if (r && !w && !x) {
+                lab5Solved = true;
+                fb.innerText = "Correct! Students should only Read exam answers.";
+                fb.className = "text-center text-xs font-bold mt-2 h-4 text-emerald-600";
+                setTimeout(() => showModal('Lab 5 Complete', 'Proper permissions assigned based on role.', 'success'), 300);
+            } else {
+                fb.innerText = "Policy Denied. Students should not write to or execute exam files.";
+                fb.className = "text-center text-xs font-bold mt-2 h-4 text-rose-600";
+            }
+        }
+
+        let lab6Solved = false;
+        function checkLab6(isBlock) {
+            if(lab6Solved) return;
+            const fb = document.getElementById('lab6-feedback');
+            if (isBlock) {
+                lab6Solved = true;
+                fb.innerText = "Blocked safely. The file lacks Execute permission.";
+                fb.className = "text-center text-xs font-bold mt-2 h-4 text-emerald-600";
+                setTimeout(() => showModal('Lab 6 Complete', 'You correctly evaluated the ACL and prevented execution.', 'success'), 300);
+            } else {
+                fb.innerText = "Error! The system would crash because 'Execute' is missing.";
+                fb.className = "text-center text-xs font-bold mt-2 h-4 text-rose-600";
+            }
+        }
+
+        let lab7Solved = false;
+        function checkLab7() {
+            if(lab7Solved) return;
+            const role = document.querySelector('input[name="lab7role"]:checked').value;
+            const fb = document.getElementById('lab7-feedback');
+            
+            if (role === 'admin') {
+                lab7Solved = true;
+                fb.innerText = "Software Installed (Admin Privileges applied).";
+                fb.className = "text-center text-xs font-bold mt-3 h-4 text-emerald-600";
+                setTimeout(() => showModal('Lab 7 Complete', 'As an Administrator, you bypassed standard user restrictions.', 'success'), 300);
+            } else {
+                fb.innerText = "Access Denied: Standard Users cannot install software.";
+                fb.className = "text-center text-xs font-bold mt-3 h-4 text-rose-600";
+            }
+        }
+
+        let lab8Solved = false;
+        function checkLab8() {
+            if(lab8Solved) return;
+            const r = document.getElementById('l8-read').checked;
+            const w = document.getElementById('l8-write').checked;
+            const d = document.getElementById('l8-del').checked;
+            const fb = document.getElementById('lab8-feedback');
+
+            if (r && !w && !d) {
+                lab8Solved = true;
+                fb.innerText = "Audit Passed. Least Privilege Achieved.";
+                fb.className = "text-center text-xs font-bold mt-2 h-4 text-emerald-600";
+                setTimeout(() => showModal('Lab 8 Complete', 'You removed excess permissions, securing the account.', 'success'), 300);
+            } else {
+                fb.innerText = "Audit Failed. A 'Data Viewer' should not have write or delete access.";
+                fb.className = "text-center text-xs font-bold mt-2 h-4 text-rose-600";
+            }
+        }
+
+        const quizData = [
+            // 10 provided questions
+            { q: "Which part of the AAA Triad focuses on what a user is allowed to do after logging in?", options: ["Authentication", "Accounting", "Authorization", "Non-repudiation"], answer: 2 },
+            { q: "Which of the following is not one of the four standard file permissions?", options: ["Write", "Delete", "Execute", "Share"], answer: 3 },
+            { q: "What is the main difference between an administrator account and a user account?", options: ["Admins cannot log in, but users can", "Users can install software, but admins cannot", "Admins have no permissions", "Admins have full control; users have limited access"], answer: 3 },
+            { q: "The least privilege model means:", options: ["Users should only get permission they need to do their job", "Users should set their own permissions", "Everyone should have all permissions just in case", "Students should have the same permissions as principals"], answer: 0 },
+            { q: "Which access control model gives the owner of the data the right to decide who can access it?", options: ["Role-Based Access Control (RBAC)", "Rule-Based Access Control (Rule-Based RBAC)", "Mandatory Access Control (MAC)", "Discretionary Access Control (DAC)"], answer: 3 },
+            { q: "A school gives all teachers the ability to update grades but not change system settings. What type of access control is this?", options: ["MAC", "RBAC", "DAC", "Rule-Based RBAC"], answer: 1 },
+            { q: "A system blocks students from logging in outside of school hours. What type of access control is this?", options: ["RBAC", "MAC", "Rule-Based RBAC", "DAC"], answer: 2 },
+            { q: "Which of the following is an example of authorization?", options: ["Being denied permission to install software", "Typing your password into a computer", "Scanning your fingerprint to unlock your phone", "Proving your identity with a driver's license"], answer: 0 },
+            { q: "Why is authorization important in cybersecurity?", options: ["It verifies the identity of a user", "It prevents users from accessing things they shouldn't", "It keeps track of user activities", "It ensures messages are not altered during transmission"], answer: 1 },
+            { q: "Which permission allows a user to view a file but not change it?", options: ["Read", "Write", "Execute", "Delete"], answer: 0 },
+            
+            // 10 additional questions derived from briefing details
+            { q: "Which component of the AAA Triad involves generating a permanent log containing a timestamp and IP address to prevent future disputes?", options: ["Authentication", "Authorization", "Accounting", "Access Control"], answer: 2 },
+            { q: "In a highly classified government environment where labels like 'Top Secret' are used and users cannot change permissions, which model is active?", options: ["Mandatory Access Control (MAC)", "Discretionary Access Control (DAC)", "Role-Based Access Control (RBAC)", "Rule-Based Access Control"], answer: 0 },
+            { q: "Why is Discretionary Access Control (DAC) considered inherently vulnerable in an enterprise environment?", options: ["It requires too much central administration", "A careless user might accidentally grant access to a sensitive document", "It relies on biometric scanning", "It automatically deletes files overnight"], answer: 1 },
+            { q: "What invisible tag does the operating system attach to every file to explicitly list which users have Read, Write, or Execute permissions?", options: ["Access Control List (ACL)", "Digital Signature", "Hardware Abstraction Layer", "Accounting Log"], answer: 0 },
+            { q: "Which file permission is critically restricted to prevent users from accidentally launching malicious software or unapproved games on company machines?", options: ["Read", "Write", "Execute", "Delete"], answer: 2 },
+            { q: "Standard user accounts act as a natural quarantine against malware because:", options: ["Malware cannot be downloaded by standard users", "Standard users do not use passwords", "Malware is denied permission to embed itself in core system folders", "Malware deletes standard user accounts automatically"], answer: 2 },
+            { q: "Under the Least Privilege Model, how should highly trained IT professionals handle their daily tasks (like checking email)?", options: ["They should permanently use an Administrator account", "They should use a standard User account and only elevate when necessary", "They should share a single generic account", "They should disable all passwords"], answer: 1 },
+            { q: "If an intern successfully authenticates into the corporate network but is blocked from downloading the CEO's spreadsheets, this block is an example of:", options: ["Accounting", "Authentication", "Authorization", "Abstraction"], answer: 2 },
+            { q: "When a person is hired and their user account is added to the 'Sales Rep' group, automatically inheriting necessary permissions, this exemplifies:", options: ["MAC", "DAC", "RBAC", "Rule-Based"], answer: 2 },
+            { q: "If a user has 'Read & Execute' permission on a corporate training application but lacks 'Write' permission, what action is blocked?", options: ["Opening the application", "Viewing the training content", "Running the executable file", "Tampering with the internal configuration files"], answer: 3 }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        
+        quizData.forEach((item, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = "bg-gray-50 p-6 rounded-lg border border-gray-200 transition-all";
+            
+            const qTitle = document.createElement('h3');
+            qTitle.className = "font-bold text-lg text-gray-800 mb-4";
+            qTitle.innerText = `${index + 1}. ${item.q}`;
+            qDiv.appendChild(qTitle);
+            
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = "space-y-3";
+            
+            item.options.forEach((opt, optIndex) => {
+                const label = document.createElement('label');
+                label.className = "flex items-center space-x-3 p-3 rounded bg-white border border-gray-300 hover:bg-blue-50 cursor-pointer transition";
+                
+                const radio = document.createElement('input');
+                radio.type = "radio";
+                radio.name = `q${index}`;
+                radio.value = optIndex;
+                radio.className = "form-radio h-5 w-5 text-blue-600";
+                
+                const span = document.createElement('span');
+                span.className = "text-gray-700";
+                span.innerText = opt;
+                
+                label.appendChild(radio);
+                label.appendChild(span);
+                optionsDiv.appendChild(label);
+            });
+            
+            qDiv.appendChild(optionsDiv);
+            quizContainer.appendChild(qDiv);
+        });
+
+        function gradeQuiz() {
+            let score = 0;
+            let allAnswered = true;
+
+            for(let i = 0; i < quizData.length; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if(selected) {
+                    if(parseInt(selected.value) === quizData[i].answer) {
+                        score++;
+                    }
+                } else {
+                    allAnswered = false;
+                }
+            }
+            
+            if(!allAnswered) {
+                showModal('Incomplete Quiz', 'Please answer all 20 questions before submitting.', 'warning');
+                return;
+            }
+            
+            const percentage = (score / quizData.length) * 100;
+            
+            if(score >= 18) { 
+                const navGame = document.getElementById('nav-game');
+                const navGameMobile = document.getElementById('nav-game-mobile');
+                
+                navGame.classList.remove('text-gray-400', 'cursor-not-allowed');
+                navGame.classList.add('text-white', 'hover:bg-blue-700');
+                navGame.disabled = false;
+                navGame.innerHTML = '<i class="fa-solid fa-gamepad mr-1"></i>Game';
+                
+                navGameMobile.classList.remove('text-gray-400', 'cursor-not-allowed');
+                navGameMobile.classList.add('text-white', 'hover:bg-blue-800');
+                navGameMobile.disabled = false;
+                navGameMobile.innerHTML = '<i class="fa-solid fa-gamepad"></i> Game';
+
+                document.getElementById('nav-cert').classList.remove('hidden');
+                document.getElementById('nav-cert-mobile').classList.remove('hidden');
+                
+                document.getElementById('proceed-game-btn').classList.remove('hidden');
+                document.getElementById('submit-quiz-btn').classList.add('hidden');
+
+                showModal('Outstanding!', `You scored ${score}/20 (${percentage}%). You have unlocked your Certificate of Mastery AND the Retro Game "Stealth Access"!`, 'success');
+            } else {
+                // Reset incorrect
+                quizData.forEach((_, i) => {
+                    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                    if(selected) selected.checked = false;
+                });
+                showModal('Keep Trying!', `You scored ${score}/20 (${percentage}%). You need 90% (18/20) to earn the certificate. Your answers have been reset so you can review the briefing and try again.`, 'error');
+                document.getElementById('quiz-section').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let gameRunning = false;
+        let gameWon = false;
+        let animationId;
+        
+        // Game Entities
+        const TILE_SIZE = 40;
+        let player = { x: 1, y: 1, color: '#3b82f6', hasKey: false, speed: 0.1 };
+        let guards = [];
+        let keyItem = { x: 13, y: 1, active: true };
+        let doorItem = { x: 13, y: 8 };
+        let level = 1;
+        
+        // 15x10 Map. 0 = floor, 1 = firewall
+        const mapData = [
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+            [1,0,0,0,1,0,0,0,0,0,0,0,0,0,1],
+            [1,0,1,0,1,0,1,1,1,1,1,1,1,0,1],
+            [1,0,1,0,0,0,0,0,0,0,0,0,1,0,1],
+            [1,0,1,1,1,1,1,1,1,1,1,0,1,0,1],
+            [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+            [1,1,1,1,1,0,1,1,1,1,1,1,1,0,1],
+            [1,0,0,0,0,0,1,0,0,0,0,0,1,0,1],
+            [1,0,1,1,1,1,1,0,1,1,1,0,1,0,1],
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+        ];
+
+        let keys = {};
+        window.addEventListener('keydown', e => { 
+            if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight","w","a","s","d"].indexOf(e.key) > -1) {
+                e.preventDefault(); 
+            }
+            keys[e.key] = true; 
+        });
+        window.addEventListener('keyup', e => keys[e.key] = false);
+
+        // Mobile swipe support
+        let touchStartX = 0; let touchStartY = 0;
+        canvas.addEventListener('touchstart', e => {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+            e.preventDefault();
+        }, {passive: false});
+        
+        canvas.addEventListener('touchmove', e => {
+            if(!gameRunning) return;
+            e.preventDefault();
+            let touchEndX = e.touches[0].clientX;
+            let touchEndY = e.touches[0].clientY;
+            let dx = touchEndX - touchStartX;
+            let dy = touchEndY - touchStartY;
+            
+            // Clear keys
+            keys = {};
+            if(Math.abs(dx) > Math.abs(dy)) {
+                if(dx > 20) keys['ArrowRight'] = true;
+                else if(dx < -20) keys['ArrowLeft'] = true;
+            } else {
+                if(dy > 20) keys['ArrowDown'] = true;
+                else if(dy < -20) keys['ArrowUp'] = true;
+            }
+            
+            // Small reset to allow continuous sliding
+            touchStartX = touchEndX;
+            touchStartY = touchEndY;
+        }, {passive: false});
+        
+        canvas.addEventListener('touchend', e => { keys = {}; });
+
+        const overlay = document.getElementById('game-overlay');
+        const startBtn = document.getElementById('start-game-btn');
+        startBtn.addEventListener('click', startGame);
+
+        function initLevel() {
+            player.x = 1; player.y = 1; player.hasKey = false;
+            keyItem.active = true;
+            guards = [];
+            
+            if (level === 1) {
+                guards.push({ x: 5, y: 1, dir: 'right', minX: 5, maxX: 12, speed: 0.05 });
+                guards.push({ x: 1, y: 3, dir: 'right', minX: 1, maxX: 11, speed: 0.04 });
+                guards.push({ x: 12, y: 5, dir: 'left', minX: 1, maxX: 12, speed: 0.06 });
+                guards.push({ x: 3, y: 7, dir: 'right', minX: 1, maxX: 5, speed: 0.03 });
+            } else if (level === 2) {
+                guards.push({ x: 5, y: 1, dir: 'right', minX: 5, maxX: 12, speed: 0.07 });
+                guards.push({ x: 1, y: 3, dir: 'right', minX: 1, maxX: 11, speed: 0.06 });
+                guards.push({ x: 12, y: 5, dir: 'left', minX: 1, maxX: 12, speed: 0.08 });
+                guards.push({ x: 1, y: 7, dir: 'right', minX: 1, maxX: 5, speed: 0.05 });
+                guards.push({ x: 8, y: 7, dir: 'right', minX: 7, maxX: 11, speed: 0.05 });
+            }
+            document.getElementById('game-level').innerText = level;
+            document.getElementById('game-status').innerText = "UNAUTHORIZED";
+            document.getElementById('game-status').className = "text-rose-400 font-bold";
+        }
+
+        function isWall(x, y) {
+            let col = Math.floor(x);
+            let row = Math.floor(y);
+            if (row < 0 || row >= mapData.length || col < 0 || col >= mapData[0].length) return true;
+            return mapData[row][col] === 1;
+        }
+
+        function updatePlayer() {
+            let nextX = player.x;
+            let nextY = player.y;
+            
+            if(keys['ArrowUp'] || keys['w']) nextY -= player.speed;
+            if(keys['ArrowDown'] || keys['s']) nextY += player.speed;
+            if(keys['ArrowLeft'] || keys['a']) nextX -= player.speed;
+            if(keys['ArrowRight'] || keys['d']) nextX += player.speed;
+            
+            // Collision detection with slide
+            // Check center points + buffer
+            let buffer = 0.2;
+            if (!isWall(nextX + buffer, player.y + buffer) && !isWall(nextX + 1 - buffer, player.y + buffer) &&
+                !isWall(nextX + buffer, player.y + 1 - buffer) && !isWall(nextX + 1 - buffer, player.y + 1 - buffer)) {
+                player.x = nextX;
+            }
+            if (!isWall(player.x + buffer, nextY + buffer) && !isWall(player.x + 1 - buffer, nextY + buffer) &&
+                !isWall(player.x + buffer, nextY + 1 - buffer) && !isWall(player.x + 1 - buffer, nextY + 1 - buffer)) {
+                player.y = nextY;
+            }
+
+            // Check Key collection
+            if (keyItem.active && Math.abs(player.x - keyItem.x) < 0.8 && Math.abs(player.y - keyItem.y) < 0.8) {
+                keyItem.active = false;
+                player.hasKey = true;
+                document.getElementById('game-status').innerText = "AUTHORIZED (Token Acquired)";
+                document.getElementById('game-status').className = "text-emerald-400 font-bold";
+            }
+            
+            // Check Door win
+            if (player.hasKey && Math.abs(player.x - doorItem.x) < 0.8 && Math.abs(player.y - doorItem.y) < 0.8) {
+                winLevel();
+            }
+        }
+
+        function updateGuards() {
+            for (let g of guards) {
+                if (g.dir === 'right') {
+                    g.x += g.speed;
+                    if (g.x >= g.maxX) g.dir = 'left';
+                } else {
+                    g.x -= g.speed;
+                    if (g.x <= g.minX) g.dir = 'right';
+                }
+                
+                // Collision with player (Detection)
+                // Guard vision cone simplified to their body + 1 tile in front
+                let pCX = player.x + 0.5; let pCY = player.y + 0.5;
+                let gCX = g.x + 0.5; let gCY = g.y + 0.5;
+                
+                let dist = Math.hypot(pCX - gCX, pCY - gCY);
+                let detected = false;
+                
+                if (dist < 0.8) detected = true; // touched guard
+                
+                if(g.dir === 'right' && pCX > gCX && pCX < gCX + 2 && Math.abs(pCY - gCY) < 0.5) detected = true;
+                if(g.dir === 'left' && pCX < gCX && pCX > gCX - 2 && Math.abs(pCY - gCY) < 0.5) detected = true;
+
+                if (detected) {
+                    gameOver();
+                }
+            }
+        }
+
+        function drawGame() {
+            if(!gameRunning) return;
+            
+            // Clear
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw Map
+            for (let row = 0; row < mapData.length; row++) {
+                for (let col = 0; col < mapData[row].length; col++) {
+                    if (mapData[row][col] === 1) {
+                        ctx.fillStyle = '#1e293b';
+                        ctx.fillRect(col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                        ctx.strokeStyle = '#334155';
+                        ctx.strokeRect(col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                    } else {
+                        // Floor dot
+                        ctx.fillStyle = '#334155';
+                        ctx.fillRect(col * TILE_SIZE + TILE_SIZE/2 - 1, row * TILE_SIZE + TILE_SIZE/2 - 1, 2, 2);
+                    }
+                }
+            }
+            
+            // Draw Door
+            ctx.fillStyle = player.hasKey ? '#10b981' : '#64748b';
+            ctx.fillRect(doorItem.x * TILE_SIZE + 5, doorItem.y * TILE_SIZE + 5, TILE_SIZE - 10, TILE_SIZE - 10);
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '10px monospace';
+            ctx.fillText('DATA', doorItem.x * TILE_SIZE + 8, doorItem.y * TILE_SIZE + 24);
+
+            // Draw Key
+            if (keyItem.active) {
+                ctx.fillStyle = '#fbbf24'; // yellow
+                ctx.beginPath();
+                ctx.arc(keyItem.x * TILE_SIZE + TILE_SIZE/2, keyItem.y * TILE_SIZE + TILE_SIZE/2, 6, 0, Math.PI*2);
+                ctx.fill();
+            }
+
+            // Draw Guards and Vision Cones
+            for (let g of guards) {
+                // Vision Cone
+                ctx.fillStyle = 'rgba(239, 68, 68, 0.2)'; // Light red
+                ctx.beginPath();
+                if (g.dir === 'right') {
+                    ctx.moveTo(g.x * TILE_SIZE + TILE_SIZE/2, g.y * TILE_SIZE + TILE_SIZE/2);
+                    ctx.lineTo(g.x * TILE_SIZE + TILE_SIZE*2.5, g.y * TILE_SIZE);
+                    ctx.lineTo(g.x * TILE_SIZE + TILE_SIZE*2.5, g.y * TILE_SIZE + TILE_SIZE);
+                } else {
+                    ctx.moveTo(g.x * TILE_SIZE + TILE_SIZE/2, g.y * TILE_SIZE + TILE_SIZE/2);
+                    ctx.lineTo(g.x * TILE_SIZE - TILE_SIZE*1.5, g.y * TILE_SIZE);
+                    ctx.lineTo(g.x * TILE_SIZE - TILE_SIZE*1.5, g.y * TILE_SIZE + TILE_SIZE);
+                }
+                ctx.fill();
+
+                // Guard Body
+                ctx.fillStyle = '#ef4444'; // Red
+                ctx.fillRect(g.x * TILE_SIZE + 6, g.y * TILE_SIZE + 6, TILE_SIZE - 12, TILE_SIZE - 12);
+            }
+
+            // Draw Player
+            ctx.fillStyle = player.color;
+            ctx.fillRect(player.x * TILE_SIZE + 8, player.y * TILE_SIZE + 8, TILE_SIZE - 16, TILE_SIZE - 16);
+            if (player.hasKey) {
+                ctx.fillStyle = '#fbbf24'; // visual indicator of key
+                ctx.fillRect(player.x * TILE_SIZE + 14, player.y * TILE_SIZE + 14, TILE_SIZE - 28, TILE_SIZE - 28);
+            }
+
+            updatePlayer();
+            updateGuards();
+            
+            if(gameRunning) {
+                animationId = requestAnimationFrame(drawGame);
+            }
+        }
+
+        function startGame() {
+            overlay.classList.add('hidden');
+            if(!gameRunning) {
+                gameWon = false;
+                initLevel();
+                gameRunning = true;
+                drawGame();
+            }
+        }
+
+        function resetGame() {
+            gameRunning = false;
+            level = 1;
+            initLevel();
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle = '#334155';
+            ctx.font = '20px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('NETWORK STANDBY', canvas.width/2, canvas.height/2);
+        }
+
+        function gameOver() {
+            gameRunning = false;
+            cancelAnimationFrame(animationId);
+            overlay.classList.remove('hidden');
+            startBtn.innerText = "ACCESS DENIED (Reboot)";
+            startBtn.classList.replace('bg-emerald-600', 'bg-rose-700');
+            startBtn.classList.replace('border-emerald-800', 'border-rose-900');
+            startBtn.classList.replace('hover:bg-emerald-500', 'hover:bg-rose-600');
+        }
+
+        function winLevel() {
+            gameRunning = false;
+            cancelAnimationFrame(animationId);
+            
+            if (level === 1) {
+                level = 2;
+                overlay.classList.remove('hidden');
+                startBtn.innerText = "ACCESS GRANTED (Proceed to Lvl 2)";
+                startBtn.classList.replace('bg-rose-700', 'bg-emerald-600');
+                startBtn.classList.replace('border-rose-900', 'border-emerald-800');
+                startBtn.classList.replace('hover:bg-rose-600', 'hover:bg-emerald-500');
+            } else {
+                gameWon = true;
+                overlay.classList.remove('hidden');
+                overlay.innerHTML = `<div class="text-center"><h2 class="text-4xl font-bold text-emerald-400 mb-4 tracking-widest">SYSTEM SECURED</h2><p class="text-white">You have successfully evaded unauthorized detection.</p></div>`;
+            }
+        }
+
+        function updateCertName() {
+            let name = document.getElementById('student-name-input').value.trim();
+            if(name) {
+                if (name.includes(' ')) {
+                    name = name.split(' ')[0];
+                    document.getElementById('student-name-input').value = name;
+                    showModal('Notice', 'Only your first name has been applied to the certificate for formatting purposes.', 'info');
+                }
+                document.getElementById('cert-student-name').innerText = name;
+            } else {
+                showModal('Wait!', 'Please enter your first name to update the certificate.', 'warning');
+            }
+        }
+
+        const today = new Date();
+        document.getElementById('cert-date').innerText = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        function downloadCert() {
+            const certEl = document.getElementById('certificate');
+            const name = document.getElementById('cert-student-name').innerText;
+            let filename = 'Certificate.png';
+            if (name && name !== 'Student') {
+                filename = `${name.replace(/\s+/g, '_')}_Certificate.png`;
+            }
+
+            // Temporarily remove transform for accurate canvas capture
+            const originalTransform = certEl.style.transform;
+            certEl.style.transform = 'none';
+
+            const btn = document.getElementById('download-btn');
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Generating...';
+            btn.disabled = true;
+
+            html2canvas(certEl, { 
+                scale: 2, 
+                useCORS: true,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+            }).catch(err => {
+                console.error(err);
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                showModal('Error', 'Failed to generate image. Try using a desktop browser.', 'error');
+            });
+        }
+
+        window.onload = () => {
+            resetGame();
+        }
+    </script>
+</body>
+</html>

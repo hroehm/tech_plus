@@ -1,0 +1,1479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 06 Section 5.1.2 Mastery - Digital Products & Business Decisions</title>
+    
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load HTML2Canvas for Certificate Download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- Load Fonts and Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Qwitcher+Grypen:wght@700&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; 
+            color: #0f172a;
+        }
+        .tab-content { display: none; opacity: 0; transition: opacity 0.3s ease-in-out; }
+        .tab-content.active { display: block; opacity: 1; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #e2e8f0; }
+        ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 5px; }
+        ::-webkit-scrollbar-thumb:hover { background: #2563eb; }
+
+        /* General Interactive Elements */
+        .btn-hover-scale { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .btn-hover-scale:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        .draggable-item { cursor: grab; transition: transform 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .draggable-item:active { cursor: grabbing; transform: scale(0.95); }
+        .dropzone { transition: all 0.2s ease; }
+        .dropzone.drag-over { background: #e0f2fe; border-color: #0ea5e9; box-shadow: inset 0 0 10px rgba(14, 165, 233, 0.2); }
+
+        /* Lab Specific Styles */
+        .pair-card { transition: all 0.2s; cursor: pointer; }
+        .pair-card.selected { background-color: #fef08a; border-color: #eab308; transform: scale(1.05); }
+        .pair-card.matched { background-color: #bbf7d0; border-color: #22c55e; cursor: default; opacity: 0.7; }
+        
+        .hotspot { position: absolute; cursor: pointer; border: 3px solid transparent; transition: all 0.2s; border-radius: 4px;}
+        .hotspot:hover { border-color: rgba(239, 68, 68, 0.5); background-color: rgba(239, 68, 68, 0.1); }
+        .hotspot.found { border-color: #ef4444; background-color: rgba(239, 68, 68, 0.2); pointer-events: none;}
+
+        /* Retro Game Canvas */
+        #game-canvas {
+            background-color: #1e1b4b; /* Deep night sky */
+            border: 6px solid #4338ca;
+            border-radius: 12px;
+            box-shadow: 0 0 30px rgba(79, 70, 229, 0.4);
+            max-width: 100%;
+            height: auto;
+            touch-action: none;
+            cursor: crosshair;
+        }
+        .retro-font { font-family: 'Press Start 2P', cursive; }
+
+        /* Certificate Styles */
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .font-body { font-family: 'Lora', serif; }
+        .font-script { font-family: 'Qwitcher Grypen', cursive; }
+        
+        .cert-preview-container {
+            width: 100%; overflow: auto; display: flex; justify-content: center;
+            background: #cbd5e1; padding: 2rem; border-radius: 0.5rem;
+        }
+
+        #certificate {
+            width: 1056px !important; height: 816px !important; flex-shrink: 0;
+            background-color: #ffffff; position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); overflow: hidden;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1056" height="816"><polygon points="0,0 200,0 0,600" fill="%233b82f6" opacity="0.1"/><polygon points="1056,816 850,816 1056,200" fill="%233b82f6" opacity="0.1"/><rect x="40" y="40" width="976" height="736" fill="none" stroke="%231e3a8a" stroke-width="4"/><rect x="48" y="48" width="960" height="720" fill="none" stroke="%233b82f6" stroke-width="1"/></svg>');
+            border: 4px solid #94a3b8;
+        }
+
+        .gold-seal {
+            position: absolute; right: 100px; bottom: 100px; width: 160px; height: 160px;
+            border-radius: 50%; background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c, #fcf6ba);
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3), inset 0 0 15px rgba(255,255,255,0.7);
+            z-index: 10;
+        }
+        .gold-seal::after {
+            content: ''; position: absolute; top: 6px; bottom: 6px; left: 6px; right: 6px;
+            border-radius: 50%; border: 2px dashed #8b6914;
+        }
+        .seal-text {
+            color: #8b6914; font-family: 'Playfair Display', serif; font-weight: 800;
+            text-align: center; text-transform: uppercase; line-height: 1.2;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.8); z-index: 2;
+        }
+
+        @media (max-width: 1100px) { #certificate { transform: scale(0.7); transform-origin: top left; margin-bottom: -240px; margin-right: -310px; } }
+        @media (max-width: 768px) { #certificate { transform: scale(0.4); transform-origin: top left; margin-bottom: -490px; margin-right: -630px; } }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen flex flex-col">
+
+    <nav class="bg-blue-800 text-white shadow-xl sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-chart-line text-2xl text-blue-300"></i>
+                    <span class="font-bold text-xl tracking-wider hidden sm:inline-block">Unit 06 Section 5.1.2: Business Data</span>
+                    <span class="font-bold text-xl tracking-wider sm:hidden">U06 5.1.2</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-2">
+                        <button onclick="switchTab('briefing')" class="nav-btn bg-blue-900 px-3 py-2 rounded-md text-sm font-semibold hover:bg-blue-700 transition" id="nav-briefing"><i class="fa-solid fa-book-open mr-1"></i>Briefing</button>
+                        <button onclick="switchTab('activity')" class="nav-btn px-3 py-2 rounded-md text-sm font-semibold hover:bg-blue-700 transition" id="nav-activity"><i class="fa-solid fa-flask mr-1"></i>Lab Activity</button>
+                        <button onclick="switchTab('quiz')" class="nav-btn px-3 py-2 rounded-md text-sm font-semibold hover:bg-blue-700 transition" id="nav-quiz"><i class="fa-solid fa-clipboard-check mr-1"></i>Quiz</button>
+                        <button onclick="switchTab('game')" class="nav-btn px-3 py-2 rounded-md text-sm font-semibold text-slate-400 cursor-not-allowed transition" id="nav-game" disabled><i class="fa-solid fa-lock mr-1"></i>Game</button>
+                        <button onclick="switchTab('cert')" class="nav-btn hidden px-3 py-2 rounded-md text-sm font-semibold text-amber-300 hover:bg-blue-700 transition" id="nav-cert"><i class="fa-solid fa-award mr-1"></i>Certificate</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Nav -->
+        <div class="md:hidden flex flex-wrap justify-center gap-2 py-2 px-2 bg-blue-900 border-t border-blue-700">
+            <button onclick="switchTab('briefing')" class="nav-btn-mobile px-3 py-1 text-sm font-semibold rounded bg-blue-800" id="nav-briefing-mobile">Briefing</button>
+            <button onclick="switchTab('activity')" class="nav-btn-mobile px-3 py-1 text-sm font-semibold rounded" id="nav-activity-mobile">Lab</button>
+            <button onclick="switchTab('quiz')" class="nav-btn-mobile px-3 py-1 text-sm font-semibold rounded" id="nav-quiz-mobile">Quiz</button>
+            <button onclick="switchTab('game')" class="nav-btn-mobile px-3 py-1 text-sm font-semibold rounded text-slate-400 cursor-not-allowed" id="nav-game-mobile" disabled><i class="fa-solid fa-lock"></i></button>
+            <button onclick="switchTab('cert')" id="nav-cert-mobile" class="hidden px-3 py-1 text-sm font-semibold text-amber-300 rounded"><i class="fa-solid fa-award"></i></button>
+        </div>
+    </nav>
+
+    <main class="flex-grow w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <!-- BRIEFING SECTION -->
+        <div id="briefing-section" class="tab-content active no-print">
+            <div class="text-center mb-10">
+                <h1 class="text-3xl md:text-5xl font-extrabold text-slate-900 mb-4 tracking-tight">Digital Products & Business Decisions</h1>
+                <p class="text-lg text-slate-600 max-w-3xl mx-auto">Explore how modern enterprises capture, analyze, report, and monetize data to drive strategic decisions and maintain a competitive edge in a digital-first world.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- Tile 1: Capture & Correlation -->
+                <div class="bg-white rounded-2xl shadow-lg border-t-4 border-indigo-500 flex flex-col hover:shadow-xl transition duration-300">
+                    <div class="p-8 flex-grow">
+                        <div class="w-14 h-14 bg-indigo-100 rounded-lg flex items-center justify-center mb-6">
+                            <i class="fa-solid fa-magnet text-3xl text-indigo-600"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold mb-3 text-slate-800">Data Capture & Correlation</h2>
+                        <p class="text-slate-600 mb-4">Gathering raw data across multiple sources and identifying relationships to uncover hidden patterns.</p>
+                        <ul class="space-y-2 text-sm text-slate-500 mb-6 font-medium">
+                            <li><i class="fa-solid fa-check text-indigo-500 mr-2"></i> Transactional & Sensor Data</li>
+                            <li><i class="fa-solid fa-check text-indigo-500 mr-2"></i> Database Management Systems (DBMS)</li>
+                            <li><i class="fa-solid fa-check text-indigo-500 mr-2"></i> Statistical & Machine Learning correlations</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 p-4 border-t border-slate-100 rounded-b-2xl">
+                        <div class="flex gap-3">
+                            <button onclick="openBriefing('capture-details')" class="flex-1 bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 py-2.5 rounded-lg text-sm font-bold transition flex items-center justify-center btn-hover-scale"><i class="fa-solid fa-book-open mr-2 text-indigo-500"></i> Details</button>
+                            <button onclick="openBriefing('capture-usecase')" class="flex-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-800 border border-indigo-200 py-2.5 rounded-lg text-sm font-bold transition flex items-center justify-center btn-hover-scale"><i class="fa-solid fa-briefcase text-indigo-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 2: Meaningful Reporting -->
+                <div class="bg-white rounded-2xl shadow-lg border-t-4 border-emerald-500 flex flex-col hover:shadow-xl transition duration-300">
+                    <div class="p-8 flex-grow">
+                        <div class="w-14 h-14 bg-emerald-100 rounded-lg flex items-center justify-center mb-6">
+                            <i class="fa-solid fa-chart-pie text-3xl text-emerald-600"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold mb-3 text-slate-800">Meaningful Reporting</h2>
+                        <p class="text-slate-600 mb-4">Presenting data analysis clearly and contextually to ensure insights are actionable and aligned with goals.</p>
+                        <ul class="space-y-2 text-sm text-slate-500 mb-6 font-medium">
+                            <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i> Clarity and Relevance</li>
+                            <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i> Data Visualization tools</li>
+                            <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i> Tailoring reports for stakeholders</li>
+                        </ul>
+                    </div>
+                     <div class="bg-slate-50 p-4 border-t border-slate-100 rounded-b-2xl">
+                        <div class="flex gap-3">
+                            <button onclick="openBriefing('reporting-details')" class="flex-1 bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 py-2.5 rounded-lg text-sm font-bold transition flex items-center justify-center btn-hover-scale"><i class="fa-solid fa-book-open mr-2 text-emerald-500"></i> Details</button>
+                            <button onclick="openBriefing('reporting-usecase')" class="flex-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 py-2.5 rounded-lg text-sm font-bold transition flex items-center justify-center btn-hover-scale"><i class="fa-solid fa-briefcase text-emerald-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 3: Data Monetization -->
+                <div class="bg-white rounded-2xl shadow-lg border-t-4 border-amber-500 flex flex-col hover:shadow-xl transition duration-300">
+                    <div class="p-8 flex-grow">
+                        <div class="w-14 h-14 bg-amber-100 rounded-lg flex items-center justify-center mb-6">
+                            <i class="fa-solid fa-sack-dollar text-3xl text-amber-600"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold mb-3 text-slate-800">Data Monetization</h2>
+                        <p class="text-slate-600 mb-4">Generating economic value from data through direct sales or indirect operational improvements.</p>
+                        <ul class="space-y-2 text-sm text-slate-500 mb-6 font-medium">
+                            <li><i class="fa-solid fa-check text-amber-500 mr-2"></i> Direct: Selling & Licensing Data</li>
+                            <li><i class="fa-solid fa-check text-amber-500 mr-2"></i> Indirect: Enhancing Operations</li>
+                            <li><i class="fa-solid fa-check text-amber-500 mr-2"></i> Ethics and Privacy Compliance</li>
+                        </ul>
+                    </div>
+                     <div class="bg-slate-50 p-4 border-t border-slate-100 rounded-b-2xl">
+                        <div class="flex gap-3">
+                            <button onclick="openBriefing('monetization-details')" class="flex-1 bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 py-2.5 rounded-lg text-sm font-bold transition flex items-center justify-center btn-hover-scale"><i class="fa-solid fa-book-open mr-2 text-amber-500"></i> Details</button>
+                            <button onclick="openBriefing('monetization-usecase')" class="flex-1 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 py-2.5 rounded-lg text-sm font-bold transition flex items-center justify-center btn-hover-scale"><i class="fa-solid fa-briefcase text-amber-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 4: Analytics & Big Data -->
+                <div class="bg-white rounded-2xl shadow-lg border-t-4 border-rose-500 flex flex-col hover:shadow-xl transition duration-300">
+                    <div class="p-8 flex-grow">
+                        <div class="w-14 h-14 bg-rose-100 rounded-lg flex items-center justify-center mb-6">
+                            <i class="fa-solid fa-network-wired text-3xl text-rose-600"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold mb-3 text-slate-800">Analytics & Big Data</h2>
+                        <p class="text-slate-600 mb-4">The scientific process of examining raw data, and handling datasets too massive for traditional tools.</p>
+                        <ul class="space-y-2 text-sm text-slate-500 mb-6 font-medium">
+                            <li><i class="fa-solid fa-check text-rose-500 mr-2"></i> 6-Step Analytics Process</li>
+                            <li><i class="fa-solid fa-check text-rose-500 mr-2"></i> Descriptive to Cognitive Analytics</li>
+                            <li><i class="fa-solid fa-check text-rose-500 mr-2"></i> The 5 V's of Big Data</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 p-4 border-t border-slate-100 rounded-b-2xl">
+                        <div class="flex gap-3">
+                            <button onclick="openBriefing('analytics-details')" class="flex-1 bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 py-2.5 rounded-lg text-sm font-bold transition flex items-center justify-center btn-hover-scale"><i class="fa-solid fa-book-open mr-2 text-rose-500"></i> Details</button>
+                            <button onclick="openBriefing('analytics-usecase')" class="flex-1 bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-200 py-2.5 rounded-lg text-sm font-bold transition flex items-center justify-center btn-hover-scale"><i class="fa-solid fa-briefcase text-rose-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-12 flex justify-center">
+                <button onclick="switchTab('activity')" class="bg-blue-600 text-white px-10 py-4 rounded-xl font-bold text-lg hover:bg-blue-500 shadow-xl transition transform hover:-translate-y-1">Begin Lab Activities <i class="fa-solid fa-arrow-right ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- LAB ACTIVITY SECTION -->
+        <div id="activity-section" class="tab-content no-print">
+            <div class="text-center mb-10">
+                <h1 class="text-3xl md:text-5xl font-extrabold text-slate-900 mb-4">Data Mastery Labs</h1>
+                <p class="text-lg text-slate-600 max-w-3xl mx-auto">Complete all 8 interactive scenarios across the 4 core concepts to demonstrate your understanding of business data utilization.</p>
+            </div>
+
+            <!-- Concept 1: Capture & Correlation -->
+            <div class="mb-12">
+                <h2 class="text-2xl font-bold text-indigo-700 border-b-2 border-indigo-200 pb-2 mb-6"><i class="fa-solid fa-magnet mr-2"></i>Concept 1: Data Capture & Correlation</h2>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Lab 1A -->
+                    <div class="bg-white p-6 rounded-2xl shadow-md border border-slate-200">
+                        <h3 class="text-lg font-bold mb-2 text-slate-800">Lab 1A: Data Source Sorter</h3>
+                        <p class="text-sm text-slate-600 mb-4">Drag the data example to the correct collection method.</p>
+                        
+                        <div class="flex flex-wrap gap-2 mb-6 min-h-[50px]" id="lab1-items">
+                            <div class="draggable-item px-3 py-1 bg-indigo-100 border border-indigo-300 rounded text-sm font-semibold" draggable="true" data-type="trans">Point of Sale Receipt</div>
+                            <div class="draggable-item px-3 py-1 bg-indigo-100 border border-indigo-300 rounded text-sm font-semibold" draggable="true" data-type="sensor">Smart Thermostat Logs</div>
+                            <div class="draggable-item px-3 py-1 bg-indigo-100 border border-indigo-300 rounded text-sm font-semibold" draggable="true" data-type="survey">Customer Feedback Form</div>
+                            <div class="draggable-item px-3 py-1 bg-indigo-100 border border-indigo-300 rounded text-sm font-semibold" draggable="true" data-type="social">Twitter Mentions</div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2">
+                            <div class="dropzone border-2 border-dashed border-slate-300 bg-slate-50 rounded p-2 min-h-[80px] flex flex-col items-center" data-target="trans"><span class="text-xs font-bold text-slate-500 mb-1">Transactional</span></div>
+                            <div class="dropzone border-2 border-dashed border-slate-300 bg-slate-50 rounded p-2 min-h-[80px] flex flex-col items-center" data-target="sensor"><span class="text-xs font-bold text-slate-500 mb-1">Sensor</span></div>
+                            <div class="dropzone border-2 border-dashed border-slate-300 bg-slate-50 rounded p-2 min-h-[80px] flex flex-col items-center" data-target="survey"><span class="text-xs font-bold text-slate-500 mb-1">Survey</span></div>
+                            <div class="dropzone border-2 border-dashed border-slate-300 bg-slate-50 rounded p-2 min-h-[80px] flex flex-col items-center" data-target="social"><span class="text-xs font-bold text-slate-500 mb-1">Social Media</span></div>
+                        </div>
+                        <div id="lab1-feedback" class="text-center font-bold mt-3 h-5 text-sm"></div>
+                    </div>
+
+                    <!-- Lab 1B -->
+                    <div class="bg-white p-6 rounded-2xl shadow-md border border-slate-200">
+                        <h3 class="text-lg font-bold mb-2 text-slate-800">Lab 1B: Correlate the Insight</h3>
+                        <p class="text-sm text-slate-600 mb-4">Click a Data Source (Left), then click its logical Business Insight (Right) to correlate them.</p>
+                        
+                        <div class="flex justify-between gap-4">
+                            <div class="flex-1 space-y-2" id="lab2-left">
+                                <div class="pair-card border-2 border-slate-200 p-2 text-xs font-bold text-center rounded bg-slate-50" data-pair="1">Historical Sales Drops</div>
+                                <div class="pair-card border-2 border-slate-200 p-2 text-xs font-bold text-center rounded bg-slate-50" data-pair="2">User Age & Location</div>
+                                <div class="pair-card border-2 border-slate-200 p-2 text-xs font-bold text-center rounded bg-slate-50" data-pair="3">Machine Vibration Data</div>
+                            </div>
+                            <div class="flex-1 space-y-2" id="lab2-right">
+                                <div class="pair-card border-2 border-slate-200 p-2 text-xs font-bold text-center rounded bg-slate-50" data-pair="3">Predictive Maintenance</div>
+                                <div class="pair-card border-2 border-slate-200 p-2 text-xs font-bold text-center rounded bg-slate-50" data-pair="1">Forecast Future Demand</div>
+                                <div class="pair-card border-2 border-slate-200 p-2 text-xs font-bold text-center rounded bg-slate-50" data-pair="2">Targeted Ad Campaigns</div>
+                            </div>
+                        </div>
+                        <div id="lab2-feedback" class="text-center font-bold mt-3 h-5 text-sm"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Concept 2: Meaningful Reporting -->
+            <div class="mb-12">
+                <h2 class="text-2xl font-bold text-emerald-700 border-b-2 border-emerald-200 pb-2 mb-6"><i class="fa-solid fa-chart-pie mr-2"></i>Concept 2: Meaningful Reporting</h2>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Lab 2A -->
+                    <div class="bg-white p-6 rounded-2xl shadow-md border border-slate-200">
+                        <h3 class="text-lg font-bold mb-2 text-slate-800">Lab 2A: Visualization Selection</h3>
+                        <p class="text-sm text-slate-600 mb-4">Which chart is best for showing the <strong class="text-emerald-600">percentage breakdown of market share</strong>?</p>
+                        
+                        <div class="grid grid-cols-3 gap-3 mb-4">
+                            <button class="border-2 border-slate-300 rounded p-4 hover:bg-emerald-50 hover:border-emerald-400 flex flex-col items-center transition" onclick="checkLab3(false)">
+                                <i class="fa-solid fa-chart-line text-3xl text-slate-500 mb-2"></i><span class="text-xs font-bold">Line Chart</span>
+                            </button>
+                            <button class="border-2 border-slate-300 rounded p-4 hover:bg-emerald-50 hover:border-emerald-400 flex flex-col items-center transition" onclick="checkLab3(true)">
+                                <i class="fa-solid fa-chart-pie text-3xl text-slate-500 mb-2"></i><span class="text-xs font-bold">Pie Chart</span>
+                            </button>
+                            <button class="border-2 border-slate-300 rounded p-4 hover:bg-emerald-50 hover:border-emerald-400 flex flex-col items-center transition" onclick="checkLab3(false)">
+                                <i class="fa-solid fa-chart-column text-3xl text-slate-500 mb-2"></i><span class="text-xs font-bold">Bar Chart</span>
+                            </button>
+                        </div>
+                        <div id="lab3-feedback" class="text-center font-bold h-5 text-sm"></div>
+                    </div>
+
+                    <!-- Lab 2B -->
+                    <div class="bg-white p-6 rounded-2xl shadow-md border border-slate-200 relative">
+                        <h3 class="text-lg font-bold mb-2 text-slate-800">Lab 2B: Audit the Report</h3>
+                        <p class="text-sm text-slate-600 mb-4">This report lacks context and clarity. Click the <strong class="text-red-500">3 areas</strong> that are missing crucial information.</p>
+                        
+                        <div class="relative bg-slate-100 border border-slate-300 h-40 rounded flex items-center justify-center p-4">
+                            <!-- Hotspots -->
+                            <div class="hotspot w-32 h-8 top-2 left-4 flex items-center justify-center text-xs text-transparent" onclick="findHotspot(this, 'Title')" title="Missing Title">Missing Title</div>
+                            <div class="hotspot w-12 h-20 bottom-4 left-4 flex items-center justify-center text-xs text-transparent" onclick="findHotspot(this, 'Y-Axis')" title="Missing Y-Axis Label">Y-Axis</div>
+                            <div class="hotspot w-40 h-10 bottom-2 right-4 flex items-center justify-center text-xs text-transparent" onclick="findHotspot(this, 'Context Note')" title="Missing Context Note">Context Note</div>
+                            
+                            <!-- Fake Graph -->
+                            <div class="w-full h-full border-l-2 border-b-2 border-slate-800 relative ml-8 mb-6">
+                                <div class="absolute bottom-0 left-4 w-6 bg-blue-400 h-1/2"></div>
+                                <div class="absolute bottom-0 left-16 w-6 bg-blue-500 h-3/4"></div>
+                                <div class="absolute bottom-0 left-28 w-6 bg-blue-600 h-full"></div>
+                            </div>
+                        </div>
+                        <div id="lab4-feedback" class="text-center font-bold mt-3 h-5 text-sm text-slate-500">Found: 0 / 3</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Concept 3: Data Monetization -->
+            <div class="mb-12">
+                <h2 class="text-2xl font-bold text-amber-700 border-b-2 border-amber-200 pb-2 mb-6"><i class="fa-solid fa-sack-dollar mr-2"></i>Concept 3: Data Monetization</h2>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Lab 3A -->
+                    <div class="bg-white p-6 rounded-2xl shadow-md border border-slate-200">
+                        <h3 class="text-lg font-bold mb-2 text-slate-800">Lab 3A: Monetization Strategy</h3>
+                        <p class="text-sm text-slate-600 mb-4">Drag the business action into Direct or Indirect Monetization.</p>
+                        
+                        <div class="flex flex-wrap gap-2 mb-4 min-h-[40px]" id="lab5-items">
+                            <div class="draggable-item px-2 py-1 bg-amber-100 border border-amber-300 rounded text-xs font-semibold" draggable="true" data-type="direct">Selling Data to Brokers</div>
+                            <div class="draggable-item px-2 py-1 bg-amber-100 border border-amber-300 rounded text-xs font-semibold" draggable="true" data-type="indirect">Improving Delivery Routes</div>
+                            <div class="draggable-item px-2 py-1 bg-amber-100 border border-amber-300 rounded text-xs font-semibold" draggable="true" data-type="direct">Data Subscription Model</div>
+                            <div class="draggable-item px-2 py-1 bg-amber-100 border border-amber-300 rounded text-xs font-semibold" draggable="true" data-type="indirect">Risk Management</div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="dropzone border-2 border-dashed border-amber-400 bg-amber-50 rounded p-2 min-h-[100px]" data-target="direct">
+                                <h4 class="text-xs font-bold text-center border-b border-amber-200 pb-1 mb-2">Direct</h4>
+                            </div>
+                            <div class="dropzone border-2 border-dashed border-orange-400 bg-orange-50 rounded p-2 min-h-[100px]" data-target="indirect">
+                                <h4 class="text-xs font-bold text-center border-b border-orange-200 pb-1 mb-2">Indirect</h4>
+                            </div>
+                        </div>
+                        <div id="lab5-feedback" class="text-center font-bold mt-2 h-5 text-sm"></div>
+                    </div>
+
+                    <!-- Lab 3B -->
+                    <div class="bg-white p-6 rounded-2xl shadow-md border border-slate-200">
+                        <h3 class="text-lg font-bold mb-2 text-slate-800">Lab 3B: Value Optimization</h3>
+                        <p class="text-sm text-slate-600 mb-4">Adjust Data Quality and Market Demand to reach a targeted <strong class="text-green-600">$50,000</strong> Value Projection.</p>
+                        
+                        <div class="space-y-4 mb-4">
+                            <div>
+                                <label class="text-xs font-bold text-slate-700 flex justify-between"><span>Data Quality (Accuracy)</span> <span id="val-q">50%</span></label>
+                                <input type="range" id="slider-quality" min="0" max="100" value="50" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer" oninput="calcROI()">
+                            </div>
+                            <div>
+                                <label class="text-xs font-bold text-slate-700 flex justify-between"><span>Market Demand</span> <span id="val-d">50%</span></label>
+                                <input type="range" id="slider-demand" min="0" max="100" value="50" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer" oninput="calcROI()">
+                            </div>
+                        </div>
+                        
+                        <div class="bg-slate-800 text-white p-4 rounded-lg text-center shadow-inner">
+                            <div class="text-xs text-slate-400 uppercase tracking-widest">Projected Value</div>
+                            <div id="roi-output" class="text-2xl font-bold text-green-400">$12,500</div>
+                        </div>
+                        <div id="lab6-feedback" class="text-center font-bold mt-2 h-5 text-sm"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Concept 4: Analytics & Big Data -->
+            <div class="mb-12">
+                <h2 class="text-2xl font-bold text-rose-700 border-b-2 border-rose-200 pb-2 mb-6"><i class="fa-solid fa-network-wired mr-2"></i>Concept 4: Analytics & Big Data</h2>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Lab 4A -->
+                    <div class="bg-white p-6 rounded-2xl shadow-md border border-slate-200">
+                        <h3 class="text-lg font-bold mb-2 text-slate-800">Lab 4A: Analytics Process</h3>
+                        <p class="text-sm text-slate-600 mb-4">Click the steps in the correct numerical order (1 through 6).</p>
+                        
+                        <div class="grid grid-cols-2 gap-2 mb-4" id="lab7-grid">
+                            <button class="border border-slate-300 bg-slate-50 hover:bg-rose-50 p-2 rounded text-xs font-bold transition" onclick="stepOrder(this, 4)">Data Analysis</button>
+                            <button class="border border-slate-300 bg-slate-50 hover:bg-rose-50 p-2 rounded text-xs font-bold transition" onclick="stepOrder(this, 1)">Data Collection</button>
+                            <button class="border border-slate-300 bg-slate-50 hover:bg-rose-50 p-2 rounded text-xs font-bold transition" onclick="stepOrder(this, 6)">Decision-Making</button>
+                            <button class="border border-slate-300 bg-slate-50 hover:bg-rose-50 p-2 rounded text-xs font-bold transition" onclick="stepOrder(this, 3)">Data Transformation</button>
+                            <button class="border border-slate-300 bg-slate-50 hover:bg-rose-50 p-2 rounded text-xs font-bold transition" onclick="stepOrder(this, 5)">Reporting</button>
+                            <button class="border border-slate-300 bg-slate-50 hover:bg-rose-50 p-2 rounded text-xs font-bold transition" onclick="stepOrder(this, 2)">Data Cleaning</button>
+                        </div>
+                        <div class="flex gap-1 justify-center mb-2" id="lab7-tracker">
+                            <!-- filled by JS -->
+                        </div>
+                        <div id="lab7-feedback" class="text-center font-bold h-5 text-sm"></div>
+                    </div>
+
+                    <!-- Lab 4B -->
+                    <div class="bg-white p-6 rounded-2xl shadow-md border border-slate-200">
+                        <h3 class="text-lg font-bold mb-2 text-slate-800">Lab 4B: Big Data's 5 V's</h3>
+                        <p class="text-sm text-slate-600 mb-4">Select the correct "V" term for each definition.</p>
+                        
+                        <div class="space-y-3 mb-4">
+                            <div class="flex items-center gap-2">
+                                <select class="border border-slate-300 rounded p-1 text-xs font-bold w-24 bg-slate-50" onchange="checkLab8()"><option value="">Select...</option><option value="volume">Volume</option><option value="velocity">Velocity</option><option value="variety">Variety</option><option value="veracity">Veracity</option><option value="value">Value</option></select>
+                                <span class="text-xs text-slate-700">= Speed of generation</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <select class="border border-slate-300 rounded p-1 text-xs font-bold w-24 bg-slate-50" onchange="checkLab8()"><option value="">Select...</option><option value="volume">Volume</option><option value="velocity">Velocity</option><option value="variety">Variety</option><option value="veracity">Veracity</option><option value="value">Value</option></select>
+                                <span class="text-xs text-slate-700">= Trustworthiness/Accuracy</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <select class="border border-slate-300 rounded p-1 text-xs font-bold w-24 bg-slate-50" onchange="checkLab8()"><option value="">Select...</option><option value="volume">Volume</option><option value="velocity">Velocity</option><option value="variety">Variety</option><option value="veracity">Veracity</option><option value="value">Value</option></select>
+                                <span class="text-xs text-slate-700">= Massive amounts of data</span>
+                            </div>
+                        </div>
+                        <div id="lab8-feedback" class="text-center font-bold h-5 text-sm"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-10">
+                <button onclick="switchTab('quiz')" class="bg-blue-600 text-white px-10 py-4 rounded-xl font-bold text-lg hover:bg-blue-500 shadow-xl transition transform hover:-translate-y-1">Take the Mastery Quiz <i class="fa-solid fa-clipboard-check ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- QUIZ SECTION -->
+        <div id="quiz-section" class="tab-content no-print">
+            <div class="bg-white p-6 sm:p-12 rounded-3xl shadow-2xl max-w-5xl mx-auto">
+                <div class="text-center mb-10 border-b border-slate-200 pb-6">
+                    <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-3">Knowledge Assessment</h1>
+                    <p class="text-slate-600">Score 90% or higher (18/20) to earn your Certificate and unlock the Data Miner retro game!</p>
+                </div>
+
+                <div id="quiz-container" class="space-y-6">
+                    <!-- Questions injected via JavaScript -->
+                </div>
+
+                <div class="mt-12 text-center border-t border-slate-200 pt-8 flex flex-col sm:flex-row justify-center items-center gap-4">
+                    <button id="submit-quiz-btn" onclick="gradeQuiz()" class="bg-indigo-600 text-white px-10 py-4 rounded-xl font-bold text-lg hover:bg-indigo-700 shadow-xl transition w-full sm:w-auto">Submit Assessment</button>
+                    <button id="proceed-game-btn" onclick="switchTab('game')" class="hidden bg-amber-500 text-slate-900 px-10 py-4 rounded-xl font-bold text-lg hover:bg-amber-400 shadow-xl transition w-full sm:w-auto">Play Data Miner <i class="fa-solid fa-gamepad ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RETRO GAME SECTION -->
+        <div id="game-section" class="tab-content no-print">
+            <div class="bg-slate-900 p-6 sm:p-8 rounded-3xl shadow-2xl max-w-4xl mx-auto border-4 border-slate-800 flex flex-col items-center">
+                <div class="text-center mb-6 w-full">
+                    <h1 class="text-3xl md:text-5xl text-amber-400 mb-3 retro-font tracking-widest text-shadow-sm">DATA MINER</h1>
+                    <p class="text-slate-300 text-sm font-medium">Click to drop the extraction claw! Collect valuable data packets (Blue/Gold). Avoid Corrupt Bugs (Red) or you'll lose a system life!</p>
+                </div>
+                
+                <div class="flex justify-between items-center w-full max-w-[800px] mb-3 px-4 text-white retro-font text-xs sm:text-sm">
+                    <div>VALUE: $<span id="game-score" class="text-green-400">0</span></div>
+                    <div>LIVES: <span id="game-lives" class="text-red-500">3</span></div>
+                </div>
+
+                <div class="relative flex justify-center w-full max-w-[800px]">
+                    <!-- Canvas -->
+                    <canvas id="game-canvas" width="800" height="500" class="w-full bg-slate-950 border-4 border-slate-700 rounded shadow-2xl"></canvas>
+                    
+                    <!-- Start Overlay -->
+                    <div id="game-overlay" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-80 rounded z-10">
+                        <button id="start-game-btn" class="bg-amber-500 hover:bg-amber-400 text-slate-900 retro-font py-4 px-8 rounded text-sm sm:text-base border-4 border-amber-700 uppercase transform transition hover:scale-105">Initialize Claw</button>
+                    </div>
+                </div>
+
+                <div class="mt-8 text-center w-full border-t border-slate-800 pt-6">
+                    <button onclick="switchTab('cert')" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-500 shadow-lg transition w-full sm:w-auto">Claim Certificate <i class="fa-solid fa-award ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CERTIFICATE SECTION -->
+        <div id="cert-section" class="tab-content">
+            <div class="max-w-5xl mx-auto">
+                <div class="bg-white p-8 rounded-2xl shadow-lg mb-8 no-print text-center border border-slate-200">
+                    <h2 class="text-3xl font-extrabold text-blue-600 mb-3">Achievement Unlocked! 🎉</h2>
+                    <p class="text-slate-600 mb-6 text-lg">You have mastered the concepts of Data in Business.</p>
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+                        <input type="text" id="student-name-input" value="Student" placeholder="Enter your first name" class="border-2 border-slate-300 rounded-lg px-4 py-3 w-full md:w-72 focus:border-blue-500 focus:outline-none font-bold text-slate-700">
+                        <button onclick="updateCertName()" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition font-bold shadow-md">Apply Name</button>
+                        <button id="download-btn" onclick="downloadCert()" class="bg-slate-800 text-white px-6 py-3 rounded-lg hover:bg-slate-900 transition font-bold flex items-center justify-center shadow-md">
+                            <i class="fa-solid fa-download mr-2"></i>Save as PNG
+                        </button>
+                    </div>
+                </div>
+
+                <div class="cert-preview-container print:p-0 print:bg-white">
+                    <div id="certificate">
+                        <div class="gold-seal">
+                            <span class="seal-text text-sm">Official<br>Mastery<br>Award</span>
+                        </div>
+
+                        <div class="relative z-20 w-full h-full flex flex-col pt-16 px-20">
+                            <h1 class="text-blue-900 text-6xl font-serif font-bold tracking-widest uppercase mb-4 text-center border-b-2 border-blue-900 pb-6">Certificate of Mastery</h1>
+                            
+                            <p class="text-2xl font-body text-slate-700 text-center mt-12 mb-6">This certifies that</p>
+                            
+                            <h3 id="cert-student-name" class="text-6xl text-slate-900 font-script text-center mb-8">Student</h3>
+                            
+                            <p class="text-xl font-body text-slate-700 text-center leading-relaxed px-10 mb-16">
+                                Has successfully demonstrated technical proficiency and strategic understanding in the assessment for<br>
+                                <strong class="text-2xl text-blue-900 block mt-6 mb-2 font-serif">Unit 06 Section 5.1.2</strong>
+                                <strong class="text-3xl text-slate-900 block font-serif italic">Digital Products and Business Decisions</strong>
+                            </p>
+                            
+                            <div class="flex justify-between items-end mt-auto mb-16 px-12">
+                                <div class="w-64">
+                                    <div class="border-b border-slate-800 mb-2 h-16 flex items-end justify-center">
+                                        <span class="font-script text-5xl text-blue-900 opacity-90 transform -rotate-2">Instructor</span>
+                                    </div>
+                                    <p class="font-serif text-lg text-slate-700 text-center uppercase tracking-widest">Authorized By</p>
+                                </div>
+                                
+                                <div class="w-64">
+                                    <div class="border-b border-slate-800 mb-2 h-16 flex items-end justify-center">
+                                        <p id="cert-date" class="font-body text-2xl text-slate-900 pb-1">Date Here</p>
+                                    </div>
+                                    <p class="font-serif text-lg text-slate-700 text-center uppercase tracking-widest">Date Achieved</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Alerts Modal -->
+    <div id="custom-modal" class="fixed inset-0 bg-slate-900 bg-opacity-75 z-[100] hidden flex justify-center items-center backdrop-blur-sm p-4">
+        <div class="bg-white p-8 rounded-3xl shadow-2xl max-w-md w-full transform transition-all text-center border-t-8 border-blue-600">
+            <div id="modal-icon" class="text-6xl mb-4"></div>
+            <h3 id="modal-title" class="text-2xl font-extrabold mb-3 text-slate-900"></h3>
+            <p id="modal-msg" class="text-slate-600 mb-8 font-medium"></p>
+            <button onclick="closeModal()" class="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-700 transition w-full shadow-lg">Understood</button>
+        </div>
+    </div>
+
+    <!-- Briefing Content Modal -->
+    <div id="briefing-modal" class="fixed inset-0 bg-slate-900 bg-opacity-80 z-[120] hidden flex justify-center items-center backdrop-blur-md p-4 sm:p-8">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-6xl w-full h-[90vh] flex flex-col overflow-hidden border-4 border-blue-500">
+            <div class="p-6 md:p-8 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+                <div class="flex items-center gap-4">
+                    <div id="briefing-modal-icon" class="text-4xl"></div>
+                    <h3 id="briefing-modal-title" class="text-2xl md:text-3xl font-extrabold text-slate-900"></h3>
+                </div>
+                <button onclick="closeBriefing()" class="text-slate-400 hover:text-red-500 transition text-5xl leading-none">&times;</button>
+            </div>
+            <div id="briefing-modal-content" class="p-6 md:p-10 overflow-y-auto flex-grow text-slate-700 text-lg leading-relaxed bg-white custom-scrollbar">
+                <!-- Injected via JS -->
+            </div>
+            <div class="p-6 border-t border-slate-200 bg-slate-50 flex justify-end">
+                <button onclick="closeBriefing()" class="bg-blue-600 text-white px-10 py-3 rounded-xl font-bold text-lg hover:bg-blue-700 transition shadow-lg">Close Details</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Content Data
+        const briefingData = {
+            'capture-details': {
+                title: 'Data Capture & Correlation',
+                icon: '<i class="fa-solid fa-magnet text-indigo-600"></i>',
+                html: `
+                    <p class="mb-5">In the modern digital economy, data is widely considered the most valuable asset a company can possess. Just as oil fueled the industrial revolution, data fuels the information age. Businesses rely on continuous streams of data to gain a strategic advantage, allowing them to make informed, evidence-based decisions rather than relying on intuition. The first crucial step in this lifecycle is Data Capture and Collection.</p>
+                    
+                    <p class="mb-5"><strong>Data Capture and Collection</strong> is the deliberate process of gathering raw data from various internal and external sources. Before a company can analyze anything, it must decide specifically what data it needs to collect, how it will securely collect it, and how it will ensure the accuracy and completeness of that information. Unstructured, random data is useless; targeted, clean data is invaluable.</p>
+                    
+                    <p class="mb-5">Businesses utilize several primary methods to capture this data. <strong>Transactional Data</strong> is captured automatically during point-of-sale customer purchases, tracking exactly what was bought, when, and for how much. <strong>Sensor Data</strong> is collected continuously from physical devices (IoT), tracking everything from a delivery truck's GPS location to the temperature of a smart thermostat. <strong>Survey Data</strong> is gathered directly from customer feedback forms, and <strong>Social Media Data</strong> aggregates mentions, likes, and trends from various platforms.</p>
+                    
+                    <p class="mb-5">To handle this influx of information, companies employ robust tools. Database Management Systems (DBMS) are used to organize and store structured data securely. For massive, disparate datasets, companies build Data Warehouses that aggregate data from multiple departments into one central repository. Additionally, Application Programming Interfaces (APIs) are heavily utilized to facilitate automated data integration, pulling external data (like live weather feeds) directly into the company's internal systems.</p>
+                    
+                    <p class="mb-5">Best practices in collection dictate that data must be heavily validated for accuracy and cleaned before storage. The data must also be standardized using consistent formats (e.g., ensuring all dates are YYYY-MM-DD). Crucially, collection must adhere strictly to legal compliance and ethical privacy guidelines, such as GDPR or CCPA, ensuring user consent is obtained.</p>
+                    
+                    <p class="mb-5">Once collected, the true value emerges through <strong>Data Correlation</strong>. This is the process of identifying hidden relationships and patterns between completely different data sets. Analysts use statistical analysis to measure the strength of these relationships, data visualization to physically see trends, and advanced Machine Learning algorithms to uncover incredibly complex patterns a human might miss.</p>
+                    
+                    <p>The applications of data correlation are massive. By correlating purchasing behavior with demographics, companies gain deep <em>Customer Insights</em> to target advertising. By correlating machine maintenance logs with output speed, they improve <em>Operational Efficiency</em>. Ultimately, connecting these data points allows for Predictive Analysis, letting businesses forecast future market demand based on historical correlation.</p>
+                `
+            },
+            'capture-usecase': {
+                title: 'Capture & Correlation: Use Cases',
+                icon: '<i class="fa-solid fa-briefcase text-indigo-600"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-indigo-800 mb-2 border-b-2 border-indigo-100 pb-1">Case 1: Global Retail Chain</h4>
+                        <p class="mb-2">A massive retail chain needs to understand its customers better to increase sales during the holiday season.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Capture):</strong> The retailer uses its point-of-sale (POS) systems to capture <em>transactional data</em>, recording every item purchased, while simultaneously using <em>sensor data</em> from door counters to track foot traffic in physical stores.</li>
+                            <li><strong>Example 2 (Correlation):</strong> Analysts correlate the foot traffic sensor data with local weather API data, discovering that foot traffic drops by 40% when it rains, prompting them to automatically trigger targeted online ads for umbrellas to local users on rainy days.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-indigo-800 mb-2 border-b-2 border-indigo-100 pb-1">Case 2: Industrial Manufacturing Plant</h4>
+                        <p class="mb-2">A factory producing automotive parts wants to reduce the amount of money lost to unexpected machine breakdowns.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Capture):</strong> The factory installs IoT sensors on all robotic assembly arms, capturing thousands of data points per minute regarding motor temperature, vibration frequencies, and power consumption.</li>
+                            <li><strong>Example 2 (Correlation):</strong> Using machine learning, the company correlates high vibration frequencies with imminent motor failure. This <em>predictive analysis</em> allows them to schedule preventative maintenance before the machine breaks, saving millions in downtime.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-2">Concept: Capturing Analytics</p>
+                            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&h=350" alt="Data dashboards" class="w-full h-auto rounded-lg shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-2">In Use: IoT Sensors</p>
+                            <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=600&h=350" alt="Robotic arm manufacturing" class="w-full h-auto rounded-lg shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'reporting-details': {
+                title: 'Meaningful Reporting',
+                icon: '<i class="fa-solid fa-chart-pie text-emerald-600"></i>',
+                html: `
+                    <p class="mb-5">Having terabytes of correlated data is entirely useless if the leadership team cannot understand it. This is where the concept of <strong>Meaningful Reporting</strong> becomes critical. Meaningful reporting is the deliberate process of presenting complex data and analysis in a manner that is clear, actionable, and perfectly aligned with the overarching objectives of the business.</p>
+                    
+                    <p class="mb-5">The first core component of meaningful reporting is <em>Clarity</em>. A report should not be a dense dump of spreadsheets and raw numbers. It must utilize clear, concise language, stripped of unnecessary technical jargon, so that executives with business backgrounds can immediately grasp the technical realities without needing an IT dictionary.</p>
+                    
+                    <p class="mb-5">The second component is <em>Relevance</em>. Analysts must filter out the "noise." While an analyst might have found fifty interesting data points, a meaningful report focuses strictly on the insights that are directly relevant to the specific business goals currently being discussed. If the goal is reducing customer churn, the report should not spend pages discussing employee server login times.</p>
+                    
+                    <p class="mb-5"><em>Visualization</em> is arguably the most impactful component. Human brains process visual imagery significantly faster than text. Using visual aids—like line graphs for trends over time, pie charts for market share, or heat maps for regional sales—makes abstract numbers comprehensible and allows stakeholders to instantly "see" the narrative the data is telling.</p>
+                    
+                    <p class="mb-5">However, visualization without <em>Context</em> is dangerous. Providing a chart that shows a 15% drop in sales is alarming, but meaningless on its own. Meaningful reporting provides the background necessary to understand the significance of the data. Noting that the 15% drop occurred during a massive industry-wide supply chain shortage contextualizes the loss, turning panic into strategic understanding.</p>
+                    
+                    <p class="mb-5">Best practices require analysts to tailor their reports. The Chief Financial Officer (CFO) needs a report heavily focused on ROI and operational costs, while the Chief Marketing Officer (CMO) needs the exact same data tailored to show customer acquisition costs and campaign engagement. One size does not fit all in reporting.</p>
+                    
+                    <p>Finally, a truly meaningful report doesn't just state facts; it provides <em>Actionable Insights</em>. It highlights key findings and explicitly recommends strategic steps the business should take next. This creates a continuous feedback loop where reports drive actions, those actions generate new data, and regular updates refine the strategy moving forward.</p>
+                `
+            },
+            'reporting-usecase': {
+                title: 'Meaningful Reporting: Use Cases',
+                icon: '<i class="fa-solid fa-briefcase text-emerald-600"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-emerald-800 mb-2 border-b-2 border-emerald-100 pb-1">Case 1: Executive Board Meeting</h4>
+                        <p class="mb-2">The CEO and Board of Directors meet quarterly to determine the high-level strategic direction of the company based on recent performance.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Visualization):</strong> The Data Analyst creates a streamlined, interactive digital dashboard. Instead of showing a 500-row spreadsheet of daily sales, they present a single bar chart showing year-over-year growth, allowing the CEO to instantly grasp the company's financial health.</li>
+                            <li><strong>Example 2 (Context):</strong> The report shows a massive spike in server costs. To provide context, the analyst includes a brief note explaining that this spike correlates directly with a wildly successful viral marketing campaign that temporarily tripled server traffic, proving the cost was justified.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-emerald-800 mb-2 border-b-2 border-emerald-100 pb-1">Case 2: Marketing Department Review</h4>
+                        <p class="mb-2">A marketing team needs to review the success of three different advertising campaigns to decide where to allocate next month's budget.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Relevance):</strong> The report strictly filters out irrelevant data (like website server uptime) and focuses entirely on relevant metrics: Click-Through Rate (CTR) and Customer Acquisition Cost (CAC) for each specific ad campaign.</li>
+                            <li><strong>Example 2 (Actionable Insights):</strong> Rather than just showing the numbers, the report concludes with a clear recommendation: "Campaign B yielded a 40% lower CAC; recommend shifting 75% of next month's budget entirely to Campaign B."</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-2">Concept: Visualizing Data</p>
+                            <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=600&h=350" alt="Graphs on a screen" class="w-full h-auto rounded-lg shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-2">In Use: Presenting Reports</p>
+                            <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=600&h=350" alt="Business presentation meeting" class="w-full h-auto rounded-lg shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'monetization-details': {
+                title: 'Data Monetization',
+                icon: '<i class="fa-solid fa-sack-dollar text-amber-600"></i>',
+                html: `
+                    <p class="mb-5">As companies accumulate massive reserves of information, the ultimate goal is <strong>Data Monetization</strong>—the process of actively generating economic value from that data. While collecting data has intrinsic costs (servers, analysts, security), monetization ensures that data acts as a profitable asset, creating new revenue streams or drastically reducing operational costs.</p>
+                    
+                    <p class="mb-5">Monetization strategies are divided into two distinct categories. The first is <strong>Direct Monetization</strong>. This occurs when a business utilizes data strictly to receive immediate, direct monetary gain. In this scenario, the data itself is the product being sold, rather than physical goods or services.</p>
+                    
+                    <p class="mb-5">Common methods of direct monetization include outright <em>Selling Data</em> to third-party data brokers or market research firms. Alternatively, companies might use <em>Data Licensing</em>, where they retain ownership of the data but charge other businesses a fee for limited access to it. Finally, companies can build <em>Subscription Models</em>, offering premium API access to their proprietary data feeds for a recurring monthly fee.</p>
+                    
+                    <p class="mb-5">The second category is <strong>Indirect Monetization</strong>. This strategy involves using data insights to fundamentally change one or more business processes with the expectation of positive financial outcomes down the line. Indirect monetization is often more lucrative long-term than simply selling raw data.</p>
+                    
+                    <p class="mb-5">Examples of indirect monetization include analyzing internal data to <em>Improve Business Operations</em> (e.g., optimizing supply chain routes to save millions in fuel), or leveraging data to create <em>Enhanced Customer Experiences</em> (e.g., personalized product recommendations that increase sales). It can also involve building strategic partnerships or utilizing data to enhance Risk Management and prevent costly fraud.</p>
+                    
+                    <p class="mb-5">However, monetization requires careful consideration. Foremost is <strong>Privacy and Compliance</strong>. Businesses must ensure they are adhering to data protection regulations (like GDPR) and have explicit user consent before selling any consumer data. A failure here can result in devastating lawsuits.</p>
+                    
+                    <p>Additionally, the value of data relies heavily on <strong>Data Quality</strong> and <strong>Ethics</strong>. Inaccurate data is worthless to buyers and dangerous for internal operations. Ethically, companies must be transparent about how data is used. Ultimately, successful monetization requires assessing true Market Demand—identifying if the data holds enough competitive value for someone to pay for it.</p>
+                `
+            },
+            'monetization-usecase': {
+                title: 'Monetization: Use Cases',
+                icon: '<i class="fa-solid fa-briefcase text-amber-600"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-amber-800 mb-2 border-b-2 border-amber-100 pb-1">Case 1: GPS Navigation Application</h4>
+                        <p class="mb-2">A free mobile app provides users with turn-by-turn driving directions, capturing massive amounts of location data in the process.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Direct Monetization):</strong> The app company anonymizes the aggregated location data (stripping user identities) and licenses it directly to city planners and real estate developers who pay large sums to understand traffic flow patterns.</li>
+                            <li><strong>Example 2 (Indirect Monetization):</strong> The app uses the aggregated speed data from its users to detect traffic jams in real-time. It uses this to improve its own routing algorithm, resulting in a better <em>customer experience</em> that attracts millions of new users, increasing their ad revenue.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-amber-800 mb-2 border-b-2 border-amber-100 pb-1">Case 2: Major Credit Card Provider</h4>
+                        <p class="mb-2">A financial institution processes millions of credit card transactions daily, holding incredibly valuable purchasing data.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Direct Monetization):</strong> The credit card company creates a subscription-based portal where partnered retail brands pay a monthly fee to access reports on macro-economic spending trends (e.g., "Are consumers spending more on dining out this quarter?").</li>
+                            <li><strong>Example 2 (Indirect Monetization):</strong> The company uses historical transaction data to train a machine learning model to detect unusual spending patterns. This acts as massive <em>Risk Management</em>, instantly blocking fraudulent charges and saving the company billions in liability.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-2">Concept: Value Generation</p>
+                            <img src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=600&h=350" alt="Digital currency and data" class="w-full h-auto rounded-lg shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-2">In Use: GPS Routing</p>
+                            <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=600&h=350" alt="Map on a mobile device" class="w-full h-auto rounded-lg shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'analytics-details': {
+                title: 'Analytics & Big Data',
+                icon: '<i class="fa-solid fa-network-wired text-rose-600"></i>',
+                html: `
+                    <p class="mb-5"><strong>Data Analytics</strong> is the rigorous science of examining raw data to draw concrete conclusions about that information. It represents the entire lifecycle of how data is transformed from random 1s and 0s into actionable business strategy. This discipline relies on specialized software, complex algorithms, and a methodical approach.</p>
+                    
+                    <p class="mb-5">The Analytics Process follows six strict steps. It begins with (1) <em>Data Collection</em>, gathering the raw material. This is immediately followed by (2) <em>Data Cleaning</em>, a critical phase where errors, duplicates, and corrupt files are scrubbed out to ensure accuracy. Next is (3) <em>Data Transformation</em>, where the clean data is converted and formatted into a structure suitable for analysis.</p>
+                    
+                    <p class="mb-5">Once prepared, (4) <em>Data Analysis</em> occurs, applying statistical techniques and models to the dataset. The results are then passed to (5) <em>Interpretation and Reporting</em>, where the findings are translated into human-readable visual reports. Finally, the process culminates in (6) <em>Decision-Making</em>, where leadership uses the insights to execute strategic business actions.</p>
+                    
+                    <p class="mb-5">Analytics comes in several types. <strong>Descriptive Analytics</strong> looks backward to summarize what happened (e.g., "Sales dropped 10%"). <strong>Diagnostic Analytics</strong> digs deeper to determine *why* it happened (e.g., "Sales dropped because a competitor lowered prices"). Moving forward, <strong>Predictive Analytics</strong> uses historical data to forecast future outcomes.</p>
+                    
+                    <p class="mb-5">At the highest level, <strong>Prescriptive Analytics</strong> doesn't just predict the future; it explicitly recommends actions to achieve desired outcomes (e.g., "Lower our prices by 5% to regain market share"). Finally, <strong>Cognitive Analytics</strong> utilizes Artificial Intelligence to simulate human thought, allowing systems to learn and adapt to changing data environments dynamically.</p>
+                    
+                    <p class="mb-5">When datasets become too massive for traditional databases like Excel or SQL to handle, it crosses into the realm of <strong>Big Data</strong>. Big Data is defined by the 5 V's: <em>Volume</em> (terabytes to petabytes of data), <em>Velocity</em> (data streaming in real-time), <em>Variety</em> (mixing text, video, sensors, and logs), <em>Veracity</em> (the struggle to ensure accuracy in the chaos), and <em>Value</em> (the potential insights hidden within).</p>
+                    
+                    <p>Handling Big Data requires specialized technologies like Apache Hadoop for distributed processing across hundreds of servers, or NoSQL databases. However, it brings massive challenges. Companies face immense hurdles regarding Data Privacy, integrating wildly diverse data sources, scaling their infrastructure, and overcoming a severe global skills gap, as trained Data Scientists are rare and expensive.</p>
+                `
+            },
+            'analytics-usecase': {
+                title: 'Analytics & Big Data: Use Cases',
+                icon: '<i class="fa-solid fa-briefcase text-rose-600"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-rose-800 mb-2 border-b-2 border-rose-100 pb-1">Case 1: Modern Healthcare Network</h4>
+                        <p class="mb-2">A vast network of hospitals needs to improve patient outcomes while managing millions of electronic health records.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Diagnostic Analytics):</strong> The hospital investigates a sudden spike in post-surgery infections. By applying diagnostic analytics to surgical schedules and staff rotations, they determine the cause was a faulty sterilization machine in Wing B.</li>
+                            <li><strong>Example 2 (Big Data Volume/Variety):</strong> The network uses Big Data technologies (like Hadoop) to store and process a massive <em>Volume</em> and <em>Variety</em> of data, combining written doctor notes, high-resolution MRI images, and real-time heart monitor readings into one unified predictive model.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-rose-800 mb-2 border-b-2 border-rose-100 pb-1">Case 2: Global E-Commerce Logistics</h4>
+                        <p class="mb-2">An e-commerce giant needs to optimize its supply chain to ensure packages arrive overnight.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Prescriptive Analytics):</strong> Instead of just predicting that a hurricane will delay shipping, the logistics software uses <em>Prescriptive Analytics</em> to automatically reroute trucks, recommend air-freight upgrades for priority items, and notify warehouses to hold certain shipments to avoid the storm.</li>
+                            <li><strong>Example 2 (Big Data Velocity):</strong> The company deals with extreme Big Data <em>Velocity</em>, needing to process thousands of customer orders per second, adjust dynamic pricing on the fly, and update real-time tracking coordinates for tens of thousands of delivery vans simultaneously.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-2">Concept: Big Data Servers</p>
+                            <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=600&h=350" alt="Server room" class="w-full h-auto rounded-lg shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-2">In Use: Supply Chain Analytics</p>
+                            <img src="https://images.unsplash.com/photo-1586528116311-ad8ed7c663be?auto=format&fit=crop&w=600&h=350" alt="Warehouse logistics" class="w-full h-auto rounded-lg shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        function openBriefing(key) {
+            const modal = document.getElementById('briefing-modal');
+            const data = briefingData[key];
+            if(data) {
+                document.getElementById('briefing-modal-icon').innerHTML = data.icon;
+                document.getElementById('briefing-modal-title').innerText = data.title;
+                document.getElementById('briefing-modal-content').innerHTML = data.html;
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; 
+            }
+        }
+
+        function closeBriefing() {
+            document.getElementById('briefing-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto'; 
+        }
+
+        document.getElementById('briefing-modal').addEventListener('click', function(e) {
+            if(e.target === this) closeBriefing();
+        });
+        
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            const target = document.getElementById(tabId + '-section');
+            target.classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-blue-900'));
+            const activeBtn = document.getElementById('nav-' + tabId);
+            if(activeBtn && tabId !== 'cert') activeBtn.classList.add('bg-blue-900');
+            
+            document.querySelectorAll('.nav-btn-mobile').forEach(btn => btn.classList.remove('bg-blue-800'));
+            const activeMobileBtn = document.getElementById('nav-' + tabId + '-mobile');
+            if(activeMobileBtn && tabId !== 'cert') activeMobileBtn.classList.add('bg-blue-800');
+
+            window.scrollTo({top: 0, behavior: 'smooth'});
+
+            if (tabId === 'game' && !gameRunning) {
+                resetGame();
+                drawGame(); // Initial draw
+            }
+        }
+
+        function showModal(title, message, type = 'info') {
+            const modal = document.getElementById('custom-modal');
+            const icon = document.getElementById('modal-icon');
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-msg').innerText = message;
+            
+            if(type === 'success') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-check text-green-500"></i>';
+                modal.querySelector('div').className = "bg-white p-8 rounded-3xl shadow-2xl max-w-md w-full transform transition-all text-center border-t-8 border-green-500";
+            } else if (type === 'error') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500"></i>';
+                modal.querySelector('div').className = "bg-white p-8 rounded-3xl shadow-2xl max-w-md w-full transform transition-all text-center border-t-8 border-red-500";
+            } else if (type === 'warning') {
+                icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-amber-500"></i>';
+                modal.querySelector('div').className = "bg-white p-8 rounded-3xl shadow-2xl max-w-md w-full transform transition-all text-center border-t-8 border-amber-500";
+            } else {
+                icon.innerHTML = '<i class="fa-solid fa-circle-info text-blue-500"></i>';
+                modal.querySelector('div').className = "bg-white p-8 rounded-3xl shadow-2xl max-w-md w-full transform transition-all text-center border-t-8 border-blue-500";
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        let draggedItem = null;
+        let lab1Score = 0;
+
+        document.querySelectorAll('#lab1-items .draggable-item, #lab5-items .draggable-item').forEach(item => {
+            item.addEventListener('dragstart', function() {
+                draggedItem = this;
+                setTimeout(() => this.classList.add('opacity-50'), 0);
+            });
+            item.addEventListener('dragend', function() {
+                setTimeout(() => this.classList.remove('opacity-50'), 0);
+                draggedItem = null;
+            });
+        });
+
+        document.querySelectorAll('.dropzone').forEach(zone => {
+            zone.addEventListener('dragover', e => e.preventDefault());
+            zone.addEventListener('dragenter', function(e) { e.preventDefault(); this.classList.add('drag-over'); });
+            zone.addEventListener('dragleave', function() { this.classList.remove('drag-over'); });
+            zone.addEventListener('drop', function() {
+                this.classList.remove('drag-over');
+                if(draggedItem) {
+                    const isLab1 = draggedItem.parentNode.id === 'lab1-items' || this.parentNode.classList.contains('grid-cols-2') && this.dataset.target.includes('s');
+                    
+                    if(draggedItem.dataset.type === this.dataset.target) {
+                        this.appendChild(draggedItem);
+                        draggedItem.classList.remove('cursor-grab');
+                        draggedItem.classList.add('cursor-default', 'mt-1', 'w-full', 'text-center');
+                        draggedItem.setAttribute('draggable', 'false');
+                        
+                        if(isLab1) {
+                            lab1Score++;
+                            document.getElementById('lab1-feedback').innerText = "Correct Assignment!";
+                            document.getElementById('lab1-feedback').className = "text-center font-bold mt-3 h-5 text-sm text-green-600";
+                            if(lab1Score === 4) setTimeout(() => showModal('Lab 1A Complete', 'All data sources categorized correctly.', 'success'), 400);
+                        } else {
+                            // Lab 5 (Monetization)
+                            let currentScore = parseInt(this.parentNode.dataset.score || 0) + 1;
+                            this.parentNode.dataset.score = currentScore;
+                            document.getElementById('lab5-feedback').innerText = "Correct Strategy!";
+                            document.getElementById('lab5-feedback').className = "text-center font-bold mt-2 h-5 text-sm text-green-600";
+                            if(currentScore === 4) setTimeout(() => showModal('Lab 3A Complete', 'Monetization strategies correctly categorized.', 'success'), 400);
+                        }
+                    } else {
+                        const feedbackId = isLab1 ? 'lab1-feedback' : 'lab5-feedback';
+                        document.getElementById(feedbackId).innerText = "Incorrect. Try again.";
+                        document.getElementById(feedbackId).className = "text-center font-bold mt-3 h-5 text-sm text-red-500";
+                    }
+                }
+            });
+        });
+
+        let selectedPair = null;
+        let lab2Matches = 0;
+        
+        document.querySelectorAll('.pair-card').forEach(card => {
+            card.addEventListener('click', function() {
+                if(this.classList.contains('matched')) return;
+                
+                if(!selectedPair) {
+                    selectedPair = this;
+                    this.classList.add('selected');
+                } else {
+                    if(selectedPair === this) {
+                        selectedPair.classList.remove('selected');
+                        selectedPair = null;
+                        return;
+                    }
+                    
+                    // Check if they are from different sides
+                    if(selectedPair.parentNode.id !== this.parentNode.id) {
+                        if(selectedPair.dataset.pair === this.dataset.pair) {
+                            // Match
+                            this.classList.add('matched');
+                            selectedPair.classList.add('matched');
+                            this.classList.remove('selected');
+                            selectedPair.classList.remove('selected');
+                            lab2Matches++;
+                            document.getElementById('lab2-feedback').innerText = "Insight Correlated!";
+                            document.getElementById('lab2-feedback').className = "text-center font-bold mt-3 h-5 text-sm text-green-600";
+                            if(lab2Matches === 3) setTimeout(() => showModal('Lab 1B Complete', 'You successfully correlated the data sources to business insights.', 'success'), 400);
+                        } else {
+                            // No match
+                            document.getElementById('lab2-feedback').innerText = "Incorrect Correlation.";
+                            document.getElementById('lab2-feedback').className = "text-center font-bold mt-3 h-5 text-sm text-red-500";
+                            selectedPair.classList.remove('selected');
+                        }
+                    } else {
+                        // Clicked same side, switch selection
+                        selectedPair.classList.remove('selected');
+                        this.classList.add('selected');
+                    }
+                    selectedPair = (selectedPair && selectedPair.dataset.pair === this.dataset.pair && selectedPair.parentNode.id !== this.parentNode.id) ? null : this;
+                    if(document.getElementById('lab2-feedback').innerText === "Insight Correlated!") selectedPair = null;
+                }
+            });
+        });
+
+        
+        // Lab 3: Chart Selection
+        function checkLab3(isPie) {
+            const fb = document.getElementById('lab3-feedback');
+            if(isPie) {
+                fb.innerText = "Correct! Pie charts are best for showing percentage breakdowns (parts of a whole).";
+                fb.className = "text-center font-bold h-5 text-sm text-green-600";
+            } else {
+                fb.innerText = "Incorrect. That chart is better suited for trends or comparisons, not percentages.";
+                fb.className = "text-center font-bold h-5 text-sm text-red-500";
+            }
+        }
+
+        // Lab 4: Hotspot Audit
+        let hotspotsFound = 0;
+        function findHotspot(el, name) {
+            if(!el.classList.contains('found')) {
+                el.classList.add('found');
+                hotspotsFound++;
+                document.getElementById('lab4-feedback').innerText = `Found: ${hotspotsFound} / 3 (${name})`;
+                if(hotspotsFound === 3) {
+                    document.getElementById('lab4-feedback').className = "text-center font-bold mt-3 h-5 text-sm text-green-600";
+                    setTimeout(() => showModal('Lab 2B Complete', 'You identified all missing reporting elements.', 'success'), 400);
+                }
+            }
+        }
+
+        // Lab 6: ROI Calculator
+        function calcROI() {
+            const q = document.getElementById('slider-quality').value;
+            const d = document.getElementById('slider-demand').value;
+            document.getElementById('val-q').innerText = q + '%';
+            document.getElementById('val-d').innerText = d + '%';
+            
+            // Formula: Value = (Q * D) * 10
+            const value = (q * d) * 10;
+            document.getElementById('roi-output').innerText = '$' + value.toLocaleString();
+            
+            if(value === 50000) {
+                document.getElementById('lab6-feedback').innerText = "Target Value Achieved!";
+                document.getElementById('lab6-feedback').className = "text-center font-bold mt-2 h-5 text-sm text-green-600";
+            } else {
+                document.getElementById('lab6-feedback').innerText = "";
+            }
+        }
+
+        // Lab 7: Process Array Order
+        let processOrder = [];
+        function stepOrder(btn, stepNum) {
+            if(btn.classList.contains('opacity-50')) return;
+            
+            const expectedNext = processOrder.length + 1;
+            
+            if(stepNum === expectedNext) {
+                processOrder.push(stepNum);
+                btn.classList.add('opacity-50', 'bg-rose-100', 'cursor-default');
+                
+                const stepMarker = document.createElement('div');
+                stepMarker.className = "w-6 h-6 bg-rose-500 rounded text-white text-xs flex items-center justify-center font-bold";
+                stepMarker.innerText = stepNum;
+                document.getElementById('lab7-tracker').appendChild(stepMarker);
+                
+                document.getElementById('lab7-feedback').innerText = "Correct step added.";
+                document.getElementById('lab7-feedback').className = "text-center font-bold h-5 text-sm text-green-600";
+                
+                if(processOrder.length === 6) {
+                     setTimeout(() => showModal('Lab 4A Complete', 'Analytics Process successfully ordered.', 'success'), 400);
+                }
+            } else {
+                document.getElementById('lab7-feedback').innerText = `Incorrect. Expected Step ${expectedNext}.`;
+                document.getElementById('lab7-feedback').className = "text-center font-bold h-5 text-sm text-red-500";
+                
+                // Reset
+                processOrder = [];
+                document.getElementById('lab7-tracker').innerHTML = '';
+                document.querySelectorAll('#lab7-grid button').forEach(b => b.classList.remove('opacity-50', 'bg-rose-100', 'cursor-default'));
+            }
+        }
+
+        // Lab 8: Big Data Dropdowns
+        function checkLab8() {
+            const selects = document.querySelectorAll('#lab8-feedback')[0].parentNode.querySelectorAll('select');
+            let vals = [];
+            selects.forEach(s => vals.push(s.value));
+            
+            if(vals[0] === 'velocity' && vals[1] === 'veracity' && vals[2] === 'volume') {
+                document.getElementById('lab8-feedback').innerText = "All V's identified correctly!";
+                document.getElementById('lab8-feedback').className = "text-center font-bold h-5 text-sm text-green-600";
+                selects.forEach(s => { s.disabled = true; s.classList.add('bg-green-50'); });
+            } else if (vals.every(v => v !== "")) {
+                document.getElementById('lab8-feedback').innerText = "Incorrect configuration. Review definitions.";
+                document.getElementById('lab8-feedback').className = "text-center font-bold h-5 text-sm text-red-500";
+            }
+        }
+
+        const quizData = [
+            // Original 10
+            { q: "All the following are methods of data capture EXCEPT:", options: ["Critical Data", "Survey Data", "Transactional Data", "Social Media Data"], answer: 0 },
+            { q: "What are the two strategies for data monetization?", options: ["Non-critical, Critical", "Direct, Indirect", "Transactional, Sensor", "Velocity, Veracity"], answer: 1 },
+            { q: "Which step in the data analytics process converts raw data into a suitable format for analysis?", options: ["Data Correlation", "Data Analysis", "Data Transformation", "Interpretation and Reporting"], answer: 2 },
+            { q: "Why is meaningful reporting important to businesses when using data to make decisions?", options: ["Inaccurate data can have a negative impact.", "Presenting data and analysis clearly for actionable insights.", "Relevant data helps businesses meet their goals.", "All answers are correct."], answer: 3 },
+            { q: "All the following tools can be used for data visualization EXCEPT:", options: ["Hadoop", "Tableau", "Power BI", "QlikView"], answer: 0 },
+            { q: "What type of data analytics simulates human thought processes in analyzing complex data sets?", options: ["Descriptive analytics", "Cognitive analytics", "Prescriptive analytics", "Diagnostic analytics"], answer: 1 },
+            { q: "What are some challenges of big data?", options: ["Scalability", "Data quality", "Integration", "All answers are correct."], answer: 3 },
+            { q: "Which tool is used to aggregate data from multiple sources?", options: ["Statistical software", "Database management systems", "Data warehouses", "Machine learning platforms"], answer: 2 },
+            { q: "Which of the following describes why businesses must consider data quality?", options: ["Businesses can use any quality of data.", "Data quality should be accurate but does not need to be relevant.", "Data inconsistencies and inaccuracies can lead to inadequate analysis and poor decisions.", "Data quality is only relevant for direct monetization."], answer: 2 },
+            { q: "Businesses use data for all the following EXCEPT:", options: ["To make employees comply with regulations.", "To inform decisions", "To gain competitive advantage", "For optimization"], answer: 0 },
+            
+            // 10 New from Briefing
+            { q: "In the context of Big Data, what does 'Veracity' refer to?", options: ["The speed at which data is generated.", "The trustworthiness and accuracy of the data.", "The different types and formats of data.", "The potential insights gained from data."], answer: 1 },
+            { q: "What is the primary goal of Data Correlation?", options: ["To delete redundant data entries.", "To convert data into visual charts.", "To identify relationships and patterns between different data sets.", "To secure data from unauthorized access."], answer: 2 },
+            { q: "Which of the following is an example of Indirect Monetization?", options: ["Selling raw data to a data broker.", "Using data to improve operational efficiency and delivery routes.", "Licensing a database to a third party.", "Charging a subscription fee for API access."], answer: 1 },
+            { q: "Which type of analytics explicitly recommends actions to achieve desired outcomes?", options: ["Diagnostic Analytics", "Prescriptive Analytics", "Descriptive Analytics", "Cognitive Analytics"], answer: 1 },
+            { q: "Which type of analytics is used to determine the causes of past events (the 'why')?", options: ["Descriptive Analytics", "Predictive Analytics", "Prescriptive Analytics", "Diagnostic Analytics"], answer: 3 },
+            { q: "Which of the following is NOT considered one of the 5 V's of Big Data?", options: ["Volume", "Velocity", "Visibility", "Variety"], answer: 2 },
+            { q: "What role does an API (Application Programming Interface) play in data collection?", options: ["It provides a visual dashboard for executives.", "It physically stores the data on hard drives.", "It facilitates data integration from outside sources automatically.", "It deletes inaccurate data fields."], answer: 2 },
+            { q: "In the 6-step data analytics process, what step immediately follows Data Collection?", options: ["Data Transformation", "Data Analysis", "Data Cleaning", "Decision-Making"], answer: 2 },
+            { q: "Which component of meaningful reporting involves using charts, graphs, and heat maps?", options: ["Clarity", "Context", "Relevance", "Visualization"], answer: 3 },
+            { q: "Which technology is specifically designed for handling and processing vast amounts of Big Data across multiple servers?", options: ["Microsoft Excel", "Apache Hadoop", "Basic SQL Databases", "Power BI"], answer: 1 }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        
+        quizData.forEach((item, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = "bg-slate-50 p-6 md:p-8 rounded-2xl border border-slate-200";
+            qDiv.id = `q-block-${index}`;
+            
+            const qTitle = document.createElement('h3');
+            qTitle.className = "font-bold text-lg md:text-xl text-slate-800 mb-5";
+            qTitle.innerText = `${index + 1}. ${item.q}`;
+            qDiv.appendChild(qTitle);
+            
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = "space-y-3";
+            
+            item.options.forEach((opt, optIndex) => {
+                const label = document.createElement('label');
+                label.className = "flex items-center space-x-4 p-4 rounded-xl bg-white border border-slate-300 hover:bg-blue-50 hover:border-blue-300 cursor-pointer transition shadow-sm";
+                
+                const radio = document.createElement('input');
+                radio.type = "radio";
+                radio.name = `q${index}`;
+                radio.value = optIndex;
+                radio.className = "form-radio h-5 w-5 text-blue-600";
+                
+                const span = document.createElement('span');
+                span.className = "text-slate-700 font-medium";
+                span.innerText = opt;
+                
+                label.appendChild(radio);
+                label.appendChild(span);
+                optionsDiv.appendChild(label);
+            });
+            
+            qDiv.appendChild(optionsDiv);
+            quizContainer.appendChild(qDiv);
+        });
+
+        function gradeQuiz() {
+            let score = 0;
+            let allAnswered = true;
+
+            for(let i = 0; i < quizData.length; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if(selected) {
+                    if(parseInt(selected.value) === quizData[i].answer) {
+                        score++;
+                    }
+                } else {
+                    allAnswered = false;
+                }
+            }
+            
+            if(!allAnswered) {
+                showModal('Incomplete', 'Please answer all 20 questions before submitting.', 'warning');
+                return;
+            }
+            
+            const percentage = (score / quizData.length) * 100;
+            
+            if(score >= 18) { 
+                const navGame = document.getElementById('nav-game');
+                const navGameMobile = document.getElementById('nav-game-mobile');
+                
+                navGame.classList.remove('text-slate-400', 'cursor-not-allowed');
+                navGame.classList.add('text-white', 'hover:bg-blue-700');
+                navGame.disabled = false;
+                navGame.innerHTML = '<i class="fa-solid fa-gamepad mr-1 text-amber-400"></i>Game';
+                
+                navGameMobile.classList.remove('text-slate-400', 'cursor-not-allowed');
+                navGameMobile.classList.add('text-white', 'hover:bg-blue-800');
+                navGameMobile.disabled = false;
+                navGameMobile.innerHTML = '<i class="fa-solid fa-gamepad text-amber-400"></i>';
+
+                document.getElementById('nav-cert').classList.remove('hidden');
+                document.getElementById('nav-cert-mobile').classList.remove('hidden');
+                
+                document.getElementById('proceed-game-btn').classList.remove('hidden');
+                document.getElementById('submit-quiz-btn').classList.add('hidden');
+
+                showModal('Mastery Achieved!', `You scored ${score}/20 (${percentage}%). You have unlocked your Certificate of Mastery and the Data Miner game!`, 'success');
+            } else {
+                quizData.forEach((_, i) => {
+                    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                    if(selected) selected.checked = false;
+                });
+                showModal('Keep Trying', `You scored ${score}/20 (${percentage}%). You need 90% (18/20) to earn the certificate. Try again!`, 'error');
+                document.getElementById('quiz-section').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let score = 0;
+        let lives = 3;
+        let gameRunning = false;
+        let animationId;
+        
+        // Game State Variables
+        let state = 'swinging'; // swinging, extending, retracting
+        let clawAngle = 0;
+        let swingSpeed = 0.03;
+        let clawX = canvas.width / 2;
+        let clawY = 50;
+        let originX = canvas.width / 2;
+        let originY = 50;
+        let clawLength = 0;
+        let extendSpeed = 8;
+        let baseRetractSpeed = 6;
+        let currentRetractSpeed = 6;
+        
+        let grabbedItem = null;
+        let items = [];
+        
+        const overlay = document.getElementById('game-overlay');
+        const startBtn = document.getElementById('start-game-btn');
+        startBtn.addEventListener('click', startGame);
+
+        // Input handling
+        function handleInput(e) {
+            if(!gameRunning) return;
+            e.preventDefault();
+            if(state === 'swinging') {
+                state = 'extending';
+            }
+        }
+
+        canvas.addEventListener('mousedown', handleInput);
+        canvas.addEventListener('touchstart', handleInput, {passive: false});
+        
+        class DataItem {
+            constructor() {
+                this.radius = Math.random() * 15 + 15; // 15 to 30
+                this.x = Math.random() * (canvas.width - 100) + 50;
+                this.y = Math.random() * (canvas.height - 200) + 150;
+                
+                let rand = Math.random();
+                if(rand < 0.2) { // Big Data
+                    this.type = 'big';
+                    this.color = '#eab308'; // Gold
+                    this.value = 500;
+                    this.radius = 35;
+                    this.weight = 2; // slow
+                } else if(rand < 0.5) { // Corrupt
+                    this.type = 'corrupt';
+                    this.color = '#ef4444'; // Red
+                    this.value = 0;
+                    this.weight = 8; // fast pull, but hurts
+                } else { // Normal Data
+                    this.type = 'normal';
+                    this.color = '#3b82f6'; // Blue
+                    this.value = 100;
+                    this.weight = 5; // medium
+                }
+            }
+            
+            draw(ctx) {
+                ctx.beginPath();
+                if(this.type === 'corrupt') {
+                    // Draw bug/virus shape
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2);
+                    ctx.fillStyle = this.color;
+                    ctx.fill();
+                    ctx.strokeStyle = '#991b1b';
+                    ctx.lineWidth = 3;
+                    ctx.stroke();
+                    // spikes
+                    for(let i=0; i<8; i++) {
+                        let a = (Math.PI*2/8) * i;
+                        ctx.moveTo(this.x + Math.cos(a)*this.radius, this.y + Math.sin(a)*this.radius);
+                        ctx.lineTo(this.x + Math.cos(a)*(this.radius+5), this.y + Math.sin(a)*(this.radius+5));
+                    }
+                    ctx.stroke();
+                } else {
+                    // Hexagon for data block
+                    for(let i=0; i<6; i++) {
+                        let a = (Math.PI*2/6) * i;
+                        if(i===0) ctx.moveTo(this.x + Math.cos(a)*this.radius, this.y + Math.sin(a)*this.radius);
+                        else ctx.lineTo(this.x + Math.cos(a)*this.radius, this.y + Math.sin(a)*this.radius);
+                    }
+                    ctx.closePath();
+                    ctx.fillStyle = this.color;
+                    ctx.fill();
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                    
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = '10px "Press Start 2P"';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(this.type === 'big' ? 'SQL' : 'TXT', this.x, this.y);
+                }
+            }
+        }
+
+        function populateItems() {
+            items = [];
+            for(let i=0; i<8; i++) {
+                items.push(new DataItem());
+            }
+        }
+
+        function loseLife() {
+            lives--;
+            document.getElementById('game-lives').innerText = lives;
+            // Visual red flash
+            ctx.fillStyle = "rgba(239, 68, 68, 0.4)";
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            
+            if(lives <= 0) gameOver();
+        }
+
+        function resetGame() {
+            score = 0;
+            lives = 3;
+            document.getElementById('game-score').innerText = score;
+            document.getElementById('game-lives').innerText = lives;
+            state = 'swinging';
+            clawLength = 0;
+            grabbedItem = null;
+            populateItems();
+        }
+
+        function startGame() {
+            overlay.classList.add('hidden');
+            if(!gameRunning) {
+                resetGame();
+                gameRunning = true;
+                drawGame();
+            }
+        }
+
+        function drawGame() {
+            if(!gameRunning) return;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw background grid
+            ctx.strokeStyle = '#312e81';
+            ctx.lineWidth = 1;
+            for(let i=0; i<canvas.width; i+=50) { ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke(); }
+            for(let i=0; i<canvas.height; i+=50) { ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(canvas.width, i); ctx.stroke(); }
+            
+            // Draw Server/Base at top
+            ctx.fillStyle = '#4f46e5';
+            ctx.fillRect(canvas.width/2 - 40, 10, 80, 40);
+            ctx.fillStyle = '#c7d2fe';
+            ctx.fillRect(canvas.width/2 - 30, 20, 60, 5);
+            ctx.fillRect(canvas.width/2 - 30, 30, 60, 5);
+
+            // Update State
+            if(state === 'swinging') {
+                clawAngle = Math.sin(Date.now() / 300) * (Math.PI / 3); // oscillate between -60 and +60 deg
+                clawLength = 0;
+            } else if (state === 'extending') {
+                clawLength += extendSpeed;
+                if(clawLength > canvas.height + 100) state = 'retracting'; // Missed
+                
+                // Check collision
+                clawX = originX + Math.sin(clawAngle) * clawLength;
+                clawY = originY + Math.cos(clawAngle) * clawLength;
+                
+                for(let i=0; i<items.length; i++) {
+                    let dx = clawX - items[i].x;
+                    let dy = clawY - items[i].y;
+                    if(Math.sqrt(dx*dx + dy*dy) < items[i].radius + 10) {
+                        grabbedItem = items[i];
+                        items.splice(i, 1);
+                        state = 'retracting';
+                        currentRetractSpeed = grabbedItem.weight;
+                        break;
+                    }
+                }
+            } else if (state === 'retracting') {
+                clawLength -= currentRetractSpeed;
+                if(clawLength <= 0) {
+                    clawLength = 0;
+                    state = 'swinging';
+                    currentRetractSpeed = baseRetractSpeed;
+                    if(grabbedItem) {
+                        if(grabbedItem.type === 'corrupt') {
+                            loseLife();
+                        } else {
+                            score += grabbedItem.value;
+                            document.getElementById('game-score').innerText = score;
+                        }
+                        grabbedItem = null;
+                        if(items.length === 0) populateItems(); // Next level
+                    }
+                }
+            }
+
+            // Calculate current claw pos
+            clawX = originX + Math.sin(clawAngle) * clawLength;
+            clawY = originY + Math.cos(clawAngle) * clawLength;
+
+            // Draw Items
+            items.forEach(item => item.draw(ctx));
+
+            // Draw line
+            ctx.beginPath();
+            ctx.moveTo(originX, originY);
+            ctx.lineTo(clawX, clawY);
+            ctx.strokeStyle = '#94a3b8';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            // Draw claw
+            ctx.save();
+            ctx.translate(clawX, clawY);
+            ctx.rotate(-clawAngle);
+            ctx.strokeStyle = '#f1f5f9';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.arc(0, 0, 15, 0, Math.PI); // Half circle claw
+            ctx.stroke();
+            ctx.restore();
+
+            // Draw grabbed item
+            if(grabbedItem) {
+                grabbedItem.x = clawX;
+                grabbedItem.y = clawY + 15;
+                grabbedItem.draw(ctx);
+            }
+
+            animationId = requestAnimationFrame(drawGame);
+        }
+
+        function gameOver() {
+            gameRunning = false;
+            cancelAnimationFrame(animationId);
+            overlay.classList.remove('hidden');
+            startBtn.innerText = "System Failure. Reboot";
+            startBtn.classList.replace('bg-amber-500', 'bg-slate-600');
+            startBtn.classList.replace('text-slate-900', 'text-white');
+            startBtn.classList.replace('border-amber-700', 'border-slate-800');
+        }
+
+        function updateCertName() {
+            let name = document.getElementById('student-name-input').value.trim();
+            if(name) {
+                if (name.includes(' ')) {
+                    name = name.split(' ')[0];
+                    document.getElementById('student-name-input').value = name;
+                    showModal('Notice', 'Only your first name has been applied to the certificate for formatting purposes.', 'info');
+                }
+                document.getElementById('cert-student-name').innerText = name;
+            } else {
+                showModal('Wait!', 'Please enter your name to update the certificate.', 'warning');
+            }
+        }
+
+        const today = new Date();
+        document.getElementById('cert-date').innerText = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        function downloadCert() {
+            const certEl = document.getElementById('certificate');
+            const name = document.getElementById('cert-student-name').innerText;
+            let filename = 'Certificate.png';
+            if (name && name !== 'Student') {
+                filename = `${name}_Unit06_Data_Certificate.png`;
+            }
+
+            const originalTransform = certEl.style.transform;
+            certEl.style.transform = 'none'; // reset scale for clear render
+
+            const btn = document.getElementById('download-btn');
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Generating...';
+            btn.disabled = true;
+
+            html2canvas(certEl, { 
+                scale: 2, 
+                useCORS: true,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            }).catch(err => {
+                console.error(err);
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                showModal('Error', 'Failed to generate image. Please try on a desktop browser.', 'error');
+            });
+        }
+
+        window.onload = () => {
+            // Draw static background for game preview before start
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle = '#64748b';
+            ctx.font = '20px "Press Start 2P"';
+            ctx.textAlign = 'center';
+            ctx.fillText('SYSTEM READY', canvas.width/2, canvas.height/2);
+        }
+    </script>
+</body>
+</html>

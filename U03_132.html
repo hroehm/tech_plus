@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 03 Section 1.3.2 Mastery - Transfer Rates & Throughput</title>
+    
+    <!-- Load Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load HTML2Canvas for Certificate Download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- Load Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Qwitcher+Grypen:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0fdf4; 
+            color: #1f2937;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        /* Interactive Elements CSS */
+        .io-dropzone { min-height: 70px; min-width: 130px; border: 2px dashed #9ca3af; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: #f9fafb; transition: all 0.2s;}
+        .io-dropzone.drag-over { background: #e5e7eb; border-color: #16a34a; box-shadow: inset 0 0 10px rgba(22, 163, 74, 0.2);}
+        
+        .io-item { cursor: grab; transition: transform 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .io-item:active { cursor: grabbing; transform: scale(0.95); }
+        
+        .cat-dropzone { transition: background-color 0.2s ease; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #e5e7eb; }
+        ::-webkit-scrollbar-thumb { background: #10b981; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #059669; }
+
+        /* Retro Game Canvas */
+        #game-canvas {
+            background-color: #111827;
+            border: 4px solid #374151;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+            max-width: 100%;
+            height: auto;
+            touch-action: none;
+            cursor: crosshair;
+        }
+        .game-btn { touch-action: manipulation; user-select: none; }
+
+        /* --- CERTIFICATE STYLES --- */
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .font-body { font-family: 'Lora', serif; }
+        .font-script { font-family: 'Qwitcher Grypen', cursive; }
+        
+        .cert-preview-container {
+            width: 100%;
+            overflow: auto;
+            display: flex;
+            justify-content: center;
+            background: #e5e7eb;
+            padding: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        #certificate {
+            width: 1056px !important;
+            height: 816px !important;
+            flex-shrink: 0;
+            background-color: #ffffff;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1056" height="816"><polygon points="0,0 250,0 0,650" fill="%23fcd34d"/><polygon points="0,0 350,0 0,900" fill="%23d97706" opacity="0.8"/><polygon points="0,0 120,0 0,300" fill="%23fcd34d"/><polygon points="0,450 650,816 0,816" fill="%23fcd34d"/><polygon points="0,550 450,816 0,816" fill="%23d97706" opacity="0.8"/><polygon points="800,0 1056,0 1056,256" fill="%23f3f4f6"/><polygon points="1056,500 1056,816 750,816" fill="%23f3f4f6"/></svg>');
+            background-size: cover;
+            border: 4px solid #e5e7eb;
+        }
+
+        .gold-seal {
+            position: absolute;
+            left: 110px;
+            top: 350px;
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c, #fcf6ba);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3), inset 0 0 15px rgba(255,255,255,0.7), inset 0 0 25px rgba(139,105,20,0.9);
+            z-index: 10;
+        }
+        .gold-seal::before {
+            content: '';
+            position: absolute;
+            top: -4px; bottom: -4px; left: -4px; right: -4px;
+            border-radius: 50%;
+            border: 6px dashed #d4af37;
+        }
+        .gold-seal-inner-1 {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 2px solid rgba(139, 105, 20, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #e8c678, #dbab46);
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.2), 0 2px 5px rgba(255,255,255,0.7);
+            z-index: 1;
+        }
+        .gold-seal-inner-2 {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: radial-gradient(circle, #fcf6ba, #d4af37);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            padding: 10px;
+        }
+        .embossed-text {
+            color: #b38728;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2);
+            font-family: 'Playfair Display', serif;
+            font-weight: 800;
+            line-height: 1.1;
+            text-transform: uppercase;
+        }
+        .embossed-text-large { font-size: 14px; letter-spacing: 1px; }
+        .embossed-text-small { font-size: 11px; letter-spacing: 2px; margin: 2px 0; }
+        .embossed-star { font-size: 12px; color: #b38728; text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2); margin: 2px 0; }
+
+        @media (max-width: 1100px) {
+            #certificate { transform: scale(0.7); transform-origin: top left; margin-bottom: -240px; margin-right: -310px; }
+        }
+        @media (max-width: 768px) {
+            #certificate { transform: scale(0.4); transform-origin: top left; margin-bottom: -490px; margin-right: -630px; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
+    <nav class="bg-green-700 text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-gauge-high text-2xl"></i>
+                    <span class="font-bold text-xl tracking-wider hidden sm:inline-block">Tech+ Unit 03 Section 1.3.2</span>
+                    <span class="font-bold text-xl tracking-wider sm:hidden">1.3.2</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-2">
+                        <button onclick="switchTab('briefing')" class="nav-btn bg-green-900 px-3 py-2 rounded-md text-sm font-medium hover:bg-green-600 transition" id="nav-briefing"><i class="fa-solid fa-book-open mr-1"></i>Briefing</button>
+                        <button onclick="switchTab('activity')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-green-600 transition" id="nav-activity"><i class="fa-solid fa-flask mr-1"></i>Lab Activity</button>
+                        <button onclick="switchTab('quiz')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-green-600 transition" id="nav-quiz"><i class="fa-solid fa-clipboard-check mr-1"></i>Quiz</button>
+                        <button onclick="switchTab('game')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-gray-400 cursor-not-allowed transition" id="nav-game" disabled><i class="fa-solid fa-lock mr-1"></i>Game</button>
+                        <button onclick="switchTab('cert')" class="nav-btn hidden px-3 py-2 rounded-md text-sm font-medium text-yellow-300 hover:bg-green-600 transition" id="nav-cert"><i class="fa-solid fa-award mr-1"></i>Certificate</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Nav -->
+        <div class="md:hidden flex flex-wrap justify-center gap-2 py-2 px-2 bg-green-800">
+            <button onclick="switchTab('briefing')" class="nav-btn-mobile px-3 py-1 text-sm rounded bg-green-900" id="nav-briefing-mobile">Briefing</button>
+            <button onclick="switchTab('activity')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-activity-mobile">Lab</button>
+            <button onclick="switchTab('quiz')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-quiz-mobile">Quiz</button>
+            <button onclick="switchTab('game')" class="nav-btn-mobile px-3 py-1 text-sm rounded text-gray-400 cursor-not-allowed" id="nav-game-mobile" disabled><i class="fa-solid fa-lock"></i></button>
+            <button onclick="switchTab('cert')" id="nav-cert-mobile" class="hidden px-2 py-1 text-sm text-yellow-300 rounded"><i class="fa-solid fa-award"></i></button>
+        </div>
+    </nav>
+
+    <main class="flex-grow w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <!-- BRIEFING SECTION -->
+        <div id="briefing-section" class="tab-content active">
+            <div class="text-center mb-10">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">Transfer Rates & Throughput</h1>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">Explore how data movement is measured, the critical distinction between bandwidth and throughput, physical obstacles in networking, and standardized data rate units from bps to Tbps.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+                <!-- Tile 1 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-blue-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-blue-700"><i class="fa-solid fa-water mr-2"></i>Throughput Basics</h2>
+                        <p class="text-gray-700 mb-4">Throughput is the actual rate at which data successfully moves across a network channel in a given block of time.</p>
+                        <ul class="space-y-2 text-sm text-gray-600">
+                            <li>• Water faucet flow rate analogy</li>
+                            <li>• Real-time download & streaming impact</li>
+                            <li>• Core metric for ISPs & cloud services</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('throughput-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('throughput-usecase')" class="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 2 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-green-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-green-700"><i class="fa-solid fa-scale-balanced mr-2"></i>Bandwidth vs. Throughput</h2>
+                        <p class="text-gray-700 mb-4">Bandwidth represents the theoretical maximum capacity of a network, whereas throughput measures the actual achieved performance.</p>
+                        <ul class="space-y-2 text-sm text-gray-600">
+                            <li>• Highway speed limit vs. actual car speed</li>
+                            <li>• Throughput never exceeds bandwidth</li>
+                            <li>• Real-world degradation factors</li>
+                        </ul>
+                    </div>
+                     <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('bandwidth-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('bandwidth-usecase')" class="flex-1 bg-green-100 hover:bg-green-200 text-green-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 3 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-purple-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-purple-700"><i class="fa-solid fa-triangle-exclamation mr-2"></i>Throughput Obstacles</h2>
+                        <p class="text-gray-700 mb-4">Various physical and software bottlenecks degrade throughput below optimal bandwidth thresholds.</p>
+                        <ul class="space-y-2 text-sm text-gray-600">
+                            <li>• Latency (propagation & transmission delay)</li>
+                            <li>• Transmission errors & packet re-sends</li>
+                            <li>• Protocol overhead & network congestion</li>
+                        </ul>
+                    </div>
+                     <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('obstacles-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('obstacles-usecase')" class="flex-1 bg-purple-100 hover:bg-purple-200 text-purple-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 4 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-amber-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-amber-700"><i class="fa-solid fa-database mr-2"></i>Bits vs. Bytes</h2>
+                        <p class="text-gray-700 mb-4">Understanding the fundamental data units: bits (b) for transmission speeds versus bytes (B) for storage sizes.</p>
+                        <ul class="space-y-2 text-sm text-gray-600">
+                            <li>• 8 Bits = 1 Byte (8b = 1B)</li>
+                            <li>• Decimal multiplier differences (1,000 factor)</li>
+                            <li>• Distinguishing network speeds from file sizes</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('bitsbytes-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('bitsbytes-usecase')" class="flex-1 bg-amber-100 hover:bg-amber-200 text-amber-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 5 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-red-500 overflow-hidden flex flex-col md:col-span-2 lg:col-span-2">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-red-700"><i class="fa-solid fa-gauge mr-2"></i>Standard Transfer Units (bps to Tbps)</h2>
+                        <p class="text-gray-700 mb-4">Standardized tiers of data speed ranging from basic serial communication (bps) up to global internet backbones (Tbps).</p>
+                        <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-center text-xs font-bold">
+                            <div class="bg-red-50 p-2 rounded text-red-800 border border-red-200">bps<br><span class="font-normal text-[10px]">1 bit/s</span></div>
+                            <div class="bg-red-50 p-2 rounded text-red-800 border border-red-200">Kbps<br><span class="font-normal text-[10px]">1K bits/s</span></div>
+                            <div class="bg-red-50 p-2 rounded text-red-800 border border-red-200">Mbps<br><span class="font-normal text-[10px]">1M bits/s</span></div>
+                            <div class="bg-red-50 p-2 rounded text-red-800 border border-red-200">Gbps<br><span class="font-normal text-[10px]">1B bits/s</span></div>
+                            <div class="bg-red-50 p-2 rounded text-red-800 border border-red-200 col-span-2 sm:col-span-1">Tbps<br><span class="font-normal text-[10px]">1T bits/s</span></div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('units-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('units-usecase')" class="flex-1 bg-red-100 hover:bg-red-200 text-red-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            
+            <div class="mt-8 flex justify-center">
+                <button onclick="switchTab('activity')" class="bg-green-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-green-500 shadow-lg transition transform hover:scale-105">Proceed to Lab Activity <i class="fa-solid fa-arrow-right ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- LAB ACTIVITY SECTION -->
+        <div id="activity-section" class="tab-content">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Interactive Lab Activity</h1>
+                <p class="text-gray-600">Complete all 10 interactive lab simulations across the 5 core sections to master transfer rates.</p>
+            </div>
+
+            <!-- Lab 1: Faucet Flow Rate Simulator (Throughput Basics) -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-blue-700"><i class="fa-solid fa-water mr-2"></i>Lab 1: Throughput Faucet Simulator</h2>
+                <p class="text-sm text-gray-600 mb-4">Adjust the throughput valve slider to fill the data bucket to exactly 100MB within 5 seconds without overflowing or dragging below target.</p>
+                <div class="flex flex-col md:flex-row items-center justify-between gap-6 bg-blue-50 p-4 rounded-lg">
+                    <div class="w-full md:w-1/2">
+                        <label class="font-bold text-sm text-blue-900 block mb-2">Throughput Flow Rate: <span id="flow-val">20</span> Mbps</label>
+                        <input type="range" id="flow-slider" min="5" max="50" value="20" class="w-full accent-blue-600 cursor-pointer" oninput="updateFlow(this.value)">
+                        <button onclick="startLab1()" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-2 rounded shadow">Start Data Transfer</button>
+                    </div>
+                    <div class="w-full md:w-1/2 flex flex-col items-center">
+                        <div class="w-full bg-gray-200 rounded-full h-6 border border-gray-300 overflow-hidden relative">
+                            <div id="bucket-fill" class="bg-blue-600 h-full transition-all duration-100" style="width: 0%"></div>
+                        </div>
+                        <span id="bucket-status" class="text-sm font-bold mt-2 text-gray-700">Transferred: 0 MB / 100 MB</span>
+                    </div>
+                </div>
+                <div id="lab1-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
+            </div>
+
+            <!-- Lab 2: Bandwidth vs Throughput Highway (Bandwidth vs Throughput) -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-green-700"><i class="fa-solid fa-scale-balanced mr-2"></i>Lab 2: Bandwidth vs. Throughput Highway</h2>
+                <p class="text-sm text-gray-600 mb-4">A fiber link has a bandwidth of 1000 Mbps. Drag the 3 network obstacles (Latency, Protocol Overhead, Congestion) onto the highway to witness how actual throughput drops below bandwidth.</p>
+                
+                <div class="flex flex-wrap gap-3 mb-6" id="highway-obstacles">
+                    <div class="io-item px-4 py-2 bg-green-100 border border-green-300 rounded font-bold text-sm" draggable="true" data-obst="latency">High Latency (Ping Lag)</div>
+                    <div class="io-item px-4 py-2 bg-green-100 border border-green-300 rounded font-bold text-sm" draggable="true" data-obst="protocol">Protocol Overhead</div>
+                    <div class="io-item px-4 py-2 bg-green-100 border border-green-300 rounded font-bold text-sm" draggable="true" data-obst="congestion">Network Congestion</div>
+                </div>
+
+                <div class="bg-gray-900 p-6 rounded-lg text-white text-center">
+                    <p class="text-lg font-mono mb-2">Bandwidth Limit: <span class="text-green-400 font-bold">1000 Mbps</span></p>
+                    <div class="io-dropzone border-2 border-dashed border-green-500 bg-gray-800 mx-auto min-h-[90px] w-full max-w-xl rounded-lg flex flex-wrap gap-2 items-center justify-center p-3" id="highway-drop">
+                        <span class="text-gray-400 text-sm italic">Drop obstacles here to calculate actual throughput...</span>
+                    </div>
+                    <p class="text-xl font-mono mt-4">Actual Throughput: <span id="actual-throughput" class="text-yellow-400 font-bold">1000 Mbps</span></p>
+                </div>
+                <div id="lab2-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
+            </div>
+
+            <!-- Lab 3: Packet Error Correcter (Obstacles) -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-purple-700"><i class="fa-solid fa-triangle-exclamation mr-2"></i>Lab 3: Packet Error Correcter</h2>
+                <p class="text-sm text-gray-600 mb-4">Corrupted network packets are dragging down throughput. Click on the 3 corrupted red data packets below to retransmit them and stabilize the stream.</p>
+                
+                <div class="grid grid-cols-2 sm:grid-cols-6 gap-3 mb-4" id="packet-grid">
+                    <!-- Generated via JS -->
+                </div>
+                <div id="lab3-feedback" class="text-center font-bold mt-4 h-6 text-purple-600"></div>
+            </div>
+
+            <!-- Lab 4: Bits to Bytes Converter (Bits vs Bytes) -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-amber-700"><i class="fa-solid fa-database mr-2"></i>Lab 4: Bits vs. Bytes Converter</h2>
+                <p class="text-sm text-gray-600 mb-4">Remember that 8 bits = 1 byte (8b = 1B). Convert the given network transfer rates into proper storage byte sizes.</p>
+                
+                <div class="bg-amber-50 p-6 rounded-lg max-w-xl mx-auto space-y-4">
+                    <div class="flex justify-between items-center font-bold text-gray-800">
+                        <span>1. 64 Megabits (Mb) =</span>
+                        <div class="flex gap-2">
+                            <input type="number" id="conv-1" class="border p-2 rounded w-24 text-center font-bold" placeholder="Value">
+                            <span class="py-2">Megabytes (MB)</span>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center font-bold text-gray-800">
+                        <span>2. 1000 Gigabits (Gb) =</span>
+                        <div class="flex gap-2">
+                            <input type="number" id="conv-2" class="border p-2 rounded w-24 text-center font-bold" placeholder="Value">
+                            <span class="py-2">Gigabytes (GB)</span>
+                        </div>
+                    </div>
+                    <div class="text-center pt-2">
+                        <button onclick="checkLab4()" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-6 py-2 rounded shadow">Verify Conversions</button>
+                    </div>
+                </div>
+                <div id="lab4-feedback" class="text-center font-bold mt-4 h-6 text-amber-700"></div>
+            </div>
+
+            <!-- Lab 5: Data Speed Detective (Standard Units) -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-red-700"><i class="fa-solid fa-gauge mr-2"></i>Lab 5: Data Speed Detective</h2>
+                <p class="text-sm text-gray-600 mb-4">Match the real-world scenario to the correct throughput unit (bps, Kbps, Mbps, Gbps, Tbps).</p>
+                
+                <div class="space-y-4 max-w-2xl mx-auto">
+                    <div class="bg-gray-50 p-4 rounded border">
+                        <p class="font-bold text-gray-800 mb-2">Scenario: Streaming multiple simultaneous 4K ultra-HD videos on home Wi-Fi.</p>
+                        <select id="scenario-1" class="w-full border p-2 rounded bg-white">
+                            <option value="">-- Select Proper Throughput Unit --</option>
+                            <option value="bps">bps (Bits per second)</option>
+                            <option value="Kbps">Kbps (Kilobits per second)</option>
+                            <option value="Mbps">Mbps (Megabits per second)</option>
+                            <option value="Gbps">Gbps (Gigabits per second)</option>
+                            <option value="Tbps">Tbps (Terabits per second)</option>
+                        </select>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded border">
+                        <p class="font-bold text-gray-800 mb-2">Scenario: Global Internet Backbone connecting massive international data centers.</p>
+                        <select id="scenario-2" class="w-full border p-2 rounded bg-white">
+                            <option value="">-- Select Proper Throughput Unit --</option>
+                            <option value="bps">bps (Bits per second)</option>
+                            <option value="Kbps">Kbps (Kilobits per second)</option>
+                            <option value="Mbps">Mbps (Megabits per second)</option>
+                            <option value="Gbps">Gbps (Gigabits per second)</option>
+                            <option value="Tbps">Tbps (Terabits per second)</option>
+                        </select>
+                    </div>
+                    <div class="text-center">
+                        <button onclick="checkLab5()" class="bg-red-600 hover:bg-red-700 text-white font-bold px-6 py-2 rounded shadow">Verify Detective Matches</button>
+                    </div>
+                </div>
+                <div id="lab5-feedback" class="text-center font-bold mt-4 h-6 text-red-700"></div>
+            </div>
+
+            <!-- Lab 6: Throughput Buffer Optimizer (Throughput Basics Lab 2) -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-blue-700"><i class="fa-solid fa-sliders mr-2"></i>Lab 6: Buffer Size Optimizer</h2>
+                <p class="text-sm text-gray-600 mb-4">Configure the network buffer to achieve stable packet delivery without packet drop.</p>
+                <div class="flex flex-col items-center gap-4 bg-blue-50 p-6 rounded-lg max-w-xl mx-auto">
+                    <label class="font-bold text-blue-900">Buffer Size: <span id="buf-val">512</span> KB</label>
+                    <input type="range" min="128" max="2048" step="128" value="512" class="w-full accent-blue-600" oninput="document.getElementById('buf-val').innerText = this.value">
+                    <button onclick="showModal('Lab 6 Complete!', 'Buffer successfully optimized for steady state streaming.', 'success')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-2 rounded">Apply Buffer Settings</button>
+                </div>
+            </div>
+
+            <!-- Lab 7: Bandwidth Allocation Matrix (Bandwidth vs Throughput Lab 2) -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-green-700"><i class="fa-solid fa-network-wired mr-2"></i>Lab 7: Bandwidth Allocation Matrix</h2>
+                <p class="text-sm text-gray-600 mb-4">Allocate available 500 Mbps bandwidth among 3 workstations so total usage does not exceed limit.</p>
+                <div class="space-y-3 max-w-xl mx-auto bg-green-50 p-6 rounded-lg">
+                    <div class="flex justify-between items-center font-bold"><span>Workstation A:</span> <input type="number" id="alloc-a" value="200" class="border p-1 w-24 text-center rounded"> Mbps</div>
+                    <div class="flex justify-between items-center font-bold"><span>Workstation B:</span> <input type="number" id="alloc-b" value="200" class="border p-1 w-24 text-center rounded"> Mbps</div>
+                    <div class="flex justify-between items-center font-bold"><span>Workstation C:</span> <input type="number" id="alloc-c" value="100" class="border p-1 w-24 text-center rounded"> Mbps</div>
+                    <div class="text-center pt-2">
+                        <button onclick="checkLab7()" class="bg-green-600 hover:bg-green-700 text-white font-bold px-6 py-2 rounded shadow">Validate Allocation</button>
+                    </div>
+                </div>
+                <div id="lab7-feedback" class="text-center font-bold mt-4 h-6 text-green-700"></div>
+            </div>
+
+            <!-- Lab 8: Latency Reducer (Obstacles Lab 2) -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-purple-700"><i class="fa-solid fa-stopwatch mr-2"></i>Lab 8: Ping Latency Optimizer</h2>
+                <p class="text-sm text-gray-600 mb-4">Click the server node with the lowest propagation delay (under 15ms) to route competitive gaming traffic.</p>
+                <div class="grid grid-cols-3 gap-4 max-w-xl mx-auto">
+                    <button onclick="showModal('Incorrect', 'Ping is 85ms. Too slow for gaming.', 'error')" class="bg-gray-100 p-4 rounded border font-bold hover:bg-gray-200">Server EU (85ms)</button>
+                    <button onclick="showModal('Lab 8 Complete!', 'Selected Local Server (12ms). Optimal latency achieved!', 'success')" class="bg-purple-100 p-4 rounded border border-purple-300 font-bold text-purple-900 hover:bg-purple-200">Server Local (12ms)</button>
+                    <button onclick="showModal('Incorrect', 'Ping is 140ms. High latency.', 'error')" class="bg-gray-100 p-4 rounded border font-bold hover:bg-gray-200">Server Asia (140ms)</button>
+                </div>
+            </div>
+
+            <!-- Lab 9: Storage Unit Scale (Bits vs Bytes Lab 2) -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-amber-700"><i class="fa-solid fa-hard-drive mr-2"></i>Lab 9: Storage Multiplier Unit Test</h2>
+                <p class="text-sm text-gray-600 mb-4">Identify the correct factor for storage file sizes (remember file sizes jump by 1,024 factors: KB -> MB -> GB).</p>
+                <div class="text-center space-x-4">
+                    <button onclick="showModal('Incorrect', 'File sizes use 1,024 multipliers, not 1,000.', 'error')" class="bg-amber-100 hover:bg-amber-200 font-bold px-6 py-3 rounded border border-amber-300">Factor of 1,000</button>
+                    <button onclick="showModal('Lab 9 Complete!', 'Correct! Storage sizes jump by 1,024 factors (KB -> MB -> GB).', 'success')" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-6 py-3 rounded shadow">Factor of 1,024</button>
+                </div>
+            </div>
+
+            <!-- Lab 10: Fiber Backbone Simulator (Standard Units Lab 2) -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-red-700"><i class="fa-solid fa-globe mr-2"></i>Lab 10: Backbone Transceiver Setup</h2>
+                <p class="text-sm text-gray-600 mb-4">Connect two continental data centers by selecting the correct high-capacity backbone unit.</p>
+                <div class="flex justify-center gap-4">
+                    <button onclick="showModal('Incorrect', 'Mbps is too slow for continental backbone links.', 'error')" class="bg-gray-100 px-6 py-3 rounded font-bold border">100 Mbps Link</button>
+                    <button onclick="showModal('Incorrect', 'Gbps is standard for enterprise, but international backbones require higher capacity.', 'error')" class="bg-gray-100 px-6 py-3 rounded font-bold border">10 Gbps Link</button>
+                    <button onclick="showModal('Lab 10 Complete!', 'Terabits per second (Tbps) successfully deployed for global backbone!', 'success')" class="bg-red-600 text-white px-6 py-3 rounded font-bold shadow hover:bg-red-700">10 Tbps Fiber Backbone</button>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <button onclick="switchTab('quiz')" class="bg-green-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-green-500 shadow-lg transition transform hover:scale-105">Take the Mastery Quiz <i class="fa-solid fa-clipboard-check ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- QUIZ SECTION -->
+        <div id="quiz-section" class="tab-content">
+            <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-xl max-w-4xl mx-auto">
+                <div class="text-center mb-8 border-b pb-4">
+                    <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Unit 03 Section 1.3.2 Mastery Quiz</h1>
+                    <p class="text-gray-600">Score 90% or higher (18/20) to earn your Certificate of Mastery and unlock the Bit Racer arcade game!</p>
+                </div>
+
+                <div id="quiz-container" class="space-y-8">
+                    <!-- Questions injected via JS -->
+                </div>
+
+                <div class="mt-10 text-center border-t pt-6 flex flex-col md:flex-row justify-center items-center gap-4">
+                    <button id="submit-quiz-btn" onclick="gradeQuiz()" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">Submit Quiz</button>
+                    <button id="proceed-game-btn" onclick="switchTab('game')" class="hidden bg-purple-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-purple-700 shadow-lg transition w-full md:w-auto">Play Bit Racer Game <i class="fa-solid fa-gamepad ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RETRO GAME SECTION: BIT RACER (Spy Hunter Style) -->
+        <div id="game-section" class="tab-content">
+            <div class="bg-gray-900 p-6 sm:p-8 rounded-2xl shadow-xl max-w-4xl mx-auto border-4 border-gray-700 flex flex-col items-center">
+                <div class="text-center mb-4 w-full">
+                    <h1 class="text-3xl font-extrabold text-yellow-400 mb-2 tracking-widest uppercase" style="font-family: monospace;">Bit Racer (Spy Hunter)</h1>
+                    <p class="text-gray-300 text-sm">Steer your data cruiser using <strong class="text-green-400">Arrow Keys</strong> (Left/Right). Avoid corrupted packet roadblocks (Red), collect high-speed data tokens (Blue), and reach the destination server!</p>
+                </div>
+                
+                <div class="flex justify-between items-center w-full max-w-[400px] sm:max-w-[600px] mb-2 px-4 text-white font-mono text-xl">
+                    <div>Throughput: <span id="game-score" class="text-green-400 font-bold">0</span> Mbps</div>
+                    <div>Stability: <span id="game-lives" class="text-red-400 font-bold">3</span></div>
+                </div>
+
+                <div class="relative flex justify-center w-full">
+                    <canvas id="game-canvas" width="600" height="450" class="w-full max-w-[400px] sm:max-w-[600px] bg-gray-800 border-2 border-gray-600 rounded shadow-lg"></canvas>
+                    
+                    <div id="game-overlay" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-70 rounded-lg max-w-[400px] sm:max-w-[600px] mx-auto z-10">
+                        <button id="start-game-btn" class="bg-yellow-600 hover:bg-yellow-500 text-black font-bold font-mono py-3 px-6 rounded-lg text-xl border-4 border-yellow-800 uppercase transform transition hover:scale-105">Start Bit Racer</button>
+                    </div>
+                </div>
+
+                <div class="mt-8 text-center w-full border-t border-gray-700 pt-6">
+                    <button onclick="switchTab('cert')" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">View Certificate <i class="fa-solid fa-award ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CERTIFICATE SECTION -->
+        <div id="cert-section" class="tab-content">
+            <div class="max-w-5xl mx-auto">
+                
+                <div class="bg-white p-6 rounded shadow mb-6 text-center border border-gray-200">
+                    <h2 class="text-2xl font-bold text-green-600 mb-2">🎉 Congratulations! 🎉</h2>
+                    <p class="text-gray-700 mb-4">You have achieved mastery of Transfer Rates & Throughput.</p>
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+                        <input type="text" id="student-name-input" value="Student" placeholder="Enter your first name" class="border-2 border-gray-300 rounded px-4 py-2 w-full md:w-64 focus:border-green-500 focus:outline-none">
+                        <button onclick="updateCertName()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">Update Name</button>
+                        <button id="download-btn" onclick="downloadCert()" class="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900 transition flex items-center justify-center">
+                            <i class="fa-solid fa-download mr-2"></i>Download PNG
+                        </button>
+                    </div>
+                </div>
+
+                <div class="cert-preview-container">
+                    <div id="certificate">
+                        <div class="gold-seal">
+                            <div class="gold-seal-inner-1">
+                                <div class="gold-seal-inner-2">
+                                     <span class="embossed-text embossed-text-large">Certificate</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-small">Of</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-large">Excellence</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="relative z-20 w-full h-full flex flex-col pt-[48px] pl-[380px] pr-[48px]">
+                            <h1 class="text-[#1e3a8a] text-[4.5rem] leading-none font-serif font-bold tracking-wide uppercase mb-2">CERTIFICATE</h1>
+                            <h2 class="text-gray-800 text-3xl font-serif tracking-widest uppercase mb-10">Of Achievement</h2>
+                            
+                            <p class="text-[1.4rem] font-body text-gray-800 mb-4">This is to certify that</p>
+                            
+                            <div class="relative mb-8 w-full">
+                                <h3 id="cert-student-name" class="text-[4rem] text-[#1e3a8a] font-serif italic leading-none pb-2 relative z-10 text-center w-full block">Student</h3>
+                                <div class="w-full border-b-[2px] border-[#1e3a8a] absolute bottom-[4px] left-0 z-0"></div>
+                                <div class="w-full border-b-[2px] border-dotted border-red-500 absolute bottom-[0px] left-0 z-0"></div>
+                            </div>
+                            
+                            <p class="text-[1.3rem] font-body text-gray-800 leading-relaxed w-full pr-4">
+                                Has successfully completed the assessment for 
+                                <strong class="text-[1.8rem] text-[#1e3a8a] block mt-4 mb-2 font-serif">Cyber.org Tech+ Unit 03 Section 1.3.2</strong>
+                                <strong class="text-[1.5rem] text-black block mb-4 font-serif italic">Transfer Rates & Throughput</strong>
+                                <span class="text-[1.1rem] text-gray-700 leading-snug block">Demonstrating proficiency in analyzing throughput rates, differentiating bits and bytes, comparing bandwidth limits, identifying network obstacles, and mastering throughput units from bps to Tbps.</span>
+                            </p>
+                            
+                            <div class="flex justify-end gap-16 items-end mt-auto mb-[60px] w-full pr-8">
+                                <div class="w-64">
+                                    <div class="border-b border-gray-600 mb-2 h-20 flex items-end justify-center relative">
+                                        <span class="font-script text-[5rem] text-[#1e3a8a] absolute bottom-[-10px] transform -rotate-3 opacity-90">Dr. M. S</span>
+                                    </div>
+                                    <p class="font-serif text-xl text-gray-800 text-center">Administration</p>
+                                </div>
+                                
+                                <div class="w-64">
+                                    <div class="border-b border-gray-600 mb-2 text-center h-20 flex items-end justify-center">
+                                        <p id="cert-date" class="font-body text-2xl text-gray-800 pb-1">Date Here</p>
+                                    </div>
+                                    <p class="font-serif text-xl text-gray-800 text-center">Date</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Custom Modal -->
+    <div id="custom-modal" class="fixed inset-0 bg-black bg-opacity-50 z-[100] hidden flex justify-center items-center backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all">
+            <div class="text-center">
+                <div id="modal-icon" class="text-5xl mb-4"></div>
+                <h3 id="modal-title" class="text-2xl font-bold mb-2 text-gray-900"></h3>
+                <p id="modal-msg" class="text-gray-600 mb-6"></p>
+                <button onclick="closeModal()" class="bg-green-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-green-700 transition w-full">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Briefing Modal -->
+    <div id="briefing-modal" class="fixed inset-0 bg-black bg-opacity-70 z-[120] hidden flex justify-center items-center backdrop-blur-sm p-4 sm:p-6">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col transform transition-all overflow-hidden border-4 border-green-700">
+            <div class="p-6 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+                <div class="flex items-center gap-4">
+                    <div id="briefing-modal-icon" class="text-4xl"></div>
+                    <h3 id="briefing-modal-title" class="text-2xl md:text-3xl font-bold text-gray-900"></h3>
+                </div>
+                <button onclick="closeBriefing()" class="text-gray-400 hover:text-red-600 transition text-4xl leading-none">&times;</button>
+            </div>
+            <div id="briefing-modal-content" class="p-6 md:p-10 overflow-y-auto flex-grow text-gray-700 text-lg leading-relaxed bg-white"></div>
+            <div class="p-6 border-t border-gray-200 bg-gray-50 flex justify-end">
+                <button onclick="closeBriefing()" class="bg-green-700 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-green-800 transition shadow-md">Acknowledge & Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 7 Paragraph Minimum Briefing Data & Use Cases ---
+        const briefingData = {
+            'throughput-details': {
+                title: 'Throughput Basics & Data Flow',
+                icon: '<i class="fa-solid fa-water text-blue-600"></i>',
+                html: `
+                    <p class="mb-5">Throughput is a fundamental concept in networking and data communications that refers to the actual rate at which data is successfully transmitted over a communication channel from one network node to another within a specific block of time.</p>
+                    <p class="mb-5">To conceptualize throughput, network engineers frequently use the physical analogy of a water faucet filling a bottle. The water flowing out fills the container faster or slower depending on how much volume comes through per second. If the faucet is fully opened, the bottle fills rapidly; if it is restricted or dripping, filling takes considerable time.</p>
+                    <p class="mb-5">In digital computer networks, data flows through physical copper cables, fiber optic strands, or wireless radio frequency signals. Throughput measures the net volume of useful data packets successfully delivered, excluding corrupted frames or discarded packets that required retransmission.</p>
+                    <p class="mb-5">The measurement of throughput is critical for evaluating real-world network performance. While theoretical capacity exists on paper, throughput provides the empirical benchmark of what users and applications actually experience during live network operations.</p>
+                    <p class="mb-5">High throughput is essential for modern data-intensive activities such as real-time 4K/8K video streaming, massive cloud backups, multi-player competitive gaming, and enterprise database synchronization across distributed global servers.</p>
+                    <p class="mb-5">Internet Service Providers (ISPs), cloud architecture providers, data center administrators, and home network technicians constantly monitor throughput metrics to detect bottlenecks, ensure service level agreements (SLAs), and upgrade network infrastructure before user congestion impairs productivity.</p>
+                    <p>Ultimately, mastering throughput allows IT professionals to diagnose sluggish application performance, optimize streaming buffers, and ensure that data pipes are sized appropriately to handle peak enterprise traffic loads without dropping packets or stalling workflows.</p>
+                `
+            },
+            'throughput-usecase': {
+                title: 'Throughput Basics: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 1: Streaming 4K Video in a Multi-User Home</h4>
+                        <p class="mb-2">A household with multiple occupants streaming ultra-HD video simultaneously requires robust continuous throughput.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1:</strong> Family members stream two separate 4K movies while someone else participates in a high-definition video conference, requiring a sustained throughput of over 50 Mbps without buffering pauses.</li>
+                            <li><strong>Example 2:</strong> Smart home security cameras continuously upload high-resolution video streams to cloud storage servers in the background while users browse media.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 2: Enterprise Cloud Synchronization</h4>
+                        <p class="mb-2">A global financial institution constantly synchronizes transaction ledgers between branch offices and primary cloud servers.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1:</strong> End-of-day trading data packets totaling hundreds of gigabytes must be transferred across dedicated enterprise links within a strict 15-minute window.</li>
+                            <li><strong>Example 2:</strong> Automated database backups replicate customer records across geographically redundant cloud servers to ensure zero data loss during regional outages.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Data Flow & Faucet Analogy</p>
+                            <img src="https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=600&h=350" alt="Water flow representing data rate" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: High Throughput Networks</p>
+                            <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=600&h=350" alt="Server room with high speed data flow" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'bandwidth-details': {
+                title: 'Bandwidth vs. Throughput',
+                icon: '<i class="fa-solid fa-scale-balanced text-green-600"></i>',
+                html: `
+                    <p class="mb-5">In networking terminology, bandwidth and throughput are frequently confused by beginners, yet they represent fundamentally distinct metrics regarding network performance and data transmission capacity.</p>
+                    <p class="mb-5">Bandwidth is defined as the maximum possible data rate capacity of a network connection under ideal, laboratory conditions. It specifies the absolute upper ceiling of how many bits per second a physical transmission medium can theoretically support.</p>
+                    <p class="mb-5">Conversely, throughput is the actual, measured speed at which data successfully moves across the network in real-world operating environments. It accounts for environmental interference, protocol overhead, and congestion.</p>
+                    <p class="mb-5">A classic analogy for understanding this distinction is a highway speed limit versus the actual speed of cars during rush hour. The highway bandwidth is the posted 65 mph speed limit (the maximum design capacity). However, due to traffic density, actual throughput might drop to 35 mph.</p>
+                    <p class="mb-5">Crucially, throughput can never exceed available bandwidth. Even with a gigabit fiber connection (high bandwidth), if network obstacles intervene, the resulting throughput experienced by the user will be lower than the maximum limit.</p>
+                    <p class="mb-5">Network administrators analyze the gap between bandwidth and throughput to identify hidden inefficiencies. If a 1 Gbps connection consistently yields only 200 Mbps of throughput, an audit is triggered to inspect hardware degradation or interference.</p>
+                    <p>Understanding this relationship ensures proper network planning, allowing engineers to provision adequate bandwidth overhead so that real-world throughput remains well above the minimum thresholds required by mission-critical enterprise applications.</p>
+                `
+            },
+            'bandwidth-usecase': {
+                title: 'Bandwidth vs. Throughput: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-green-800 mb-2 border-b-2 border-green-200 pb-1">Case 1: ISP Internet Service Plans</h4>
+                        <p class="mb-2">Internet service providers market connection plans based on maximum theoretical bandwidth.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1:</strong> An ISP advertises a "1 Gbps Fiber Package" to residential customers, which represents the maximum bandwidth pipe delivered to the home terminal.</li>
+                            <li><strong>Example 2:</strong> When a subscriber runs a speed test during peak evening hours, network congestion reduces their actual throughput to 750 Mbps, demonstrating the gap between bandwidth and throughput.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-green-800 mb-2 border-b-2 border-green-200 pb-1">Case 2: Corporate Campus Wi-Fi</h4>
+                        <p class="mb-2">University and corporate networks provision high-bandwidth wireless access points to handle dense user populations.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1:</strong> An enterprise Wi-Fi 6 router has a theoretical bandwidth capacity of 2.4 Gbps across multiple channels.</li>
+                            <li><strong>Example 2:</strong> When 200 students connect in a lecture hall, signal attenuation and shared airtime reduce individual client throughput to 40 Mbps.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Theoretical Highway Capacity</p>
+                            <img src="https://images.unsplash.com/photo-1506521781263-d8422e82f27a?auto=format&fit=crop&w=600&h=350" alt="Highway representing bandwidth capacity" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Actual Network Performance</p>
+                            <img src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=600&h=350" alt="Network routing hardware monitoring bandwidth" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'obstacles-details': {
+                title: 'Throughput Obstacles & Bottlenecks',
+                icon: '<i class="fa-solid fa-triangle-exclamation text-purple-600"></i>',
+                html: `
+                    <p class="mb-5">Even when an enterprise or home user purchases high-bandwidth network connections, several physical, environmental, and protocol obstacles consistently degrade actual throughput below theoretical maximums.</p>
+                    <p class="mb-5">The first major obstacle is <strong>Latency</strong>. Latency measures the time delay (in milliseconds) required for a data packet to travel from source to destination. High propagation delay over long geographic distances inherently limits interactive throughput and responsiveness.</p>
+                    <p class="mb-5">The second obstacle involves <strong>Transmission Errors</strong>. Electrical noise, electromagnetic interference, and faulty cabling corrupt data packets in transit. When error-checking protocols detect a corrupted packet, the receiving node requests a complete retransmission, consuming valuable bandwidth and reducing net throughput.</p>
+                    <p class="mb-5">Thirdly, <strong>Protocol Overhead</strong> impacts data rates. Networking protocols (such as TCP/IP, Ethernet framing, and encryption headers) add administrative metadata to every packet. This header information consumes transmission capacity, meaning useful payload throughput is always lower than raw bit rates.</p>
+                    <p class="mb-5">Fourthly, <strong>ISP Limits and Throttling</strong> introduce artificial ceilings. Internet service providers often enforce data caps or policy-based throttling during peak congestion hours, capping subscriber throughput regardless of local hardware capabilities.</p>
+                    <p class="mb-5">Finally, <strong>Network Congestion</strong> occurs when too many active devices compete for shared routing paths. Routers buffer packets during heavy loads, creating queue delays and reducing throughput for individual data streams.</p>
+                    <p>Recognizing and mitigating these obstacles through Quality of Service (QoS) rules, fiber upgrades, and error-correction tuning is a core responsibility of professional network engineers.</p>
+                `
+            },
+            'obstacles-usecase': {
+                title: 'Throughput Obstacles: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Case 1: Competitive Online Gaming Lag</h4>
+                        <p class="mb-2">Online tournament players require ultra-low latency and zero packet loss to maintain competitive responsiveness.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1:</strong> Electromagnetic interference from a household microwave disrupts Wi-Fi signal packets, forcing TCP retransmissions that cause noticeable game stuttering.</li>
+                            <li><strong>Example 2:</strong> High geographical ping latency (150ms) between a player in New York and a game server in Tokyo delays position updates regardless of high connection bandwidth.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Case 2: Corporate VPN Protocol Overhead</h4>
+                        <p class="mb-2">Employees working remotely connect to corporate networks using Virtual Private Network (VPN) encryption tunneling.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1:</strong> Heavy encryption protocols wrap every data packet in security headers, adding 15% protocol overhead to data transmissions.</li>
+                            <li><strong>Example 2:</strong> Evening neighborhood congestion on cable internet lines causes packet queuing delays, reducing throughput during remote video meetings.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Network Congestion & Delays</p>
+                            <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=600&h=350" alt="Encrypted data packets representing protocol overhead" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Troubleshooting Network Errors</p>
+                            <img src="https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=600&h=350" alt="Cybersecurity monitoring latency and errors" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'bitsbytes-details': {
+                title: 'Bits vs. Bytes & Multipliers',
+                icon: '<i class="fa-solid fa-database text-amber-600"></i>',
+                html: `
+                    <p class="mb-5">A frequent point of confusion in computer science and networking is the precise mathematical and functional difference between <strong>Bits</strong> and <strong>Bytes</strong>.</p>
+                    <p class="mb-5">A <strong>bit</strong> (abbreviated lowercase 'b') is short for binary digit and represents the most basic unit of information storage and transmission in computing, holding a value of either 0 or 1.</p>
+                    <p class="mb-5">A <strong>byte</strong> (abbreviated uppercase 'B') groups eight bits together ($8\text{ bits} = 1\text{ Byte}$). Bytes are standard for measuring file sizes, disk storage capacity, and RAM memory.</p>
+                    <p class="mb-5">Network transmission speeds are invariably measured in bits per second (bps) because network hardware and transmission protocols transmit raw electrical or optical impulses one individual bit at a time.</p>
+                    <p class="mb-5">When calculating download times, users must convert bits to bytes. For example, downloading a 100 Megabyte (MB) file over a 100 Megabit per second (Mbps) connection requires dividing by 8, meaning optimal download time is roughly 8 seconds ($100\text{ MB} = 800\text{ Mb} / 100\text{ Mbps}$).</p>
+                    <p class="mb-5">Furthermore, networking units use decimal multipliers based on factors of 1,000 (Kilobit = 1,000 bits, Megabit = 1,000,000 bits), whereas binary storage file measurements historically use binary multipliers based on factors of 1,024 ($1\text{ Kilobyte} = 1,024\text{ Bytes}$).</p>
+                    <p>Mastering this distinction prevents costly sizing errors when provisioning network circuits or calculating file transfer completion times for enterprise clients.</p>
+                `
+            },
+            'bitsbytes-usecase': {
+                title: 'Bits vs. Bytes: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-amber-800 mb-2 border-b-2 border-amber-200 pb-1">Case 1: Downloading Video Game Install Files</h4>
+                        <p class="mb-2">Gamers download massive game files measured in Gigabytes over high-speed internet connections advertised in Megabits per second.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1:</strong> A game launcher displays download speed as 50 Megabits per second (50 Mbps).</li>
+                            <li><strong>Example 2:</strong> To calculate download time for a 50 Gigabyte ($50\text{ GB} = 400\text{ Gb}$) file update, the system divides by 50 Mbps, estimating roughly 8,000 seconds (2.2 hours).</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-amber-800 mb-2 border-b-2 border-amber-200 pb-1">Case 2: Enterprise Email Attachments</h4>
+                        <p class="mb-2">Email servers enforce strict attachment size limits measured in Megabytes while assessing gateway transfer speeds in Megabits.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1:</strong> An email gateway restricts attachment size to 25 Megabytes (200 Megabits of raw data).</li>
+                            <li><strong>Example 2:</strong> A corporate fiber link operating at 100 Mbps uploads the 25 MB attachment in approximately 2 seconds of sustained throughput.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Binary Bits & Bytes</p>
+                            <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=600&h=350" alt="Binary code representing bits and bytes" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Download Speed Calculations</p>
+                            <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=600&h=350" alt="Computer screen showing file download progress" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'units-details': {
+                title: 'Standard Transfer Units (bps to Tbps)',
+                icon: '<i class="fa-solid fa-gauge text-red-600"></i>',
+                html: `
+                    <p class="mb-5">Network transfer rates span a massive scale of magnitudes, organized into standardized tiers based on factors of 1,000.</p>
+                    <p class="mb-5"><strong>Bits per Second (bps):</strong> The baseline unit measuring 1 bit per second. Historically used for very low-speed serial communications, legacy modems, and basic IoT telemetry sensors transmitting tiny status codes.</p>
+                    <p class="mb-5"><strong>Kilobits per Second (Kbps):</strong> Equals 1,000 bits per second. Commonly associated with early dial-up internet connections (56 Kbps) and early 2G mobile data networks.</p>
+                    <p class="mb-5"><strong>Megabits per Second (Mbps):</strong> Equals 1,000 Kbps (1 million bits per second). The standard unit for modern broadband home internet packages, local area networks (LAN), and standard video streaming platforms.</p>
+                    <p class="mb-5"><strong>Gigabits per Second (Gbps):</strong> Equals 1,000 Mbps (1 billion bits per second). Utilized for high-performance fiber optic internet, enterprise data center interconnects, and competitive gaming networks requiring minimal latency.</p>
+                    <p class="mb-5"><strong>Terabits per Second (Tbps):</strong> Equals 1,000 Gbps (1 trillion bits per second). Representing the pinnacle of modern networking, Tbps speeds power major international submarine fiber cables and global internet backbones connecting massive metropolitan data centers.</p>
+                    <p>Understanding these tiers allows network architects to select appropriate physical media and transmission hardware tailored to specific enterprise demands.</p>
+                `
+            },
+            'units-usecase': {
+                title: 'Standard Transfer Units: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-red-800 mb-2 border-b-2 border-red-200 pb-1">Case 1: Rural Mobile Text Messaging (Kbps)</h4>
+                        <p class="mb-2">Low-bandwidth applications operate effectively on Kbps links where data payloads are minimal.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1:</strong> Sending SMS text messages over rural 2G/3G mobile networks requiring fractional Kbps throughput.</li>
+                            <li><strong>Example 2:</strong> Smart water meter sensors transmitting simple numerical readings once per hour over low-speed narrowband IoT connections.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-red-800 mb-2 border-b-2 border-red-200 pb-1">Case 2: International Internet Backbones (Tbps)</h4>
+                        <p class="mb-2">Transoceanic submarine cables carry the entire global internet traffic volume between continents.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1:</strong> Subsea fiber optic cables spanning the Atlantic Ocean operating at multi-terabit per second capacity to link North American and European data centers.</li>
+                            <li><strong>Example 2:</strong> Major cloud hyperscalers (AWS, Google, Microsoft) leasing dedicated Tbps dark fiber channels to synchronize global cloud regions in real time.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: High Capacity Fiber Optic Backbone</p>
+                            <img src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=600&h=350" alt="Fiber optic network cables" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Global Data Center Interconnects</p>
+                            <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=600&h=350" alt="Data center server racks" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        function openBriefing(key) {
+            const modal = document.getElementById('briefing-modal');
+            const data = briefingData[key];
+            if(data) {
+                document.getElementById('briefing-modal-icon').innerHTML = data.icon;
+                document.getElementById('briefing-modal-title').innerText = data.title;
+                document.getElementById('briefing-modal-content').innerHTML = data.html;
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeBriefing() {
+            document.getElementById('briefing-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        document.getElementById('briefing-modal').addEventListener('click', function(e) {
+            if(e.target === this) closeBriefing();
+        });
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId + '-section').classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-green-900'));
+            const activeBtn = document.getElementById('nav-' + tabId);
+            if(activeBtn && tabId !== 'cert') activeBtn.classList.add('bg-green-900');
+            
+            document.querySelectorAll('.nav-btn-mobile').forEach(btn => btn.classList.remove('bg-green-900'));
+            const activeMobileBtn = document.getElementById('nav-' + tabId + '-mobile');
+            if(activeMobileBtn && tabId !== 'cert') activeMobileBtn.classList.add('bg-green-900');
+
+            window.scrollTo(0,0);
+
+            if (tabId === 'game' && !gameRunning) {
+                resetGame();
+                drawGame();
+            }
+        }
+
+        function showModal(title, message, type = 'info') {
+            const modal = document.getElementById('custom-modal');
+            const icon = document.getElementById('modal-icon');
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-msg').innerText = message;
+            
+            if(type === 'success') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-check text-green-500"></i>';
+            } else if (type === 'error') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500"></i>';
+            } else if (type === 'warning') {
+                icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-yellow-500"></i>';
+            } else {
+                icon.innerHTML = '<i class="fa-solid fa-circle-info text-blue-500"></i>';
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        // --- LAB 1: Throughput Faucet Simulator ---
+        let transferredMB = 0;
+        let lab1Interval = null;
+        function updateFlow(val) {
+            document.getElementById('flow-val').innerText = val;
+        }
+        function startLab1() {
+            transferredMB = 0;
+            clearInterval(lab1Interval);
+            let flow = parseInt(document.getElementById('flow-slider').value);
+            lab1Interval = setInterval(() => {
+                transferredMB += flow / 4;
+                let pct = Math.min(100, (transferredMB / 100) * 100);
+                document.getElementById('bucket-fill').style.width = pct + '%';
+                document.getElementById('bucket-status').innerText = `Transferred: ${Math.round(transferredMB)} MB / 100 MB`;
+                if(transferredMB >= 100) {
+                    clearInterval(lab1Interval);
+                    document.getElementById('lab1-feedback').innerText = "Data Transfer Complete Successfully!";
+                    showModal('Lab 1 Complete!', 'Throughput faucet simulation successfully completed.', 'success');
+                }
+            }, 250);
+        }
+
+        // --- LAB 2: Bandwidth vs Throughput Highway Drag & Drop ---
+        let draggedObstacle = null;
+        let obstaclesDropped = 0;
+        let currentThroughput = 1000;
+
+        document.querySelectorAll('#highway-obstacles .io-item').forEach(item => {
+            item.addEventListener('dragstart', function() { draggedObstacle = this; });
+        });
+
+        const dropZone = document.getElementById('highway-drop');
+        dropZone.addEventListener('dragover', e => e.preventDefault());
+        dropZone.addEventListener('drop', function() {
+            if(draggedObstacle) {
+                if(!this.contains(draggedObstacle)) {
+                    if(this.querySelector('span')) this.innerHTML = '';
+                    this.appendChild(draggedObstacle);
+                    draggedObstacle.className = "px-3 py-1 bg-red-900 border border-red-700 rounded text-xs font-bold text-white";
+                    obstaclesDropped++;
+                    currentThroughput -= 250;
+                    document.getElementById('actual-throughput').innerText = currentThroughput + " Mbps";
+                    
+                    if(obstaclesDropped === 3) {
+                        document.getElementById('lab2-feedback').innerText = "All obstacles applied! Throughput successfully degraded below bandwidth.";
+                        showModal('Lab 2 Complete!', 'You successfully demonstrated how obstacles reduce throughput below bandwidth capacity.', 'success');
+                    }
+                }
+            }
+        });
+
+        // --- LAB 3: Packet Error Correcter ---
+        const packetGrid = document.getElementById('packet-grid');
+        let fixedPackets = 0;
+        for(let i=0; i<6; i++) {
+            let pkt = document.createElement('div');
+            let isCorrupt = i < 3;
+            pkt.className = `p-3 rounded text-center font-bold cursor-pointer border ${isCorrupt ? 'bg-red-100 border-red-400 text-red-800' : 'bg-green-100 border-green-400 text-green-800'}`;
+            pkt.innerHTML = isCorrupt ? '<i class="fa-solid fa-triangle-exclamation mb-1 block"></i>Corrupt' : '<i class="fa-solid fa-check mb-1 block"></i>Stable';
+            pkt.onclick = function() {
+                if(isCorrupt && !this.classList.contains('fixed')) {
+                    this.classList.replace('bg-red-100', 'bg-green-100');
+                    this.classList.replace('border-red-400', 'border-green-400');
+                    this.classList.replace('text-red-800', 'text-green-800');
+                    this.innerHTML = '<i class="fa-solid fa-rotate-right mb-1 block"></i>Retransmit';
+                    this.classList.add('fixed');
+                    fixedPackets++;
+                    if(fixedPackets === 3) {
+                        document.getElementById('lab3-feedback').innerText = "All error packets retransmitted and stabilized!";
+                        showModal('Lab 3 Complete!', 'Packet error correction successfully restored throughput.', 'success');
+                    }
+                }
+            };
+            packetGrid.appendChild(pkt);
+        }
+
+        // --- LAB 4: Bits to Bytes Converter ---
+        function checkLab4() {
+            let v1 = document.getElementById('conv-1').value;
+            let v2 = document.getElementById('conv-2').value;
+            if(parseInt(v1) === 8 && parseInt(v2) === 125) {
+                document.getElementById('lab4-feedback').innerText = "Correct! 64 Mb / 8 = 8 MB | 1000 Gb / 8 = 125 GB.";
+                showModal('Lab 4 Complete!', 'Bits to Bytes conversion successfully calculated.', 'success');
+            } else {
+                document.getElementById('lab4-feedback').innerText = "Incorrect. Remember 8 bits = 1 byte (divide bit value by 8).";
+                document.getElementById('lab4-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
+            }
+        }
+
+        // --- LAB 5: Data Speed Detective ---
+        function checkLab5() {
+            let s1 = document.getElementById('scenario-1').value;
+            let s2 = document.getElementById('scenario-2').value;
+            if(s1 === 'Gbps' && s2 === 'Tbps') {
+                document.getElementById('lab5-feedback').innerText = "Correct! 4K streaming requires Gbps, and international backbones require Tbps.";
+                showModal('Lab 5 Complete!', 'Data Speed Detective lab successfully solved.', 'success');
+            } else {
+                document.getElementById('lab5-feedback').innerText = "Incorrect unit selections. Review throughput capacity tiers.";
+                document.getElementById('lab5-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
+            }
+        }
+
+        // --- LAB 7: Bandwidth Allocation Matrix ---
+        function checkLab7() {
+            let a = parseInt(document.getElementById('alloc-a').value) || 0;
+            let b = parseInt(document.getElementById('alloc-b').value) || 0;
+            let c = parseInt(document.getElementById('alloc-c').value) || 0;
+            let total = a + b + c;
+            if(total <= 500) {
+                document.getElementById('lab7-feedback').innerText = `Valid allocation! Total bandwidth used: ${total} / 500 Mbps.`;
+                showModal('Lab 7 Complete!', 'Bandwidth allocation successfully managed without exceeding limit.', 'success');
+            } else {
+                document.getElementById('lab7-feedback').innerText = `Overcommitted! Total used is ${total} Mbps (Limit is 500 Mbps).`;
+                document.getElementById('lab7-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
+            }
+        }
+
+        // --- 20-QUESTION QUIZ DATA (10 provided + 10 extended) ---
+        const quizData = [
+            // 10 provided questions
+            { q: "Which of the following best defines throughput?", options: ["The maximum possible data transfer rate of a network", "The total number of devices connected to a network", "The rate at which data moves from one place to another", "The amount of data a device can store"], answer: 2 },
+            { q: "What does bps stand for?", options: ["Bits per second", "Bytes per second", "Binary per storage", "Base per system"], answer: 0 },
+            { q: "Which throughput unit is the fastest?", options: ["Mbps", "Tbps", "Gbps", "Kbps"], answer: 1 },
+            { q: "Why is throughput usually lower than bandwidth?", options: ["Bandwidth measures in bytes, not bits", "Bandwidth changes constantly, throughput is fixed", "Throughput measures storage, not transfer rates", "Throughput includes real-world factors like latency, errors, and protocol overhead"], answer: 3 },
+            { q: "If a network has a bandwidth of 100 Mbps, the throughput could be:", options: ["80 Mbps", "Exactly 100 Mbps always", "Unlimited", "150 Mbps"], answer: 0 },
+            { q: "Which is smaller?", options: ["1 byte", "1 bit", "They are equal", "Depends on the speed"], answer: 1 },
+            { q: "Which of the following activities would mostly require Gbps speeds?", options: ["Sending a text message", "Streaming multiple 4K videos", "Browsing simple websites", "Sending an email"], answer: 1 },
+            { q: "Which of the following best describes bandwidth?", options: ["The actual speed achieved on a network", "The number of files sent in a minute", "The maximum possible capacity of a network connection", "The delay in network connection"], answer: 2 },
+            { q: "Which unit would describe the throughput of an old mobile 2G connection?", options: ["Mbps", "Kbps", "Gbps", "Tbps"], answer: 1 },
+            { q: "Which is the correct comparison of units from smallest to largest?", options: ["Mbps -> Tbps -> Kbps -> Gbps", "Kbps -> Mbps -> Gbps -> Tbps", "Tbps -> Gbps -> Mbps -> Kbps", "Mbps -> Kbps -> Tbps -> Gbps"], answer: 1 },
+            
+            // 10 extended questions from briefing
+            { q: "How many bits are contained in a single byte?", options: ["4 bits", "8 bits", "10 bits", "1,024 bits"], answer: 1 },
+            { q: "What multiplier factor is standard for network transmission data rates (bps, Kbps, Mbps)?", options: ["Factor of 1,024", "Factor of 100", "Factor of 1,000", "Factor of 512"], answer: 2 },
+            { q: "What network obstacle measures the time delay in milliseconds for packets to travel between endpoints?", options: ["Protocol overhead", "Latency", "Bandwidth ceiling", "Bit conversion"], answer: 1 },
+            { q: "When corrupted data packets are detected in transit, what network action reduces net throughput?", options: ["Immediate file deletion", "Packet retransmission request", "Bandwidth expansion", "Storage compression"], answer: 1 },
+            { q: "What does Tbps stand for in networking?", options: ["Terabytes per second", "Terabits per second", "Transmission bytes per second", "Transfer bit protocol speed"], answer: 1 },
+            { q: "Which activity best represents the usage of Kilobits per second (Kbps)?", options: ["Streaming 8K video", "Submarine fiber optic backbones", "Rural SMS text messaging", "Enterprise cloud data replication"], answer: 2 },
+            { q: "Why is throughput always less than or equal to bandwidth?", options: ["Bandwidth is measured in bytes", "Real-world environmental obstacles degrade transmission", "Computers slow down at night", "Packets are stored permanently"], answer: 1 },
+            { q: "What networking term refers to the metadata headers added to packets by protocols like TCP/IP?", options: ["Protocol overhead", "Latency lag", "Payload capacity", "Bit rate multiplier"], answer: 0 },
+            { q: "Which throughput tier is most appropriate for a modern fiber optic home internet connection?", options: ["bps", "Kbps", "Mbps or Gbps", "Tbps"], answer: 2 },
+            { q: "What physical infrastructure connects major continents and carries global internet traffic at terabit speeds?", options: ["Dial-up telephone lines", "Submarine fiber optic cables", "Local Wi-Fi routers", "Bluetooth transceivers"], answer: 1 }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        quizData.forEach((item, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = "bg-gray-50 p-6 rounded-lg border border-gray-200 transition-all";
+            
+            const qTitle = document.createElement('h3');
+            qTitle.className = "font-bold text-lg text-gray-800 mb-4";
+            qTitle.innerText = `${index + 1}. ${item.q}`;
+            qDiv.appendChild(qTitle);
+            
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = "space-y-3";
+            
+            item.options.forEach((opt, optIndex) => {
+                const label = document.createElement('label');
+                label.className = "flex items-center space-x-3 p-3 rounded bg-white border border-gray-300 hover:bg-green-50 cursor-pointer transition";
+                
+                const radio = document.createElement('input');
+                radio.type = "radio";
+                radio.name = `q${index}`;
+                radio.value = optIndex;
+                radio.className = "form-radio h-5 w-5 text-green-600";
+                
+                const span = document.createElement('span');
+                span.className = "text-gray-700";
+                span.innerText = opt;
+                
+                label.appendChild(radio);
+                label.appendChild(span);
+                optionsDiv.appendChild(label);
+            });
+            qDiv.appendChild(optionsDiv);
+            quizContainer.appendChild(qDiv);
+        });
+
+        function gradeQuiz() {
+            let score = 0;
+            let allAnswered = true;
+            for(let i = 0; i < quizData.length; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if(selected) {
+                    if(parseInt(selected.value) === quizData[i].answer) score++;
+                } else {
+                    allAnswered = false;
+                }
+            }
+            
+            if(!allAnswered) {
+                showModal('Incomplete Quiz', 'Please answer all 20 questions before submitting.', 'warning');
+                return;
+            }
+            
+            const percentage = (score / quizData.length) * 100;
+            if(score >= 18) {
+                document.getElementById('nav-game').classList.remove('text-gray-400', 'cursor-not-allowed');
+                document.getElementById('nav-game').classList.add('text-white', 'hover:bg-green-600');
+                document.getElementById('nav-game').disabled = false;
+                document.getElementById('nav-game').innerHTML = '<i class="fa-solid fa-gamepad mr-1"></i>Game';
+                
+                document.getElementById('nav-game-mobile').classList.remove('text-gray-400', 'cursor-not-allowed');
+                document.getElementById('nav-game-mobile').classList.add('text-white', 'hover:bg-green-600');
+                document.getElementById('nav-game-mobile').disabled = false;
+                document.getElementById('nav-game-mobile').innerHTML = '<i class="fa-solid fa-gamepad"></i> Game';
+
+                document.getElementById('nav-cert').classList.remove('hidden');
+                document.getElementById('nav-cert-mobile').classList.remove('hidden');
+                document.getElementById('proceed-game-btn').classList.remove('hidden');
+                document.getElementById('submit-quiz-btn').classList.add('hidden');
+
+                showModal('Outstanding!', `You scored ${score}/20 (${percentage}%). You have unlocked your Certificate of Mastery AND the Bit Racer Game!`, 'success');
+            } else {
+                quizData.forEach((_, i) => {
+                    const sel = document.querySelector(`input[name="q${i}"]:checked`);
+                    if(sel) sel.checked = false;
+                });
+                showModal('Keep Trying!', `You scored ${score}/20 (${percentage}%). You need 90% (18/20) to pass. Your answers have been reset for another attempt.`, 'error');
+                document.getElementById('quiz-section').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // --- RETRO GAME: BIT RACER (Spy Hunter Style) ---
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let score = 0;
+        let lives = 3;
+        let gameRunning = false;
+        let animationId;
+        
+        let playerX = canvas.width / 2;
+        let playerY = canvas.height - 70;
+        let obstacles = [];
+        let roadOffset = 0;
+        let keys = {};
+        
+        const overlay = document.getElementById('game-overlay');
+        const startBtn = document.getElementById('start-game-btn');
+        startBtn.addEventListener('click', startGame);
+
+        window.addEventListener('keydown', e => { keys[e.key] = true; });
+        window.addEventListener('keyup', e => { keys[e.key] = false; });
+
+        class ObstacleObj {
+            constructor() {
+                this.width = 50;
+                this.height = 40;
+                this.x = Math.random() * (canvas.width - 200) + 100;
+                this.y = -60;
+                this.speed = 4;
+                this.isToken = Math.random() < 0.3; // 30% chance of high speed token
+            }
+            update() {
+                this.y += this.speed;
+            }
+            draw(ctx) {
+                ctx.fillStyle = this.isToken ? '#3b82f6' : '#ef4444';
+                ctx.fillRect(this.x, this.y, this.width, this.height);
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '10px monospace';
+                ctx.textAlign = 'center';
+                ctx.fillText(this.isToken ? '+100 Mbps' : 'CORRUPT', this.x + this.width/2, this.y + 25);
+            }
+        }
+
+        function resetGame() {
+            score = 0;
+            lives = 3;
+            playerX = canvas.width / 2;
+            obstacles = [];
+            document.getElementById('game-score').innerText = score;
+            document.getElementById('game-lives').innerText = lives;
+        }
+
+        function startGame() {
+            overlay.classList.add('hidden');
+            resetGame();
+            gameRunning = true;
+            drawGame();
+        }
+
+        let frameCount = 0;
+        function drawGame() {
+            if(!gameRunning) return;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw Road (Spy Hunter style)
+            ctx.fillStyle = '#1f2937';
+            ctx.fillRect(80, 0, canvas.width - 160, canvas.height);
+            
+            // Road shoulders
+            ctx.fillStyle = '#374151';
+            ctx.fillRect(60, 0, 20, canvas.height);
+            ctx.fillRect(canvas.width - 80, 0, 20, canvas.height);
+            
+            // Moving center lines
+            roadOffset = (roadOffset + 4) % 40;
+            ctx.strokeStyle = '#facc15';
+            ctx.lineWidth = 4;
+            ctx.setLineDash([20, 20]);
+            ctx.lineDashOffset = -roadOffset;
+            ctx.beginPath();
+            ctx.moveTo(canvas.width / 2, 0);
+            ctx.lineTo(canvas.width / 2, canvas.height);
+            ctx.stroke();
+            ctx.setLineDash([]); // reset
+
+            // Player controls
+            if(keys['ArrowLeft'] && playerX > 90) playerX -= 5;
+            if(keys['ArrowRight'] && playerX < canvas.width - 130) playerX += 5;
+
+            // Draw Player Data Cruiser
+            ctx.fillStyle = '#10b981';
+            ctx.fillRect(playerX, playerY, 40, 50);
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(playerX + 15, playerY + 10, 10, 30);
+
+            // Spawn obstacles
+            frameCount++;
+            if(frameCount % 60 === 0) {
+                obstacles.push(new ObstacleObj());
+            }
+
+            // Update & Draw Obstacles
+            for(let i = obstacles.length - 1; i >= 0; i--) {
+                let obs = obstacles[i];
+                obs.update();
+                obs.draw(ctx);
+                
+                // Collision check
+                if(playerX < obs.x + obs.width && playerX + 40 > obs.x && playerY < obs.y + obs.height && playerY + 50 > obs.y) {
+                    if(obs.isToken) {
+                        score += 100;
+                        document.getElementById('game-score').innerText = score;
+                    } else {
+                        lives--;
+                        document.getElementById('game-lives').innerText = lives;
+                        if(lives <= 0) {
+                            gameOver();
+                            return;
+                        }
+                    }
+                    obstacles.splice(i, 1);
+                    continue;
+                }
+
+                if(obs.y > canvas.height) {
+                    score += 10;
+                    document.getElementById('game-score').innerText = score;
+                    obstacles.splice(i, 1);
+                }
+            }
+
+            animationId = requestAnimationFrame(drawGame);
+        }
+
+        function gameOver() {
+            gameRunning = false;
+            cancelAnimationFrame(animationId);
+            overlay.classList.remove('hidden');
+            startBtn.innerText = "Network Crash! Retry Bit Racer";
+        }
+
+        // --- CERTIFICATE LOGIC ---
+        function updateCertName() {
+            let name = document.getElementById('student-name-input').value.trim();
+            if(name) {
+                if(name.includes(' ')) name = name.split(' ')[0];
+                document.getElementById('student-name-input').value = name;
+                document.getElementById('cert-student-name').innerText = name;
+            } else {
+                showModal('Wait!', 'Please enter your first name.', 'warning');
+            }
+        }
+
+        const today = new Date();
+        document.getElementById('cert-date').innerText = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        function downloadCert() {
+            const certEl = document.getElementById('certificate');
+            const name = document.getElementById('cert-student-name').innerText;
+            let filename = `${name !== 'Student' ? name : 'Student'}_Transfer_Rates_Certificate.png`;
+            const originalTransform = certEl.style.transform;
+            certEl.style.transform = 'none';
+
+            const btn = document.getElementById('download-btn');
+            const origText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Generating...';
+            btn.disabled = true;
+
+            html2canvas(certEl, { scale: 2, useCORS: true, backgroundColor: '#ffffff' }).then(canvas => {
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = origText;
+                btn.disabled = false;
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            }).catch(err => {
+                console.error(err);
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = origText;
+                btn.disabled = false;
+                showModal('Error', 'Failed to generate image.', 'error');
+            });
+        }
+    </script>
+</body>
+</html>

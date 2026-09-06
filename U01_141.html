@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 01 Section 1.4.1 Mastery - Troubleshooting Methodology</title>
+    
+    <!-- Load Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load HTML2Canvas for Certificate Download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- Load Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Qwitcher+Grypen:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #1e293b; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        /* Interactive Elements CSS */
+        .dropzone { min-height: 60px; border: 2px dashed #94a3b8; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #f1f5f9; transition: all 0.2s; padding: 0.5rem; gap: 0.5rem;}
+        .dropzone.drag-over { background: #e2e8f0; border-color: #3b82f6; box-shadow: inset 0 0 10px rgba(59, 130, 246, 0.2);}
+        .drag-item { cursor: grab; transition: transform 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); width: 100%; text-align: center; }
+        .drag-item:active { cursor: grabbing; transform: scale(0.98); }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #e2e8f0; }
+        ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #2563eb; }
+
+        /* Game Styles */
+        .lights-out-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; max-width: 400px; margin: 0 auto; background: #1e293b; padding: 10px; border-radius: 8px; border: 4px solid #334155; box-shadow: 0 0 20px rgba(14, 165, 233, 0.4); }
+        .light-node { aspect-ratio: 1; border-radius: 4px; border: 2px solid #0f172a; cursor: pointer; transition: all 0.1s; }
+        .light-node.on { background-color: #ef4444; box-shadow: 0 0 15px #ef4444; border-color: #fca5a5; }
+        .light-node.off { background-color: #10b981; border-color: #059669; opacity: 0.6; }
+        .light-node:active { transform: scale(0.9); }
+
+        /* Certificate Styles */
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .font-body { font-family: 'Lora', serif; }
+        .font-script { font-family: 'Qwitcher Grypen', cursive; }
+        .cert-preview-container { width: 100%; overflow: auto; display: flex; justify-content: center; background: #cbd5e1; padding: 2rem; border-radius: 0.5rem; }
+        #certificate { width: 1056px !important; height: 816px !important; flex-shrink: 0; background-color: #ffffff; position: relative; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); overflow: hidden; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1056" height="816"><rect width="1056" height="816" fill="%23f8fafc"/><path d="M0,0 L300,0 L0,400 Z" fill="%232563eb" opacity="0.1"/><path d="M1056,816 L756,816 L1056,416 Z" fill="%232563eb" opacity="0.1"/><rect x="40" y="40" width="976" height="736" fill="none" stroke="%233b82f6" stroke-width="4"/><rect x="50" y="50" width="956" height="716" fill="none" stroke="%2393c5fd" stroke-width="1"/></svg>'); }
+        .cert-seal { position: absolute; left: 120px; top: 340px; width: 180px; height: 180px; border-radius: 50%; background: linear-gradient(135deg, #1e3a8a, #3b82f6); display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 20px rgba(0,0,0,0.2); z-index: 10; border: 4px dashed #93c5fd; }
+        .cert-seal-inner { width: 140px; height: 140px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, 0.8); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: white; }
+        @media (max-width: 1100px) { #certificate { transform: scale(0.7); transform-origin: top left; margin-bottom: -240px; margin-right: -310px; } }
+        @media (max-width: 768px) { #certificate { transform: scale(0.4); transform-origin: top left; margin-bottom: -490px; margin-right: -630px; } }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Navigation -->
+    <nav class="bg-blue-800 text-white shadow-lg sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-wrench text-2xl"></i>
+                    <span class="font-bold text-xl tracking-wider hidden sm:inline-block">Tech+ Unit 01 Section 1.4.1</span>
+                    <span class="font-bold text-xl tracking-wider sm:hidden">1.4.1</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-2">
+                        <button onclick="switchTab('briefing')" class="nav-btn bg-blue-900 px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition" id="nav-briefing"><i class="fa-solid fa-book-open mr-1"></i>Briefing</button>
+                        <button onclick="switchTab('activity')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition" id="nav-activity"><i class="fa-solid fa-flask mr-1"></i>Lab Activity</button>
+                        <button onclick="switchTab('quiz')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition" id="nav-quiz"><i class="fa-solid fa-clipboard-check mr-1"></i>Quiz</button>
+                        <button onclick="switchTab('game')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-gray-400 cursor-not-allowed transition" id="nav-game" disabled><i class="fa-solid fa-lock mr-1"></i>Game</button>
+                        <button onclick="switchTab('cert')" class="nav-btn hidden px-3 py-2 rounded-md text-sm font-medium text-yellow-300 hover:bg-blue-700 transition" id="nav-cert"><i class="fa-solid fa-award mr-1"></i>Certificate</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Nav -->
+        <div class="md:hidden flex flex-wrap justify-center gap-2 py-2 px-2 bg-blue-900">
+            <button onclick="switchTab('briefing')" class="nav-btn-mobile px-3 py-1 text-sm rounded bg-blue-950" id="nav-briefing-mobile">Briefing</button>
+            <button onclick="switchTab('activity')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-activity-mobile">Lab</button>
+            <button onclick="switchTab('quiz')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-quiz-mobile">Quiz</button>
+            <button onclick="switchTab('game')" class="nav-btn-mobile px-3 py-1 text-sm rounded text-gray-400 cursor-not-allowed" id="nav-game-mobile" disabled><i class="fa-solid fa-lock"></i></button>
+            <button onclick="switchTab('cert')" id="nav-cert-mobile" class="hidden px-2 py-1 text-sm text-yellow-300 rounded"><i class="fa-solid fa-award"></i></button>
+        </div>
+    </nav>
+
+    <main class="flex-grow w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <!-- BRIEFING SECTION -->
+        <div id="briefing-section" class="tab-content active no-print">
+            <div class="text-center mb-10">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">Troubleshooting Methodology</h1>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">Troubleshooting is an essential skill in IT that transforms chaos into order. It provides a structured, logical sequence to identify, resolve, and prevent technical issues effectively.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- Tile 1 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-indigo-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-indigo-700"><i class="fa-solid fa-magnifying-glass mr-2"></i>1. Identify & Theorize</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Step 1: Identify the Problem:</strong> Gather symptoms, question users, and replicate the issue.</li>
+                            <li><strong>Step 2: Establish a Theory:</strong> Question the obvious and construct a probable cause.</li>
+                            <li><strong>Knowledge Base:</strong> Utilize external and internal documentation for known errors.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 border-t border-slate-100 p-4 flex gap-4">
+                        <button onclick="openBriefing('identify-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                        <button onclick="openBriefing('identify-usecase')" class="flex-1 bg-indigo-100 hover:bg-indigo-200 text-indigo-900 py-3 rounded text-sm font-bold transition shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                    </div>
+                </div>
+
+                <!-- Tile 2 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-emerald-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-emerald-700"><i class="fa-solid fa-vial mr-2"></i>2. Test the Theory</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Step 3: Determine Cause:</strong> Methodically test your theories one variable at a time.</li>
+                            <li><strong>Isolation:</strong> Eliminate simple solutions (like loose cables) before complex ones.</li>
+                            <li><strong>Escalation:</strong> If all theories fail or are beyond your scope, escalate to specialists.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 border-t border-slate-100 p-4 flex gap-4">
+                        <button onclick="openBriefing('test-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                        <button onclick="openBriefing('test-usecase')" class="flex-1 bg-emerald-100 hover:bg-emerald-200 text-emerald-900 py-3 rounded text-sm font-bold transition shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                    </div>
+                </div>
+
+                <!-- Tile 3 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-amber-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-amber-700"><i class="fa-solid fa-list-check mr-2"></i>3. Plan & Implement</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Step 4: Establish a Plan:</strong> Create a step-by-step action plan to resolve the issue.</li>
+                            <li><strong>Precautions:</strong> Always backup data and verify hardware compatibility before changes.</li>
+                            <li><strong>Implementation:</strong> Apply the fix while minimizing downtime and disruption to users.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 border-t border-slate-100 p-4 flex gap-4">
+                        <button onclick="openBriefing('plan-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                        <button onclick="openBriefing('plan-usecase')" class="flex-1 bg-amber-100 hover:bg-amber-200 text-amber-900 py-3 rounded text-sm font-bold transition shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                    </div>
+                </div>
+
+                <!-- Tile 4 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-rose-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-rose-700"><i class="fa-solid fa-clipboard-check mr-2"></i>4. Verify & Document</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Step 5: Verify Functionality:</strong> Confirm the issue is fixed without creating new bugs.</li>
+                            <li><strong>Preventive Measures:</strong> Implement policies or updates to stop recurrence.</li>
+                            <li><strong>Step 6: Document:</strong> Record symptoms, actions, and outcomes for future reference.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 border-t border-slate-100 p-4 flex gap-4">
+                        <button onclick="openBriefing('verify-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                        <button onclick="openBriefing('verify-usecase')" class="flex-1 bg-rose-100 hover:bg-rose-200 text-rose-900 py-3 rounded text-sm font-bold transition shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 flex justify-center">
+                <button onclick="switchTab('activity')" class="bg-blue-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-blue-500 shadow-lg transition transform hover:scale-105">Proceed to Lab Activity <i class="fa-solid fa-arrow-right ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- LAB ACTIVITY SECTION -->
+        <div id="activity-section" class="tab-content no-print">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Interactive Troubleshooting Labs</h1>
+                <p class="text-gray-600">Complete these 8 mini-labs to master the 6 steps of the Troubleshooting Methodology.</p>
+            </div>
+
+            <!-- Lab 1 & 2: Identify & Theorize -->
+            <div class="grid md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                    <h2 class="text-lg font-bold mb-2 text-indigo-700"><i class="fa-solid fa-tag mr-2"></i>Lab 1: Symptom Sorter (Step 1)</h2>
+                    <p class="text-sm text-gray-600 mb-4">Drag the symptoms into the correct category to identify the root area of the problem.</p>
+                    <div class="flex flex-wrap gap-2 mb-4" id="lab1-items">
+                        <div class="drag-item bg-indigo-50 border border-indigo-200 p-2 text-sm rounded" draggable="true" data-type="hw">Burnt smell from case</div>
+                        <div class="drag-item bg-indigo-50 border border-indigo-200 p-2 text-sm rounded" draggable="true" data-type="sw">App crashes on launch</div>
+                        <div class="drag-item bg-indigo-50 border border-indigo-200 p-2 text-sm rounded" draggable="true" data-type="hw">Frayed power cable</div>
+                        <div class="drag-item bg-indigo-50 border border-indigo-200 p-2 text-sm rounded" draggable="true" data-type="sw">Missing DLL error</div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="dropzone flex-1" data-target="hw"><span class="font-bold text-slate-500">Hardware</span></div>
+                        <div class="dropzone flex-1" data-target="sw"><span class="font-bold text-slate-500">Software</span></div>
+                    </div>
+                    <div id="lab1-feed" class="text-center mt-2 h-5 text-sm font-bold"></div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                    <h2 class="text-lg font-bold mb-2 text-indigo-700"><i class="fa-solid fa-question mr-2"></i>Lab 2: Question the Obvious (Step 2)</h2>
+                    <p class="text-sm text-gray-600 mb-4">A user reports their monitor is entirely black and unresponsive. Select the most obvious theory to test first.</p>
+                    <div class="space-y-2">
+                        <button class="w-full text-left p-3 border rounded hover:bg-slate-50 transition" onclick="checkLab2(false, this)">A) The GPU is fried and needs replacing.</button>
+                        <button class="w-full text-left p-3 border rounded hover:bg-slate-50 transition" onclick="checkLab2(true, this)">B) The monitor is not plugged in or turned on.</button>
+                        <button class="w-full text-left p-3 border rounded hover:bg-slate-50 transition" onclick="checkLab2(false, this)">C) The OS display drivers are corrupted.</button>
+                    </div>
+                    <div id="lab2-feed" class="text-center mt-2 h-5 text-sm font-bold"></div>
+                </div>
+            </div>
+
+            <!-- Lab 3 & 4: Test Theory -->
+            <div class="grid md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                    <h2 class="text-lg font-bold mb-2 text-emerald-700"><i class="fa-solid fa-toggle-on mr-2"></i>Lab 3: Variable Isolation (Step 3)</h2>
+                    <p class="text-sm text-gray-600 mb-4">To find the bad configuration, turn ON exactly ONE switch at a time. Do not test multiple variables at once.</p>
+                    <div class="flex justify-around items-center bg-slate-100 p-4 rounded mb-4">
+                        <input type="checkbox" class="w-6 h-6 lab3-switch cursor-pointer" onchange="checkLab3()">
+                        <input type="checkbox" class="w-6 h-6 lab3-switch cursor-pointer" onchange="checkLab3()">
+                        <input type="checkbox" class="w-6 h-6 lab3-switch cursor-pointer" onchange="checkLab3()">
+                        <div id="lab3-light" class="w-10 h-10 rounded-full bg-slate-300 border-4 border-slate-400 transition-colors"></div>
+                    </div>
+                    <div id="lab3-feed" class="text-center mt-2 h-5 text-sm font-bold text-slate-500">Waiting for isolated test...</div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                    <h2 class="text-lg font-bold mb-2 text-emerald-700"><i class="fa-solid fa-arrow-up-right-dots mr-2"></i>Lab 4: Escalation (Step 3)</h2>
+                    <p class="text-sm text-gray-600 mb-4">You are a Tier 1 Helpdesk tech. You verified the user's PC is plugged in, but the motherboard is sparking. What is the correct action?</p>
+                    <div class="flex gap-4">
+                        <button class="flex-1 bg-red-100 text-red-800 p-3 rounded font-bold hover:bg-red-200" onclick="checkLab4(false)">Open PC and solder it</button>
+                        <button class="flex-1 bg-emerald-100 text-emerald-800 p-3 rounded font-bold hover:bg-emerald-200" onclick="checkLab4(true)">Escalate to Hardware Team</button>
+                    </div>
+                    <div id="lab4-feed" class="text-center mt-4 h-5 text-sm font-bold"></div>
+                </div>
+            </div>
+
+            <!-- Lab 5 & 6: Plan & Implement -->
+            <div class="grid md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                    <h2 class="text-lg font-bold mb-2 text-amber-700"><i class="fa-solid fa-list-ol mr-2"></i>Lab 5: Action Ordering (Step 4)</h2>
+                    <p class="text-sm text-gray-600 mb-4">Click the steps in the correct safe order to implement a major OS registry fix.</p>
+                    <div class="space-y-2 mb-4" id="lab5-container">
+                        <button class="w-full text-left p-2 border rounded bg-slate-50 hover:bg-slate-100" onclick="lab5Click(this, 3)">Apply Registry Edit</button>
+                        <button class="w-full text-left p-2 border rounded bg-slate-50 hover:bg-slate-100" onclick="lab5Click(this, 1)">Communicate downtime to user</button>
+                        <button class="w-full text-left p-2 border rounded bg-slate-50 hover:bg-slate-100" onclick="lab5Click(this, 2)">Backup User Data</button>
+                    </div>
+                    <div id="lab5-feed" class="text-center mt-2 h-5 text-sm font-bold text-amber-600">Select Step 1...</div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                    <h2 class="text-lg font-bold mb-2 text-amber-700"><i class="fa-solid fa-plug mr-2"></i>Lab 6: Compatibility (Step 4)</h2>
+                    <p class="text-sm text-gray-600 mb-4">The plan requires replacing a faulty DDR4 RAM stick. Select the compatible replacement part.</p>
+                    <select id="lab6-select" class="w-full p-2 border rounded mb-4 focus:ring-2 focus:ring-amber-500">
+                        <option value="">-- Select Replacement Part --</option>
+                        <option value="wrong1">DDR3 8GB Memory Module</option>
+                        <option value="correct">DDR4 16GB Memory Module</option>
+                        <option value="wrong2">PCIe Graphic Card</option>
+                        <option value="wrong3">SATA Hard Drive</option>
+                    </select>
+                    <button class="w-full bg-amber-600 text-white p-2 rounded font-bold hover:bg-amber-700" onclick="checkLab6()">Implement Part</button>
+                    <div id="lab6-feed" class="text-center mt-2 h-5 text-sm font-bold"></div>
+                </div>
+            </div>
+
+            <!-- Lab 7 & 8: Verify & Document -->
+            <div class="grid md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                    <h2 class="text-lg font-bold mb-2 text-rose-700"><i class="fa-solid fa-check-double mr-2"></i>Lab 7: Verification (Step 5)</h2>
+                    <p class="text-sm text-gray-600 mb-4">You fixed the network cable. Check all necessary boxes to verify FULL system functionality and prevention.</p>
+                    <div class="space-y-2 mb-4">
+                        <label class="flex items-center space-x-2 cursor-pointer"><input type="checkbox" id="l7-1" class="form-checkbox"><span>Internet connects</span></label>
+                        <label class="flex items-center space-x-2 cursor-pointer"><input type="checkbox" id="l7-2" class="form-checkbox"><span>User can access shared drives</span></label>
+                        <label class="flex items-center space-x-2 cursor-pointer"><input type="checkbox" id="l7-3" class="form-checkbox"><span>Cable secured away from foot traffic (Preventive)</span></label>
+                    </div>
+                    <button class="w-full bg-rose-600 text-white p-2 rounded font-bold hover:bg-rose-700" onclick="checkLab7()">Verify Completion</button>
+                    <div id="lab7-feed" class="text-center mt-2 h-5 text-sm font-bold"></div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                    <h2 class="text-lg font-bold mb-2 text-rose-700"><i class="fa-solid fa-file-signature mr-2"></i>Lab 8: Documentation (Step 6)</h2>
+                    <p class="text-sm text-gray-600 mb-4">Complete the ticket documentation by typing the missing critical word: <em>"Document findings, actions, and ________"</em></p>
+                    <input type="text" id="lab8-input" class="w-full p-2 border rounded mb-4" placeholder="Type the missing word...">
+                    <button class="w-full bg-slate-800 text-white p-2 rounded font-bold hover:bg-slate-900" onclick="checkLab8()">Close Ticket</button>
+                    <div id="lab8-feed" class="text-center mt-2 h-5 text-sm font-bold"></div>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <button onclick="switchTab('quiz')" class="bg-blue-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-blue-500 shadow-lg transition transform hover:scale-105">Take the Mastery Quiz <i class="fa-solid fa-clipboard-check ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- QUIZ SECTION -->
+        <div id="quiz-section" class="tab-content no-print">
+            <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-xl max-w-4xl mx-auto">
+                <div class="text-center mb-8 border-b pb-4">
+                    <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Section 1.4.1 Mastery Quiz</h1>
+                    <p class="text-gray-600">Score 90% or higher (18/20) to earn your Certificate and unlock the Retro Game!</p>
+                </div>
+
+                <div id="quiz-container" class="space-y-8">
+                    <!-- Questions injected via JS -->
+                </div>
+
+                <div class="mt-10 text-center border-t pt-6 flex flex-col md:flex-row justify-center items-center gap-4">
+                    <button id="submit-quiz-btn" onclick="gradeQuiz()" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">Submit Quiz</button>
+                    <button id="proceed-game-btn" onclick="switchTab('game')" class="hidden bg-indigo-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-indigo-700 shadow-lg transition w-full md:w-auto">Play Retro Game <i class="fa-solid fa-gamepad ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RETRO GAME SECTION (Lights Out) -->
+        <div id="game-section" class="tab-content no-print">
+            <div class="bg-slate-900 p-6 sm:p-8 rounded-2xl shadow-xl max-w-2xl mx-auto border-4 border-slate-700 flex flex-col items-center">
+                <div class="text-center mb-6 w-full">
+                    <h1 class="text-3xl font-extrabold text-sky-400 mb-2 tracking-widest uppercase font-mono">Lights Out: Node Debugger</h1>
+                    <p class="text-slate-300 text-sm mb-4">Troubleshoot the grid! Clicking a node toggles it and its neighbors. Turn OFF all the red error nodes (make them green) to stabilize the system.</p>
+                    <div class="flex justify-between w-full px-4 text-white font-mono text-lg">
+                        <span>Level: <span id="game-level" class="text-emerald-400">1</span></span>
+                        <span>Moves: <span id="game-moves" class="text-amber-400">0</span></span>
+                    </div>
+                </div>
+
+                <div id="lights-out-board" class="lights-out-grid mb-6">
+                    <!-- Grid generated via JS -->
+                </div>
+
+                <div class="flex gap-4">
+                    <button onclick="initGame()" class="bg-sky-600 text-white px-6 py-2 rounded font-bold font-mono hover:bg-sky-700 transition">Reset System</button>
+                    <button onclick="switchTab('cert')" class="bg-emerald-600 text-white px-6 py-2 rounded font-bold font-mono hover:bg-emerald-700 transition">View Certificate</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CERTIFICATE SECTION -->
+        <div id="cert-section" class="tab-content">
+            <div class="max-w-5xl mx-auto">
+                <div class="bg-white p-6 rounded shadow mb-6 no-print text-center border border-slate-200">
+                    <h2 class="text-2xl font-bold text-emerald-600 mb-2">🎉 Master Troubleshooter! 🎉</h2>
+                    <p class="text-gray-700 mb-4">You have mastered the IT Troubleshooting Methodology.</p>
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+                        <input type="text" id="student-name-input" value="Student" placeholder="Enter your first name" class="border-2 border-slate-300 rounded px-4 py-2 w-full md:w-64 focus:border-blue-500 focus:outline-none">
+                        <button onclick="updateCertName()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">Update Name</button>
+                        <button id="download-btn" onclick="downloadCert()" class="bg-slate-800 text-white px-4 py-2 rounded hover:bg-slate-900 transition flex items-center justify-center">
+                            <i class="fa-solid fa-download mr-2"></i>Download PNG
+                        </button>
+                    </div>
+                </div>
+
+                <div class="cert-preview-container print:p-0 print:bg-white">
+                    <div id="certificate">
+                        <div class="cert-seal">
+                            <div class="cert-seal-inner font-serif">
+                                <span class="uppercase tracking-widest text-sm mb-1">Official</span>
+                                <i class="fa-solid fa-check-double text-2xl mb-1 text-yellow-300"></i>
+                                <span class="uppercase tracking-widest text-sm">Certified</span>
+                            </div>
+                        </div>
+
+                        <div class="relative z-20 w-full h-full flex flex-col pt-16 pl-[380px] pr-16 text-slate-800">
+                            <h1 class="text-blue-700 text-6xl leading-none font-serif font-bold tracking-wide uppercase mb-2">CERTIFICATE</h1>
+                            <h2 class="text-3xl font-serif tracking-widest uppercase mb-12">Of Technical Mastery</h2>
+                            
+                            <p class="text-xl font-body mb-4">This document officially certifies that</p>
+                            
+                            <div class="relative mb-8 w-full">
+                                <h3 id="cert-student-name" class="text-6xl text-blue-800 font-serif italic leading-none pb-2 relative z-10 text-center w-full block">Student</h3>
+                                <div class="w-full border-b-2 border-blue-800 absolute bottom-[4px] left-0 z-0"></div>
+                            </div>
+                            
+                            <p class="text-xl font-body leading-relaxed w-full pr-4">
+                                Has successfully completed the rigorous assessment for 
+                                <strong class="text-2xl text-blue-700 block mt-4 mb-2 font-serif">Tech+ Unit 01 Section 1.4.1</strong>
+                                <strong class="text-2xl text-black block mb-4 font-serif italic">Troubleshooting Methodology</strong>
+                                <span class="text-lg text-slate-600 leading-snug block">Demonstrating profound comprehension of identifying problems, establishing theories, methodical testing, implementation planning, system verification, and documentation.</span>
+                            </p>
+                            
+                            <div class="flex justify-end gap-16 items-end mt-auto mb-16 w-full pr-8">
+                                <div class="w-64">
+                                    <div class="border-b border-slate-600 mb-2 h-20 flex items-end justify-center">
+                                        <p id="cert-date" class="font-body text-xl pb-1">Date Here</p>
+                                    </div>
+                                    <p class="font-serif text-lg text-center uppercase tracking-widest">Date of Issue</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal for Alerts -->
+    <div id="custom-modal" class="fixed inset-0 bg-black bg-opacity-50 z-[100] hidden flex justify-center items-center backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all">
+            <div class="text-center">
+                <div id="modal-icon" class="text-5xl mb-4"></div>
+                <h3 id="modal-title" class="text-2xl font-bold mb-2 text-gray-900"></h3>
+                <p id="modal-msg" class="text-gray-600 mb-6"></p>
+                <button onclick="closeModal()" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-700 transition w-full">Acknowledge</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Briefing Modal -->
+    <div id="briefing-modal" class="fixed inset-0 bg-black bg-opacity-70 z-[120] hidden flex justify-center items-center backdrop-blur-sm p-4 sm:p-6">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col transform transition-all overflow-hidden border-4 border-blue-700">
+            <div class="p-6 border-b border-gray-200 flex justify-between items-center bg-slate-50">
+                <div class="flex items-center gap-4">
+                    <div id="briefing-modal-icon" class="text-4xl"></div>
+                    <h3 id="briefing-modal-title" class="text-2xl md:text-3xl font-bold text-gray-900"></h3>
+                </div>
+                <button onclick="closeBriefing()" class="text-gray-400 hover:text-red-600 transition text-4xl leading-none">&times;</button>
+            </div>
+            <div id="briefing-modal-content" class="p-6 md:p-10 overflow-y-auto flex-grow text-gray-700 text-lg leading-relaxed bg-white space-y-5">
+                <!-- Content injected here -->
+            </div>
+            <div class="p-6 border-t border-gray-200 bg-slate-50 flex justify-end">
+                <button onclick="closeBriefing()" class="bg-blue-700 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-800 transition shadow-md">Close Briefing</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Briefing Content Data (7 Paragraphs Min & Use Cases) ---
+        const briefingData = {
+            'identify-details': {
+                title: 'Step 1 & 2: Identify & Theorize',
+                icon: '<i class="fa-solid fa-magnifying-glass text-indigo-600"></i>',
+                html: `
+                    <p>The troubleshooting process always begins with <strong>Identifying the Problem (Step 1)</strong>. This step is crucial because attempting to fix a poorly understood issue often leads to wasted time or, worse, creating new problems. Identification involves acting like a detective—gathering as much information as possible from the environment, the system, and the user before making any technical changes.</p>
+                    
+                    <p>When questioning users, it is vital to remain objective and avoid accusatory tones. A technician should ask open-ended questions such as, "What were you doing when the error occurred?" or "When did you first notice the issue?" Understanding the exact symptoms, such as specific error codes, strange noises (like clicking hard drives), or unexpected system behaviors, forms the foundation of the investigation.</p>
+
+                    <p>If possible, a critical part of problem identification is <strong>replicating the issue</strong>. By observing the problem firsthand under the same conditions the user experienced, the technician confirms its existence and scope. It also helps to determine if the problem is isolated to a single machine or widespread across the network, which drastically changes how the problem will be approached.</p>
+
+                    <p>During this phase, technicians must categorize the problem. Is it a hardware issue (e.g., faulty power supplies, loose cables, physical damage) or a software issue (e.g., bugs, misconfigured settings, failed updates)? Understanding this broad categorization directs the next phase of the methodology.</p>
+
+                    <p>Once the problem is identified, the technician moves to <strong>Establish a Theory of Probable Cause (Step 2)</strong>. This means brainstorming logical reasons why the problem is occurring based on the symptoms gathered. A core principle of this step is to <em>"question the obvious."</em></p>
+
+                    <p>Questioning the obvious means checking the simplest, most common points of failure first. Is the device plugged in? Is the power switch turned on? Has the password recently changed? Ruling out these simple causes immediately can save hours of complex diagnostic work. Simple issues are often the most common disruptors in any computing environment.</p>
+
+                    <p>Finally, if the obvious answers do not apply, technicians should research external resources. This involves consulting organizational knowledge bases, previous help desk tickets, hardware manuals, online forums, and manufacturer troubleshooting guides. Leveraging collective knowledge prevents technicians from having to "reinvent the wheel" when facing known issues.</p>
+                `
+            },
+            'identify-usecase': {
+                title: 'Identify & Theorize: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-indigo-800 mb-2 border-b-2 border-indigo-200 pb-1">Case 1: The Dead Monitor</h4>
+                        <p class="mb-2">A user frantically calls the helpdesk stating their computer is completely dead and won't turn on.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Identify):</strong> The technician asks the user what exactly happens when they press the power button. The user states the PC tower lights up and fans spin, but the screen is black. The problem is isolated to the display, not the whole PC.</li>
+                            <li><strong>Example 2 (Theorize - Question the Obvious):</strong> The technician theorizes the monitor simply has no power. They ask the user to check if the monitor's specific power cable is plugged tightly into the wall, checking the most obvious failure point first.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-indigo-800 mb-2 border-b-2 border-indigo-200 pb-1">Case 2: Network Connectivity Failure</h4>
+                        <p class="mb-2">An entire department complains they cannot access the internet.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Replicate & Scope):</strong> The technician tests their own laptop in the department and confirms no connection. They check the adjacent department, which is working fine. The scope is isolated to one specific network switch.</li>
+                            <li><strong>Example 2 (Research):</strong> The technician searches the internal knowledge base for the switch's error code and finds a previous ticket noting that this specific model fails if it overheats, forming a strong theory of probable cause.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Questioning Users</p>
+                            <img src="https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&w=600&h=350" alt="Helpdesk questioning user" class="w-full h-auto rounded shadow object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Checking Obvious Cables</p>
+                            <img src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=600&h=350" alt="Plugging in cables" class="w-full h-auto rounded shadow object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'test-details': {
+                title: 'Step 3: Test the Theory',
+                icon: '<i class="fa-solid fa-vial text-emerald-600"></i>',
+                html: `
+                    <p>After establishing a prioritized list of probable causes, the methodology moves to <strong>Test the Theory to Determine the Cause (Step 3)</strong>. This step transitions the troubleshooting process from brainstorming into active, physical diagnostic work. The goal here is to definitively prove or disprove the theories formulated in the previous step.</p>
+                    
+                    <p>The golden rule of testing theories is to <strong>change one variable at a time</strong>. If a technician changes a cable, updates a driver, and reboots a router all at the exact same moment, and the system suddenly works, they will never know which action actually solved the problem. By isolating variables, the root cause is precisely identified.</p>
+
+                    <p>Testing should always follow a logical progression from the simplest, least invasive tests to the most complex and destructive. For instance, if a printer won't print, a technician should test the theory of a paused print queue (a simple software click) before testing the theory of a burnt-out internal motor (which requires dismantling the hardware).</p>
+
+                    <p>When a test is performed, careful observation is required. Does the system behavior change? Does the error code alter? Even if a test fails to fix the primary issue, a change in symptoms can provide critical new clues that lead the technician to formulate a completely new, more accurate theory.</p>
+
+                    <p>It is perfectly normal for theories to be disproved during this phase. If the theory is proven wrong, the technician simply returns to their prioritized list of causes and tests the next most probable theory. Troubleshooting is an iterative loop of theorizing, testing, and adjusting based on evidence.</p>
+
+                    <p>During testing, technicians must be exceedingly careful not to introduce new problems into the system. Connecting unverified hardware or running risky command-line scripts just to "see what happens" can turn a minor software glitch into a catastrophic data loss event.</p>
+
+                    <p>Finally, a critical part of this step is knowing when to <strong>escalate</strong>. If a technician tests all reasonable theories within their skill level and administrative permissions, and the problem remains unresolved, they must escalate the issue to a higher-level professional or specialized support team. Recognizing one's own limitations is a hallmark of a professional IT technician.</p>
+                `
+            },
+            'test-usecase': {
+                title: 'Test the Theory: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-emerald-800 mb-2 border-b-2 border-emerald-200 pb-1">Case 1: Audio Not Playing</h4>
+                        <p class="mb-2">A user cannot hear audio during a video conference.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Variable Isolation):</strong> The tech theorizes the speakers are broken. They test this by plugging in a known-good pair of headphones. The headphones also produce no sound, disproving the speaker hardware theory. They only tested one variable (the output device).</li>
+                            <li><strong>Example 2 (Iterative Testing):</strong> Since hardware was ruled out, the tech forms a new theory: software routing. They test this by changing the default audio output in the OS settings. The sound instantly returns, confirming the cause.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-emerald-800 mb-2 border-b-2 border-emerald-200 pb-1">Case 2: Server Database Crash</h4>
+                        <p class="mb-2">A junior admin responds to an alert that the main database server is offline.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Least Invasive First):</strong> The admin first tests the network connection by pinging the server (non-invasive). The ping fails. They then physically look at the server and see no power lights.</li>
+                            <li><strong>Example 2 (Escalation):</strong> The admin theorizes the internal power supply has blown. Because opening the enterprise server voids the warranty and requires specialized certification, the junior admin formally escalates the ticket to the Tier 3 Hardware Support team.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Iterative Testing</p>
+                            <img src="https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?auto=format&fit=crop&w=600&h=350" alt="Testing circuitry" class="w-full h-auto rounded shadow object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Team Escalation</p>
+                            <img src="https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&w=600&h=350" alt="IT team collaborating on escalation" class="w-full h-auto rounded shadow object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'plan-details': {
+                title: 'Step 4: Plan & Implement Solution',
+                icon: '<i class="fa-solid fa-list-check text-amber-600"></i>',
+                html: `
+                    <p>Once the root cause is definitively determined, the methodology shifts to <strong>Establish a Plan of Action to Resolve the Problem and Implement the Solution (Step 4)</strong>. Knowing what is broken is only half the battle; knowing how to safely and effectively repair it without causing collateral damage is where true technical expertise is required.</p>
+                    
+                    <p>A plan of action must be specific, clear, and sequential. It outlines exactly what tools are needed, what software patches will be applied, or what hardware components will be swapped. A chaotic, unplanned implementation can easily turn a simple fix into a prolonged system outage.</p>
+
+                    <p>A primary goal of the action plan is to resolve the issue with <strong>minimal disruption</strong> to the user or the organization. For example, if a server requires a restart to install a fix, the plan should schedule this implementation for 2:00 AM rather than the middle of the workday.</p>
+
+                    <p>Crucially, extreme precautions must be taken before implementation. The most important precaution is <strong>backing up data and configurations</strong>. If a solution involves editing the registry, formatting a drive, or altering a database, an IT professional always creates a rollback point. If the implementation fails, the backup ensures the system can be restored to its previous state.</p>
+
+                    <p>Another precaution involves verifying hardware and software compatibility. If the plan is to replace a dead RAM stick, the technician must verify that the new replacement part matches the exact specifications (e.g., DDR4, correct clock speed) of the motherboard before tearing the computer apart.</p>
+
+                    <p>Communication is a vital part of implementation. If the plan involves taking a network switch offline for 15 minutes, the technician must communicate this downtime to all affected users beforehand. Silent implementations that randomly disrupt workflow cause immense frustration within organizations.</p>
+
+                    <p>Finally, the solution is carefully executed according to the plan. The technician follows their established sequence, replaces the part, applies the patch, or reconfigures the software. During this physical implementation phase, anti-static precautions and safety protocols must always be observed when dealing with hardware.</p>
+                `
+            },
+            'plan-usecase': {
+                title: 'Plan & Implement: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-amber-800 mb-2 border-b-2 border-amber-200 pb-1">Case 1: Corrupted Operating System</h4>
+                        <p class="mb-2">Testing proves that a user's laptop blue-screens constantly due to deep OS corruption, requiring a complete wipe and reinstall.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Precautions & Backup):</strong> The technician's plan explicitly dictates that before formatting the drive, they must boot into a live USB environment and securely back up the user's "Documents" and "Desktop" folders to an external hard drive.</li>
+                            <li><strong>Example 2 (Implementation Sequence):</strong> The plan follows a strict order: 1) Backup data, 2) Wipe partition, 3) Install fresh OS, 4) Install specific manufacturer drivers, 5) Restore user data.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-amber-800 mb-2 border-b-2 border-amber-200 pb-1">Case 2: Corporate Firewall Update</h4>
+                        <p class="mb-2">Testing confirms that an outdated firewall firmware is dropping legitimate video call packets.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Minimal Disruption):</strong> The IT manager establishes an action plan that schedules the firmware flash for Sunday at 3:00 AM, ensuring zero disruption to normal business operations.</li>
+                            <li><strong>Example 2 (Communication):</strong> Prior to the weekend, an automated email is sent to all staff warning them of a potential 30-minute network outage on Sunday morning, fulfilling the communication requirement of the implementation phase.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Planning & Schematics</p>
+                            <img src="https://images.unsplash.com/photo-1588508065123-287b28e013da?auto=format&fit=crop&w=600&h=350" alt="Planning a technical project" class="w-full h-auto rounded shadow object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Safe Implementation</p>
+                            <img src="https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?auto=format&fit=crop&w=600&h=350" alt="Technician implementing a hardware fix" class="w-full h-auto rounded shadow object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'verify-details': {
+                title: 'Step 5 & 6: Verify & Document',
+                icon: '<i class="fa-solid fa-clipboard-check text-rose-600"></i>',
+                html: `
+                    <p>After implementing the solution, a technician's job is not complete. They must immediately move to <strong>Verify Full System Functionality and Implement Preventive Measures (Step 5)</strong>. A common amateur mistake is assuming a fix worked just because an error message disappeared. Rigorous verification is required to ensure system integrity.</p>
+                    
+                    <p>Verification means testing the entire system comprehensively. If a technician replaced a laptop's Wi-Fi card, they shouldn't just check if the Wi-Fi icon appears. They need to connect to a network, load a webpage, test download speeds, and ensure Bluetooth (often on the same chip) still functions. The fix must not have broken adjacent systems.</p>
+
+                    <p>A crucial part of verification is engaging the user. The technician should have the user sit at the machine and perform the exact task that previously failed. If the user confirms the system meets their needs, the functional verification is truly complete.</p>
+
+                    <p>While verifying, technicians should apply <strong>preventive measures</strong>. This is proactive IT management. If the problem was a malware infection, the fix is removing the virus; the preventive measure is updating the antivirus definitions, running system health checks, and training the user on identifying phishing emails to prevent future occurrences.</p>
+
+                    <p>The absolute final phase of the methodology is to <strong>Document Findings, Actions, and Outcomes (Step 6)</strong>. Human memory is fallible. If a complex, unique issue is solved but never documented, the next technician who encounters the same problem will have to start the troubleshooting process from scratch.</p>
+
+                    <p>Good documentation should be thorough yet concise. It must include the initial symptoms reported, the theories tested (both successful and failed), the exact steps taken to implement the solution, and the final outcome of the verification phase. Any lessons learned during the process should be highlighted.</p>
+
+                    <p>This documentation is typically entered into a ticketing system or an organizational knowledge base. By diligently logging this information, a single technician's successful fix becomes an asset to the entire IT department, permanently reducing future resolution times for the organization.</p>
+                `
+            },
+            'verify-usecase': {
+                title: 'Verify & Document: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-rose-800 mb-2 border-b-2 border-rose-200 pb-1">Case 1: The Paper Jam</h4>
+                        <p class="mb-2">A technician clears a severe mechanical paper jam from an office laser printer.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Verify & Prevent):</strong> Instead of walking away after pulling the paper out, the tech prints a 10-page test document to verify full functionality. As a preventive measure, they clean the rubber pickup rollers with alcohol to prevent future misfeeds.</li>
+                            <li><strong>Example 2 (Documentation):</strong> The tech logs the ticket: "Removed jam from Tray 2. Cleaned worn rollers. Recommend ordering replacement roller kit next quarter if jams continue."</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-rose-800 mb-2 border-b-2 border-rose-200 pb-1">Case 2: Malware Remediation</h4>
+                        <p class="mb-2">A security analyst successfully isolates and removes a trojan from an executive's laptop.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (User Verification):</strong> The analyst sits with the executive, having them log into their accounts to verify no data is locked or missing, ensuring the executive feels confident the threat is gone.</li>
+                            <li><strong>Example 2 (Preventive Documentation):</strong> The analyst writes a detailed incident report documenting the exact hash of the malware. This documentation is used to update the company's global firewall rules, automatically preventing any other employee from downloading the same file.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: System Verification</p>
+                            <img src="https://images.unsplash.com/photo-1600861194942-f883de0dfe96?auto=format&fit=crop&w=600&h=350" alt="Testing network speeds" class="w-full h-auto rounded shadow object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Ticket Documentation</p>
+                            <img src="https://images.unsplash.com/photo-1554415707-6e8cfc93fe23?auto=format&fit=crop&w=600&h=350" alt="Typing documentation into a laptop" class="w-full h-auto rounded shadow object-cover">
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        function openBriefing(key) {
+            const modal = document.getElementById('briefing-modal');
+            const data = briefingData[key];
+            if(data) {
+                document.getElementById('briefing-modal-icon').innerHTML = data.icon;
+                document.getElementById('briefing-modal-title').innerText = data.title;
+                document.getElementById('briefing-modal-content').innerHTML = data.html;
+                modal.classList.remove('hidden');
+            }
+        }
+        function closeBriefing() {
+            document.getElementById('briefing-modal').classList.add('hidden');
+        }
+
+        // --- Core UI & Lab Logic ---
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.getElementById(tabId + '-section').classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('bg-blue-900'));
+            const activeBtn = document.getElementById('nav-' + tabId);
+            if(activeBtn && tabId !== 'cert') activeBtn.classList.add('bg-blue-900');
+            
+            document.querySelectorAll('.nav-btn-mobile').forEach(b => b.classList.remove('bg-blue-950'));
+            const activeMobileBtn = document.getElementById('nav-' + tabId + '-mobile');
+            if(activeMobileBtn && tabId !== 'cert') activeMobileBtn.classList.add('bg-blue-950');
+
+            window.scrollTo(0,0);
+        }
+
+        function showModal(title, msg, type='info') {
+            const m = document.getElementById('custom-modal');
+            const i = document.getElementById('modal-icon');
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-msg').innerText = msg;
+            
+            if(type === 'success') i.innerHTML = '<i class="fa-solid fa-check-circle text-emerald-500"></i>';
+            else if (type === 'error') i.innerHTML = '<i class="fa-solid fa-times-circle text-red-500"></i>';
+            else if (type === 'warning') i.innerHTML = '<i class="fa-solid fa-exclamation-triangle text-amber-500"></i>';
+            else i.innerHTML = '<i class="fa-solid fa-info-circle text-blue-500"></i>';
+            
+            m.classList.remove('hidden');
+        }
+        function closeModal() { document.getElementById('custom-modal').classList.add('hidden'); }
+
+        // Lab 1: Drag & Drop
+        let draggedItem = null;
+        let lab1Score = 0;
+        document.querySelectorAll('.drag-item').forEach(item => {
+            item.addEventListener('dragstart', function() { draggedItem = this; setTimeout(()=>this.classList.add('opacity-50'), 0); });
+            item.addEventListener('dragend', function() { setTimeout(()=>this.classList.remove('opacity-50'), 0); draggedItem = null; });
+        });
+        document.querySelectorAll('.dropzone').forEach(zone => {
+            zone.addEventListener('dragover', e => e.preventDefault());
+            zone.addEventListener('dragenter', function(e) { e.preventDefault(); this.classList.add('drag-over'); });
+            zone.addEventListener('dragleave', function() { this.classList.remove('drag-over'); });
+            zone.addEventListener('drop', function() {
+                this.classList.remove('drag-over');
+                if(draggedItem && draggedItem.dataset.type === this.dataset.target) {
+                    this.appendChild(draggedItem);
+                    draggedItem.setAttribute('draggable', 'false');
+                    draggedItem.classList.replace('cursor-grab', 'cursor-default');
+                    draggedItem.classList.replace('bg-indigo-50', 'bg-emerald-100');
+                    lab1Score++;
+                    document.getElementById('lab1-feed').innerText = "Correct categorization!";
+                    document.getElementById('lab1-feed').className = "text-center mt-2 h-5 text-sm font-bold text-emerald-600";
+                    if(lab1Score === 4) showModal('Lab 1 Complete', 'Excellent! Identifying hardware vs software is crucial for establishing theories.', 'success');
+                } else if (draggedItem) {
+                    document.getElementById('lab1-feed').innerText = "Incorrect category. Try again.";
+                    document.getElementById('lab1-feed').className = "text-center mt-2 h-5 text-sm font-bold text-red-600";
+                }
+            });
+        });
+
+        // Lab 2
+        function checkLab2(isCorrect, btn) {
+            if(isCorrect) {
+                btn.className = "w-full text-left p-3 border rounded bg-emerald-100 border-emerald-500 text-emerald-800 transition font-bold";
+                document.getElementById('lab2-feed').innerText = "Correct! Always question the obvious first.";
+                document.getElementById('lab2-feed').className = "text-center mt-2 h-5 text-sm font-bold text-emerald-600";
+                showModal('Lab 2 Complete', 'You successfully identified the most obvious probable cause.', 'success');
+            } else {
+                btn.className = "w-full text-left p-3 border rounded bg-red-100 border-red-500 text-red-800 transition line-through opacity-75";
+                document.getElementById('lab2-feed').innerText = "Too complex! Check simple things first.";
+                document.getElementById('lab2-feed').className = "text-center mt-2 h-5 text-sm font-bold text-red-600";
+            }
+        }
+
+        // Lab 3
+        function checkLab3() {
+            const switches = document.querySelectorAll('.lab3-switch');
+            let checkedCount = 0;
+            switches.forEach(s => { if(s.checked) checkedCount++; });
+            
+            const light = document.getElementById('lab3-light');
+            const feed = document.getElementById('lab3-feed');
+            
+            if(checkedCount === 0) {
+                light.className = "w-10 h-10 rounded-full bg-slate-300 border-4 border-slate-400 transition-colors";
+                feed.innerText = "Waiting for isolated test..."; feed.className = "text-center mt-2 h-5 text-sm font-bold text-slate-500";
+            } else if (checkedCount === 1) {
+                // If switch 2 is the correct one (arbitrary logic for the game)
+                if(switches[1].checked) {
+                    light.className = "w-10 h-10 rounded-full bg-emerald-500 border-4 border-emerald-600 transition-colors shadow-[0_0_15px_#10b981]";
+                    feed.innerText = "Theory Confirmed! Cause isolated."; feed.className = "text-center mt-2 h-5 text-sm font-bold text-emerald-600";
+                    showModal('Lab 3 Complete', 'Great job! You tested one variable at a time.', 'success');
+                } else {
+                    light.className = "w-10 h-10 rounded-full bg-red-500 border-4 border-red-600 transition-colors";
+                    feed.innerText = "Theory Disproved. Test another."; feed.className = "text-center mt-2 h-5 text-sm font-bold text-red-600";
+                }
+            } else {
+                light.className = "w-10 h-10 rounded-full bg-amber-500 border-4 border-amber-600 transition-colors animate-pulse";
+                feed.innerText = "WARNING: Too many variables tested at once!"; feed.className = "text-center mt-2 h-5 text-sm font-bold text-amber-600";
+            }
+        }
+
+        // Lab 4
+        function checkLab4(correct) {
+            if(correct) {
+                document.getElementById('lab4-feed').innerText = "Correct! Recognize limits and escalate safely.";
+                document.getElementById('lab4-feed').className = "text-center mt-4 h-5 text-sm font-bold text-emerald-600";
+                showModal('Lab 4 Complete', 'Escalation is a critical part of the testing phase.', 'success');
+            } else {
+                document.getElementById('lab4-feed').innerText = "DANGER! Out of scope. Escalate instead.";
+                document.getElementById('lab4-feed').className = "text-center mt-4 h-5 text-sm font-bold text-red-600";
+            }
+        }
+
+        // Lab 5
+        let expectedStep = 1;
+        function lab5Click(btn, stepId) {
+            if(stepId === expectedStep) {
+                btn.className = "w-full text-left p-2 border rounded bg-emerald-100 border-emerald-400 text-emerald-800 font-bold";
+                btn.innerText = `${stepId}. ` + btn.innerText;
+                btn.onclick = null;
+                expectedStep++;
+                
+                if(expectedStep === 4) {
+                    document.getElementById('lab5-feed').innerText = "Action Plan Sequential Order Correct!";
+                    document.getElementById('lab5-feed').className = "text-center mt-2 h-5 text-sm font-bold text-emerald-600";
+                    showModal('Lab 5 Complete', 'You established a safe, methodical plan of action.', 'success');
+                } else {
+                    document.getElementById('lab5-feed').innerText = `Select Step ${expectedStep}...`;
+                }
+            } else {
+                document.getElementById('lab5-feed').innerText = "Incorrect order! Think about precautions.";
+                document.getElementById('lab5-feed').className = "text-center mt-2 h-5 text-sm font-bold text-red-600";
+                setTimeout(()=> {
+                    if(expectedStep < 4) {
+                        document.getElementById('lab5-feed').innerText = `Select Step ${expectedStep}...`;
+                        document.getElementById('lab5-feed').className = "text-center mt-2 h-5 text-sm font-bold text-amber-600";
+                    }
+                }, 1500);
+            }
+        }
+
+        // Lab 6
+        function checkLab6() {
+            const val = document.getElementById('lab6-select').value;
+            if(val === 'correct') {
+                document.getElementById('lab6-feed').innerText = "Implementation Successful! Part is compatible.";
+                document.getElementById('lab6-feed').className = "text-center mt-2 h-5 text-sm font-bold text-emerald-600";
+                showModal('Lab 6 Complete', 'Hardware compatibility verified before implementation.', 'success');
+            } else {
+                document.getElementById('lab6-feed').innerText = "Implementation Failed. Incompatible part.";
+                document.getElementById('lab6-feed').className = "text-center mt-2 h-5 text-sm font-bold text-red-600";
+            }
+        }
+
+        // Lab 7
+        function checkLab7() {
+            const v1 = document.getElementById('l7-1').checked;
+            const v2 = document.getElementById('l7-2').checked;
+            const v3 = document.getElementById('l7-3').checked;
+            
+            if(v1 && v2 && v3) {
+                document.getElementById('lab7-feed').innerText = "Full Verification & Prevention Confirmed.";
+                document.getElementById('lab7-feed').className = "text-center mt-2 h-5 text-sm font-bold text-emerald-600";
+                showModal('Lab 7 Complete', 'You successfully verified functionality and applied preventive measures.', 'success');
+            } else {
+                document.getElementById('lab7-feed').innerText = "Incomplete. Verify all systems and prevent recurrence.";
+                document.getElementById('lab7-feed').className = "text-center mt-2 h-5 text-sm font-bold text-amber-600";
+            }
+        }
+
+        // Lab 8
+        function checkLab8() {
+            const val = document.getElementById('lab8-input').value.trim().toLowerCase();
+            if(val === 'outcomes' || val === 'outcome') {
+                document.getElementById('lab8-feed').innerText = "Ticket closed successfully!";
+                document.getElementById('lab8-feed').className = "text-center mt-2 h-5 text-sm font-bold text-emerald-600";
+                showModal('Lab 8 Complete', 'Excellent documentation. All labs complete!', 'success');
+            } else {
+                document.getElementById('lab8-feed').innerText = "Incorrect term. Hint: It rhymes with 'outcomes'.";
+                document.getElementById('lab8-feed').className = "text-center mt-2 h-5 text-sm font-bold text-red-600";
+            }
+        }
+
+        // --- QUIZ LOGIC (20 Questions) ---
+        const quizData = [
+            // Original 10
+            { q: "When a computer breaks down, what could be the cause?", options: ["Hardware", "Software", "Both hardware and software", "Neither hardware nor software"], answer: 2 },
+            { q: "Which of the following is the first step in troubleshooting?", options: ["Research", "Identify the problem", "Establish a theory", "Establish an action plan"], answer: 1 },
+            { q: "Which of the following should NOT be done during the troubleshooting process?", options: ["If the problem is a large one, break it down into smaller problems.", "If the problems are small ones, combine them into one larger problem.", "Duplicate/replicate the problem, if possible.", "Question users about what seemed to happen."], answer: 1 },
+            { q: "Which of the following can be used to determine a solution to problems?", options: ["Internet forums", "Previous tickets", "Private knowledge bases", "All of the above"], answer: 3 },
+            { q: "When testing solutions, you should ______.", options: ["Test multiple solutions at once", "Test all solutions at once", "Test one solution at a time", "Test solutions in pairs"], answer: 2 },
+            { q: "Once the solution is implemented, users are good to continue working.", options: ["True", "False, functionality must be verified.", "False, users must be reprimanded for causing the problem.", "False, once a computer has problems, it can't be used again."], answer: 1 },
+            { q: "What is the final step in the troubleshooting methodology?", options: ["Document the solution.", "Divide and conquer.", "Implement the solution.", "Reprimand the user."], answer: 0 },
+            { q: "Which of the following does NOT need to be inspected if the computer fails to turn on?", options: ["The power supply", "The outlet", "Tracks on the motherboard", "None of the above"], answer: 3 },
+            { q: "Which is NOT a step of the troubleshooting methodology?", options: ["Attempt to fix multiple problems at the same time.", "Implement the solutions or escalate as necessary.", "Establish a theory of probable cause.", "Establish a plan of action to resolve the problem and identify potential effects."], answer: 0 },
+            { q: "Which is NOT a part of the Identify the Problem step?", options: ["Gather information.", "Question users.", "Identify symptoms.", "Consider multiple theories of solutions."], answer: 3 },
+            // 10 New from Briefings
+            { q: "When questioning users during Step 1, a technician's tone should be:", options: ["Accusatory and strict", "Objective and open-ended", "Dismissive to save time", "Highly technical and confusing"], answer: 1 },
+            { q: "Why is replicating the user's issue helpful during Step 1?", options: ["It proves the user was lying.", "It fixes the problem automatically.", "It confirms the problem's existence and scope.", "It tests hardware compatibility."], answer: 2 },
+            { q: "Checking if a device is plugged into the wall before dismantling it is an example of:", options: ["Escalation", "Questioning the obvious", "Documenting outcomes", "Implementing preventive measures"], answer: 1 },
+            { q: "Why should a technician only change one variable at a time during Step 3 (Testing)?", options: ["To save money on parts", "Because changing two is impossible", "To precisely isolate and identify the root cause", "To make the documentation longer"], answer: 2 },
+            { q: "If all reasonable theories have been tested and the problem remains unresolved, the technician should:", options: ["Give up and format the drive.", "Escalate the issue to a specialist.", "Pretend the problem is fixed.", "Blame the user."], answer: 1 },
+            { q: "What is a critical precaution that must be taken BEFORE implementing a risky solution?", options: ["Documenting the outcome", "Replicating the issue", "Backing up data and configurations", "Updating antivirus definitions"], answer: 2 },
+            { q: "When scheduling a network outage to apply a fix, what must a technician do?", options: ["Do it secretly to avoid panic.", "Communicate the downtime to all affected users.", "Only inform the CEO.", "Test one variable at a time."], answer: 1 },
+            { q: "What demonstrates rigorous 'Verification' (Step 5)?", options: ["Seeing the error message disappear.", "Replacing a part.", "Having the user successfully perform the task that previously failed.", "Typing the ticket out."], answer: 2 },
+            { q: "Running a system health check and updating antivirus software after removing malware is an example of:", options: ["Establishing a theory", "Questioning the obvious", "Implementing preventive measures", "Escalation"], answer: 2 },
+            { q: "What is a primary benefit of diligently documenting findings and outcomes (Step 6)?", options: ["It prevents technicians from reinventing the wheel on future similar issues.", "It automatically backs up user data.", "It isolates variables.", "It replaces the need for a knowledge base."], answer: 0 }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        quizData.forEach((item, idx) => {
+            let qDiv = document.createElement('div');
+            qDiv.className = "bg-slate-50 p-6 rounded-lg border border-slate-200";
+            qDiv.innerHTML = `<h3 class="font-bold text-lg text-slate-800 mb-4">${idx + 1}. ${item.q}</h3>`;
+            
+            let optDiv = document.createElement('div');
+            optDiv.className = "space-y-3";
+            item.options.forEach((opt, oIdx) => {
+                let lbl = document.createElement('label');
+                lbl.className = "flex items-center space-x-3 p-3 rounded bg-white border border-slate-300 hover:bg-blue-50 cursor-pointer transition";
+                lbl.innerHTML = `<input type="radio" name="q${idx}" value="${oIdx}" class="form-radio h-5 w-5 text-blue-600"><span class="text-slate-700">${opt}</span>`;
+                optDiv.appendChild(lbl);
+            });
+            qDiv.appendChild(optDiv);
+            quizContainer.appendChild(qDiv);
+        });
+
+        function gradeQuiz() {
+            let score = 0;
+            let answered = 0;
+            for(let i=0; i<20; i++) {
+                const sel = document.querySelector(`input[name="q${i}"]:checked`);
+                if(sel) {
+                    answered++;
+                    if(parseInt(sel.value) === quizData[i].answer) score++;
+                }
+            }
+            if(answered < 20) {
+                showModal('Incomplete', 'Please answer all 20 questions.', 'warning');
+                return;
+            }
+            
+            if(score >= 18) {
+                document.getElementById('nav-game').classList.replace('text-gray-400', 'text-white');
+                document.getElementById('nav-game').classList.remove('cursor-not-allowed');
+                document.getElementById('nav-game').disabled = false;
+                
+                document.getElementById('nav-game-mobile').classList.replace('text-gray-400', 'text-white');
+                document.getElementById('nav-game-mobile').classList.remove('cursor-not-allowed');
+                document.getElementById('nav-game-mobile').disabled = false;
+
+                document.getElementById('nav-cert').classList.remove('hidden');
+                document.getElementById('nav-cert-mobile').classList.remove('hidden');
+                
+                document.getElementById('submit-quiz-btn').classList.add('hidden');
+                document.getElementById('proceed-game-btn').classList.remove('hidden');
+                
+                showModal('Mastery Achieved!', `You scored ${score}/20. You have unlocked the Retro Game and your Certificate!`, 'success');
+            } else {
+                showModal('Keep Trying', `You scored ${score}/20. You need 18/20 (90%) to pass. Review the briefing and try again.`, 'error');
+            }
+        }
+
+        // --- RETRO GAME: LIGHTS OUT (Node Debugger) ---
+        const board = document.getElementById('lights-out-board');
+        const levelDisplay = document.getElementById('game-level');
+        const movesDisplay = document.getElementById('game-moves');
+        
+        let grid = [];
+        let moves = 0;
+        let level = 1;
+        const GRID_SIZE = 5;
+
+        function createGridUI() {
+            board.innerHTML = '';
+            for(let r=0; r<GRID_SIZE; r++) {
+                for(let c=0; c<GRID_SIZE; c++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'light-node off';
+                    btn.dataset.r = r;
+                    btn.dataset.c = c;
+                    btn.onclick = () => handleNodeClick(r, c);
+                    board.appendChild(btn);
+                }
+            }
+        }
+
+        function updateGridUI() {
+            const nodes = board.children;
+            let index = 0;
+            for(let r=0; r<GRID_SIZE; r++) {
+                for(let c=0; c<GRID_SIZE; c++) {
+                    if(grid[r][c] === 1) {
+                        nodes[index].className = 'light-node on';
+                    } else {
+                        nodes[index].className = 'light-node off';
+                    }
+                    index++;
+                }
+            }
+        }
+
+        function toggle(r, c) {
+            if(r>=0 && r<GRID_SIZE && c>=0 && c<GRID_SIZE) {
+                grid[r][c] = grid[r][c] === 1 ? 0 : 1;
+            }
+        }
+
+        function handleNodeClick(r, c) {
+            moves++;
+            movesDisplay.innerText = moves;
+            
+            toggle(r, c);
+            toggle(r-1, c);
+            toggle(r+1, c);
+            toggle(r, c-1);
+            toggle(r, c+1);
+            
+            updateGridUI();
+            checkWin();
+        }
+
+        function checkWin() {
+            let win = true;
+            for(let r=0; r<GRID_SIZE; r++) {
+                for(let c=0; c<GRID_SIZE; c++) {
+                    if(grid[r][c] === 1) win = false;
+                }
+            }
+            if(win) {
+                setTimeout(() => {
+                    level++;
+                    showModal('System Stabilized!', `Grid cleared in ${moves} moves. Proceed to level ${level}.`, 'success');
+                    initGame(true);
+                }, 200);
+            }
+        }
+
+        function initGame(keepLevel = false) {
+            if(!keepLevel) { level = 1; moves = 0; }
+            else { moves = 0; }
+            
+            levelDisplay.innerText = level;
+            movesDisplay.innerText = moves;
+
+            // Initialize all 0
+            grid = Array.from({length: GRID_SIZE}, () => Array(GRID_SIZE).fill(0));
+            createGridUI();
+            
+            // Randomly simulate clicks to create a solvable puzzle
+            // More clicks for higher levels
+            let scrambleClicks = 5 + (level * 2);
+            for(let i=0; i<scrambleClicks; i++) {
+                let rr = Math.floor(Math.random() * GRID_SIZE);
+                let cc = Math.floor(Math.random() * GRID_SIZE);
+                toggle(rr, cc);
+                toggle(rr-1, cc);
+                toggle(rr+1, cc);
+                toggle(rr, cc-1);
+                toggle(rr, cc+1);
+            }
+            
+            // Prevent accidental 0-state generation
+            let allZero = true;
+            for(let r=0; r<GRID_SIZE; r++) for(let c=0; c<GRID_SIZE; c++) if(grid[r][c]===1) allZero = false;
+            if(allZero) { grid[0][0]=1; grid[0][1]=1; grid[1][0]=1; } // Force some lights on
+
+            updateGridUI();
+        }
+
+        // Initialize game structure silently
+        initGame();
+
+        // --- CERTIFICATE LOGIC ---
+        function updateCertName() {
+            let name = document.getElementById('student-name-input').value.trim();
+            if(name) {
+                if (name.includes(' ')) {
+                    name = name.split(' ')[0];
+                    document.getElementById('student-name-input').value = name;
+                    showModal('Notice', 'Only your first name has been applied to the certificate.', 'info');
+                }
+                document.getElementById('cert-student-name').innerText = name;
+            } else {
+                showModal('Wait', 'Enter your name first.', 'warning');
+            }
+        }
+
+        const today = new Date();
+        document.getElementById('cert-date').innerText = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        function downloadCert() {
+            const certEl = document.getElementById('certificate');
+            const name = document.getElementById('cert-student-name').innerText;
+            let filename = (name && name !== 'Student') ? `${name}_Certificate.png` : 'Certificate.png';
+
+            const originalTransform = certEl.style.transform;
+            certEl.style.transform = 'none';
+
+            const btn = document.getElementById('download-btn');
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Generating...';
+            btn.disabled = true;
+
+            html2canvas(certEl, { scale: 2, useCORS: true, backgroundColor: '#ffffff' }).then(canvas => {
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            }).catch(err => {
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                showModal('Error', 'Failed to generate image.', 'error');
+            });
+        }
+    </script>
+</body>
+</html>

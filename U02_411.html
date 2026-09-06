@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 02 Section 4.1.1 Mastery - Programming Language Categories</title>
+    
+    <!-- Load Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load HTML2Canvas for Certificate Download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- Load Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Qwitcher+Grypen:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; 
+            color: #1e293b;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        /* Interactive Elements CSS */
+        .io-dropzone { min-height: 50px; min-width: 100px; border: 2px dashed #94a3b8; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: #f1f5f9; transition: all 0.2s;}
+        .io-dropzone.drag-over { background: #e2e8f0; border-color: #3b82f6; box-shadow: inset 0 0 10px rgba(59, 130, 246, 0.2);}
+        
+        .io-item { cursor: grab; transition: transform 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .io-item:active { cursor: grabbing; transform: scale(0.95); }
+
+        .lab-block { transition: all 0.2s; cursor: pointer; }
+        .lab-block:hover { transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .lab-block.selected { border-color: #3b82f6; background-color: #dbeafe; color: #1e40af; }
+        .lab-block.success { border-color: #10b981; background-color: #d1fae5; color: #065f46; }
+        .lab-block.error { border-color: #ef4444; background-color: #fee2e2; color: #991b1b; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #e2e8f0; }
+        ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #2563eb; }
+
+        /* Retro Game Canvas */
+        #game-canvas {
+            background-color: #0f172a;
+            border: 4px solid #334155;
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.4), inset 0 0 40px rgba(0,0,0,0.8);
+            max-width: 100%;
+            height: auto;
+            touch-action: none;
+            cursor: crosshair;
+        }
+
+        /* --- CERTIFICATE STYLES --- */
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .font-body { font-family: 'Lora', serif; }
+        .font-script { font-family: 'Qwitcher Grypen', cursive; }
+        
+        .cert-preview-container {
+            width: 100%;
+            overflow: auto;
+            display: flex;
+            justify-content: center;
+            background: #e2e8f0;
+            padding: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        #certificate {
+            width: 1056px !important;
+            height: 816px !important;
+            flex-shrink: 0;
+            background-color: #ffffff;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1056" height="816"><rect width="1056" height="816" fill="%23f8fafc"/><polygon points="0,0 200,0 0,200" fill="%233b82f6"/><polygon points="1056,0 1056,200 856,0" fill="%233b82f6"/><polygon points="0,816 200,816 0,616" fill="%233b82f6"/><polygon points="1056,816 856,816 1056,616" fill="%233b82f6"/><rect x="20" y="20" width="1016" height="776" fill="none" stroke="%231e293b" stroke-width="4"/><rect x="30" y="30" width="996" height="756" fill="none" stroke="%233b82f6" stroke-width="2"/></svg>');
+            background-size: cover;
+        }
+
+        @media (max-width: 1100px) {
+            #certificate { transform: scale(0.7); transform-origin: top left; margin-bottom: -240px; margin-right: -310px; }
+        }
+        @media (max-width: 768px) {
+            #certificate { transform: scale(0.4); transform-origin: top left; margin-bottom: -490px; margin-right: -630px; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen flex flex-col">
+
+    <nav class="bg-blue-800 text-white shadow-lg sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-code text-2xl"></i>
+                    <span class="font-bold text-xl tracking-wider hidden sm:inline-block">Tech+ Unit 02 Section 4.1.1</span>
+                    <span class="font-bold text-xl tracking-wider sm:hidden">4.1.1</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-2">
+                        <button onclick="switchTab('briefing')" class="nav-btn bg-blue-950 px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-600 transition" id="nav-briefing"><i class="fa-solid fa-book-open mr-1"></i>Briefing</button>
+                        <button onclick="switchTab('activity')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-600 transition" id="nav-activity"><i class="fa-solid fa-flask mr-1"></i>Lab Activity</button>
+                        <button onclick="switchTab('quiz')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-600 transition" id="nav-quiz"><i class="fa-solid fa-clipboard-check mr-1"></i>Quiz</button>
+                        <button onclick="switchTab('game')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-slate-400 cursor-not-allowed transition" id="nav-game" disabled><i class="fa-solid fa-lock mr-1"></i>Game</button>
+                        <button onclick="switchTab('cert')" class="nav-btn hidden px-3 py-2 rounded-md text-sm font-medium text-yellow-300 hover:bg-blue-600 transition" id="nav-cert"><i class="fa-solid fa-award mr-1"></i>Certificate</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Nav -->
+        <div class="md:hidden flex flex-wrap justify-center gap-2 py-2 px-2 bg-blue-900">
+            <button onclick="switchTab('briefing')" class="nav-btn-mobile px-3 py-1 text-sm rounded bg-blue-950" id="nav-briefing-mobile">Briefing</button>
+            <button onclick="switchTab('activity')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-activity-mobile">Lab</button>
+            <button onclick="switchTab('quiz')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-quiz-mobile">Quiz</button>
+            <button onclick="switchTab('game')" class="nav-btn-mobile px-3 py-1 text-sm rounded text-slate-400 cursor-not-allowed" id="nav-game-mobile" disabled><i class="fa-solid fa-lock"></i></button>
+            <button onclick="switchTab('cert')" id="nav-cert-mobile" class="hidden px-2 py-1 text-sm text-yellow-300 rounded"><i class="fa-solid fa-award"></i></button>
+        </div>
+    </nav>
+
+    <main class="flex-grow w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <!-- BRIEFING SECTION -->
+        <div id="briefing-section" class="tab-content active no-print">
+            <div class="text-center mb-10">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4">Programming Language Categories</h1>
+                <p class="text-lg text-slate-600 max-w-3xl mx-auto">Discover how developers choose programming languages based on problem requirements. Like different types of transportation (building a car, driving a manual, driving an automatic, or taking a taxi), languages offer varying levels of abstraction from the hardware.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- Tile 1 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-red-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-red-700"><i class="fa-solid fa-microchip mr-2"></i>Assembly (Low-Level)</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>Low-Level Abstraction:</strong> Very close to the computer's hardware. Like building a car engine yourself.</li>
+                            <li><strong>Direct Hardware Control:</strong> Fast and efficient, interacting directly with CPU registers.</li>
+                            <li><strong>Platform Dependent:</strong> Code written for x86 processors will not work on ARM processors.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('assembly-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('assembly-usecase')" class="flex-1 bg-red-100 hover:bg-red-200 text-red-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 2 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-blue-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-blue-700"><i class="fa-solid fa-cogs mr-2"></i>Compiled (Mid/High-Level)</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>The Compiler:</strong> Translates entire source code into an executable machine code file before running.</li>
+                            <li><strong>High Performance:</strong> Extremely fast execution times during runtime.</li>
+                            <li><strong>Use Cases:</strong> Ideal for operating systems, physics engines, and large-scale applications. Examples: C, C++, Java.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('compiled-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('compiled-usecase')" class="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 3 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-green-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-green-700"><i class="fa-brands fa-python mr-2"></i>Interpreted (High-Level)</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>The Interpreter:</strong> Reads and executes code line-by-line at runtime. Easier to debug.</li>
+                            <li><strong>Scripting & Markup:</strong> Includes languages for automation (Python), web scripting (JS, PHP), and structuring (HTML, XML).</li>
+                            <li><strong>Portability:</strong> "Write once, run anywhere" (as long as the system has an interpreter).</li>
+                        </ul>
+                    </div>
+                     <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('interpreted-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('interpreted-usecase')" class="flex-1 bg-green-100 hover:bg-green-200 text-green-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 4 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-purple-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-purple-700"><i class="fa-solid fa-database mr-2"></i>Query (Very High-Level)</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>Domain-Specific:</strong> Specialized languages designed exclusively for asking questions and manipulating databases.</li>
+                            <li><strong>Declarative Nature:</strong> You describe *what* you want, the language handles *how* it gets done. (Like hailing a taxi).</li>
+                            <li><strong>Examples:</strong> SQL (Structured Query Language), LDAP.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('query-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('query-usecase')" class="flex-1 bg-purple-100 hover:bg-purple-200 text-purple-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 flex justify-center">
+                <button onclick="switchTab('activity')" class="bg-blue-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-blue-500 shadow-lg transition transform hover:scale-105">Proceed to Lab Activity <i class="fa-solid fa-arrow-right ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- LAB ACTIVITY SECTION -->
+        <div id="activity-section" class="tab-content no-print">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-extrabold text-slate-900 mb-2">Interactive Code Labs</h1>
+                <p class="text-slate-600">Complete these 8 mini-labs (2 for each category) to prove your mastery of programming concepts.</p>
+            </div>
+
+            <!-- ASSEMBLY LABS -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                    <h2 class="text-lg font-bold mb-2 text-red-700"><i class="fa-solid fa-microchip mr-2"></i>Assembly: Register Routing</h2>
+                    <p class="text-sm text-slate-600 mb-4">Drag the assembly instruction to its correct hardware definition.</p>
+                    <div class="flex flex-wrap gap-2 mb-4" id="lab1-items">
+                        <div class="io-item px-3 py-1 bg-red-100 border border-red-300 rounded text-sm font-mono" draggable="true" data-type="mov">MOV AL, [INPUT]</div>
+                        <div class="io-item px-3 py-1 bg-red-100 border border-red-300 rounded text-sm font-mono" draggable="true" data-type="cmp">CMP AL, 1</div>
+                        <div class="io-item px-3 py-1 bg-red-100 border border-red-300 rounded text-sm font-mono" draggable="true" data-type="jmp">JMP END</div>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex items-center gap-4"><div class="io-dropzone flex-1" data-target="cmp"></div><div class="text-sm w-1/2">Compare register to a value.</div></div>
+                        <div class="flex items-center gap-4"><div class="io-dropzone flex-1" data-target="jmp"></div><div class="text-sm w-1/2">Jump to end of code execution.</div></div>
+                        <div class="flex items-center gap-4"><div class="io-dropzone flex-1" data-target="mov"></div><div class="text-sm w-1/2">Move sensor input into register.</div></div>
+                    </div>
+                    <div id="fb-lab1" class="text-center text-sm font-bold h-4 mt-2"></div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                    <h2 class="text-lg font-bold mb-2 text-red-700"><i class="fa-solid fa-microchip mr-2"></i>Assembly: Hardware Targets</h2>
+                    <p class="text-sm text-slate-600 mb-4">Click the 2 devices that would most likely require Assembly programming due to extreme resource constraints.</p>
+                    <div class="grid grid-cols-2 gap-3" id="lab2-grid">
+                        <div class="lab-block border-2 p-3 rounded text-center text-sm" onclick="checkLabTarget(this, false, 'fb-lab2', 2)"><i class="fa-brands fa-chrome text-2xl mb-1 text-slate-400 block"></i>Web Browser</div>
+                        <div class="lab-block border-2 p-3 rounded text-center text-sm" onclick="checkLabTarget(this, true, 'fb-lab2', 2)"><i class="fa-solid fa-temperature-half text-2xl mb-1 text-slate-400 block"></i>IoT Thermostat</div>
+                        <div class="lab-block border-2 p-3 rounded text-center text-sm" onclick="checkLabTarget(this, false, 'fb-lab2', 2)"><i class="fa-solid fa-file-word text-2xl mb-1 text-slate-400 block"></i>Word Processor</div>
+                        <div class="lab-block border-2 p-3 rounded text-center text-sm" onclick="checkLabTarget(this, true, 'fb-lab2', 2)"><i class="fa-solid fa-robot text-2xl mb-1 text-slate-400 block"></i>Pedometer Chip</div>
+                    </div>
+                    <div id="fb-lab2" class="text-center text-sm font-bold h-4 mt-2"></div>
+                </div>
+            </div>
+
+            <!-- COMPILED LABS -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                    <h2 class="text-lg font-bold mb-2 text-blue-700"><i class="fa-solid fa-cogs mr-2"></i>Compiled: Pipeline Sort</h2>
+                    <p class="text-sm text-slate-600 mb-4">Drag the steps into the correct order for running a Compiled program.</p>
+                    <div class="flex flex-col gap-2" id="lab3-dropzones">
+                        <div class="io-dropzone w-full p-2" data-target="1"><span class="text-slate-400 text-xs">Step 1</span></div>
+                        <div class="io-dropzone w-full p-2" data-target="2"><span class="text-slate-400 text-xs">Step 2</span></div>
+                        <div class="io-dropzone w-full p-2" data-target="3"><span class="text-slate-400 text-xs">Step 3</span></div>
+                    </div>
+                    <div class="flex gap-2 mt-4" id="lab3-items">
+                        <div class="io-item px-2 py-1 bg-blue-100 border border-blue-300 rounded text-xs flex-1 text-center" draggable="true" data-type="3">Run Machine Code</div>
+                        <div class="io-item px-2 py-1 bg-blue-100 border border-blue-300 rounded text-xs flex-1 text-center" draggable="true" data-type="1">Write Source Code</div>
+                        <div class="io-item px-2 py-1 bg-blue-100 border border-blue-300 rounded text-xs flex-1 text-center" draggable="true" data-type="2">Compile Code</div>
+                    </div>
+                    <div id="fb-lab3" class="text-center text-sm font-bold h-4 mt-2"></div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                    <h2 class="text-lg font-bold mb-2 text-blue-700"><i class="fa-solid fa-cogs mr-2"></i>Compiled: Output Identifier</h2>
+                    <p class="text-sm text-slate-600 mb-4">Click the 2 file extensions that represent compiled machine code ready for execution.</p>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="lab-block border-2 p-3 rounded text-center font-mono font-bold" onclick="checkLabTarget(this, true, 'fb-lab4', 2)">.exe</div>
+                        <div class="lab-block border-2 p-3 rounded text-center font-mono font-bold" onclick="checkLabTarget(this, false, 'fb-lab4', 2)">.py</div>
+                        <div class="lab-block border-2 p-3 rounded text-center font-mono font-bold" onclick="checkLabTarget(this, false, 'fb-lab4', 2)">.html</div>
+                        <div class="lab-block border-2 p-3 rounded text-center font-mono font-bold" onclick="checkLabTarget(this, true, 'fb-lab4', 2)">.bin</div>
+                    </div>
+                    <div id="fb-lab4" class="text-center text-sm font-bold h-4 mt-2"></div>
+                </div>
+            </div>
+
+            <!-- INTERPRETED LABS -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                    <h2 class="text-lg font-bold mb-2 text-green-700"><i class="fa-brands fa-python mr-2"></i>Interpreted: Sub-Categories</h2>
+                    <p class="text-sm text-slate-600 mb-4">Interpreted languages can be Scripting or Markup. Drag the language to its sub-category.</p>
+                    <div class="flex gap-2 mb-4 justify-center" id="lab5-items">
+                        <div class="io-item px-3 py-1 bg-green-100 border border-green-300 rounded font-mono text-sm" draggable="true" data-type="mark">HTML / XML</div>
+                        <div class="io-item px-3 py-1 bg-green-100 border border-green-300 rounded font-mono text-sm" draggable="true" data-type="script">Python / JS</div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="flex-1 text-center">
+                            <h4 class="text-xs font-bold text-slate-500 mb-1">Scripting (Automation)</h4>
+                            <div class="io-dropzone w-full" data-target="script"></div>
+                        </div>
+                        <div class="flex-1 text-center">
+                            <h4 class="text-xs font-bold text-slate-500 mb-1">Markup (Structuring)</h4>
+                            <div class="io-dropzone w-full" data-target="mark"></div>
+                        </div>
+                    </div>
+                    <div id="fb-lab5" class="text-center text-sm font-bold h-4 mt-2"></div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                    <h2 class="text-lg font-bold mb-2 text-green-700"><i class="fa-brands fa-python mr-2"></i>Interpreted: Line-by-Line</h2>
+                    <p class="text-sm text-slate-600 mb-4">Click "Interpret Line" 4 times to execute the script step-by-step, finding the bug on line 3.</p>
+                    <div class="bg-slate-900 text-green-400 p-3 rounded font-mono text-xs mb-3">
+                        <div id="l1">1. x = 5</div>
+                        <div id="l2">2. y = 10</div>
+                        <div id="l3">3. print(x + z) # Bug! z is undefined</div>
+                        <div id="l4">4. print("Done")</div>
+                    </div>
+                    <button id="interpret-btn" class="w-full bg-green-600 text-white font-bold py-2 rounded hover:bg-green-700">Interpret Next Line</button>
+                    <div id="fb-lab6" class="text-center text-sm font-bold h-4 mt-2"></div>
+                </div>
+            </div>
+
+            <!-- QUERY LABS -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                    <h2 class="text-lg font-bold mb-2 text-purple-700"><i class="fa-solid fa-database mr-2"></i>Query: Syntax Builder</h2>
+                    <p class="text-sm text-slate-600 mb-4">Click the SQL keywords in order to retrieve the Math Score for the student named John.</p>
+                    <div class="flex gap-2 flex-wrap mb-4 justify-center">
+                        <button class="bg-slate-200 hover:bg-slate-300 px-3 py-1 rounded border border-slate-400 font-mono text-sm" onclick="buildSQL('SELECT')">SELECT</button>
+                        <button class="bg-slate-200 hover:bg-slate-300 px-3 py-1 rounded border border-slate-400 font-mono text-sm" onclick="buildSQL('math_score')">math_score</button>
+                        <button class="bg-slate-200 hover:bg-slate-300 px-3 py-1 rounded border border-slate-400 font-mono text-sm" onclick="buildSQL('FROM')">FROM</button>
+                        <button class="bg-slate-200 hover:bg-slate-300 px-3 py-1 rounded border border-slate-400 font-mono text-sm" onclick="buildSQL('students')">students</button>
+                        <button class="bg-slate-200 hover:bg-slate-300 px-3 py-1 rounded border border-slate-400 font-mono text-sm" onclick="buildSQL('WHERE')">WHERE</button>
+                        <button class="bg-slate-200 hover:bg-slate-300 px-3 py-1 rounded border border-slate-400 font-mono text-sm" onclick="buildSQL('name = John')">name = John</button>
+                    </div>
+                    <div class="bg-slate-100 p-2 border border-slate-300 rounded font-mono text-sm text-purple-800 min-h-[40px]" id="sql-output"></div>
+                    <div class="flex gap-2 mt-2">
+                        <button class="flex-1 bg-red-500 text-white py-1 rounded hover:bg-red-600 text-sm" onclick="resetSQL()">Clear</button>
+                        <button class="flex-1 bg-purple-600 text-white py-1 rounded hover:bg-purple-700 text-sm" onclick="checkSQL()">Run Query</button>
+                    </div>
+                    <div id="fb-lab7" class="text-center text-sm font-bold h-4 mt-2"></div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                    <h2 class="text-lg font-bold mb-2 text-purple-700"><i class="fa-solid fa-database mr-2"></i>Query: Data Retrieval</h2>
+                    <p class="text-sm text-slate-600 mb-4">Execute this visual query: Select the 2 rows where <code>Score > 90</code>.</p>
+                    <table class="w-full text-sm text-left border-collapse border border-slate-300">
+                        <thead><tr class="bg-slate-100"><th class="border border-slate-300 p-2">Name</th><th class="border border-slate-300 p-2">Score</th></tr></thead>
+                        <tbody>
+                            <tr class="lab-block border border-slate-300" onclick="checkLabTarget(this, false, 'fb-lab8', 2)"><td class="p-2">Alice</td><td class="p-2">85</td></tr>
+                            <tr class="lab-block border border-slate-300" onclick="checkLabTarget(this, true, 'fb-lab8', 2)"><td class="p-2">Bob</td><td class="p-2">95</td></tr>
+                            <tr class="lab-block border border-slate-300" onclick="checkLabTarget(this, false, 'fb-lab8', 2)"><td class="p-2">Charlie</td><td class="p-2">72</td></tr>
+                            <tr class="lab-block border border-slate-300" onclick="checkLabTarget(this, true, 'fb-lab8', 2)"><td class="p-2">Diana</td><td class="p-2">92</td></tr>
+                        </tbody>
+                    </table>
+                    <div id="fb-lab8" class="text-center text-sm font-bold h-4 mt-2"></div>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <button onclick="switchTab('quiz')" class="bg-blue-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-blue-500 shadow-lg transition transform hover:scale-105">Take the Mastery Quiz <i class="fa-solid fa-clipboard-check ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- QUIZ SECTION -->
+        <div id="quiz-section" class="tab-content no-print">
+            <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-xl max-w-4xl mx-auto">
+                <div class="text-center mb-8 border-b pb-4">
+                    <h1 class="text-3xl font-extrabold text-slate-900 mb-2">Section 4.1.1 Mastery Quiz</h1>
+                    <p class="text-slate-600">Score 90% or higher (18/20) to earn your Certificate and unlock the Retro Game!</p>
+                </div>
+
+                <div id="quiz-container" class="space-y-8">
+                    <!-- Questions injected via JS -->
+                </div>
+
+                <div class="mt-10 text-center border-t pt-6 flex flex-col md:flex-row justify-center items-center gap-4">
+                    <button id="submit-quiz-btn" onclick="gradeQuiz()" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">Submit Quiz</button>
+                    <button id="proceed-game-btn" class="hidden bg-emerald-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-emerald-700 shadow-lg transition w-full md:w-auto" onclick="switchTab('game')">Play Retro Game <i class="fa-solid fa-gamepad ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RETRO GAME SECTION -->
+        <div id="game-section" class="tab-content no-print">
+            <div class="bg-slate-900 p-6 sm:p-8 rounded-2xl shadow-xl max-w-4xl mx-auto border-4 border-slate-700 flex flex-col items-center">
+                <div class="text-center mb-4 w-full">
+                    <h1 class="text-3xl font-extrabold text-sky-400 mb-2 tracking-widest uppercase" style="font-family: monospace;">Core Defender</h1>
+                    <p class="text-slate-300 text-sm">Protect the CPU Kernel! Use <kbd class="bg-slate-700 px-2 rounded border border-slate-500">Left / Right</kbd> arrows (or tap sides of screen) to rotate your Compiled Shield and block the incoming Rogue Code Bugs (red)!</p>
+                </div>
+                
+                <div class="flex justify-between items-center w-full max-w-[500px] mb-2 px-4 text-white font-mono text-xl">
+                    <div>Score: <span id="game-score" class="text-green-400 font-bold">0</span></div>
+                    <div>Integrity: <span id="game-lives" class="text-red-400 font-bold">3</span></div>
+                </div>
+
+                <div class="relative flex justify-center w-full">
+                    <!-- Game Canvas -->
+                    <canvas id="game-canvas" width="500" height="500" class="w-full max-w-[500px] bg-slate-800 rounded-full"></canvas>
+                    
+                    <!-- Overlay Start Button -->
+                    <div id="game-overlay" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-70 rounded-full max-w-[500px] mx-auto z-10">
+                        <button id="start-game-btn" class="bg-sky-600 hover:bg-sky-500 text-white font-bold font-mono py-3 px-6 rounded-lg text-xl border-4 border-sky-800 uppercase transform transition hover:scale-105">Execute Kernel</button>
+                    </div>
+                </div>
+
+                <div class="mt-8 text-center w-full border-t border-slate-700 pt-6">
+                    <button onclick="switchTab('cert')" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">Claim Certificate <i class="fa-solid fa-award ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CERTIFICATE SECTION -->
+        <div id="cert-section" class="tab-content">
+            <div class="max-w-5xl mx-auto">
+                
+                <!-- Controls -->
+                <div class="bg-white p-6 rounded shadow mb-6 no-print text-center border border-slate-200">
+                    <h2 class="text-2xl font-bold text-blue-600 mb-2">🎉 Congratulations! 🎉</h2>
+                    <p class="text-slate-700 mb-4">You have mastered Programming Language Categories.</p>
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+                        <input type="text" id="student-name-input" value="Student" placeholder="Enter your first name" class="border-2 border-slate-300 rounded px-4 py-2 w-full md:w-64 focus:border-blue-500 focus:outline-none">
+                        <button onclick="updateCertName()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">Update Name</button>
+                        <button id="download-btn" onclick="downloadCert()" class="bg-slate-800 text-white px-4 py-2 rounded hover:bg-slate-900 transition flex items-center justify-center">
+                            <i class="fa-solid fa-download mr-2"></i>Download PNG
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Certificate Render Container -->
+                <div class="cert-preview-container print:p-0 print:bg-white">
+                    <div id="certificate">
+                        <div class="relative z-20 w-full h-full flex flex-col pt-[120px] pl-[120px] pr-[120px] text-center">
+                            <h1 class="text-[#1e3a8a] text-[4rem] leading-none font-serif font-bold tracking-wide uppercase mb-2">CERTIFICATE</h1>
+                            <h2 class="text-slate-800 text-2xl font-serif tracking-widest uppercase mb-10">Of Achievement</h2>
+                            
+                            <p class="text-[1.4rem] font-body text-slate-800 mb-4">This is to certify that</p>
+                            
+                            <div class="relative mb-8 w-full max-w-2xl mx-auto">
+                                <h3 id="cert-student-name" class="text-[4rem] text-[#1e3a8a] font-serif italic leading-none pb-2 relative z-10 w-full block">Student</h3>
+                                <div class="w-full border-b-[2px] border-[#1e3a8a] absolute bottom-[4px] left-0 z-0"></div>
+                            </div>
+                            
+                            <p class="text-[1.3rem] font-body text-slate-800 leading-relaxed w-full max-w-3xl mx-auto">
+                                Has successfully completed the assessment for 
+                                <strong class="text-[1.8rem] text-[#1e3a8a] block mt-4 mb-2 font-serif">Cyber.org Tech+ Unit 02 Section 4.1.1</strong>
+                                <strong class="text-[1.5rem] text-black block mb-4 font-serif italic">Programming Language Categories</strong>
+                                <span class="text-[1.1rem] text-slate-700 leading-snug block">Demonstrating proficiency in identifying, comparing, and applying Assembly, Compiled, Interpreted, and Query programming languages across various levels of hardware abstraction.</span>
+                            </p>
+                            
+                            <div class="flex justify-between items-end mt-auto mb-[60px] w-full px-12">
+                                <div class="w-64">
+                                    <div class="border-b border-slate-600 mb-2 h-20 flex items-end justify-center relative">
+                                        <span class="font-script text-[4rem] text-[#1e3a8a] absolute bottom-[-10px] transform -rotate-3 opacity-90">Dr. Alan T.</span>
+                                    </div>
+                                    <p class="font-serif text-lg text-slate-800">Lead Instructor</p>
+                                </div>
+                                <div class="w-32 h-32 bg-blue-100 rounded-full border-4 border-blue-500 flex items-center justify-center flex-col shadow-inner">
+                                    <i class="fa-solid fa-code text-3xl text-blue-600 mb-1"></i>
+                                    <span class="text-[10px] font-bold text-blue-800 uppercase tracking-widest">Mastery</span>
+                                </div>
+                                <div class="w-64">
+                                    <div class="border-b border-slate-600 mb-2 text-center h-20 flex items-end justify-center">
+                                        <p id="cert-date" class="font-body text-xl text-slate-800 pb-1">Date Here</p>
+                                    </div>
+                                    <p class="font-serif text-lg text-slate-800">Date</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Custom Modal for Alerts -->
+    <div id="custom-modal" class="fixed inset-0 bg-black bg-opacity-50 z-[100] hidden flex justify-center items-center backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all">
+            <div class="text-center">
+                <div id="modal-icon" class="text-5xl mb-4"></div>
+                <h3 id="modal-title" class="text-2xl font-bold mb-2 text-slate-900"></h3>
+                <p id="modal-msg" class="text-slate-600 mb-6"></p>
+                <button onclick="closeModal()" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-700 transition w-full">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Briefing Modal -->
+    <div id="briefing-modal" class="fixed inset-0 bg-black bg-opacity-70 z-[120] hidden flex justify-center items-center backdrop-blur-sm p-4 sm:p-6">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col transform transition-all overflow-hidden border-4 border-blue-700">
+            <div class="p-6 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+                <div class="flex items-center gap-4">
+                    <div id="briefing-modal-icon" class="text-4xl"></div>
+                    <h3 id="briefing-modal-title" class="text-2xl md:text-3xl font-bold text-slate-900"></h3>
+                </div>
+                <button onclick="closeBriefing()" class="text-slate-400 hover:text-red-600 transition text-4xl leading-none">&times;</button>
+            </div>
+            <div id="briefing-modal-content" class="p-6 md:p-10 overflow-y-auto flex-grow text-slate-700 text-lg leading-relaxed bg-white">
+                <!-- Dynamic Content Injected Here -->
+            </div>
+            <div class="p-6 border-t border-slate-200 bg-slate-50 flex justify-end">
+                <button onclick="closeBriefing()" class="bg-blue-700 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-800 transition shadow-md">Acknowledge & Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Briefing Content Data (7 Paragraphs + Use Cases) ---
+        const briefingData = {
+            'assembly-details': {
+                title: 'Assembly Languages (Low-Level)',
+                icon: '<i class="fa-solid fa-microchip text-red-600"></i>',
+                html: `
+                    <p class="mb-5">At the absolute lowest level of computing, processors only understand Machine Code—a binary sequence of 1s and 0s representing electrical high and low voltage states. Writing software in raw binary is incredibly slow and prone to human error. To bridge this gap, computer scientists created <strong>Assembly Language</strong>. Assembly is considered a "Low-Level" language because it provides a direct, one-to-one symbolic representation of these machine code instructions.</p>
+                    
+                    <p class="mb-5">In the "car" abstraction analogy, programming in Assembly is akin to building the car engine yourself from raw metal parts. You are not shielded from the complexities of the hardware; you must manipulate them directly. You must manually manage the physical CPU registers and memory addresses, telling the processor exactly where to move a single byte of data before performing a calculation.</p>
+                    
+                    <p class="mb-5">Because Assembly communicates so intimately with the hardware, it is heavily <strong>Platform Dependent</strong>. The specific instructions understood by an Intel desktop processor (using the x86 architecture) are fundamentally different from the instructions understood by an Apple iPhone processor (using the ARM architecture) or a networking router (using MIPS). Therefore, Assembly code written for one device must be entirely rewritten to work on another architecture.</p>
+                    
+                    <p class="mb-5">The syntax of Assembly utilizes short mnemonics to represent complex binary actions. For example, the command <code>MOV AL, 5</code> instructs the CPU to move the physical value of 5 into a specific memory register labeled "AL". Another command, <code>CMP AL, 1</code>, tells the processor to compare the value in AL to the number 1. While slightly more readable than binary, this syntax remains incredibly cryptic compared to high-level languages.</p>
+                    
+                    <p class="mb-5">The greatest advantage of Assembly language is its unparalleled <strong>Execution Speed and Efficiency</strong>. Because there is almost no abstraction layer—meaning the computer does not have to spend time translating complex commands—the code executes instantaneously. Furthermore, Assembly programs require a microscopic footprint in memory, making them ideal for systems with severe hardware limitations.</p>
+                    
+                    <p class="mb-5">Conversely, the disadvantages are substantial. Development in Assembly is incredibly slow; it might take hundreds of lines of code just to display a simple image on a screen. Debugging is a nightmare, as a single misplaced comma can crash the entire physical system. Consequently, very few modern applications are written entirely in Assembly.</p>
+                    
+                    <p>Today, Assembly is reserved for highly specialized tasks requiring absolute hardware control. This includes writing the core firmware for Internet of Things (IoT) devices, developing low-level hardware drivers for graphics cards, creating the bootloaders that start an operating system, and occasionally optimizing highly specific mathematical algorithms within video game physics engines.</p>
+                `
+            },
+            'assembly-usecase': {
+                title: 'Assembly Language: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-red-800 mb-2 border-b-2 border-red-200 pb-1">Case 1: Embedded Systems & IoT Firmware</h4>
+                        <p class="mb-2">When engineering tiny devices with minimal processing power and battery life, developers must squeeze maximum efficiency out of the hardware.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Medical Device):</strong> A developer writes the firmware for a heart pacemaker in Assembly to ensure the timing of the electrical pulses is accurate to the microsecond, with absolutely zero software bloat or delay.</li>
+                            <li><strong>Example 2 (Smart Sensor):</strong> An IoT agricultural soil monitor uses an 8-bit microcontroller. Assembly is used to directly read voltage from the analog sensor pin and sleep the processor to preserve a 5-year battery life.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-red-800 mb-2 border-b-2 border-red-200 pb-1">Case 2: Extreme Performance Optimization</h4>
+                        <p class="mb-2">In scenarios where millions of calculations must occur per second, developers will write critical bottlenecks in Assembly to bypass high-level inefficiencies.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Game Console Engine):</strong> While the main game logic is written in C++, a developer uses specialized Assembly routines to force the CPU to render 3D lighting vectors faster than a compiler could optimize it.</li>
+                            <li><strong>Example 2 (Hardware Drivers):</strong> A manufacturer writes the core communication driver for a new high-speed network card in Assembly to guarantee data packets are moved from the network cable to the CPU cache with zero latency.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Microcontroller Hardware</p>
+                            <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&h=350" alt="Microchip on a circuit board" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: IoT Device Control</p>
+                            <img src="https://images.unsplash.com/photo-1558346490-a72e53ae2d4f?auto=format&fit=crop&w=600&h=350" alt="Smart home thermostat" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'compiled-details': {
+                title: 'Compiled Languages (Mid/High-Level)',
+                icon: '<i class="fa-solid fa-cogs text-blue-600"></i>',
+                html: `
+                    <p class="mb-5">As software complexity grew, programming strictly in Assembly became unsustainable. This led to the creation of Compiled Languages, bridging the gap between human readability and hardware execution. A <strong>Compiled Language</strong> relies on a specialized, powerful program called a "Compiler" to act as a universal translator.</p>
+                    
+                    <p class="mb-5">The development process involves writing human-readable "Source Code" in an Integrated Development Environment (IDE). However, the computer cannot understand this source code. When the developer clicks "Build", the compiler reads the entire document at once. It performs lexical and syntax analysis, optimizes the logic, and translates the entire program into a standalone, binary Machine Code file (such as a <code>.exe</code> file on Windows). Only then can the program be executed.</p>
+                    
+                    <p class="mb-5">In the abstraction analogy, languages like C and C++ are considered "Mid-Level" (driving a manual car). They hide the raw binary but still require the programmer to manually allocate and free up system memory (RAM). Other compiled languages, like Java or C#, are considered "High-Level" (driving an automatic). They handle memory management automatically, allowing the developer to focus purely on the application logic.</p>
+                    
+                    <p class="mb-5">The primary advantage of compiled languages is <strong>Execution Speed</strong>. Because the translation to machine code happens *before* the user ever runs the program, the CPU can execute the instructions immediately without pausing to interpret them. This makes compiled languages the standard for heavy, resource-intensive software.</p>
+                    
+                    <p class="mb-5">Compiled languages are heavily utilized in the <strong>Object-Oriented Programming (OOP)</strong> paradigm. OOP allows developers to model real-world objects using "Classes" and "Methods." For example, a developer can create a "Car" class with attributes like "Color" and "Speed," making large-scale software development highly organized, modular, and easier for massive teams to collaborate on.</p>
+                    
+                    <p class="mb-5">However, the compilation process introduces a distinct disadvantage regarding <strong>Portability</strong>. A program compiled into a Windows <code>.exe</code> file will not run on an Apple Mac or a Linux server. The developer must acquire the source code, open it on a Mac, and use a Mac-specific compiler to generate a new Mac-compatible executable. (Note: Java mitigates this slightly by compiling into "Bytecode" that runs on a virtual machine, but traditional compiled languages do not).</p>
+                    
+                    <p class="mb-5">Furthermore, the development loop is slower. If a programmer makes a single typo in a million lines of code, they must wait for the compiler to process the entire program again before they can test the fix. Despite this, Compiled languages remain the backbone of modern software engineering, powering web browsers, operating systems, massive databases, and 3D video games.</p>
+                `
+            },
+            'compiled-usecase': {
+                title: 'Compiled Language: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 1: Operating System & Systems Software</h4>
+                        <p class="mb-2">The foundation of a computer (the OS) must be incredibly fast, stable, and capable of managing complex memory allocations without overhead.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (OS Kernel):</strong> The Linux Kernel and parts of Windows are written in C (a mid-level compiled language) because it allows developers to write human-readable code that compiles into blazing-fast machine code with direct access to RAM.</li>
+                            <li><strong>Example 2 (Database Engines):</strong> The core engines of massive database systems like MySQL are compiled via C++ to ensure they can handle thousands of data requests simultaneously without crashing.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 2: High-Performance Commercial Applications</h4>
+                        <p class="mb-2">Commercial software companies require their programs to execute quickly and want to protect their intellectual property (source code) from being read by end-users.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Video Games):</strong> A game studio uses C++ and the Unreal Engine to create a 3D video game. When finished, they compile it into an executable, ensuring the physics calculations run at 60 frames per second on the user's PC.</li>
+                            <li><strong>Example 2 (Proprietary Software):</strong> Adobe Photoshop is written in compiled languages. Because the user only receives the final Machine Code executable, competitors cannot easily reverse-engineer Adobe's proprietary image-processing algorithms.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Compiling Code</p>
+                            <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=600&h=350" alt="Code on a screen representing compilation" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: 3D Game Rendering</p>
+                            <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=600&h=350" alt="Video game controller and high graphics game" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'interpreted-details': {
+                title: 'Interpreted Languages (High-Level)',
+                icon: '<i class="fa-brands fa-python text-green-600"></i>',
+                html: `
+                    <p class="mb-5">In contrast to compiling an entire program beforehand, an <strong>Interpreted Language</strong> uses a program called an "Interpreter" to read, translate, and execute the source code line-by-line while the program is actively running. This represents a very high level of abstraction, completely hiding the hardware and memory management from the developer.</p>
+                    
+                    <p class="mb-5">One massive advantage of this approach is <strong>Cross-Platform Portability</strong>. A Python script written on a Windows PC can be emailed to a Mac user, and as long as the Mac has the Python Interpreter installed, the script will run flawlessly without needing to be recompiled. The interpreter acts as an active translator standing between the script and the specific operating system.</p>
+                    
+                    <p class="mb-5">Interpreted languages offer rapid development and debugging. If a script has a bug on line 50, the interpreter will successfully execute lines 1 through 49, allowing the developer to see exactly what happened right up until the crash. They can fix the typo and instantly run it again without waiting for a build process.</p>
+                    
+                    <p class="mb-5">This category heavily features <strong>Scripting Languages</strong>. Scripts are designed to automate tasks, control other software, or glue systems together. For instance, System Administrators use Bash or PowerShell scripts to automate daily server backups. Developers use languages like Python to parse large text files or automate web scraping.</p>
+                    
+                    <p class="mb-5">Another massive sub-category is <strong>Web Scripting</strong>. The modern internet relies entirely on interpreted code. When you visit a website, your browser downloads the raw text of a JavaScript (JS) file and a PHP script runs on the web server. The server interprets the PHP to fetch data, and your browser's built-in interpreter reads the JavaScript line-by-line to make the buttons interactive and the animations smooth.</p>
+                    
+                    <p class="mb-5">It is vital to distinguish scripting from <strong>Markup Languages</strong> (like HTML, XML, or Markdown). While markup languages are technically interpreted by browsers, they are <em>not</em> programming languages. They cannot perform math, logic, or decisions (no "if/then" statements). They are strictly used to format, structure, and annotate text documents so they display correctly visually.</p>
+                    
+                    <p>The primary drawback to interpreted languages is <strong>Slower Execution Speed</strong>. Because the computer must pause to translate every single line of code into machine code on-the-fly, an interpreted Python program will run significantly slower than a compiled C++ program doing the exact same mathematical calculations. Therefore, they are rarely used for physics engines or heavy operating system architecture.</p>
+                `
+            },
+            'interpreted-usecase': {
+                title: 'Interpreted Language: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-green-800 mb-2 border-b-2 border-green-200 pb-1">Case 1: Web Development</h4>
+                        <p class="mb-2">The internet relies on files being sent across the world and instantly rendered on thousands of different types of devices, making interpreted languages essential.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Markup Structure):</strong> A web developer uses HTML (a markup language) to tag text as 'Headers' or 'Paragraphs'. The user's Chrome browser acts as the interpreter, reading the tags and structuring the visual page.</li>
+                            <li><strong>Example 2 (Client Scripting):</strong> A developer uses JavaScript to add a "Dark Mode" toggle to a website. The browser interprets the script when the button is clicked, instantly altering the page's colors without needing to communicate with a server.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-green-800 mb-2 border-b-2 border-green-200 pb-1">Case 2: Automation and Rapid Prototyping</h4>
+                        <p class="mb-2">IT Professionals often need to perform repetitive tasks quickly without the overhead of building massive, compiled software applications.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (System Automation):</strong> A system administrator writes a 10-line Bash script on a Linux server to find all log files older than 30 days and delete them, automating a boring daily task.</li>
+                            <li><strong>Example 2 (Data Science):</strong> A data scientist uses Python (an interpreted language) to write a script that analyzes a spreadsheet of sales data. They can run, tweak, and re-run the code rapidly line-by-line in a notebook environment to visualize trends.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Web Structuring (HTML)</p>
+                            <img src="https://images.unsplash.com/photo-1627398240411-b4f00994a5e2?auto=format&fit=crop&w=600&h=350" alt="HTML code on a screen" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Data Science & Scripting</p>
+                            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&h=350" alt="Charts and data analysis" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'query-details': {
+                title: 'Query Languages (Domain-Specific)',
+                icon: '<i class="fa-solid fa-database text-purple-600"></i>',
+                html: `
+                    <p class="mb-5">At the highest level of abstraction exist <strong>Domain-Specific Languages (DSLs)</strong>. Unlike general-purpose languages (like Python or C++), which can be used to build almost anything from calculators to video games, a DSL is designed to do exactly one specific job extremely well. <strong>Query Languages</strong> are the most prominent example of DSLs, designed exclusively to ask questions of, retrieve, and manipulate data within massive databases.</p>
+                    
+                    <p class="mb-5">In the abstraction analogy, using a Query language is like taking a taxi. You do not build the engine, shift the gears, or even steer the wheel. You simply tell the driver "Take me to the airport." The Query language is <strong>Declarative</strong>. You declare exactly *what* data you want returned, and the underlying database engine automatically calculates *how* to search the hard drives to find it.</p>
+                    
+                    <p class="mb-5">The undisputed king of Query languages is <strong>SQL (Structured Query Language)</strong>. SQL is used to interact with Relational Databases—systems that store data in massive, interconnected spreadsheets (tables) of rows and columns. Almost every modern business relies on SQL to manage their inventory, user accounts, and financial records.</p>
+                    
+                    <p class="mb-5">The syntax of SQL reads very much like plain English, making it highly accessible even to non-programmers like business analysts. A command like <code>SELECT student_name FROM grades WHERE score > 90</code> is intuitively obvious. Despite its simple syntax, SQL is incredibly powerful, capable of joining data from a dozen different tables to generate complex financial reports in milliseconds.</p>
+                    
+                    <p class="mb-5">Another example of a Query language is <strong>LDAP (Lightweight Directory Access Protocol)</strong>. While SQL searches relational tables, LDAP is designed specifically to query network directories. It is the language used in corporate environments to ask the central server, "Does the username 'JSmith' exist, and is the password entered correct?" to authenticate logins.</p>
+                    
+                    <p class="mb-5">The primary limitation of Query languages is their scope. You cannot use SQL to program a web browser, build a mobile app, or create a video game. It lacks the complex looping and logic structures required for general computing. It exists solely within the domain of the database.</p>
+                    
+                    <p class="mb-5">Because of this limitation, Query languages are almost always used in tandem with other programming languages. A web developer will write the backend server logic in a high-level interpreted language (like PHP or Python), and that Python script will construct and send a SQL query to the database, retrieve the results, and then format them in HTML for the user to see.</p>
+                `
+            },
+            'query-usecase': {
+                title: 'Query Language: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Case 1: Business Intelligence and Analytics</h4>
+                        <p class="mb-2">Companies collect massive amounts of data. Analysts use query languages to extract meaningful insights from millions of raw records without needing to write complex software.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Data Retrieval):</strong> A marketing analyst uses SQL to write a query requesting the email addresses of all customers who purchased a specific product in the last 30 days, allowing them to send a targeted ad campaign.</li>
+                            <li><strong>Example 2 (Data Manipulation):</strong> An HR manager uses a SQL <code>UPDATE</code> command to systematically increase the salary field by 3% for all employees in the "Engineering" department simultaneously, rather than editing 500 rows manually.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Case 2: Application Backend Services</h4>
+                        <p class="mb-2">Modern applications rely on query languages functioning in the background to handle user data, authentication, and content delivery.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Network Authentication):</strong> When an employee logs into their corporate workstation, the system uses an LDAP query to check the central Active Directory server to verify their credentials and determine what network folders they can access.</li>
+                            <li><strong>Example 2 (E-Commerce Filtering):</strong> When a user clicks "Price: Low to High" on a shopping website, the backend Python script generates an SQL query (<code>ORDER BY price ASC</code>) and sends it to the database, which returns the sorted list of products to display.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Database Servers</p>
+                            <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=600&h=350" alt="Server racks in a data center" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Data Analytics</p>
+                            <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=600&h=350" alt="Business charts and graphs on a laptop" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        // Modal Control Functions
+        function openBriefing(key) {
+            const modal = document.getElementById('briefing-modal');
+            const data = briefingData[key];
+            if(data) {
+                document.getElementById('briefing-modal-icon').innerHTML = data.icon;
+                document.getElementById('briefing-modal-title').innerText = data.title;
+                document.getElementById('briefing-modal-content').innerHTML = data.html;
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; 
+            }
+        }
+
+        function closeBriefing() {
+            document.getElementById('briefing-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto'; 
+        }
+
+        document.getElementById('briefing-modal').addEventListener('click', function(e) {
+            if(e.target === this) closeBriefing();
+        });
+        
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId + '-section').classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-blue-950'));
+            const activeBtn = document.getElementById('nav-' + tabId);
+            if(activeBtn && tabId !== 'cert') activeBtn.classList.add('bg-blue-950');
+            
+            document.querySelectorAll('.nav-btn-mobile').forEach(btn => btn.classList.remove('bg-blue-950'));
+            const activeMobileBtn = document.getElementById('nav-' + tabId + '-mobile');
+            if(activeMobileBtn && tabId !== 'cert') activeMobileBtn.classList.add('bg-blue-950');
+
+            window.scrollTo(0,0);
+
+            if (tabId === 'game' && !gameRunning) {
+                resetGame();
+                drawGame();
+            }
+        }
+
+        function showModal(title, message, type = 'info') {
+            const modal = document.getElementById('custom-modal');
+            const icon = document.getElementById('modal-icon');
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-msg').innerText = message;
+            
+            if(type === 'success') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-check text-green-500"></i>';
+            } else if (type === 'error') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500"></i>';
+            } else if (type === 'warning') {
+                icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-yellow-500"></i>';
+            } else {
+                icon.innerHTML = '<i class="fa-solid fa-circle-info text-blue-500"></i>';
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        // Generic Lab Target Checker (Labs 2, 4, 8)
+        function checkLabTarget(el, isCorrect, feedbackId, requiredTotal) {
+            if(el.classList.contains('success')) return; // Already locked in
+            
+            const container = el.parentElement;
+            let currentSelected = container.querySelectorAll('.success').length;
+            
+            if (isCorrect) {
+                el.classList.add('success');
+                el.classList.remove('error');
+                currentSelected++;
+                
+                if(currentSelected >= requiredTotal) {
+                    document.getElementById(feedbackId).innerText = "Correct! Mission Accomplished.";
+                    document.getElementById(feedbackId).className = "text-center text-sm font-bold h-4 mt-2 text-green-600";
+                    setTimeout(() => showModal('Lab Complete!', 'You successfully identified the correct targets for this category.', 'success'), 500);
+                } else {
+                    document.getElementById(feedbackId).innerText = `Good! Find ${requiredTotal - currentSelected} more.`;
+                    document.getElementById(feedbackId).className = "text-center text-sm font-bold h-4 mt-2 text-blue-600";
+                }
+            } else {
+                el.classList.add('error');
+                setTimeout(() => el.classList.remove('error'), 1000);
+                document.getElementById(feedbackId).innerText = "Incorrect. Try again.";
+                document.getElementById(feedbackId).className = "text-center text-sm font-bold h-4 mt-2 text-red-600";
+            }
+        }
+
+        // --- LAB 1: Assembly Drag & Drop ---
+        let draggedItem = null;
+        let lab1Count = 0;
+
+        function setupDragAndDrop(itemSelector, zoneSelector, successCallback) {
+            document.querySelectorAll(itemSelector).forEach(item => {
+                item.addEventListener('dragstart', function() {
+                    draggedItem = this;
+                    setTimeout(() => this.classList.add('opacity-50'), 0);
+                });
+                item.addEventListener('dragend', function() {
+                    setTimeout(() => this.classList.remove('opacity-50'), 0);
+                    draggedItem = null;
+                });
+            });
+
+            document.querySelectorAll(zoneSelector).forEach(zone => {
+                zone.addEventListener('dragover', e => e.preventDefault());
+                zone.addEventListener('dragenter', function(e) { e.preventDefault(); this.classList.add('drag-over'); });
+                zone.addEventListener('dragleave', function() { this.classList.remove('drag-over'); });
+                zone.addEventListener('drop', function() {
+                    this.classList.remove('drag-over');
+                    if(draggedItem) {
+                        successCallback(this, draggedItem);
+                    }
+                });
+            });
+        }
+
+        setupDragAndDrop('#lab1-items .io-item', '#activity-section .io-dropzone[data-target]', function(zone, item) {
+            if(item.parentElement.id !== 'lab1-items') return;
+            if(item.dataset.type === zone.dataset.target) {
+                zone.appendChild(item);
+                item.classList.remove('cursor-grab', 'bg-red-100');
+                item.classList.add('cursor-default', 'bg-green-100', 'text-green-800', 'w-[90%]');
+                item.setAttribute('draggable', 'false');
+                lab1Count++;
+                document.getElementById('fb-lab1').innerText = "Correct Instruction!";
+                document.getElementById('fb-lab1').className = "text-center text-sm font-bold h-4 mt-2 text-green-600";
+                
+                if(lab1Count === 3) setTimeout(() => showModal('Lab Complete!', 'You successfully routed the Assembly registers.', 'success'), 500);
+            } else {
+                document.getElementById('fb-lab1').innerText = "Incorrect. Check the instruction definition.";
+                document.getElementById('fb-lab1').className = "text-center text-sm font-bold h-4 mt-2 text-red-600";
+            }
+        });
+
+        // --- LAB 3: Compiled Sort ---
+        let lab3Count = 0;
+        setupDragAndDrop('#lab3-items .io-item', '#lab3-dropzones .io-dropzone', function(zone, item) {
+            if(item.parentElement.id !== 'lab3-items') return;
+            if(item.dataset.type === zone.dataset.target) {
+                zone.innerHTML = '';
+                zone.appendChild(item);
+                item.classList.remove('cursor-grab', 'bg-blue-100');
+                item.classList.add('cursor-default', 'bg-green-100', 'text-green-800', 'w-full', 'py-2');
+                item.setAttribute('draggable', 'false');
+                lab3Count++;
+                document.getElementById('fb-lab3').innerText = "Correct Step!";
+                document.getElementById('fb-lab3').className = "text-center text-sm font-bold h-4 mt-2 text-green-600";
+                
+                if(lab3Count === 3) setTimeout(() => showModal('Lab Complete!', 'You successfully ordered the Compilation pipeline.', 'success'), 500);
+            } else {
+                document.getElementById('fb-lab3').innerText = "Incorrect order. Try again.";
+                document.getElementById('fb-lab3').className = "text-center text-sm font-bold h-4 mt-2 text-red-600";
+            }
+        });
+
+        // --- LAB 5: Interpreted Sort ---
+        let lab5Count = 0;
+        setupDragAndDrop('#lab5-items .io-item', '.io-dropzone[data-target="mark"], .io-dropzone[data-target="script"]', function(zone, item) {
+            if(item.parentElement.id !== 'lab5-items') return;
+            if(item.dataset.type === zone.dataset.target) {
+                zone.appendChild(item);
+                item.classList.remove('cursor-grab', 'bg-green-100');
+                item.classList.add('cursor-default', 'bg-green-200', 'text-green-900', 'w-[90%]', 'mt-2');
+                item.setAttribute('draggable', 'false');
+                lab5Count++;
+                document.getElementById('fb-lab5').innerText = "Correct Category!";
+                document.getElementById('fb-lab5').className = "text-center text-sm font-bold h-4 mt-2 text-green-600";
+                
+                if(lab5Count === 2) setTimeout(() => showModal('Lab Complete!', 'You successfully identified the interpreted sub-categories.', 'success'), 500);
+            } else {
+                document.getElementById('fb-lab5').innerText = "Incorrect. Think about the purpose of the language.";
+                document.getElementById('fb-lab5').className = "text-center text-sm font-bold h-4 mt-2 text-red-600";
+            }
+        });
+
+        // --- LAB 6: Interpreter Simulator ---
+        let lineCount = 0;
+        document.getElementById('interpret-btn').addEventListener('click', function() {
+            lineCount++;
+            let btn = this;
+            if(lineCount === 1) {
+                document.getElementById('l1').classList.add('bg-green-900', 'text-white');
+            } else if (lineCount === 2) {
+                document.getElementById('l1').classList.remove('bg-green-900', 'text-white');
+                document.getElementById('l2').classList.add('bg-green-900', 'text-white');
+            } else if (lineCount === 3) {
+                document.getElementById('l2').classList.remove('bg-green-900', 'text-white');
+                document.getElementById('l3').classList.add('bg-red-900', 'text-white');
+                document.getElementById('fb-lab6').innerText = "Fatal Error: Variable 'z' is not defined!";
+                document.getElementById('fb-lab6').className = "text-center text-sm font-bold h-4 mt-2 text-red-500";
+                btn.innerText = "Debug Code";
+                btn.classList.replace('bg-green-600', 'bg-yellow-500');
+                btn.classList.replace('hover:bg-green-700', 'hover:bg-yellow-600');
+            } else if (lineCount === 4) {
+                document.getElementById('l3').innerText = "3. print(x + y) # Bug Fixed!";
+                document.getElementById('l3').classList.replace('bg-red-900', 'bg-green-900');
+                document.getElementById('fb-lab6').innerText = "Bug Fixed! Continue Interpreting.";
+                document.getElementById('fb-lab6').className = "text-center text-sm font-bold h-4 mt-2 text-green-500";
+                btn.innerText = "Interpret Next Line";
+                btn.classList.replace('bg-yellow-500', 'bg-green-600');
+                btn.classList.replace('hover:bg-yellow-600', 'hover:bg-green-700');
+            } else if (lineCount === 5) {
+                document.getElementById('l3').classList.remove('bg-green-900', 'text-white');
+                document.getElementById('l4').classList.add('bg-green-900', 'text-white');
+                document.getElementById('fb-lab6').innerText = "Script execution complete.";
+                document.getElementById('fb-lab6').className = "text-center text-sm font-bold h-4 mt-2 text-green-500";
+                btn.disabled = true;
+                btn.classList.add('opacity-50', 'cursor-not-allowed');
+                setTimeout(() => showModal('Lab Complete!', 'You successfully interpreted the script and debugged the error at runtime.', 'success'), 500);
+            }
+        });
+
+        // --- LAB 7: Query Builder ---
+        let sqlQuery = [];
+        const correctSQL = ["SELECT", "math_score", "FROM", "students", "WHERE", "name = John"];
+        function buildSQL(word) {
+            sqlQuery.push(word);
+            document.getElementById('sql-output').innerText = sqlQuery.join(' ');
+        }
+        function resetSQL() {
+            sqlQuery = [];
+            document.getElementById('sql-output').innerText = '';
+            document.getElementById('fb-lab7').innerText = '';
+        }
+        function checkSQL() {
+            if(sqlQuery.join(' ') === correctSQL.join(' ')) {
+                document.getElementById('fb-lab7').innerText = "Query Executed Successfully!";
+                document.getElementById('fb-lab7').className = "text-center text-sm font-bold h-4 mt-2 text-green-600";
+                setTimeout(() => showModal('Lab Complete!', 'You successfully built the declarative SQL query.', 'success'), 500);
+            } else {
+                document.getElementById('fb-lab7').innerText = "Syntax Error. Check your declarative structure.";
+                document.getElementById('fb-lab7').className = "text-center text-sm font-bold h-4 mt-2 text-red-600";
+            }
+        }
+
+        // --- QUIZ LOGIC (20 Questions) ---
+        const quizData = [
+            // 10 provided from Document
+            { q: "Which of the following is NOT a programming language category?", options: ["Assembly", "Interpreted", "Compiled", "Pseudocode"], answer: 3 },
+            { q: "What is an advantage of a high-level programming language?", options: ["The user talks directly to hardware.", "The user focuses on what to do, not how it works.", "The user writes machine code.", "The user thinks about difficult problems."], answer: 1 },
+            { q: "Why is assembly language faster in execution than other categories?", options: ["It allows direct access to hardware.", "It uses a compiler.", "It uses an interpreter.", "It is platform-independent."], answer: 0 },
+            { q: "How do compiler languages work?", options: ["It communicates directly with hardware.", "It uses questions to gather information.", "It uses an interpreter to run line by line.", "It uses a compiler to change source code into machine language."], answer: 3 },
+            { q: "Which of the following languages would a web developer most likely use?", options: ["Java", "Python", "JavaScript", "SQL"], answer: 2 },
+            { q: "Which is a characteristic of interpreted languages compared to compiled languages?", options: ["They are harder to debug but execute faster.", "They are easier to debug but execute slower.", "They require a compiler before execution.", "They produce machine code directly."], answer: 1 },
+            { q: "Which interpreted language can be used for functional and object-oriented programming?", options: ["JavaScript", "Python", "Lisp", "XML"], answer: 1 },
+            { q: "Which of the following languages would be best for modeling a real-world object?", options: ["JavaScript", "Lisp", "Java", "SQL"], answer: 2 },
+            { q: "What category of programming languages are you most likely to use to retrieve data from a database?", options: ["Assembly", "Compiled", "Interpreted", "Query"], answer: 3 },
+            { q: "All of the following are advantages of query languages, EXCEPT:", options: ["easy to use", "suitable for general-purpose programming", "very high-level abstraction", "efficiently handles complex queries"], answer: 1 },
+            
+            // 10 new questions based on briefing
+            { q: "Which level of abstraction is compared to 'building the car engine yourself'?", options: ["High-Level", "Mid-Level", "Domain-Specific", "Low-Level"], answer: 3 },
+            { q: "Which CPU architecture is commonly associated with Assembly language on modern mobile devices?", options: ["x86", "ARM", "MIPS", "SPARC"], answer: 1 },
+            { q: "What is a major disadvantage of programming in Assembly language?", options: ["It executes too quickly.", "It is highly platform dependent and lacks portability.", "It requires an interpreter to run.", "It uses too much system memory."], answer: 1 },
+            { q: "What must happen to a compiled program if a single line of source code is changed?", options: ["Only that line needs to be recompiled.", "The entire program must be recompiled.", "The interpreter will automatically fix it.", "It runs normally with the old code."], answer: 1 },
+            { q: "Which of the following is considered a 'Markup Language' used strictly for structuring web pages?", options: ["Python", "JavaScript", "HTML", "C++"], answer: 2 },
+            { q: "Shell scripting languages like Bash or PowerShell are typically used by System Administrators for what primary purpose?", options: ["Building 3D physics engines", "Automating repetitive system tasks", "Writing OS Kernels", "Structuring relational databases"], answer: 1 },
+            { q: "What does the acronym SQL stand for?", options: ["System Query Language", "Structured Query Language", "Standard Qualitative Language", "Sequential Query Logic"], answer: 1 },
+            { q: "Which programming paradigm heavily utilizes 'Classes' and 'Methods' to keep massive development projects organized?", options: ["Functional Programming", "Declarative Programming", "Object-Oriented Programming (OOP)", "Assembly Programming"], answer: 2 },
+            { q: "What defines a Domain-Specific Language (DSL) like a Query language?", options: ["It is designed to do exactly one specific job extremely well.", "It can be used to build any type of application.", "It communicates directly with the CPU registers.", "It requires a manual memory management system."], answer: 0 },
+            { q: "Which category allows a developer to 'write once, run anywhere' by translating the code on-the-fly at runtime?", options: ["Assembly", "Compiled", "Interpreted", "Machine Code"], answer: 2 }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        
+        quizData.forEach((item, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = "bg-slate-50 p-6 rounded-lg border border-slate-200 transition-all";
+            qDiv.id = `q-block-${index}`;
+            
+            const qTitle = document.createElement('h3');
+            qTitle.className = "font-bold text-lg text-slate-800 mb-4";
+            qTitle.innerText = `${index + 1}. ${item.q}`;
+            qDiv.appendChild(qTitle);
+            
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = "space-y-3";
+            
+            item.options.forEach((opt, optIndex) => {
+                const label = document.createElement('label');
+                label.className = "flex items-center space-x-3 p-3 rounded bg-white border border-slate-300 hover:bg-blue-50 cursor-pointer transition";
+                
+                const radio = document.createElement('input');
+                radio.type = "radio";
+                radio.name = `q${index}`;
+                radio.value = optIndex;
+                radio.className = "form-radio h-5 w-5 text-blue-600";
+                
+                const span = document.createElement('span');
+                span.className = "text-slate-700";
+                span.innerText = opt;
+                
+                label.appendChild(radio);
+                label.appendChild(span);
+                optionsDiv.appendChild(label);
+            });
+            
+            qDiv.appendChild(optionsDiv);
+            quizContainer.appendChild(qDiv);
+        });
+
+        function gradeQuiz() {
+            let score = 0;
+            let allAnswered = true;
+
+            for(let i = 0; i < quizData.length; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if(selected) {
+                    if(parseInt(selected.value) === quizData[i].answer) {
+                        score++;
+                    }
+                } else {
+                    allAnswered = false;
+                }
+            }
+            
+            if(!allAnswered) {
+                showModal('Incomplete Quiz', 'Please answer all 20 questions before submitting.', 'warning');
+                return;
+            }
+            
+            const percentage = (score / quizData.length) * 100;
+            
+            if(score >= 18) { 
+                const navGame = document.getElementById('nav-game');
+                const navGameMobile = document.getElementById('nav-game-mobile');
+                
+                navGame.classList.remove('text-slate-400', 'cursor-not-allowed');
+                navGame.classList.add('text-white', 'hover:bg-blue-600');
+                navGame.disabled = false;
+                navGame.innerHTML = '<i class="fa-solid fa-gamepad mr-1"></i>Game';
+                
+                navGameMobile.classList.remove('text-slate-400', 'cursor-not-allowed');
+                navGameMobile.classList.add('text-white', 'hover:bg-blue-600');
+                navGameMobile.disabled = false;
+                navGameMobile.innerHTML = '<i class="fa-solid fa-gamepad"></i> Game';
+
+                document.getElementById('nav-cert').classList.remove('hidden');
+                document.getElementById('nav-cert-mobile').classList.remove('hidden');
+                
+                document.getElementById('proceed-game-btn').classList.remove('hidden');
+                document.getElementById('submit-quiz-btn').classList.add('hidden');
+
+                showModal('Outstanding!', `You scored ${score}/20 (${percentage}%). You have unlocked your Certificate of Mastery AND the Retro Game!`, 'success');
+            } else {
+                quizData.forEach((_, i) => {
+                    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                    if(selected) selected.checked = false;
+                });
+                showModal('Keep Trying!', `You scored ${score}/20 (${percentage}%). You need 90% (18/20) to earn the certificate. Your answers have been reset so you can try again.`, 'error');
+                document.getElementById('quiz-section').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // --- RETRO GAME LOGIC: Core Defender ---
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        const center = { x: canvas.width / 2, y: canvas.height / 2 };
+        const coreRadius = 40;
+        const shieldRadius = 100;
+        
+        let score = 0;
+        let lives = 3;
+        let gameRunning = false;
+        let animationId;
+        
+        let shieldAngle = 0; // Shield position in radians
+        let shieldWidth = Math.PI / 2; // 90 degree arc
+        
+        let bugs = [];
+        let lastTime = 0;
+        let spawnTimer = 0;
+        let spawnRate = 1500;
+        
+        let keys = { ArrowLeft: false, ArrowRight: false };
+        let touchLeft = false, touchRight = false;
+
+        const overlay = document.getElementById('game-overlay');
+        const startBtn = document.getElementById('start-game-btn');
+        startBtn.addEventListener('click', startGame);
+
+        // Input
+        window.addEventListener('keydown', (e) => { if(keys.hasOwnProperty(e.code)) keys[e.code] = true; });
+        window.addEventListener('keyup', (e) => { if(keys.hasOwnProperty(e.code)) keys[e.code] = false; });
+        
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const rect = canvas.getBoundingClientRect();
+            for(let i=0; i<e.touches.length; i++) {
+                let x = e.touches[i].clientX - rect.left;
+                if(x < rect.width/2) touchLeft = true;
+                else touchRight = true;
+            }
+        }, {passive: false});
+        
+        canvas.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            touchLeft = false; touchRight = false;
+            const rect = canvas.getBoundingClientRect();
+            for(let i=0; i<e.touches.length; i++) {
+                let x = e.touches[i].clientX - rect.left;
+                if(x < rect.width/2) touchLeft = true;
+                else touchRight = true;
+            }
+        }, {passive: false});
+        
+        canvas.addEventListener('mousedown', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            let x = e.clientX - rect.left;
+            if(x < rect.width/2) keys.ArrowLeft = true;
+            else keys.ArrowRight = true;
+        });
+        canvas.addEventListener('mouseup', () => { keys.ArrowLeft = false; keys.ArrowRight = false; });
+
+        class Bug {
+            constructor() {
+                this.angle = Math.random() * Math.PI * 2;
+                this.dist = Math.max(canvas.width, canvas.height) / 2 + 20;
+                this.speed = 1.5 + (Math.random() * 1.5) + (score * 0.05); // Speed increases with score
+                this.radius = 8;
+                this.color = '#ef4444';
+                this.updatePos();
+            }
+            updatePos() {
+                this.x = center.x + Math.cos(this.angle) * this.dist;
+                this.y = center.y + Math.sin(this.angle) * this.dist;
+            }
+            update(dt) {
+                this.dist -= this.speed * (dt / 16);
+                this.updatePos();
+            }
+            draw(ctx) {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                // Bug eyes
+                ctx.fillStyle = 'white';
+                ctx.beginPath(); ctx.arc(this.x-2, this.y-2, 2, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(this.x+2, this.y-2, 2, 0, Math.PI*2); ctx.fill();
+            }
+        }
+
+        function resetGame() {
+            bugs = [];
+            score = 0;
+            lives = 3;
+            spawnRate = 1500;
+            shieldAngle = 0;
+            document.getElementById('game-score').innerText = score;
+            document.getElementById('game-lives').innerText = lives;
+            lastTime = Date.now();
+        }
+
+        function startGame() {
+            overlay.classList.add('hidden');
+            if(!gameRunning) {
+                resetGame();
+                gameRunning = true;
+                drawGame();
+            }
+        }
+
+        function normalizeAngle(a) {
+            let res = a % (Math.PI * 2);
+            if (res < 0) res += Math.PI * 2;
+            return res;
+        }
+
+        function checkShieldCollision(bugAngle) {
+            let bAngle = normalizeAngle(bugAngle);
+            let sAngle = normalizeAngle(shieldAngle);
+            let halfW = shieldWidth / 2;
+            
+            // Handle wrap around
+            let diff = Math.abs(bAngle - sAngle);
+            if (diff > Math.PI) diff = Math.PI * 2 - diff;
+            
+            return diff <= halfW;
+        }
+
+        function drawGame() {
+            if(!gameRunning) return;
+            
+            let now = Date.now();
+            let dt = now - lastTime;
+            lastTime = now;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw radar lines
+            ctx.strokeStyle = '#1e293b';
+            ctx.lineWidth = 1;
+            for(let i=0; i<8; i++) {
+                let a = (i * Math.PI) / 4;
+                ctx.beginPath();
+                ctx.moveTo(center.x, center.y);
+                ctx.lineTo(center.x + Math.cos(a)*300, center.y + Math.sin(a)*300);
+                ctx.stroke();
+            }
+            
+            // Input update
+            let rotSpeed = 0.1 * (dt/16);
+            if (keys.ArrowLeft || touchLeft) shieldAngle -= rotSpeed;
+            if (keys.ArrowRight || touchRight) shieldAngle += rotSpeed;
+            shieldAngle = normalizeAngle(shieldAngle);
+            
+            // Spawn logic
+            spawnTimer += dt;
+            if(spawnTimer > spawnRate) {
+                bugs.push(new Bug());
+                spawnTimer = 0;
+                if(spawnRate > 500) spawnRate -= 20; // Increase difficulty
+            }
+            
+            // Update & Draw Bugs
+            for(let i = bugs.length - 1; i >= 0; i--) {
+                let b = bugs[i];
+                b.update(dt);
+                b.draw(ctx);
+                
+                // Collision checks
+                if (b.dist <= shieldRadius + b.radius && b.dist > shieldRadius - 10) {
+                    if (checkShieldCollision(b.angle)) {
+                        // Blocked
+                        score += 10;
+                        document.getElementById('game-score').innerText = score;
+                        bugs.splice(i, 1);
+                        
+                        // Shield flash effect
+                        ctx.strokeStyle = '#fff';
+                        ctx.lineWidth = 10;
+                        ctx.beginPath();
+                        ctx.arc(center.x, center.y, shieldRadius, shieldAngle - shieldWidth/2, shieldAngle + shieldWidth/2);
+                        ctx.stroke();
+                        continue;
+                    }
+                }
+                
+                if (b.dist <= coreRadius) {
+                    // Hit Core
+                    lives--;
+                    document.getElementById('game-lives').innerText = lives;
+                    bugs.splice(i, 1);
+                    
+                    // Screen flash
+                    ctx.fillStyle = "rgba(239,68,68,0.5)";
+                    ctx.fillRect(0,0,canvas.width,canvas.height);
+                    
+                    if (lives <= 0) gameOver();
+                }
+            }
+            
+            // Draw Core
+            ctx.beginPath();
+            ctx.arc(center.x, center.y, coreRadius, 0, Math.PI*2);
+            ctx.fillStyle = '#0284c7'; // Kernel Blue
+            ctx.fill();
+            ctx.strokeStyle = '#7dd3fc';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+            ctx.fillStyle = '#fff';
+            ctx.font = '10px monospace';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('CPU', center.x, center.y);
+
+            // Draw Shield
+            ctx.beginPath();
+            ctx.arc(center.x, center.y, shieldRadius, shieldAngle - shieldWidth/2, shieldAngle + shieldWidth/2);
+            ctx.strokeStyle = '#38bdf8'; // Compiled Shield
+            ctx.lineWidth = 8;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+
+            if(gameRunning) animationId = requestAnimationFrame(drawGame);
+        }
+
+        function gameOver() {
+            gameRunning = false;
+            cancelAnimationFrame(animationId);
+            overlay.classList.remove('hidden');
+            startBtn.innerText = "Kernel Panic! Reboot";
+            startBtn.classList.replace('bg-sky-600', 'bg-slate-700');
+            startBtn.classList.replace('border-sky-800', 'border-slate-900');
+        }
+
+        // --- CERTIFICATE LOGIC ---
+        function updateCertName() {
+            let name = document.getElementById('student-name-input').value.trim();
+            if(name) {
+                if (name.includes(' ')) {
+                    name = name.split(' ')[0];
+                    document.getElementById('student-name-input').value = name;
+                    showModal('Notice', 'Only your first name has been applied to the certificate.', 'info');
+                }
+                document.getElementById('cert-student-name').innerText = name;
+            } else {
+                showModal('Wait!', 'Please enter your first name to update the certificate.', 'warning');
+            }
+        }
+
+        const today = new Date();
+        document.getElementById('cert-date').innerText = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        function downloadCert() {
+            const certEl = document.getElementById('certificate');
+            const name = document.getElementById('cert-student-name').innerText;
+            let filename = 'Certificate.png';
+            if (name && name !== 'Student') {
+                filename = `${name.replace(/\s+/g, '_')}_Certificate.png`;
+            }
+
+            const originalTransform = certEl.style.transform;
+            certEl.style.transform = 'none';
+
+            const btn = document.getElementById('download-btn');
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Generating...';
+            btn.disabled = true;
+
+            html2canvas(certEl, { 
+                scale: 2, 
+                useCORS: true,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+            }).catch(err => {
+                console.error(err);
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                showModal('Error', 'Failed to generate image. Try using a desktop browser.', 'error');
+            });
+        }
+
+        window.onload = () => {
+            // Draw static background for game preview
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            ctx.beginPath();
+            ctx.arc(center.x, center.y, coreRadius, 0, Math.PI*2);
+            ctx.fillStyle = '#0284c7'; ctx.fill();
+            ctx.fillStyle = '#fff';
+            ctx.font = '10px monospace';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('CPU', center.x, center.y);
+            
+            ctx.beginPath();
+            ctx.arc(center.x, center.y, shieldRadius, -Math.PI/4, Math.PI/4);
+            ctx.strokeStyle = '#38bdf8';
+            ctx.lineWidth = 8;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+        }
+    </script>
+</body>
+</html>

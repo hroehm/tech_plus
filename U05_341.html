@@ -1,0 +1,1612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 05 Section 3.4.1 Mastery - Web Browsers</title>
+    
+    <!-- Load Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load HTML2Canvas for Certificate Download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- Load Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Qwitcher+Grypen:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; 
+            color: #0f172a;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        /* Interactive Elements CSS */
+        .lab-box { transition: all 0.2s ease; }
+        .lab-box:hover { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+        
+        /* Drag and Drop Bookmark CSS */
+        .bm-item { cursor: grab; transition: transform 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .bm-item:active { cursor: grabbing; transform: scale(0.95); }
+        .bm-dropzone { transition: background-color 0.2s ease; border: 2px dashed #cbd5e1; min-height: 100px;}
+        .bm-dropzone.drag-over { background: #f1f5f9; border-color: #3b82f6; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #e2e8f0; }
+        ::-webkit-scrollbar-thumb { background: #0284c7; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #0369a1; }
+
+        /* Retro Game Canvas */
+        #game-canvas {
+            background-color: #cbd5e1;
+            border: 6px solid #64748b;
+            border-radius: 4px;
+            box-shadow: 0 0 20px rgba(14, 165, 233, 0.3);
+            max-width: 100%;
+            height: auto;
+            touch-action: none;
+            cursor: crosshair;
+        }
+
+        /* --- CERTIFICATE STYLES --- */
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .font-body { font-family: 'Lora', serif; }
+        .font-script { font-family: 'Qwitcher Grypen', cursive; }
+        
+        .cert-preview-container {
+            width: 100%;
+            overflow: auto;
+            display: flex;
+            justify-content: center;
+            background: #e2e8f0;
+            padding: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        #certificate {
+            width: 1056px !important;
+            height: 816px !important;
+            flex-shrink: 0;
+            background-color: #ffffff;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1056" height="816"><path d="M0,0 L200,0 L0,200 Z" fill="%23bae6fd"/><path d="M1056,0 L856,0 L1056,200 Z" fill="%237dd3fc"/><path d="M0,816 L200,816 L0,616 Z" fill="%237dd3fc"/><path d="M1056,816 L856,816 L1056,616 Z" fill="%23bae6fd"/><rect x="20" y="20" width="1016" height="776" fill="none" stroke="%230284c7" stroke-width="4"/></svg>');
+            background-size: cover;
+            border: 4px solid #e2e8f0;
+        }
+
+        .gold-seal {
+            position: absolute;
+            left: 110px;
+            top: 350px;
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c, #fcf6ba);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3), inset 0 0 15px rgba(255,255,255,0.7), inset 0 0 25px rgba(139,105,20,0.9);
+            z-index: 10;
+        }
+        .gold-seal::before {
+            content: '';
+            position: absolute;
+            top: -4px; bottom: -4px; left: -4px; right: -4px;
+            border-radius: 50%;
+            border: 6px dashed #d4af37;
+        }
+        .gold-seal-inner-1 {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 2px solid rgba(139, 105, 20, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #e8c678, #dbab46);
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.2), 0 2px 5px rgba(255,255,255,0.7);
+            z-index: 1;
+        }
+        .gold-seal-inner-2 {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: radial-gradient(circle, #fcf6ba, #d4af37);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            padding: 10px;
+        }
+        .embossed-text {
+            color: #b38728;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2);
+            font-family: 'Playfair Display', serif;
+            font-weight: 800;
+            line-height: 1.1;
+            text-transform: uppercase;
+        }
+        .embossed-text-large { font-size: 14px; letter-spacing: 1px; }
+        .embossed-text-small { font-size: 11px; letter-spacing: 2px; margin: 2px 0; }
+        .embossed-star { font-size: 12px; color: #b38728; text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2); margin: 2px 0; }
+
+        @media (max-width: 1100px) {
+            #certificate { transform: scale(0.7); transform-origin: top left; margin-bottom: -240px; margin-right: -310px; }
+        }
+        @media (max-width: 768px) {
+            #certificate { transform: scale(0.4); transform-origin: top left; margin-bottom: -490px; margin-right: -630px; }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Navigation -->
+    <nav class="bg-[#0369a1] text-white shadow-lg sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-brands fa-chrome text-2xl"></i>
+                    <span class="font-bold text-xl tracking-wider hidden sm:inline-block">Tech+ Unit 05 Section 3.4.1</span>
+                    <span class="font-bold text-xl tracking-wider sm:hidden">3.4.1</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-2">
+                        <button onclick="switchTab('briefing')" class="nav-btn bg-[#075985] px-3 py-2 rounded-md text-sm font-medium hover:bg-[#0284c7] transition" id="nav-briefing"><i class="fa-solid fa-book-open mr-1"></i>Briefing</button>
+                        <button onclick="switchTab('activity')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-[#0284c7] transition" id="nav-activity"><i class="fa-solid fa-flask mr-1"></i>Lab Activity</button>
+                        <button onclick="switchTab('quiz')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-[#0284c7] transition" id="nav-quiz"><i class="fa-solid fa-clipboard-check mr-1"></i>Quiz</button>
+                        <button onclick="switchTab('game')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-gray-400 cursor-not-allowed transition" id="nav-game" disabled><i class="fa-solid fa-lock mr-1"></i>Game</button>
+                        <button onclick="switchTab('cert')" class="nav-btn hidden px-3 py-2 rounded-md text-sm font-medium text-yellow-300 hover:bg-[#0284c7] transition" id="nav-cert"><i class="fa-solid fa-award mr-1"></i>Certificate</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Nav -->
+        <div class="md:hidden flex flex-wrap justify-center gap-2 py-2 px-2 bg-[#075985]">
+            <button onclick="switchTab('briefing')" class="nav-btn-mobile px-3 py-1 text-sm rounded bg-[#0369a1]" id="nav-briefing-mobile">Briefing</button>
+            <button onclick="switchTab('activity')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-activity-mobile">Lab</button>
+            <button onclick="switchTab('quiz')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-quiz-mobile">Quiz</button>
+            <button onclick="switchTab('game')" class="nav-btn-mobile px-3 py-1 text-sm rounded text-gray-400 cursor-not-allowed" id="nav-game-mobile" disabled><i class="fa-solid fa-lock"></i></button>
+            <button onclick="switchTab('cert')" id="nav-cert-mobile" class="hidden px-2 py-1 text-sm text-yellow-300 rounded"><i class="fa-solid fa-award"></i></button>
+        </div>
+    </nav>
+
+    <main class="flex-grow w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <!-- BRIEFING SECTION -->
+        <div id="briefing-section" class="tab-content active no-print">
+            <div class="text-center mb-10">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4">Web Browsers</h1>
+                <p class="text-lg text-slate-600 max-w-3xl mx-auto">Web browsers are the primary tools we use to access the digital world. Proper configuration of these applications ensures an efficient, secure, and personalized internet experience.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- Tile 1 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-red-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-red-700"><i class="fa-solid fa-shield-halved mr-2"></i>Privacy & Security</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>Private Browsing:</strong> (Incognito/InPrivate) Prevents the browser from saving local history, cookies, and login credentials after closing.</li>
+                            <li><strong>Pop-up Blockers:</strong> Intercepts unauthorized scripts that open new windows or redirect pages, mitigating spam and adware.</li>
+                            <li><strong>Password Managers:</strong> Built-in tools to generate, store, and auto-fill complex credentials securely across various websites.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('privacy-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('privacy-usecase')" class="flex-1 bg-red-100 hover:bg-red-200 text-red-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 2 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-blue-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-blue-700"><i class="fa-solid fa-gauge-high mr-2"></i>Performance & System Settings</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>Cache Management:</strong> Temporary files that speed up load times but must be cleared periodically to resolve rendering errors.</li>
+                            <li><strong>Search Engine Config:</strong> Customizing the default query engine (e.g., Google, Bing, DuckDuckGo) used directly from the URL address bar.</li>
+                            <li><strong>Hardware Integration:</strong> Allowing web applications to interface with physical hardware via protocols like WebUSB (e.g., for micro:bit coding).</li>
+                        </ul>
+                    </div>
+                     <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('perf-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('perf-usecase')" class="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 3 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-purple-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-purple-700"><i class="fa-solid fa-palette mr-2"></i>Appearance & Customization</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>Themes & Layout:</strong> Modifying light/dark modes, window colors, and the arrangement of navigation buttons to suit user preference.</li>
+                            <li><strong>Extensions/Add-ons:</strong> Third-party software modules that add new functionality or enhance existing features of the web browser.</li>
+                            <li><strong>Permission Audits:</strong> Reviewing what data and websites extensions have authorization to read and modify to ensure security.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('custom-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('custom-usecase')" class="flex-1 bg-purple-100 hover:bg-purple-200 text-purple-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 4 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-green-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-green-700"><i class="fa-solid fa-universal-access mr-2"></i>Accessibility & Organization</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>Accessibility Tools:</strong> Utilizing page zoom, high-contrast colors, live captioning, and text-to-speech for an inclusive experience.</li>
+                            <li><strong>Bookmarks/Favorites:</strong> Saving and categorizing frequently visited URLs into structured folders for rapid navigation.</li>
+                            <li><strong>Profile Synchronization:</strong> Linking a user account to the browser to securely sync settings and bookmarks across multiple physical devices.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('access-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('access-usecase')" class="flex-1 bg-green-100 hover:bg-green-200 text-green-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 flex justify-center">
+                <button onclick="switchTab('activity')" class="bg-[#0284c7] text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-[#0369a1] shadow-lg transition transform hover:scale-105">Proceed to Lab Activity <i class="fa-solid fa-arrow-right ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- LAB ACTIVITY SECTION -->
+        <div id="activity-section" class="tab-content no-print">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-extrabold text-slate-900 mb-2">Interactive Browser Configuration Lab</h1>
+                <p class="text-slate-600">Complete all 8 configuration tasks below to demonstrate mastery of modern web browser settings.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- LAB 1: Password Strength -->
+                <div class="lab-box bg-white p-6 rounded-xl shadow border-t-4 border-red-500">
+                    <h2 class="font-bold text-lg text-red-700 mb-2"><i class="fa-solid fa-key mr-2"></i>Task 1: Password Manager Generation</h2>
+                    <p class="text-sm text-slate-600 mb-4">A password manager requires a strong master password. Type a password below that meets all 4 security criteria to validate it.</p>
+                    <input type="text" id="lab1-input" class="w-full border-2 border-slate-300 rounded p-2 mb-3 focus:outline-none focus:border-red-500" placeholder="Type password here..." onkeyup="checkLab1()">
+                    <ul class="text-xs text-slate-500 space-y-1 mb-3">
+                        <li id="req-len" class="text-red-500"><i class="fa-solid fa-xmark mr-1"></i> At least 8 characters</li>
+                        <li id="req-up" class="text-red-500"><i class="fa-solid fa-xmark mr-1"></i> 1 Uppercase letter</li>
+                        <li id="req-num" class="text-red-500"><i class="fa-solid fa-xmark mr-1"></i> 1 Number</li>
+                        <li id="req-sym" class="text-red-500"><i class="fa-solid fa-xmark mr-1"></i> 1 Symbol (!@#$%)</li>
+                    </ul>
+                    <div id="lab1-feedback" class="font-bold text-sm text-slate-400">Status: Waiting for input...</div>
+                </div>
+
+                <!-- LAB 2: Pop-up Blocker -->
+                <div class="lab-box bg-white p-6 rounded-xl shadow border-t-4 border-red-500">
+                    <h2 class="font-bold text-lg text-red-700 mb-2"><i class="fa-solid fa-ban mr-2"></i>Task 2: Pop-up Blocker Exceptions</h2>
+                    <p class="text-sm text-slate-600 mb-4">Configure the site permissions. ALLOW pop-ups for the internal corporate site, but BLOCK them for the external tracking network.</p>
+                    <div class="space-y-3 mb-4">
+                        <div class="flex justify-between items-center bg-slate-50 p-2 rounded border">
+                            <span class="text-sm font-mono">intranet.corporate.org</span>
+                            <select id="lab2-sel1" class="border rounded p-1 text-sm bg-white" onchange="checkLab2()">
+                                <option value="none">-- Select --</option>
+                                <option value="allow">Allow</option>
+                                <option value="block">Block</option>
+                            </select>
+                        </div>
+                        <div class="flex justify-between items-center bg-slate-50 p-2 rounded border">
+                            <span class="text-sm font-mono">ad.tracking-network.com</span>
+                            <select id="lab2-sel2" class="border rounded p-1 text-sm bg-white" onchange="checkLab2()">
+                                <option value="none">-- Select --</option>
+                                <option value="allow">Allow</option>
+                                <option value="block">Block</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="lab2-feedback" class="font-bold text-sm text-slate-400">Status: Configuration incomplete.</div>
+                </div>
+
+                <!-- LAB 3: Clear Cache -->
+                <div class="lab-box bg-white p-6 rounded-xl shadow border-t-4 border-blue-500">
+                    <h2 class="font-bold text-lg text-blue-700 mb-2"><i class="fa-solid fa-broom mr-2"></i>Task 3: Cache Sweeping</h2>
+                    <p class="text-sm text-slate-600 mb-4">A user's browser is loading a webpage improperly due to outdated CSS files stored locally. Clear the cached images and files to force a fresh download.</p>
+                    <div class="w-full bg-slate-200 rounded-full h-6 mb-2 relative overflow-hidden">
+                        <div id="cache-bar" class="bg-yellow-400 h-6 w-[80%] transition-all duration-500"></div>
+                        <span class="absolute inset-0 flex items-center justify-center text-xs font-bold" id="cache-text">320 MB Stored Cache</span>
+                    </div>
+                    <div class="flex gap-2 mt-4">
+                        <input type="checkbox" id="chk-history" class="mt-1"><label for="chk-history" class="text-sm">Browsing History</label><br>
+                        <input type="checkbox" id="chk-cache" class="mt-1 ml-4"><label for="chk-cache" class="text-sm font-bold text-blue-800">Cached Images/Files</label>
+                    </div>
+                    <button class="mt-4 bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700" onclick="checkLab3()">Clear Data</button>
+                    <div id="lab3-feedback" class="font-bold text-sm text-slate-400 mt-2">Status: Waiting for action...</div>
+                </div>
+
+                <!-- LAB 4: Default Search Engine -->
+                <div class="lab-box bg-white p-6 rounded-xl shadow border-t-4 border-blue-500">
+                    <h2 class="font-bold text-lg text-blue-700 mb-2"><i class="fa-solid fa-magnifying-glass mr-2"></i>Task 4: Default Search Config</h2>
+                    <p class="text-sm text-slate-600 mb-4">The user wants their URL address bar searches to prioritize privacy and not track their queries. Select the most appropriate default search engine.</p>
+                    <select id="lab4-select" class="w-full border-2 border-slate-300 rounded p-2 mb-4 bg-white" onchange="checkLab4()">
+                        <option value="none">Select Search Engine...</option>
+                        <option value="google">Google Search (Default)</option>
+                        <option value="bing">Microsoft Bing</option>
+                        <option value="yahoo">Yahoo!</option>
+                        <option value="duck">DuckDuckGo (Privacy Focused)</option>
+                    </select>
+                    <div id="lab4-feedback" class="font-bold text-sm text-slate-400">Status: Select an engine.</div>
+                </div>
+
+                <!-- LAB 5: Theme Builder -->
+                <div class="lab-box bg-white p-6 rounded-xl shadow border-t-4 border-purple-500">
+                    <h2 class="font-bold text-lg text-purple-700 mb-2"><i class="fa-solid fa-palette mr-2"></i>Task 5: Visual Customization</h2>
+                    <p class="text-sm text-slate-600 mb-4">A user is experiencing eye strain working late at night. Switch the browser's theme to "Dark Mode" to resolve this issue.</p>
+                    
+                    <!-- Mock Browser UI -->
+                    <div id="mock-browser" class="w-full h-24 border rounded shadow-sm bg-white mb-4 flex flex-col transition-colors duration-300">
+                        <div id="mock-nav" class="h-8 border-b bg-slate-100 flex items-center px-2 gap-2 transition-colors duration-300">
+                            <div class="w-3 h-3 rounded-full bg-red-400"></div><div class="w-3 h-3 rounded-full bg-yellow-400"></div><div class="w-3 h-3 rounded-full bg-green-400"></div>
+                            <div id="mock-url" class="h-4 bg-white w-full rounded ml-4 border transition-colors duration-300"></div>
+                        </div>
+                        <div class="flex-grow flex items-center justify-center p-2">
+                            <p id="mock-text" class="text-xs text-slate-800 transition-colors duration-300">Google.com - Search</p>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-2 justify-center">
+                        <button class="px-4 py-2 border rounded bg-slate-100 text-slate-800 text-sm font-bold hover:bg-slate-200" onclick="checkLab5('light')"><i class="fa-solid fa-sun mr-1"></i> Light</button>
+                        <button class="px-4 py-2 border rounded bg-slate-800 text-white text-sm font-bold hover:bg-slate-900" onclick="checkLab5('dark')"><i class="fa-solid fa-moon mr-1"></i> Dark</button>
+                    </div>
+                    <div id="lab5-feedback" class="font-bold text-sm text-slate-400 mt-3 text-center">Status: Theme currently set to Light.</div>
+                </div>
+
+                <!-- LAB 6: Extension Auditor -->
+                <div class="lab-box bg-white p-6 rounded-xl shadow border-t-4 border-purple-500">
+                    <h2 class="font-bold text-lg text-purple-700 mb-2"><i class="fa-solid fa-puzzle-piece mr-2"></i>Task 6: Extension Auditing</h2>
+                    <p class="text-sm text-slate-600 mb-4">Review the installed extensions below. DISABLE the extension that requires suspicious permissions (reading your passwords and banking data) while leaving the safe productivity tool ENABLED.</p>
+                    
+                    <div class="space-y-2 mb-4">
+                        <div class="border p-2 rounded flex justify-between items-center bg-slate-50">
+                            <div>
+                                <h3 class="font-bold text-sm">Grammar Check Pro</h3>
+                                <p class="text-xs text-slate-500">Permissions: Read text on current page.</p>
+                            </div>
+                            <button id="ext1-btn" class="px-3 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700" onclick="toggleExt(1)">Enabled</button>
+                        </div>
+                        <div class="border p-2 rounded flex justify-between items-center bg-slate-50">
+                            <div>
+                                <h3 class="font-bold text-sm text-red-600">Free Smiley Cursors!</h3>
+                                <p class="text-xs text-slate-500">Permissions: Read/change all data on all websites.</p>
+                            </div>
+                            <button id="ext2-btn" class="px-3 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700" onclick="toggleExt(2)">Enabled</button>
+                        </div>
+                    </div>
+                    <div id="lab6-feedback" class="font-bold text-sm text-slate-400">Status: Auditing required...</div>
+                </div>
+
+                <!-- LAB 7: Accessibility -->
+                <div class="lab-box bg-white p-6 rounded-xl shadow border-t-4 border-green-500">
+                    <h2 class="font-bold text-lg text-green-700 mb-2"><i class="fa-solid fa-magnifying-glass-plus mr-2"></i>Task 7: Accessibility Zoom</h2>
+                    <p class="text-sm text-slate-600 mb-4">Use the browser's accessibility zoom feature (simulated below) to increase the size of the microscopic text and reveal the secret code. Type the code in the box to pass.</p>
+                    
+                    <div class="flex items-center gap-4 mb-4 bg-slate-100 p-2 rounded">
+                        <button class="bg-slate-300 px-2 py-1 rounded font-bold" onclick="changeZoom(-0.5)">-</button>
+                        <span id="zoom-level" class="font-mono text-sm w-12 text-center">100%</span>
+                        <button class="bg-slate-300 px-2 py-1 rounded font-bold" onclick="changeZoom(0.5)">+</button>
+                    </div>
+                    
+                    <div class="h-16 border bg-white flex items-center justify-center overflow-hidden mb-4 relative">
+                        <div id="tiny-text" style="font-size: 2px;" class="transition-all duration-200">CODE: BROWSER99</div>
+                    </div>
+                    
+                    <input type="text" id="lab7-input" class="w-full border rounded p-2 text-sm uppercase" placeholder="Enter code here..." onkeyup="checkLab7()">
+                    <div id="lab7-feedback" class="font-bold text-sm text-slate-400 mt-2">Status: Waiting for correct code...</div>
+                </div>
+
+                <!-- LAB 8: Bookmarks -->
+                <div class="lab-box bg-white p-6 rounded-xl shadow border-t-4 border-green-500">
+                    <h2 class="font-bold text-lg text-green-700 mb-2"><i class="fa-solid fa-bookmark mr-2"></i>Task 8: Bookmark Organization</h2>
+                    <p class="text-sm text-slate-600 mb-4">Drag the "Timecard Portal" URL into the correct Bookmark Folder (Work) to organize the browser.</p>
+                    
+                    <div class="flex gap-2 mb-4">
+                        <div id="bm-item-1" class="bm-item bg-white border border-slate-400 rounded px-3 py-1 text-sm font-mono flex items-center gap-2" draggable="true"><i class="fa-solid fa-globe text-blue-500"></i> timecard.company.local</div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bm-dropzone bg-slate-50 rounded p-2 flex flex-col items-center" data-folder="personal">
+                            <i class="fa-solid fa-folder text-yellow-400 text-2xl mb-1"></i>
+                            <span class="text-xs font-bold text-slate-600">Personal</span>
+                        </div>
+                        <div class="bm-dropzone bg-slate-50 rounded p-2 flex flex-col items-center" data-folder="work">
+                            <i class="fa-solid fa-folder text-yellow-400 text-2xl mb-1"></i>
+                            <span class="text-xs font-bold text-slate-600">Work Links</span>
+                        </div>
+                    </div>
+                    <div id="lab8-feedback" class="font-bold text-sm text-slate-400 mt-4">Status: Unorganized.</div>
+                </div>
+
+            </div>
+
+            <div class="text-center mt-10">
+                <button onclick="switchTab('quiz')" class="bg-[#0284c7] text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-[#0369a1] shadow-lg transition transform hover:scale-105">Take the Mastery Quiz <i class="fa-solid fa-clipboard-check ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- QUIZ SECTION -->
+        <div id="quiz-section" class="tab-content no-print">
+            <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-xl max-w-4xl mx-auto border-t-8 border-[#0284c7]">
+                <div class="text-center mb-8 border-b pb-4">
+                    <h1 class="text-3xl font-extrabold text-slate-900 mb-2">Section 3.4.1 Mastery Quiz</h1>
+                    <p class="text-slate-600">Score 90% or higher (18/20) to earn your Certificate of Mastery and unlock the Retro Game!</p>
+                </div>
+
+                <div id="quiz-container" class="space-y-8">
+                    <!-- Questions injected via JS -->
+                </div>
+
+                <div class="mt-10 text-center border-t pt-6 flex flex-col md:flex-row justify-center items-center gap-4">
+                    <button id="submit-quiz-btn" onclick="gradeQuiz()" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">Submit Quiz</button>
+                    <button id="proceed-game-btn" onclick="switchTab('game')" class="hidden bg-emerald-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-emerald-700 shadow-lg transition w-full md:w-auto">Play Secure Surfer <i class="fa-solid fa-gamepad ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RETRO GAME SECTION -->
+        <div id="game-section" class="tab-content no-print">
+            <div class="bg-slate-900 p-6 sm:p-8 rounded-2xl shadow-xl max-w-4xl mx-auto border-4 border-slate-700 flex flex-col items-center">
+                <div class="text-center mb-4 w-full">
+                    <h1 class="text-3xl font-extrabold text-sky-400 mb-2 tracking-widest uppercase font-mono">Secure Surfer</h1>
+                    <p class="text-slate-300 text-sm max-w-xl mx-auto mb-2">Surf the Information Superhighway! Use the <strong class="text-white">Left & Right Arrow Keys</strong> to dodge malicious pop-ups (Red) and bugs (Purple). Collect Privacy Shields (Blue) and Safe Cookies (Green) for points!</p>
+                    <p class="text-xs text-yellow-300 font-mono">Mobile: Tap and hold the left or right sides of the game screen to steer.</p>
+                </div>
+                
+                <div class="flex justify-between items-center w-full max-w-[500px] mb-2 px-4 text-white font-mono text-xl bg-slate-800 p-2 border-2 border-slate-600 rounded">
+                    <div>Score: <span id="game-score" class="text-sky-400 font-bold">0</span></div>
+                    <div>Lives: <span id="game-lives" class="text-red-500 font-bold">3</span></div>
+                </div>
+
+                <div class="relative flex justify-center w-full">
+                    <!-- Game Canvas -->
+                    <canvas id="game-canvas" width="500" height="600" class="w-full max-w-[500px] bg-slate-100 shadow-lg border-2 border-slate-600 rounded"></canvas>
+                    
+                    <!-- Overlay Start Button -->
+                    <div id="game-overlay" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-70 rounded max-w-[500px] mx-auto z-10">
+                        <div class="text-center">
+                            <h2 id="game-end-title" class="text-4xl font-bold text-red-500 mb-4 hidden font-mono">BROWSER CRASHED</h2>
+                            <button id="start-game-btn" class="bg-sky-600 hover:bg-sky-500 text-white font-bold font-mono py-3 px-6 rounded-lg text-xl border-4 border-sky-800 uppercase transform transition hover:scale-105">Start Surfing</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 text-center w-full border-t border-slate-700 pt-6">
+                    <button onclick="switchTab('cert')" class="bg-[#0284c7] text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-[#0369a1] shadow-lg transition w-full md:w-auto">View Certificate <i class="fa-solid fa-award ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CERTIFICATE SECTION -->
+        <div id="cert-section" class="tab-content">
+            <div class="max-w-5xl mx-auto">
+                
+                <!-- Controls -->
+                <div class="bg-white p-6 rounded shadow mb-6 no-print text-center border border-slate-200">
+                    <h2 class="text-2xl font-bold text-emerald-600 mb-2">🎉 Congratulations! 🎉</h2>
+                    <p class="text-slate-700 mb-4">You have achieved mastery of Web Browser Configuration & Security.</p>
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+                        <input type="text" id="student-name-input" value="Student" placeholder="Enter your first name" class="border-2 border-slate-300 rounded px-4 py-2 w-full md:w-64 focus:border-emerald-500 focus:outline-none">
+                        <button onclick="updateCertName()" class="bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700 transition">Update Name</button>
+                        <button id="download-btn" onclick="downloadCert()" class="bg-slate-800 text-white px-4 py-2 rounded hover:bg-slate-900 transition flex items-center justify-center">
+                            <i class="fa-solid fa-download mr-2"></i>Download PNG
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Certificate Render Container -->
+                <div class="cert-preview-container print:p-0 print:bg-white">
+                    <div id="certificate">
+                        <div class="gold-seal">
+                            <div class="gold-seal-inner-1">
+                                <div class="gold-seal-inner-2">
+                                     <span class="embossed-text embossed-text-large">Certificate</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-small">Of</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-large">Excellence</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="relative z-20 w-full h-full flex flex-col pt-[48px] pl-[380px] pr-[48px]">
+                            <h1 class="text-[#0284c7] text-[4.5rem] leading-none font-serif font-bold tracking-wide uppercase mb-2">CERTIFICATE</h1>
+                            <h2 class="text-slate-800 text-3xl font-serif tracking-widest uppercase mb-10">Of Achievement</h2>
+                            
+                            <p class="text-[1.4rem] font-body text-slate-800 mb-4">This is to certify that</p>
+                            
+                            <div class="relative mb-8 w-full">
+                                <h3 id="cert-student-name" class="text-[4rem] text-[#0284c7] font-serif italic leading-none pb-2 relative z-10 text-center w-full block">Student</h3>
+                                <div class="w-full border-b-[2px] border-[#0284c7] absolute bottom-[4px] left-0 z-0"></div>
+                                <div class="w-full border-b-[2px] border-dotted border-red-500 absolute bottom-[0px] left-0 z-0"></div>
+                            </div>
+                            
+                            <p class="text-[1.3rem] font-body text-slate-800 leading-relaxed w-full pr-4">
+                                Has successfully completed the assessment for 
+                                <strong class="text-[1.8rem] text-[#0284c7] block mt-4 mb-2 font-serif">Cyber.org Tech+ Unit 05 Section 3.4.1</strong>
+                                <strong class="text-[1.5rem] text-black block mb-4 font-serif italic">Web Browsers</strong>
+                                <span class="text-[1.1rem] text-slate-700 leading-snug block">Demonstrating proficiency in browser privacy features, password management, system performance optimization via cache control, aesthetic customization, and digital accessibility configurations.</span>
+                            </p>
+                            
+                            <div class="flex justify-end gap-16 items-end mt-auto mb-[60px] w-full pr-8">
+                                <div class="w-64">
+                                    <div class="border-b border-slate-600 mb-2 h-20 flex items-end justify-center relative">
+                                        <span class="font-script text-[5rem] text-[#0284c7] absolute bottom-[-10px] transform -rotate-3 opacity-90">Dr. M. S</span>
+                                    </div>
+                                    <p class="font-serif text-xl text-slate-800 text-center">Administration</p>
+                                </div>
+                                
+                                <div class="w-64">
+                                    <div class="border-b border-slate-600 mb-2 text-center h-20 flex items-end justify-center">
+                                        <p id="cert-date" class="font-body text-2xl text-slate-800 pb-1">Date Here</p>
+                                    </div>
+                                    <p class="font-serif text-xl text-slate-800 text-center">Date</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Custom Modal for Alerts -->
+    <div id="custom-modal" class="fixed inset-0 bg-black bg-opacity-50 z-[100] hidden flex justify-center items-center backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all">
+            <div class="text-center">
+                <div id="modal-icon" class="text-5xl mb-4"></div>
+                <h3 id="modal-title" class="text-2xl font-bold mb-2 text-slate-900"></h3>
+                <p id="modal-msg" class="text-slate-600 mb-6"></p>
+                <button onclick="closeModal()" class="bg-[#0284c7] text-white px-6 py-2 rounded-lg font-bold hover:bg-[#0369a1] transition w-full">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Briefing Modal -->
+    <div id="briefing-modal" class="fixed inset-0 bg-black bg-opacity-70 z-[120] hidden flex justify-center items-center backdrop-blur-sm p-4 sm:p-6">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col transform transition-all overflow-hidden border-4 border-[#0369a1]">
+            <div class="p-6 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+                <div class="flex items-center gap-4">
+                    <div id="briefing-modal-icon" class="text-4xl"></div>
+                    <h3 id="briefing-modal-title" class="text-2xl md:text-3xl font-bold text-slate-900"></h3>
+                </div>
+                <button onclick="closeBriefing()" class="text-slate-400 hover:text-red-600 transition text-4xl leading-none">&times;</button>
+            </div>
+            <div id="briefing-modal-content" class="p-6 md:p-10 overflow-y-auto flex-grow text-slate-700 text-lg leading-relaxed bg-white">
+                <!-- Dynamic Content Injected Here -->
+            </div>
+            <div class="p-6 border-t border-slate-200 bg-slate-50 flex justify-end">
+                <button onclick="closeBriefing()" class="bg-[#0369a1] text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-[#075985] transition shadow-md">Acknowledge & Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Extensive Briefing Content Data (Min 7 Paragraphs per detail, specific structure for Use Cases) ---
+        const briefingData = {
+            'privacy-details': {
+                title: 'Privacy & Security',
+                icon: '<i class="fa-solid fa-shield-halved text-red-600"></i>',
+                html: `
+                    <p class="mb-5">In the modern digital landscape, web browsers act as the primary gateway to the internet, handling vast amounts of sensitive personal, financial, and corporate data daily. Consequently, configuring the privacy and security settings of a browser is paramount to protecting users from malicious actors and invasive data tracking. The first line of defense available in nearly all modern browsers is <strong>Private Browsing</strong> (known as Incognito Mode in Google Chrome and InPrivate in Microsoft Edge).</p>
+                    
+                    <p class="mb-5">Private browsing is designed specifically to prevent the local device from recording the user's digital footprint during a session. When a user opens a private window, the browser immediately stops saving new browsing history entries. Furthermore, it will not persistently store temporary files, cache data, or site cookies once the window is closed. Most critically, any login credentials typed into forms during a private session are intentionally forgotten, preventing subsequent users of the same physical device from easily accessing the accounts.</p>
+                    
+                    <p class="mb-5">However, a major misconception exists regarding the scope of private browsing. While it successfully hides activity from other users sharing the same computer, <strong>it does not provide anonymity on the internet</strong>. Private browsing does not encrypt or hide your network traffic from external entities. Your Internet Service Provider (ISP), network administrators at your school or workplace, and the actual websites you visit can still monitor and log your IP address and web activity.</p>
+                    
+                    <p class="mb-5">Another critical security feature is the <strong>Pop-up Blocker</strong>. In the early days of the web, malicious websites aggressively abused JavaScript commands to spawn dozens of intrusive, unrequested new windows—often filled with scams or malware links. Modern browsers combat this by blocking unrequested pop-ups by default, displaying a small icon in the address bar alerting the user that an interception occurred.</p>
+                    
+                    <p class="mb-5">Despite their malicious reputation, pop-ups are still required for the legitimate functionality of many enterprise and educational websites. For example, clicking "Print Receipt" on a banking portal often requires opening a pop-up window. To handle this, browsers allow users to configure <strong>Exceptions</strong>. Users can navigate to the privacy settings and manually add specific, trusted URLs to an "Allow List," granting them permission to execute pop-up scripts while keeping the global block active against unknown sites.</p>
+                    
+                    <p class="mb-5">Managing authentication across hundreds of websites is impossible using human memory alone, leading to the dangerous habit of password reuse. To solve this, browsers integrate robust <strong>Password Managers</strong>. These built-in tools securely store website credentials in an encrypted vault tied to the user's browser profile. When the user navigates back to a saved site, the browser securely auto-fills the complex password, protecting against keylogging malware that tracks physical typing.</p>
+                    
+                    <p>Beyond simple storage, modern browser password managers take an active role in user security. They feature password generators that automatically create 16-character alphanumeric strings when registering for new accounts. Furthermore, they perform continuous background <strong>Health Checks</strong>, scanning known databases of compromised passwords on the dark web and actively alerting the user if one of their stored passwords has been leaked in a corporate data breach.</p>
+                `
+            },
+            'privacy-usecase': {
+                title: 'Privacy & Security: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-red-800 mb-2 border-b-2 border-red-200 pb-1">Case 1: Utilizing Public or Shared Computers</h4>
+                        <p class="mb-2">When a user needs to access sensitive information on a computer located in a public library, hotel business center, or shared classroom, they must ensure no trace of their activity remains.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Local Privacy):</strong> The user opens a New Incognito Window to check their bank balance. When they close the window, the browser immediately wipes the session cookies, ensuring the next person who opens the browser cannot simply click "Back" to view the financial data.</li>
+                            <li><strong>Example 2 (Profile Separation):</strong> The user ensures they do NOT log in to the browser's profile synchronization feature on the public device, preventing their personal bookmarks and saved passwords from downloading to the shared hard drive.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-red-800 mb-2 border-b-2 border-red-200 pb-1">Case 2: Managing Extensive Authentication Needs</h4>
+                        <p class="mb-2">An IT professional must manage dozens of unique accounts across various server portals and software vendor websites without resorting to writing passwords on sticky notes.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Password Generation):</strong> When creating a new account for a cloud service provider, the user right-clicks the password field and selects "Suggest Strong Password." The browser generates and saves a string like "x9#K2pL@mN5qR!v", guaranteeing high entropy.</li>
+                            <li><strong>Example 2 (Security Auditing):</strong> The user navigates to the browser's Password Manager settings and runs a manual Health Check. The browser cross-references the saved credentials and flags two older accounts as "Compromised in a known breach," prompting the user to immediately change them.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Private Browsing Limitations</p>
+                            <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=600&h=350" alt="Server room representing ISP monitoring" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Secure Authentication</p>
+                            <img src="https://images.unsplash.com/photo-1614064641936-732431718f4a?auto=format&fit=crop&w=600&h=350" alt="Padlock representing password management" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'perf-details': {
+                title: 'Performance & System Settings',
+                icon: '<i class="fa-solid fa-gauge-high text-blue-600"></i>',
+                html: `
+                    <p class="mb-5">Web browsers are incredibly complex pieces of software that often consume more RAM and CPU processing power than any other application running on a modern computer. Because they must render text, execute complex JavaScript code, stream high-definition video, and manage secure connections simultaneously, optimizing browser <strong>Performance and System Settings</strong> is vital for maintaining a responsive and stable computing experience.</p>
+                    
+                    <p class="mb-5">The most influential factor in browser performance is the management of temporary data, broadly known as the <strong>Browser Cache</strong>. When a user visits a website, the browser downloads numerous assets—such as company logos, background images, and CSS layout files. Instead of deleting these files when the user leaves, the browser saves them locally to the hard drive in the cache. When the user visits the site again the next day, the browser instantly loads the assets from the local hard drive rather than re-downloading them over the internet, drastically increasing page load speed.</p>
+                    
+                    <p class="mb-5">However, the cache can become a significant source of performance degradation. Over months of browsing, the cache can swell to consume gigabytes of storage space. More importantly, if a website updates its code on the server, but your browser forces the use of the outdated, cached file stored locally, the website will render incorrectly, display broken images, or fail to process logins. In these scenarios, the primary troubleshooting step an IT technician will take is to navigate to the settings and <strong>Clear the Cache</strong>.</p>
+                    
+                    <p class="mb-5">Alongside the cache, browsers store small text files called <strong>Cookies</strong>. Cookies are used by websites to remember user preferences, maintain active login sessions (so you don't have to log in every time you click a new link on the site), and track user behavior across the web for targeted advertising. While clearing cookies can resolve complex login loops, it will also immediately sign the user out of all active websites, causing minor inconvenience.</p>
+                    
+                    <p class="mb-5">Another crucial system setting involves configuring the <strong>Default Search Engine</strong>. The omnibar (the URL address bar at the top of the browser) serves a dual purpose: taking direct web addresses (like www.google.com) and processing raw search queries (like "best pizza near me"). Users are not locked into the search engine provided by the browser creator. For instance, an Edge user can navigate to settings and change their default omnibar search provider from Bing to Google, or to DuckDuckGo if they prioritize search privacy.</p>
+                    
+                    <p class="mb-5">Browsers also require <strong>Profile Synchronization</strong> to improve modern workflows. By logging into the browser itself with an account (like a Google or Microsoft account), the browser securely uploads the user's bookmarks, saved passwords, browsing history, and extension preferences to the cloud. When the user logs into the same browser on their mobile phone or a new laptop, all their data instantly synchronizes, providing a seamless transition between physical hardware devices.</p>
+                    
+                    <p>Finally, browsers are increasingly acting as operating systems themselves, requiring settings for <strong>Hardware Integration</strong>. Some specialized web applications need direct access to the physical hardware of the computer. For example, educational coding platforms (like Microsoft MakeCode) utilize the <strong>WebUSB</strong> protocol. This requires configuring the browser to allow a specific webpage to transmit data directly through the computer's physical USB port to external microcontrollers, highlighting the need to check technology requirements when deploying browser-based solutions.</p>
+                `
+            },
+            'perf-usecase': {
+                title: 'Performance & System: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 1: Resolving Website Rendering Errors</h4>
+                        <p class="mb-2">A user is attempting to access their company's HR portal, but the layout is completely broken, buttons are missing, and they are stuck in a login loop. The IT Helpdesk is called to resolve the issue.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Clearing Cache):</strong> The technician guides the user to the browser settings and clears the "Cached Images and Files." This forces the browser to discard the corrupted local CSS file and download the freshly updated code directly from the HR server, fixing the layout.</li>
+                            <li><strong>Example 2 (Clearing Cookies):</strong> To resolve the login loop, the technician instructs the user to clear "Cookies and other site data" specifically for the HR domain, destroying the corrupted session token and allowing the user to generate a clean, fresh login state.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 2: Customizing System-Level Workflows</h4>
+                        <p class="mb-2">A cybersecurity student wants their web browser to better support their privacy-focused workflow and interface directly with specific hardware tools.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Search Engine Config):</strong> The student navigates to the "Search engine used in the address bar" setting in Microsoft Edge and changes it from the default Bing engine to DuckDuckGo, ensuring their rapid omnibar searches are not tracked or profiled.</li>
+                            <li><strong>Example 2 (Hardware Integration):</strong> The student opens a web-based firmware flasher application. Because they are using a modern browser that supports the WebUSB API, the browser successfully prompts for permission to connect directly to the USB device plugged into the tower, avoiding the need to install a heavy desktop application.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Browser Data Storage</p>
+                            <img src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=600&h=350" alt="Data servers representing cache storage" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Hardware Integration</p>
+                            <img src="https://images.unsplash.com/photo-1611081395913-75c13e5ee055?auto=format&fit=crop&w=600&h=350" alt="USB ports and cables for WebUSB" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'custom-details': {
+                title: 'Appearance & Customization',
+                icon: '<i class="fa-solid fa-palette text-purple-600"></i>',
+                html: `
+                    <p class="mb-5">Because the web browser is the most frequently used application for millions of professionals and students, its visual interface and functional toolset must be adaptable. <strong>Appearance and Customization</strong> settings empower users to alter the browser's default state, tailoring the digital environment to reduce eye strain, improve workflow efficiency, and integrate third-party tools that drastically expand what a simple browser can accomplish.</p>
+                    
+                    <p class="mb-5">The most universally utilized appearance setting is the toggle between Light Mode and <strong>Dark Mode</strong>. Activating Dark Mode inverts the standard stark-white background of the browser's menus and toolbars to a deep gray or black, adjusting the text to a lighter contrasting color. This reduces glare in low-light environments, significantly mitigating user eye fatigue during long coding or reading sessions. Furthermore, on modern OLED displays, dark modes can marginally reduce physical battery consumption.</p>
+                    
+                    <p class="mb-5">Beyond basic light and dark toggles, browsers support expansive <strong>Visual Themes</strong>. Users can navigate to web stores to download themes that apply custom color palettes, background art to new tabs, and unique styling to the application window. Additionally, users can customize the <strong>Toolbar Layout</strong>, choosing to show or hide the "Home" button, managing the visibility of the bookmarks bar, or utilizing vertical tabs (a feature highly prominent in Edge) to better utilize widescreen monitors.</p>
+                    
+                    <p class="mb-5">The most powerful customization options, however, lie in <strong>Extensions and Add-ons</strong>. These are small software modules written in standard web technologies (HTML, CSS, JavaScript) that hook directly into the browser's core architecture. Extensions fundamentally change how a browser behaves. They can inject a grammar-checking tool directly into text fields, force video players to behave differently, or automate repetitive web form filling tasks.</p>
+                    
+                    <p class="mb-5">One of the most common categories of extensions is the <strong>Ad-Blocker</strong>. These extensions monitor the network traffic requesting to load on a page and actively intercept requests directed toward known advertising servers. By preventing these heavy, often intrusive media files from loading, ad-blockers customize the visual appearance of the webpage, stripping away clutter while simultaneously improving the page load speed and reducing bandwidth consumption.</p>
+                    
+                    <p class="mb-5">However, modifying a browser's functionality introduces significant cybersecurity risks. To function properly, extensions require <strong>Permissions</strong>. A grammar checker cannot check your spelling unless it has explicit permission to "Read and change all data on the websites you visit." This means the extension can technically see every email you write, every password you type, and every bank balance you view while it is active.</p>
+                    
+                    <p>Therefore, rigorous <strong>Extension Auditing</strong> is a critical administrative task. Users and IT professionals must regularly review installed extensions, ensuring they are only downloaded from verified, official web stores (like the Chrome Web Store). Furthermore, users must critically evaluate the permissions requested; if a simple "Calculator" extension demands permission to view your browsing history, it is likely malicious spyware and should be immediately removed via the browser settings.</p>
+                `
+            },
+            'custom-usecase': {
+                title: 'Appearance & Customization: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Case 1: Optimizing Visual Ergonomics</h4>
+                        <p class="mb-2">A software developer spends 10+ hours a day staring at their web browser reading documentation and testing code. They must configure the browser's appearance to prevent chronic eye strain.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Themes):</strong> The developer enters the browser settings and applies the global "Dark Theme," ensuring the bright white glare of the default interface is replaced with a soothing charcoal gray, matching their operating system settings.</li>
+                            <li><strong>Example 2 (Layout Customization):</strong> To maximize vertical reading space for code documentation on their widescreen monitor, the developer toggles on "Vertical Tabs" in Microsoft Edge, moving the heavy tab row from the top of the screen to a collapsible sidebar.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Case 2: Extending Browser Capabilities Securely</h4>
+                        <p class="mb-2">A marketing professional needs to streamline their daily web-based workflow by integrating third-party writing tools directly into their browser, but must maintain data security.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Productivity Add-ons):</strong> The user navigates to the official Chrome Web Store and installs a reputable Grammar/Spell Checking extension. This modifies the browser to actively highlight grammatical errors in real-time as the user drafts emails in their webmail client.</li>
+                            <li><strong>Example 2 (Permission Auditing):</strong> During a routine security check, the IT administrator opens the "Manage Extensions" menu on the user's browser. They discover a free "Smiley Cursor" extension that requests permission to read all site data. The admin immediately clicks "Remove" to neutralize the spyware threat.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Add-on Code Modification</p>
+                            <img src="https://images.unsplash.com/photo-1555099962-4199c345e5dd?auto=format&fit=crop&w=600&h=350" alt="HTML code representing extension modifications" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Dark Mode Ergonomics</p>
+                            <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=600&h=350" alt="Person working on dark mode monitor" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'access-details': {
+                title: 'Accessibility & Organization',
+                icon: '<i class="fa-solid fa-universal-access text-green-600"></i>',
+                html: `
+                    <p class="mb-5">Ensuring that the vast wealth of information on the internet is available to everyone, regardless of physical or cognitive abilities, is a foundational principle of modern software design. Modern web browsers integrate comprehensive <strong>Accessibility Settings</strong> aimed at dismantling barriers for users with visual, auditory, or motor impairments. Simultaneously, robust <strong>Organization Tools</strong> allow all users to manage the chaotic sprawl of the web into a coherent, navigable structure.</p>
+                    
+                    <p class="mb-5">For users with visual impairments, browsers offer immediate relief through built-in <strong>Zoom and Scaling</strong>. Using simple keyboard shortcuts (like Ctrl +) or settings menus, users can scale the text and images of a webpage to 400% of their original size, overriding poorly designed websites with microscopic fonts. Additionally, High Contrast mode extensions can strip away confusing background images and enforce stark black-and-white color schemes to assist users with color blindness or low vision.</p>
+                    
+                    <p class="mb-5">To assist users with auditory processing needs or those navigating noisy environments, browsers feature advanced <strong>Live Captioning</strong>. By leveraging localized machine learning, the browser can actively listen to any audio playing within a tab (whether a podcast, a muted social media video, or an online lecture) and generate accurate, real-time text captions overlaying the browser window, all without sending the audio data to the cloud.</p>
+                    
+                    <p class="mb-5">Browsers also integrate deeply with OS-level <strong>Text-to-Speech (TTS)</strong> engines and Screen Readers. Features like "Read Aloud" allow users with dyslexia, learning disabilities, or severe visual impairments to have entire articles synthesized into spoken audio. The browser navigates the HTML structure of the page, bypassing ad banners to read only the pertinent paragraph content aloud in a natural, customizable voice.</p>
+                    
+                    <p class="mb-5">On the organizational front, the internet is too vast to rely on memory to return to specific pages. <strong>Bookmarks (or Favorites)</strong> are the essential tool for saving the exact URL address of a webpage. Clicking the star icon in the address bar instantly records the site to the browser's database, providing rapid access in the future and preventing the chaotic practice of leaving fifty tabs open indefinitely.</p>
+                    
+                    <p class="mb-5">However, simply accumulating hundreds of bookmarks creates a new form of clutter. Effective organization requires utilizing <strong>Bookmark Folders and the Bookmarks Bar</strong>. Users can categorize saved links logically—creating a "Work" folder, a "Recipes" folder, and a "Research Project" folder. Pinning the most critical folders directly beneath the URL address bar via the "Bookmarks Bar" provides one-click access to essential daily workflows.</p>
+                    
+                    <p>Finally, modern organizational workflows rely on <strong>Tab Management</strong>. When a user is conducting deep research, they may need twenty tabs open. Browsers now allow users to select multiple tabs, right-click, and "Add tabs to new group." This color-codes and collapses related tabs into a single, labeled header on the tab strip. This feature reduces visual clutter, frees up screen real estate, and allows users to compartmentalize different tasks within a single browser window efficiently.</p>
+                `
+            },
+            'access-usecase': {
+                title: 'Accessibility & Organization: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-green-800 mb-2 border-b-2 border-green-200 pb-1">Case 1: Overcoming Visual and Auditory Barriers</h4>
+                        <p class="mb-2">A user with age-related macular degeneration (low vision) and slight hearing loss relies heavily on the browser's accessibility suite to engage with daily news and media.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Scaling):</strong> Upon navigating to a news article with a tiny, light-gray font, the user presses "Ctrl" and the "+" key three times. The browser dynamically reflows the text at 200% zoom, making the article highly legible without requiring them to squint at the screen.</li>
+                            <li><strong>Example 2 (Live Captioning):</strong> While watching a muted informational video clip in a quiet library, the user clicks the browser's "Live Caption" button. The browser immediately begins generating a black text box with real-time subtitles at the bottom of the screen, allowing them to comprehend the video without sound.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-green-800 mb-2 border-b-2 border-green-200 pb-1">Case 2: Managing Complex Academic Research</h4>
+                        <p class="mb-2">A university student is writing a massive research paper and has discovered over thirty different academic journals, PDF links, and citation generators they need to access repeatedly.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Folder Organization):</strong> Instead of leaving thirty tabs open and crashing the browser, the student creates a Bookmark Folder titled "History Thesis 2024" on the Bookmarks Bar. They categorize and save every critical link into this folder, allowing them to safely close tabs and recall the resources instantly when needed.</li>
+                            <li><strong>Example 2 (Tab Grouping):</strong> While actively writing, the student has five tabs open for historical sources, three for grammar checking, and two for university portal access. They right-click and organize these into color-coded "Tab Groups" (Red for Sources, Blue for Tools), allowing them to collapse the source tabs out of view while they focus on writing.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Audio/Visual Assistance</p>
+                            <img src="https://images.unsplash.com/photo-1573164574572-cb89e39749b4?auto=format&fit=crop&w=600&h=350" alt="Person wearing headphones reading" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Organizing Data Links</p>
+                            <img src="https://images.unsplash.com/photo-1488190211105-8b0e65b80b4e?auto=format&fit=crop&w=600&h=350" alt="Person writing in a notebook organizing data" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        function openBriefing(key) {
+            const modal = document.getElementById('briefing-modal');
+            const data = briefingData[key];
+            if(data) {
+                document.getElementById('briefing-modal-icon').innerHTML = data.icon;
+                document.getElementById('briefing-modal-title').innerText = data.title;
+                document.getElementById('briefing-modal-content').innerHTML = data.html;
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; 
+            }
+        }
+
+        function closeBriefing() {
+            document.getElementById('briefing-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto'; 
+        }
+
+        document.getElementById('briefing-modal').addEventListener('click', function(e) {
+            if(e.target === this) closeBriefing();
+        });
+        
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId + '-section').classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-[#075985]'));
+            const activeBtn = document.getElementById('nav-' + tabId);
+            if(activeBtn && tabId !== 'cert') activeBtn.classList.add('bg-[#075985]');
+            
+            document.querySelectorAll('.nav-btn-mobile').forEach(btn => btn.classList.remove('bg-[#0369a1]'));
+            const activeMobileBtn = document.getElementById('nav-' + tabId + '-mobile');
+            if(activeMobileBtn && tabId !== 'cert') activeMobileBtn.classList.add('bg-[#0369a1]');
+
+            window.scrollTo(0,0);
+
+            if (tabId === 'game') {
+                initGameUI();
+            }
+        }
+
+        function showModal(title, message, type = 'info') {
+            const modal = document.getElementById('custom-modal');
+            const icon = document.getElementById('modal-icon');
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-msg').innerText = message;
+            
+            if(type === 'success') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-check text-green-500"></i>';
+            } else if (type === 'error') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500"></i>';
+            } else if (type === 'warning') {
+                icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-yellow-500"></i>';
+            } else {
+                icon.innerHTML = '<i class="fa-solid fa-circle-info text-blue-500"></i>';
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        // --- LAB LOGIC ---
+
+        // Lab 1: Password Strength
+        function checkLab1() {
+            const val = document.getElementById('lab1-input').value;
+            let len = val.length >= 8;
+            let up = /[A-Z]/.test(val);
+            let num = /[0-9]/.test(val);
+            let sym = /[!@#$%]/.test(val);
+
+            const updateReq = (id, bool) => {
+                const el = document.getElementById(id);
+                if(bool) {
+                    el.className = "text-green-600 font-bold";
+                    el.innerHTML = '<i class="fa-solid fa-check mr-1"></i> ' + el.innerText.trim();
+                } else {
+                    el.className = "text-red-500";
+                    el.innerHTML = '<i class="fa-solid fa-xmark mr-1"></i> ' + el.innerText.trim();
+                }
+            };
+
+            updateReq('req-len', len);
+            updateReq('req-up', up);
+            updateReq('req-num', num);
+            updateReq('req-sym', sym);
+
+            const fb = document.getElementById('lab1-feedback');
+            if(len && up && num && sym) {
+                fb.innerText = "Status: Password meets complexity requirements! Manager updated.";
+                fb.className = "font-bold text-sm text-green-600 mt-2";
+            } else {
+                fb.innerText = "Status: Waiting for all criteria...";
+                fb.className = "font-bold text-sm text-slate-400 mt-2";
+            }
+        }
+
+        // Lab 2: Pop-up Blocker
+        function checkLab2() {
+            const sel1 = document.getElementById('lab2-sel1').value; // intranet -> allow
+            const sel2 = document.getElementById('lab2-sel2').value; // ad -> block
+            const fb = document.getElementById('lab2-feedback');
+
+            if(sel1 === 'allow' && sel2 === 'block') {
+                fb.innerText = "Status: Exceptions correctly configured. Intranet allowed, Tracker blocked.";
+                fb.className = "font-bold text-sm text-green-600";
+            } else if (sel1 !== 'none' || sel2 !== 'none') {
+                fb.innerText = "Status: Configuration incorrect. Check policies.";
+                fb.className = "font-bold text-sm text-red-500";
+            }
+        }
+
+        // Lab 3: Clear Cache
+        function checkLab3() {
+            const c_hist = document.getElementById('chk-history').checked;
+            const c_cache = document.getElementById('chk-cache').checked;
+            const fb = document.getElementById('lab3-feedback');
+            const bar = document.getElementById('cache-bar');
+            const text = document.getElementById('cache-text');
+
+            if(c_cache) {
+                bar.style.width = '0%';
+                text.innerText = "0 MB Stored Cache";
+                fb.innerText = "Status: Cached Images & Files cleared! Webpage will download fresh CSS.";
+                fb.className = "font-bold text-sm text-green-600 mt-2";
+            } else {
+                fb.innerText = "Status: Incorrect data selected. CSS rendering error persists.";
+                fb.className = "font-bold text-sm text-red-500 mt-2";
+            }
+        }
+
+        // Lab 4: Default Search
+        function checkLab4() {
+            const sel = document.getElementById('lab4-select').value;
+            const fb = document.getElementById('lab4-feedback');
+            if(sel === 'duck') {
+                fb.innerText = "Status: DuckDuckGo selected. Omnibar queries will not be tracked.";
+                fb.className = "font-bold text-sm text-green-600";
+            } else if (sel !== 'none') {
+                fb.innerText = "Status: That engine is known for tracking/profiling. Try again.";
+                fb.className = "font-bold text-sm text-red-500";
+            }
+        }
+
+        // Lab 5: Theme Builder
+        function checkLab5(theme) {
+            const browser = document.getElementById('mock-browser');
+            const nav = document.getElementById('mock-nav');
+            const url = document.getElementById('mock-url');
+            const text = document.getElementById('mock-text');
+            const fb = document.getElementById('lab5-feedback');
+
+            if(theme === 'dark') {
+                browser.className = "w-full h-24 border-slate-700 rounded shadow-sm bg-slate-800 mb-4 flex flex-col transition-colors duration-300";
+                nav.className = "h-8 border-b border-slate-700 bg-slate-900 flex items-center px-2 gap-2 transition-colors duration-300";
+                url.className = "h-4 bg-slate-700 w-full rounded ml-4 border-slate-600 transition-colors duration-300";
+                text.className = "text-xs text-slate-300 transition-colors duration-300";
+                text.innerText = "Google.com - Search (Dark Mode Active)";
+                fb.innerText = "Status: Dark Mode Applied. Eye strain reduced.";
+                fb.className = "font-bold text-sm text-green-600 mt-3 text-center";
+            } else {
+                browser.className = "w-full h-24 border rounded shadow-sm bg-white mb-4 flex flex-col transition-colors duration-300";
+                nav.className = "h-8 border-b bg-slate-100 flex items-center px-2 gap-2 transition-colors duration-300";
+                url.className = "h-4 bg-white w-full rounded ml-4 border transition-colors duration-300";
+                text.className = "text-xs text-slate-800 transition-colors duration-300";
+                text.innerText = "Google.com - Search";
+                fb.innerText = "Status: Theme currently set to Light.";
+                fb.className = "font-bold text-sm text-slate-400 mt-3 text-center";
+            }
+        }
+
+        // Lab 6: Extension Auditor
+        let ext1State = true;
+        let ext2State = true;
+        function toggleExt(id) {
+            const btn = document.getElementById(`ext${id}-btn`);
+            if(id === 1) {
+                ext1State = !ext1State;
+                btn.innerText = ext1State ? "Enabled" : "Disabled";
+                btn.className = ext1State ? "px-3 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700" : "px-3 py-1 bg-slate-400 text-white text-xs rounded hover:bg-slate-500";
+            } else {
+                ext2State = !ext2State;
+                btn.innerText = ext2State ? "Enabled" : "Disabled";
+                btn.className = ext2State ? "px-3 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700" : "px-3 py-1 bg-slate-400 text-white text-xs rounded hover:bg-slate-500";
+            }
+            checkLab6();
+        }
+
+        function checkLab6() {
+            const fb = document.getElementById('lab6-feedback');
+            if(ext1State === true && ext2State === false) {
+                fb.innerText = "Status: Audit Passed! Spyware disabled, productivity tool remains.";
+                fb.className = "font-bold text-sm text-green-600";
+            } else if (ext2State === true) {
+                fb.innerText = "Status: DANGER - Highly privileged extension still active.";
+                fb.className = "font-bold text-sm text-red-500";
+            } else {
+                fb.innerText = "Status: Grammar tool was safe, no need to disable it.";
+                fb.className = "font-bold text-sm text-yellow-600";
+            }
+        }
+
+        // Lab 7: Accessibility Zoom
+        let zoom = 1.0;
+        function changeZoom(val) {
+            zoom += val;
+            if(zoom < 0.5) zoom = 0.5;
+            if(zoom > 4.0) zoom = 4.0;
+            
+            document.getElementById('zoom-level').innerText = (zoom * 100) + "%";
+            document.getElementById('tiny-text').style.fontSize = (zoom * 4) + "px";
+        }
+        function checkLab7() {
+            const input = document.getElementById('lab7-input').value.toUpperCase();
+            const fb = document.getElementById('lab7-feedback');
+            if(input === "BROWSER99") {
+                fb.innerText = "Status: Code Accepted! Accessibility zoom successful.";
+                fb.className = "font-bold text-sm text-green-600 mt-2";
+            } else if(input.length > 0) {
+                fb.innerText = "Status: Incorrect code.";
+                fb.className = "font-bold text-sm text-red-500 mt-2";
+            } else {
+                fb.innerText = "Status: Waiting for correct code...";
+                fb.className = "font-bold text-sm text-slate-400 mt-2";
+            }
+        }
+
+        // Lab 8: Bookmarks Drag Drop
+        let draggedBM = null;
+        document.querySelectorAll('.bm-item').forEach(item => {
+            item.addEventListener('dragstart', function() {
+                draggedBM = this;
+                setTimeout(() => this.classList.add('opacity-50'), 0);
+            });
+            item.addEventListener('dragend', function() {
+                setTimeout(() => this.classList.remove('opacity-50'), 0);
+                draggedBM = null;
+            });
+        });
+
+        document.querySelectorAll('.bm-dropzone').forEach(zone => {
+            zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+            zone.addEventListener('dragleave', e => { zone.classList.remove('drag-over'); });
+            zone.addEventListener('drop', function(e) {
+                this.classList.remove('drag-over');
+                if(draggedBM) {
+                    this.appendChild(draggedBM);
+                    const fb = document.getElementById('lab8-feedback');
+                    if(this.dataset.folder === 'work') {
+                        fb.innerText = "Status: Bookmark filed correctly in Work folder!";
+                        fb.className = "font-bold text-sm text-green-600 mt-4";
+                        draggedBM.classList.replace('border-slate-400', 'border-green-400');
+                    } else {
+                        fb.innerText = "Status: Incorrect folder. Timecards are work-related.";
+                        fb.className = "font-bold text-sm text-red-500 mt-4";
+                    }
+                }
+            });
+        });
+
+
+        // --- QUIZ LOGIC (20 Questions) ---
+        const quizData = [
+            // 10 provided from Document
+            { q: "Why are web browsers among the most used applications in our daily lives?", options: ["They are required to turn the computer on.", "Many tasks can be accomplished from a browser, such as shopping, streaming, and work.", "They are the only application capable of storing files.", "They act as a firewall against all viruses."], answer: 1 },
+            { q: "What is a primary function of private browsing modes (like Incognito)?", options: ["It encrypts your internet connection.", "It speeds up the browser significantly.", "It removes logins, cookies, and history after exiting the session.", "It automatically blocks all malware."], answer: 2 },
+            { q: "Does private browsing prevent someone from monitoring your activity in the browser?", options: ["Yes, it hides everything from everyone.", "No, network monitoring can still occur by ISPs, businesses, and schools.", "Yes, but only on mobile devices.", "No, but it prevents the websites from seeing your IP address."], answer: 1 },
+            { q: "What are some features associated with built-in browser password managers?", options: ["They create secure passwords, store credentials, and provide wellness checks.", "They prevent pop-ups from appearing on bank websites.", "They encrypt the entire hard drive.", "They automatically change your passwords every 30 days."], answer: 0 },
+            { q: "What are some appearance customization options for browsers?", options: ["Hard drive partitioning and formatting.", "Themes, colors, layouts, and custom functions with extensions.", "BIOS configuration and boot order.", "CPU scheduling and process management."], answer: 1 },
+            { q: "What are two accessibility features commonly found in browsers?", options: ["Private browsing and password managers.", "Pop-up blockers and cache clearing.", "Closed captioning and page zoom.", "Developer tools and WebUSB."], answer: 2 },
+            { q: "How can you organize webpages being viewed and why is it important?", options: ["Using Bookmarks/Favorites allows pages to be saved and accessed quickly, keeping the browser organized.", "Using the Cache saves pages so they load slower.", "Using the Task Manager to close pages.", "Using extensions to print all pages."], answer: 0 },
+            { q: "What can cause a browser to slow down performance-wise and how can you improve this?", options: ["Too many bookmarks; delete all favorites.", "Outdated or bloated temporary files (cookies/cache); clearing the browser's cache assists in this issue.", "Using dark mode; switch to light mode.", "Using private browsing; use a standard window."], answer: 1 },
+            { q: "Why is it important to check technology requirements when choosing a browser for a task?", options: ["To ensure the browser matches your shirt color.", "Because some features (like WebUSB hardware integration) are not included or enabled in every browser.", "To make sure the browser has a built-in search engine.", "Because you must pay a monthly fee for some browsers."], answer: 1 },
+            { q: "How does profile synchronization improve a user's workflow?", options: ["It automatically deletes history every hour.", "It saves settings, preferences, and bookmarks across multiple devices seamlessly.", "It prevents pop-ups from appearing.", "It translates web pages automatically."], answer: 1 },
+            
+            // 10 new questions based on briefing
+            { q: "In Google Chrome, what is the private browsing mode officially called?", options: ["InPrivate", "Stealth Mode", "Incognito", "Secure Session"], answer: 2 },
+            { q: "In Microsoft Edge, what is the private browsing mode officially called?", options: ["InPrivate", "Incognito", "Ghost Mode", "Privateer"], answer: 0 },
+            { q: "If you need to print a receipt from a banking portal but nothing happens when you click the button, what browser security feature might be interfering?", options: ["The Password Manager", "The Pop-up Blocker", "Dark Mode", "Profile Synchronization"], answer: 1 },
+            { q: "Which setting would you modify if you wanted to type 'best restaurants' into the URL address bar and have it search using DuckDuckGo instead of Bing?", options: ["Default Search Engine", "Extensions", "Cache Settings", "Accessibility Zoom"], answer: 0 },
+            { q: "What is a significant cybersecurity risk associated with installing browser extensions?", options: ["They might change your theme color.", "They can consume too much RAM.", "They often require broad permissions to read and modify sensitive site data.", "They prevent the cache from clearing."], answer: 2 },
+            { q: "Which appearance setting is specifically utilized by professionals to reduce eye strain and glare during long computing sessions?", options: ["WebUSB", "High Contrast Mode", "Dark Mode/Dark Theme", "Live Captioning"], answer: 2 },
+            { q: "If a website developer updates the visual layout of a page, but your browser is still showing the old, broken layout, what is likely happening?", options: ["Your browser is loading an outdated CSS file from the local cache.", "A malicious pop-up is blocking the new layout.", "Your password manager is interfering.", "You need to enable WebUSB."], answer: 0 },
+            { q: "Which browser feature actively monitors network audio streams locally to generate real-time subtitles without sending the data to the cloud?", options: ["Text-to-Speech (TTS)", "Live Captioning", "Audio Caching", "Media Sync"], answer: 1 },
+            { q: "Why is it dangerous to enable Profile Synchronization on a public library computer?", options: ["It will break the library's internet connection.", "It will securely download your personal history and saved passwords to a shared public device.", "It will delete your cloud account.", "It forces the computer into Dark Mode."], answer: 1 },
+            { q: "What feature allows users to collapse related tabs into a single, color-coded and labeled header?", options: ["Password Manager", "Tab Groups", "Cache Sweeper", "Incognito Tabs"], answer: 1 }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        
+        quizData.forEach((item, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = "bg-white p-6 rounded-lg border border-slate-200 transition-all shadow-sm";
+            qDiv.id = `q-block-${index}`;
+            
+            const qTitle = document.createElement('h3');
+            qTitle.className = "font-bold text-lg text-slate-800 mb-4";
+            qTitle.innerText = `${index + 1}. ${item.q}`;
+            qDiv.appendChild(qTitle);
+            
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = "space-y-3";
+            
+            item.options.forEach((opt, optIndex) => {
+                const label = document.createElement('label');
+                label.className = "flex items-center space-x-3 p-3 rounded bg-slate-50 border border-slate-300 hover:bg-sky-50 cursor-pointer transition";
+                
+                const radio = document.createElement('input');
+                radio.type = "radio";
+                radio.name = `q${index}`;
+                radio.value = optIndex;
+                radio.className = "form-radio h-5 w-5 text-[#0284c7]";
+                
+                const span = document.createElement('span');
+                span.className = "text-slate-700";
+                span.innerText = opt;
+                
+                label.appendChild(radio);
+                label.appendChild(span);
+                optionsDiv.appendChild(label);
+            });
+            
+            qDiv.appendChild(optionsDiv);
+            if(quizContainer) {
+                quizContainer.appendChild(qDiv);
+            }
+        });
+
+        function gradeQuiz() {
+            let score = 0;
+            let allAnswered = true;
+
+            for(let i = 0; i < quizData.length; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if(selected) {
+                    if(parseInt(selected.value) === quizData[i].answer) {
+                        score++;
+                    }
+                } else {
+                    allAnswered = false;
+                }
+            }
+            
+            if(!allAnswered) {
+                showModal('Incomplete Quiz', 'Please answer all 20 questions before submitting.', 'warning');
+                return;
+            }
+            
+            const percentage = (score / quizData.length) * 100;
+            
+            if(score >= 18) { 
+                const navGame = document.getElementById('nav-game');
+                const navGameMobile = document.getElementById('nav-game-mobile');
+                
+                if(navGame) {
+                    navGame.classList.remove('text-gray-400', 'cursor-not-allowed');
+                    navGame.classList.add('text-white', 'hover:bg-[#0284c7]');
+                    navGame.disabled = false;
+                    navGame.innerHTML = '<i class="fa-solid fa-gamepad mr-1"></i>Game';
+                }
+                
+                if(navGameMobile) {
+                    navGameMobile.classList.remove('text-gray-400', 'cursor-not-allowed');
+                    navGameMobile.classList.add('text-white', 'hover:bg-[#0369a1]');
+                    navGameMobile.disabled = false;
+                    navGameMobile.innerHTML = '<i class="fa-solid fa-gamepad"></i> Game';
+                }
+
+                document.getElementById('nav-cert').classList.remove('hidden');
+                document.getElementById('nav-cert-mobile').classList.remove('hidden');
+                
+                document.getElementById('proceed-game-btn').classList.remove('hidden');
+                document.getElementById('submit-quiz-btn').classList.add('hidden');
+
+                showModal('Outstanding!', `You scored ${score}/20 (${percentage}%). You have unlocked your Certificate of Mastery AND the Retro Game!`, 'success');
+            } else {
+                quizData.forEach((_, i) => {
+                    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                    if(selected) selected.checked = false;
+                });
+                showModal('Keep Trying!', `You scored ${score}/20 (${percentage}%). You need 90% (18/20) to earn the certificate. Your answers have been reset so you can try again.`, 'error');
+                document.getElementById('quiz-section').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // --- RETRO GAME LOGIC: SECURE SURFER (SkiFree Clone) ---
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        const overlay = document.getElementById('game-overlay');
+        const startBtn = document.getElementById('start-game-btn');
+        const endTitle = document.getElementById('game-end-title');
+        
+        let gameRunning = false;
+        let animationId;
+        let score = 0;
+        let lives = 3;
+        let gameSpeed = 4;
+        let distance = 0;
+        let frameCount = 0;
+        
+        // Player (Cursor/Surfer)
+        const player = {
+            x: canvas.width / 2,
+            y: 150, // Stays near the top, obstacles move up
+            width: 30,
+            height: 40,
+            speed: 6,
+            invulnerableTimer: 0
+        };
+        
+        let entities = [];
+        let backgroundLines = [];
+        
+        // Input tracking
+        const keys = {
+            ArrowLeft: false,
+            ArrowRight: false
+        };
+
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'ArrowLeft') keys.ArrowLeft = true;
+            if (e.code === 'ArrowRight') keys.ArrowRight = true;
+        });
+
+        document.addEventListener('keyup', (e) => {
+            if (e.code === 'ArrowLeft') keys.ArrowLeft = false;
+            if (e.code === 'ArrowRight') keys.ArrowRight = false;
+        });
+
+        // Touch Controls
+        let touchLeft = false;
+        let touchRight = false;
+
+        canvas.addEventListener('touchstart', handleTouch, { passive: false });
+        canvas.addEventListener('touchmove', handleTouch, { passive: false });
+        canvas.addEventListener('touchend', () => { touchLeft = false; touchRight = false; });
+
+        function handleTouch(e) {
+            e.preventDefault();
+            if (!gameRunning) return;
+            const touchX = e.touches[0].clientX - canvas.getBoundingClientRect().left;
+            const ratio = canvas.width / canvas.getBoundingClientRect().width;
+            const scaledX = touchX * ratio;
+
+            if (scaledX < canvas.width / 2) {
+                touchLeft = true;
+                touchRight = false;
+            } else {
+                touchRight = true;
+                touchLeft = false;
+            }
+        }
+
+        startBtn.addEventListener('click', startGame);
+
+        function initGameUI() {
+            if(!gameRunning && score === 0 && lives === 3) {
+                drawBackground();
+                drawPlayer();
+                ctx.fillStyle = '#64748b';
+                ctx.font = '24px monospace';
+                ctx.textAlign = 'center';
+                ctx.fillText('WAITING FOR CONNECTION', canvas.width/2, canvas.height/2);
+            }
+        }
+
+        function startGame() {
+            overlay.classList.add('hidden');
+            endTitle.classList.add('hidden');
+            score = 0;
+            lives = 3;
+            gameSpeed = 4;
+            distance = 0;
+            frameCount = 0;
+            entities = [];
+            backgroundLines = [];
+            
+            player.x = canvas.width / 2;
+            player.invulnerableTimer = 0;
+            
+            // Initial background lines
+            for(let i=0; i<10; i++) {
+                backgroundLines.push({
+                    y: (canvas.height / 10) * i,
+                    width: Math.random() * 200 + 100,
+                    x: Math.random() * 200
+                });
+            }
+
+            updateStatus();
+            gameRunning = true;
+            gameLoop();
+        }
+
+        function updateStatus() {
+            document.getElementById('game-score').innerText = Math.floor(score);
+            document.getElementById('game-lives').innerText = lives;
+        }
+
+        function spawnEntity() {
+            // As speed increases, spawn less frequently so the screen isn't completely impossible
+            let spawnRate = Math.max(20, 60 - Math.floor(gameSpeed * 2));
+            if (frameCount % spawnRate !== 0) return;
+
+            let typeRand = Math.random();
+            let entity = {
+                x: Math.random() * (canvas.width - 50) + 10,
+                y: canvas.height + 50, // Spawn below screen
+                width: 40,
+                height: 40,
+                type: 'popup', // default
+                active: true
+            };
+
+            // 70% chance Enemy, 30% chance Collectible
+            if (typeRand < 0.7) {
+                // Enemies
+                if (Math.random() < 0.6) {
+                    entity.type = 'popup';
+                    entity.width = 60;
+                    entity.height = 40;
+                } else {
+                    entity.type = 'bug';
+                    entity.width = 35;
+                    entity.height = 35;
+                }
+            } else {
+                // Collectibles
+                if (Math.random() < 0.5) {
+                    entity.type = 'shield';
+                    entity.width = 30;
+                    entity.height = 30;
+                } else {
+                    entity.type = 'cookie';
+                    entity.width = 25;
+                    entity.height = 25;
+                }
+            }
+
+            entities.push(entity);
+        }
+
+        function update() {
+            frameCount++;
+            distance += gameSpeed / 10;
+            score += gameSpeed / 20; // Passive points for surviving
+            
+            // Speed up progressively
+            if (frameCount % 600 === 0) {
+                gameSpeed += 0.5;
+            }
+
+            // Player movement
+            if ((keys.ArrowLeft || touchLeft) && player.x - player.width / 2 > 0) player.x -= player.speed;
+            if ((keys.ArrowRight || touchRight) && player.x + player.width / 2 < canvas.width) player.x += player.speed;
+
+            if (player.invulnerableTimer > 0) {
+                player.invulnerableTimer--;
+            }
+
+            // Update Background Lines (Creates the illusion of moving down)
+            for (let i = 0; i < backgroundLines.length; i++) {
+                backgroundLines[i].y -= gameSpeed * 0.5; // Parallax effect
+                if (backgroundLines[i].y < -20) {
+                    backgroundLines[i].y = canvas.height + 20;
+                    backgroundLines[i].x = Math.random() * (canvas.width - 150);
+                    backgroundLines[i].width = Math.random() * 200 + 100;
+                }
+            }
+
+            spawnEntity();
+
+            // Update Entities
+            for (let i = entities.length - 1; i >= 0; i--) {
+                let e = entities[i];
+                if (!e.active) {
+                    entities.splice(i, 1);
+                    continue;
+                }
+
+                e.y -= gameSpeed;
+
+                // Collision Detection (AABB)
+                if (
+                    player.x - player.width/2 < e.x + e.width &&
+                    player.x + player.width/2 > e.x &&
+                    player.y - player.height/2 < e.y + e.height &&
+                    player.y + player.height/2 > e.y
+                ) {
+                    handleCollision(e);
+                }
+
+                // Remove if scrolled off top
+                if (e.y < -100) {
+                    entities.splice(i, 1);
+                }
+            }
+
+            updateStatus();
+        }
+
+        function handleCollision(entity) {
+            if (entity.type === 'popup' || entity.type === 'bug') {
+                if (player.invulnerableTimer === 0) {
+                    lives--;
+                    player.invulnerableTimer = 60; // 1 second of invulnerability at 60fps
+                    
+                    // Screen flash
+                    ctx.fillStyle = "rgba(239, 68, 68, 0.5)"; // Red flash
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    
+                    if (lives <= 0) {
+                        gameOver();
+                    }
+                }
+                entity.active = false;
+            } else if (entity.type === 'shield' || entity.type === 'cookie') {
+                score += (entity.type === 'shield') ? 200 : 100;
+                
+                // Visual pop
+                ctx.fillStyle = "rgba(56, 189, 248, 0.3)";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                entity.active = false;
+            }
+        }
+
+        function drawBackground() {
+            // Website style background
+            ctx.fillStyle = '#f8fafc';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw pseudo text lines representing webpage content
+            ctx.fillStyle = '#e2e8f0';
+            for (let i = 0; i < backgroundLines.length; i++) {
+                let line = backgroundLines[i];
+                ctx.fillRect(line.x, line.y, line.width, 15);
+                ctx.fillRect(line.x, line.y + 25, line.width * 0.8, 15);
+            }
+        }
+
+        function drawPlayer() {
+            // Blinking if invulnerable
+            if (player.invulnerableTimer > 0 && Math.floor(player.invulnerableTimer / 5) % 2 === 0) {
+                return; 
+            }
+
+            // Draw a stylized mouse cursor pointing UP (since we are surfing "down" the page, cursor points "up" screen)
+            ctx.fillStyle = '#0f172a'; // Dark slate
+            ctx.beginPath();
+            ctx.moveTo(player.x, player.y - player.height/2); // Tip
+            ctx.lineTo(player.x + player.width/2, player.y + player.height/2); // Right bottom
+            ctx.lineTo(player.x + player.width/6, player.y + player.height/3); // Inner right
+            ctx.lineTo(player.x + player.width/4, player.y + player.height/2 + 10); // Tail right
+            ctx.lineTo(player.x - player.width/4, player.y + player.height/2 + 10); // Tail left
+            ctx.lineTo(player.x - player.width/6, player.y + player.height/3); // Inner left
+            ctx.lineTo(player.x - player.width/2, player.y + player.height/2); // Left bottom
+            ctx.closePath();
+            ctx.fill();
+            
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+
+        function drawEntities() {
+            entities.forEach(e => {
+                if (!e.active) return;
+
+                if (e.type === 'popup') {
+                    // Draw red popup box
+                    ctx.fillStyle = '#ef4444';
+                    ctx.fillRect(e.x, e.y, e.width, e.height);
+                    ctx.fillStyle = '#b91c1c';
+                    ctx.fillRect(e.x, e.y, e.width, 10); // Header
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold 12px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText('AD', e.x + e.width/2, e.y + e.height/2 + 5);
+                } 
+                else if (e.type === 'bug') {
+                    // Draw purple bug/malware
+                    ctx.fillStyle = '#9333ea';
+                    ctx.beginPath();
+                    ctx.arc(e.x + e.width/2, e.y + e.height/2, e.width/2, 0, Math.PI*2);
+                    ctx.fill();
+                    // Legs
+                    ctx.strokeStyle = '#9333ea';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath(); ctx.moveTo(e.x, e.y+10); ctx.lineTo(e.x-10, e.y+5); ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(e.x+e.width, e.y+10); ctx.lineTo(e.x+e.width+10, e.y+5); ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(e.x, e.y+25); ctx.lineTo(e.x-10, e.y+30); ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(e.x+e.width, e.y+25); ctx.lineTo(e.x+e.width+10, e.y+30); ctx.stroke();
+                }
+                else if (e.type === 'shield') {
+                    // Draw blue privacy shield
+                    ctx.fillStyle = '#3b82f6';
+                    ctx.beginPath();
+                    ctx.moveTo(e.x + e.width/2, e.y);
+                    ctx.lineTo(e.x + e.width, e.y + 10);
+                    ctx.lineTo(e.x + e.width/2, e.y + e.height);
+                    ctx.lineTo(e.x, e.y + 10);
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold 14px sans-serif';
+                    ctx.fillText('S', e.x + e.width/2, e.y + e.height/2);
+                }
+                else if (e.type === 'cookie') {
+                    // Draw green safe cookie
+                    ctx.fillStyle = '#10b981';
+                    ctx.beginPath();
+                    ctx.arc(e.x + e.width/2, e.y + e.height/2, e.width/2, 0, Math.PI*2);
+                    ctx.fill();
+                    // Chips
+                    ctx.fillStyle = '#064e3b';
+                    ctx.fillRect(e.x + 5, e.y + 8, 4, 4);
+                    ctx.fillRect(e.x + 14, e.y + 5, 4, 4);
+                    ctx.fillRect(e.x + 10, e.y + 15, 4, 4);
+                }
+            });
+        }
+
+        function gameLoop() {
+            if (!gameRunning) return;
+            
+            update();
+            
+            drawBackground();
+            drawEntities();
+            drawPlayer(); // Draw player last so it's on top
+            
+            animationId = requestAnimationFrame(gameLoop);
+        }
+
+        function gameOver() {
+            gameRunning = false;
+            cancelAnimationFrame(animationId);
+            overlay.classList.remove('hidden');
+            endTitle.classList.remove('hidden');
+            startBtn.innerText = "Restart Browser";
+            startBtn.className = "bg-red-600 hover:bg-red-500 text-white font-bold font-mono py-3 px-6 rounded-lg text-xl border-4 border-red-800 uppercase transform transition hover:scale-105";
+        }
+
+        // --- CERTIFICATE LOGIC ---
+        function updateCertName() {
+            let name = document.getElementById('student-name-input').value.trim();
+            if(name) {
+                if (name.includes(' ')) {
+                    name = name.split(' ')[0];
+                    document.getElementById('student-name-input').value = name;
+                    showModal('Notice', 'Only your first name has been applied to the certificate.', 'info');
+                }
+                document.getElementById('cert-student-name').innerText = name;
+            } else {
+                showModal('Wait!', 'Please enter your first name to update the certificate.', 'warning');
+            }
+        }
+
+        const today = new Date();
+        document.getElementById('cert-date').innerText = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        function downloadCert() {
+            const certEl = document.getElementById('certificate');
+            const name = document.getElementById('cert-student-name').innerText;
+            let filename = 'Certificate.png';
+            if (name && name !== 'Student') {
+                filename = `${name.replace(/\s+/g, '_')}_Certificate.png`;
+            }
+
+            const originalTransform = certEl.style.transform;
+            certEl.style.transform = 'none';
+
+            const btn = document.getElementById('download-btn');
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Generating...';
+            btn.disabled = true;
+
+            html2canvas(certEl, { 
+                scale: 2, 
+                useCORS: true,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+            }).catch(err => {
+                console.error(err);
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                showModal('Error', 'Failed to generate image. Try using a desktop browser.', 'error');
+            });
+        }
+    </script>
+</body>
+</html>

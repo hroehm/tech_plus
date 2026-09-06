@@ -1,0 +1,1398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 02 Section 1.2.2 Mastery - Hexadecimal & Decimal</title>
+    
+    <!-- Load Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load HTML2Canvas for Certificate Download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- Load Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Qwitcher+Grypen:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0fdf4; 
+            color: #1f2937;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        /* Interactive Elements CSS */
+        .io-dropzone { min-height: 70px; min-width: 70px; border: 2px dashed #9ca3af; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: #f9fafb; transition: all 0.2s;}
+        .io-dropzone.drag-over { background: #e5e7eb; border-color: #16a34a; box-shadow: inset 0 0 10px rgba(22, 163, 74, 0.2);}
+        
+        .io-item { cursor: grab; transition: transform 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .io-item:active { cursor: grabbing; transform: scale(0.95); }
+        
+        .cat-dropzone { transition: background-color 0.2s ease; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #e5e7eb; }
+        ::-webkit-scrollbar-thumb { background: #10b981; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #059669; }
+
+        /* Retro Game CSS (Memory Match) */
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            max-width: 500px;
+            margin: 0 auto;
+            perspective: 1000px;
+        }
+        .memory-card {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.5s;
+            cursor: pointer;
+        }
+        .memory-card.flipped {
+            transform: rotateY(180deg);
+        }
+        .memory-card.matched {
+            transform: rotateY(180deg);
+            cursor: default;
+            opacity: 0.8;
+        }
+        .memory-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            border: 3px solid #374151;
+        }
+        .memory-front {
+            background: linear-gradient(135deg, #1f2937, #111827);
+            color: #10b981;
+            transform: rotateY(180deg);
+            font-family: monospace;
+        }
+        .memory-back {
+            background: linear-gradient(135deg, #374151, #1f2937);
+            background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.05) 10px, rgba(255,255,255,0.05) 20px);
+            color: transparent;
+        }
+        .memory-back::after {
+            content: '?';
+            color: #9ca3af;
+            font-size: 2rem;
+            font-family: monospace;
+        }
+
+        /* --- CERTIFICATE STYLES --- */
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .font-body { font-family: 'Lora', serif; }
+        .font-script { font-family: 'Qwitcher Grypen', cursive; }
+        
+        .cert-preview-container {
+            width: 100%;
+            overflow: auto;
+            display: flex;
+            justify-content: center;
+            background: #e5e7eb;
+            padding: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        #certificate {
+            width: 1056px !important;
+            height: 816px !important;
+            flex-shrink: 0;
+            background-color: #ffffff;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1056" height="816"><polygon points="0,0 250,0 0,650" fill="%2310b981"/><polygon points="0,0 350,0 0,900" fill="%23047857" opacity="0.8"/><polygon points="0,0 120,0 0,300" fill="%2310b981"/><polygon points="0,450 650,816 0,816" fill="%2310b981"/><polygon points="0,550 450,816 0,816" fill="%23047857" opacity="0.8"/><polygon points="800,0 1056,0 1056,256" fill="%23f3f4f6"/><polygon points="1056,500 1056,816 750,816" fill="%23f3f4f6"/></svg>');
+            background-size: cover;
+            border: 4px solid #e5e7eb;
+        }
+
+        .gold-seal {
+            position: absolute;
+            left: 110px;
+            top: 350px;
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c, #fcf6ba);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3), inset 0 0 15px rgba(255,255,255,0.7), inset 0 0 25px rgba(139,105,20,0.9);
+            z-index: 10;
+        }
+        .gold-seal::before {
+            content: '';
+            position: absolute;
+            top: -4px; bottom: -4px; left: -4px; right: -4px;
+            border-radius: 50%;
+            border: 6px dashed #d4af37;
+        }
+        .gold-seal-inner-1 {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 2px solid rgba(139, 105, 20, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #e8c678, #dbab46);
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.2), 0 2px 5px rgba(255,255,255,0.7);
+            z-index: 1;
+        }
+        .gold-seal-inner-2 {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: radial-gradient(circle, #fcf6ba, #d4af37);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            padding: 10px;
+        }
+        .embossed-text {
+            color: #b38728;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2);
+            font-family: 'Playfair Display', serif;
+            font-weight: 800;
+            line-height: 1.1;
+            text-transform: uppercase;
+        }
+        .embossed-text-large { font-size: 14px; letter-spacing: 1px; }
+        .embossed-text-small { font-size: 11px; letter-spacing: 2px; margin: 2px 0; }
+        .embossed-star { font-size: 12px; color: #b38728; text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2); margin: 2px 0; }
+
+        @media (max-width: 1100px) {
+            #certificate { transform: scale(0.7); transform-origin: top left; margin-bottom: -240px; margin-right: -310px; }
+        }
+        @media (max-width: 768px) {
+            #certificate { transform: scale(0.4); transform-origin: top left; margin-bottom: -490px; margin-right: -630px; }
+        }
+        
+        /* Lab Specific Styles */
+        .color-preview { transition: background-color 0.1s; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
+    <nav class="bg-green-700 text-white shadow-lg sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-hashtag text-2xl"></i>
+                    <span class="font-bold text-xl tracking-wider hidden sm:inline-block">Tech+ Unit 02 Section 1.2.2</span>
+                    <span class="font-bold text-xl tracking-wider sm:hidden">1.2.2</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-2">
+                        <button onclick="switchTab('briefing')" class="nav-btn bg-green-900 px-3 py-2 rounded-md text-sm font-medium hover:bg-green-600 transition" id="nav-briefing"><i class="fa-solid fa-book-open mr-1"></i>Briefing</button>
+                        <button onclick="switchTab('activity')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-green-600 transition" id="nav-activity"><i class="fa-solid fa-flask mr-1"></i>Lab Activity</button>
+                        <button onclick="switchTab('quiz')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-green-600 transition" id="nav-quiz"><i class="fa-solid fa-clipboard-check mr-1"></i>Quiz</button>
+                        <button onclick="switchTab('game')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-gray-400 cursor-not-allowed transition" id="nav-game" disabled><i class="fa-solid fa-lock mr-1"></i>Game</button>
+                        <button onclick="switchTab('cert')" class="nav-btn hidden px-3 py-2 rounded-md text-sm font-medium text-yellow-300 hover:bg-green-600 transition" id="nav-cert"><i class="fa-solid fa-award mr-1"></i>Certificate</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Nav -->
+        <div class="md:hidden flex flex-wrap justify-center gap-2 py-2 px-2 bg-green-800">
+            <button onclick="switchTab('briefing')" class="nav-btn-mobile px-3 py-1 text-sm rounded bg-green-900" id="nav-briefing-mobile">Briefing</button>
+            <button onclick="switchTab('activity')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-activity-mobile">Lab</button>
+            <button onclick="switchTab('quiz')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-quiz-mobile">Quiz</button>
+            <button onclick="switchTab('game')" class="nav-btn-mobile px-3 py-1 text-sm rounded text-gray-400 cursor-not-allowed" id="nav-game-mobile" disabled><i class="fa-solid fa-lock"></i></button>
+            <button onclick="switchTab('cert')" id="nav-cert-mobile" class="hidden px-2 py-1 text-sm text-yellow-300 rounded"><i class="fa-solid fa-award"></i></button>
+        </div>
+    </nav>
+
+    <main class="flex-grow w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <!-- BRIEFING SECTION -->
+        <div id="briefing-section" class="tab-content active no-print">
+            <div class="text-center mb-10">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">Hexadecimal & Decimal</h1>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">Explore the bridge between binary data and human readability. Learn how the base-16 numeral system powers memory addressing, network identification, and error logging.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- Tile 1 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-blue-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-blue-700"><i class="fa-solid fa-hashtag mr-2"></i>Intro to Hexadecimal</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Base-16 System:</strong> Utilizes 16 distinct symbols to represent values.</li>
+                            <li><strong>Alphanumeric:</strong> Uses digits 0-9 and letters A-F to account for all 16 values.</li>
+                            <li><strong>Binary Shorthand:</strong> Every hex digit represents exactly 4 bits (a nibble) of binary data.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('concept1-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('concept1-usecase')" class="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 2 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-green-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-green-700"><i class="fa-solid fa-arrow-right-to-bracket mr-2"></i>Hex to Decimal</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Place Values:</strong> Based on powers of 16 (16^0, 16^1, 16^2).</li>
+                            <li><strong>Pre-Conversion:</strong> Letters A-F must be translated to 10-15 before calculating.</li>
+                            <li><strong>Multiplication:</strong> Digits are multiplied by their respective place values and summed.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('concept2-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('concept2-usecase')" class="flex-1 bg-green-100 hover:bg-green-200 text-green-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 3 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-purple-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-purple-700"><i class="fa-solid fa-arrow-right-from-bracket mr-2"></i>Decimal to Hex</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Division Method:</strong> Repeatedly divide the decimal number by 16.</li>
+                            <li><strong>Tracking Remainders:</strong> The remainders of each division form the hex digits.</li>
+                            <li><strong>Bottom to Top:</strong> Remainders are read from the last calculation up to the first.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('concept3-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('concept3-usecase')" class="flex-1 bg-purple-100 hover:bg-purple-200 text-purple-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 4 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-red-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-red-700"><i class="fa-solid fa-network-wired mr-2"></i>IT Applications</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>MAC Addresses:</strong> Identifies network hardware manufacturers via OUIs.</li>
+                            <li><strong>Color Codes:</strong> Defines precise RGB combinations in web design.</li>
+                            <li><strong>System Diagnostics:</strong> Utilized in error codes (0x) and memory addressing.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('concept4-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('concept4-usecase')" class="flex-1 bg-red-100 hover:bg-red-200 text-red-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 flex justify-center">
+                <button onclick="switchTab('activity')" class="bg-green-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-green-500 shadow-lg transition transform hover:scale-105">Proceed to Lab Activity <i class="fa-solid fa-arrow-right ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- LAB ACTIVITY SECTION -->
+        <div id="activity-section" class="tab-content no-print">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Interactive Labs</h1>
+                <p class="text-gray-600">Apply your knowledge of hexadecimal conversions and applications across these 8 mini-labs.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- Concept 1 Labs -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-blue-200">
+                    <h2 class="text-xl font-bold mb-4 text-blue-700 border-b pb-2"><i class="fa-solid fa-hashtag mr-2"></i>Intro to Hexadecimal</h2>
+                    
+                    <div class="mb-6">
+                        <h3 class="font-bold text-gray-800 mb-2">Lab 1: Symbol Matcher</h3>
+                        <p class="text-sm text-gray-600 mb-3">Drag the hexadecimal letter to its corresponding decimal value.</p>
+                        <div class="flex justify-center gap-2 mb-4" id="lab1-drags">
+                            <div class="io-item w-10 h-10 bg-blue-100 border border-blue-300 rounded flex items-center justify-center font-bold" draggable="true" data-val="10">A</div>
+                            <div class="io-item w-10 h-10 bg-blue-100 border border-blue-300 rounded flex items-center justify-center font-bold" draggable="true" data-val="11">B</div>
+                            <div class="io-item w-10 h-10 bg-blue-100 border border-blue-300 rounded flex items-center justify-center font-bold" draggable="true" data-val="15">F</div>
+                        </div>
+                        <div class="flex justify-center gap-2">
+                            <div class="cat-dropzone w-12 h-12 border-2 border-dashed border-gray-400 bg-gray-50 flex items-center justify-center flex-col relative" data-target="15"><span class="absolute top-0 text-[10px] text-gray-500">15</span></div>
+                            <div class="cat-dropzone w-12 h-12 border-2 border-dashed border-gray-400 bg-gray-50 flex items-center justify-center flex-col relative" data-target="10"><span class="absolute top-0 text-[10px] text-gray-500">10</span></div>
+                            <div class="cat-dropzone w-12 h-12 border-2 border-dashed border-gray-400 bg-gray-50 flex items-center justify-center flex-col relative" data-target="11"><span class="absolute top-0 text-[10px] text-gray-500">11</span></div>
+                        </div>
+                        <div id="lab1-fb" class="text-center text-sm font-bold text-green-600 mt-2 h-5"></div>
+                    </div>
+
+                    <div class="border-t pt-4">
+                        <h3 class="font-bold text-gray-800 mb-2">Lab 2: Nibble Visualizer</h3>
+                        <p class="text-sm text-gray-600 mb-3">Click the bits to toggle them ON (1) or OFF (0) to see the Hex representation.</p>
+                        <div class="flex justify-center gap-2 mb-4">
+                            <button class="bit-btn w-12 h-12 bg-gray-200 border-2 border-gray-400 rounded font-bold text-xl" data-val="8">0</button>
+                            <button class="bit-btn w-12 h-12 bg-gray-200 border-2 border-gray-400 rounded font-bold text-xl" data-val="4">0</button>
+                            <button class="bit-btn w-12 h-12 bg-gray-200 border-2 border-gray-400 rounded font-bold text-xl" data-val="2">0</button>
+                            <button class="bit-btn w-12 h-12 bg-gray-200 border-2 border-gray-400 rounded font-bold text-xl" data-val="1">0</button>
+                        </div>
+                        <div class="flex justify-between px-4 font-mono font-bold bg-gray-100 p-2 rounded">
+                            <span>Dec: <span id="lab2-dec">0</span></span>
+                            <span class="text-blue-600">Hex: <span id="lab2-hex">0</span></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Concept 2 Labs -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-green-200">
+                    <h2 class="text-xl font-bold mb-4 text-green-700 border-b pb-2"><i class="fa-solid fa-arrow-right-to-bracket mr-2"></i>Hex to Decimal</h2>
+                    
+                    <div class="mb-6">
+                        <h3 class="font-bold text-gray-800 mb-2">Lab 3: Step-by-Step Calculator</h3>
+                        <p class="text-sm text-gray-600 mb-3">Enter a 2-digit hex number (e.g., 2B or FF) to see the math.</p>
+                        <div class="flex items-center gap-2 mb-3">
+                            <input type="text" id="lab3-input" maxlength="2" class="border-2 border-gray-300 rounded px-3 py-1 w-20 text-center font-bold uppercase" placeholder="Hex">
+                            <button onclick="calcLab3()" class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 font-bold">Calculate</button>
+                        </div>
+                        <div id="lab3-math" class="bg-gray-100 p-2 rounded text-sm font-mono min-h-[60px] text-gray-700">Waiting for input...</div>
+                    </div>
+
+                    <div class="border-t pt-4">
+                        <h3 class="font-bold text-gray-800 mb-2">Lab 4: Quick Quiz</h3>
+                        <p class="text-sm text-gray-600 mb-3">Convert the following hex number to decimal.</p>
+                        <div class="flex items-center justify-between bg-green-50 p-3 rounded border border-green-200 mb-3">
+                            <span class="font-bold text-xl tracking-widest text-green-800">Hex: <span id="lab4-target">3C</span></span>
+                            <div class="flex gap-2">
+                                <input type="number" id="lab4-input" class="border-2 border-gray-300 rounded w-20 px-2 text-center" placeholder="Dec">
+                                <button onclick="checkLab4()" class="bg-green-600 text-white px-3 py-1 rounded font-bold hover:bg-green-700">Check</button>
+                            </div>
+                        </div>
+                        <div id="lab4-fb" class="text-center text-sm font-bold h-5"></div>
+                    </div>
+                </div>
+                
+                <!-- Concept 3 Labs -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-purple-200">
+                    <h2 class="text-xl font-bold mb-4 text-purple-700 border-b pb-2"><i class="fa-solid fa-arrow-right-from-bracket mr-2"></i>Decimal to Hex</h2>
+                    
+                    <div class="mb-6">
+                        <h3 class="font-bold text-gray-800 mb-2">Lab 5: Division Simulator</h3>
+                        <p class="text-sm text-gray-600 mb-3">Enter a decimal (0-255) to view the division steps.</p>
+                        <div class="flex items-center gap-2 mb-3">
+                            <input type="number" id="lab5-input" min="0" max="255" class="border-2 border-gray-300 rounded px-3 py-1 w-20 text-center font-bold" placeholder="Dec">
+                            <button onclick="calcLab5()" class="bg-purple-600 text-white px-3 py-1 rounded hover:bg-purple-700 font-bold">Simulate</button>
+                        </div>
+                        <div id="lab5-math" class="bg-gray-100 p-2 rounded text-sm font-mono min-h-[60px] text-gray-700">Waiting for input...</div>
+                    </div>
+
+                    <div class="border-t pt-4">
+                        <h3 class="font-bold text-gray-800 mb-2">Lab 6: Quick Quiz</h3>
+                        <p class="text-sm text-gray-600 mb-3">Convert the following decimal number to hex.</p>
+                        <div class="flex items-center justify-between bg-purple-50 p-3 rounded border border-purple-200 mb-3">
+                            <span class="font-bold text-xl tracking-widest text-purple-800">Dec: <span id="lab6-target">75</span></span>
+                            <div class="flex gap-2">
+                                <input type="text" id="lab6-input" maxlength="2" class="border-2 border-gray-300 rounded w-20 px-2 text-center uppercase" placeholder="Hex">
+                                <button onclick="checkLab6()" class="bg-purple-600 text-white px-3 py-1 rounded font-bold hover:bg-purple-700">Check</button>
+                            </div>
+                        </div>
+                        <div id="lab6-fb" class="text-center text-sm font-bold h-5"></div>
+                    </div>
+                </div>
+                
+                <!-- Concept 4 Labs -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-red-200">
+                    <h2 class="text-xl font-bold mb-4 text-red-700 border-b pb-2"><i class="fa-solid fa-network-wired mr-2"></i>IT Applications</h2>
+                    
+                    <div class="mb-6">
+                        <h3 class="font-bold text-gray-800 mb-2">Lab 7: Color Hex Mixer</h3>
+                        <p class="text-sm text-gray-600 mb-3">Adjust RGB values (0-255) to see the Hex code update.</p>
+                        <div class="flex gap-4 items-center">
+                            <div class="flex-grow space-y-2">
+                                <div class="flex items-center gap-2"><span class="w-4 text-red-500 font-bold">R</span><input type="range" id="r-slider" min="0" max="255" value="0" class="w-full"></div>
+                                <div class="flex items-center gap-2"><span class="w-4 text-green-500 font-bold">G</span><input type="range" id="g-slider" min="0" max="255" value="0" class="w-full"></div>
+                                <div class="flex items-center gap-2"><span class="w-4 text-blue-500 font-bold">B</span><input type="range" id="b-slider" min="0" max="255" value="0" class="w-full"></div>
+                            </div>
+                            <div class="w-24 text-center">
+                                <div id="color-box" class="w-16 h-16 rounded border-2 border-gray-300 mx-auto mb-1 color-preview bg-black"></div>
+                                <span id="color-hex" class="font-mono font-bold text-sm">#000000</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border-t pt-4">
+                        <h3 class="font-bold text-gray-800 mb-2">Lab 8: MAC Address OUI Lookup</h3>
+                        <p class="text-sm text-gray-600 mb-3">Identify the manufacturer based on the first 3 hex pairs (OUI).</p>
+                        <div class="bg-red-50 p-3 rounded border border-red-200 mb-3">
+                            <div class="font-mono font-bold text-center text-lg mb-2 text-gray-800" id="lab8-mac">F0:CB:A1:12:34:56</div>
+                            <div class="flex gap-2">
+                                <select id="lab8-select" class="border-2 border-gray-300 rounded flex-grow px-2 py-1">
+                                    <option value="">Select Manufacturer...</option>
+                                    <option value="apple">Apple</option>
+                                    <option value="cisco">Cisco</option>
+                                    <option value="amazon">Amazon</option>
+                                    <option value="nintendo">Nintendo</option>
+                                    <option value="sony">Sony</option>
+                                </select>
+                                <button onclick="checkLab8()" class="bg-red-600 text-white px-3 py-1 rounded font-bold hover:bg-red-700">Verify</button>
+                            </div>
+                        </div>
+                        <div id="lab8-fb" class="text-center text-sm font-bold h-5"></div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="text-center mt-8">
+                <button onclick="switchTab('quiz')" class="bg-green-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-green-500 shadow-lg transition transform hover:scale-105">Take the Mastery Quiz <i class="fa-solid fa-clipboard-check ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- QUIZ SECTION -->
+        <div id="quiz-section" class="tab-content no-print">
+            <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-xl max-w-4xl mx-auto border-t-8 border-green-600">
+                <div class="text-center mb-8 border-b pb-4">
+                    <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Unit 02 Section 1.2.2 Mastery Quiz</h1>
+                    <p class="text-gray-600">Score 90% or higher (18/20) to earn your Certificate of Mastery and unlock the Retro Game!</p>
+                </div>
+
+                <div id="quiz-container" class="space-y-8">
+                    <!-- Questions injected via JS -->
+                </div>
+
+                <div class="mt-10 text-center border-t pt-6 flex flex-col md:flex-row justify-center items-center gap-4">
+                    <button id="submit-quiz-btn" onclick="gradeQuiz()" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">Submit Quiz</button>
+                    <button id="proceed-game-btn" onclick="switchTab('game')" class="hidden bg-purple-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-purple-700 shadow-lg transition w-full md:w-auto">Play Retro Game <i class="fa-solid fa-gamepad ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RETRO GAME SECTION -->
+        <div id="game-section" class="tab-content no-print">
+            <div class="bg-gray-900 p-6 sm:p-8 rounded-2xl shadow-xl max-w-4xl mx-auto border-4 border-gray-700 flex flex-col items-center">
+                <div class="text-center mb-6 w-full">
+                    <h1 class="text-4xl font-extrabold text-green-500 mb-2 tracking-widest uppercase" style="font-family: monospace; text-shadow: 0 0 10px rgba(16, 185, 129, 0.5);">Hex Matcher</h1>
+                    <p class="text-gray-300 text-sm max-w-lg mx-auto">Access the memory banks! Flip the cards to match the Hexadecimal value with its corresponding Decimal equivalent to clear the system buffer.</p>
+                </div>
+                
+                <div class="flex justify-between items-center w-full max-w-[500px] mb-4 px-4 text-white font-mono text-xl bg-gray-800 p-3 rounded border border-gray-600 shadow-inner">
+                    <div>Moves: <span id="game-moves" class="text-blue-400 font-bold">0</span></div>
+                    <div>Matches: <span id="game-matches" class="text-green-400 font-bold">0</span>/8</div>
+                </div>
+
+                <div class="relative w-full pb-8">
+                    <!-- Game Grid -->
+                    <div id="memory-board" class="memory-grid">
+                        <!-- Cards injected via JS -->
+                    </div>
+                    
+                    <!-- Overlay Start Button -->
+                    <div id="game-overlay" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-80 rounded-lg max-w-[500px] mx-auto z-10 backdrop-blur-sm">
+                        <button id="start-game-btn" class="bg-green-600 hover:bg-green-500 text-white font-bold font-mono py-4 px-8 rounded-lg text-2xl border-4 border-green-800 uppercase transform transition hover:scale-105 shadow-[0_0_15px_rgba(16,185,129,0.7)]">Initialize Data</button>
+                    </div>
+                </div>
+
+                <div class="mt-4 text-center w-full border-t border-gray-700 pt-6">
+                    <button onclick="switchTab('cert')" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">View Certificate <i class="fa-solid fa-award ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CERTIFICATE SECTION -->
+        <div id="cert-section" class="tab-content">
+            <div class="max-w-5xl mx-auto">
+                <!-- Controls -->
+                <div class="bg-white p-6 rounded shadow mb-6 no-print text-center border border-gray-200">
+                    <h2 class="text-2xl font-bold text-green-600 mb-2">🎉 Congratulations! 🎉</h2>
+                    <p class="text-gray-700 mb-4">You have mastered the concepts of Hexadecimal conversions and applications.</p>
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+                        <input type="text" id="student-name-input" value="Student" placeholder="Enter your first name" class="border-2 border-gray-300 rounded px-4 py-2 w-full md:w-64 focus:border-green-500 focus:outline-none">
+                        <button onclick="updateCertName()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">Update Name</button>
+                        <button id="download-btn" onclick="downloadCert()" class="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900 transition flex items-center justify-center">
+                            <i class="fa-solid fa-download mr-2"></i>Download PNG
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Certificate Render Container -->
+                <div class="cert-preview-container print:p-0 print:bg-white">
+                    <div id="certificate">
+                        <div class="gold-seal">
+                            <div class="gold-seal-inner-1">
+                                <div class="gold-seal-inner-2">
+                                     <span class="embossed-text embossed-text-large">Certificate</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-small">Of</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-large">Excellence</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="relative z-20 w-full h-full flex flex-col pt-[48px] pl-[380px] pr-[48px]">
+                            <h1 class="text-[#047857] text-[4.5rem] leading-none font-serif font-bold tracking-wide uppercase mb-2">CERTIFICATE</h1>
+                            <h2 class="text-gray-800 text-3xl font-serif tracking-widest uppercase mb-10">Of Achievement</h2>
+                            
+                            <p class="text-[1.4rem] font-body text-gray-800 mb-4">This is to certify that</p>
+                            
+                            <div class="relative mb-8 w-full">
+                                <h3 id="cert-student-name" class="text-[4rem] text-[#047857] font-serif italic leading-none pb-2 relative z-10 text-center w-full block">Student</h3>
+                                <div class="w-full border-b-[2px] border-[#047857] absolute bottom-[4px] left-0 z-0"></div>
+                                <div class="w-full border-b-[2px] border-dotted border-gray-400 absolute bottom-[0px] left-0 z-0"></div>
+                            </div>
+                            
+                            <p class="text-[1.3rem] font-body text-gray-800 leading-relaxed w-full pr-4">
+                                Has successfully completed the assessment for 
+                                <strong class="text-[1.8rem] text-[#047857] block mt-4 mb-2 font-serif">Cyber.org Tech+ Unit 02 Section 1.2.2</strong>
+                                <strong class="text-[1.5rem] text-black block mb-4 font-serif italic">Hexadecimal & Decimal</strong>
+                                <span class="text-[1.1rem] text-gray-700 leading-snug block">Demonstrating proficiency in converting between base-10 and base-16 numeral systems, and understanding the critical application of hexadecimal formatting in networking, hardware identification, and system diagnostics.</span>
+                            </p>
+                            
+                            <div class="flex justify-end gap-16 items-end mt-auto mb-[60px] w-full pr-8">
+                                <div class="w-64">
+                                    <div class="border-b border-gray-600 mb-2 h-20 flex items-end justify-center relative">
+                                        <span class="font-script text-[5rem] text-[#047857] absolute bottom-[-10px] transform -rotate-3 opacity-90">Dr. M. S</span>
+                                    </div>
+                                    <p class="font-serif text-xl text-gray-800 text-center">Administration</p>
+                                </div>
+                                
+                                <div class="w-64">
+                                    <div class="border-b border-gray-600 mb-2 text-center h-20 flex items-end justify-center">
+                                        <p id="cert-date" class="font-body text-2xl text-gray-800 pb-1">Date Here</p>
+                                    </div>
+                                    <p class="font-serif text-xl text-gray-800 text-center">Date</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Custom Modal for Alerts -->
+    <div id="custom-modal" class="fixed inset-0 bg-black bg-opacity-50 z-[100] hidden flex justify-center items-center backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all border-t-8 border-green-600">
+            <div class="text-center">
+                <div id="modal-icon" class="text-5xl mb-4"></div>
+                <h3 id="modal-title" class="text-2xl font-bold mb-2 text-gray-900"></h3>
+                <p id="modal-msg" class="text-gray-600 mb-6"></p>
+                <button onclick="closeModal()" class="bg-green-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-green-700 transition w-full">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Briefing Modal -->
+    <div id="briefing-modal" class="fixed inset-0 bg-black bg-opacity-70 z-[120] hidden flex justify-center items-center backdrop-blur-sm p-4 sm:p-6">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col transform transition-all overflow-hidden border-4 border-green-700">
+            <div class="p-6 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+                <div class="flex items-center gap-4">
+                    <div id="briefing-modal-icon" class="text-4xl"></div>
+                    <h3 id="briefing-modal-title" class="text-2xl md:text-3xl font-bold text-gray-900"></h3>
+                </div>
+                <button onclick="closeBriefing()" class="text-gray-400 hover:text-red-600 transition text-4xl leading-none">&times;</button>
+            </div>
+            <div id="briefing-modal-content" class="p-6 md:p-10 overflow-y-auto flex-grow text-gray-700 text-lg leading-relaxed bg-white">
+                <!-- Dynamic Content Injected Here -->
+            </div>
+            <div class="p-6 border-t border-gray-200 bg-gray-50 flex justify-end">
+                <button onclick="closeBriefing()" class="bg-green-700 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-green-800 transition shadow-md">Acknowledge & Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Extensive Briefing Content Data (Min 7 Paragraphs per detail, specific structure for Use Cases) ---
+        const briefingData = {
+            'concept1-details': {
+                title: 'Introduction to Hexadecimal',
+                icon: '<i class="fa-solid fa-hashtag text-blue-600"></i>',
+                html: `
+                    <p class="mb-5">Hexadecimal, often simply called "hex," is a foundational numeral system used extensively throughout computing and digital electronics. Unlike our everyday decimal system which is base-10, hexadecimal is a base-16 system. This means it relies on sixteen distinct symbols to represent values, offering a unique mathematical structure tailored perfectly for digital systems.</p>
+                    
+                    <p class="mb-5">To achieve sixteen unique symbols, the hexadecimal system utilizes the standard digits 0 through 9 to represent values zero to nine. However, it must also represent values ten through fifteen using single characters. To accomplish this, it adopts the first six letters of the English alphabet: A, B, C, D, E, and F.</p>
+                    
+                    <p class="mb-5">In this system, A equals 10, B equals 11, C equals 12, D equals 13, E equals 14, and F equals 15. This alphanumeric approach allows complex, multi-digit decimal numbers to be condensed into shorter, more manageable representations. It is a brilliant solution to a uniquely digital problem regarding human readability.</p>
+                    
+                    <p class="mb-5">The primary reason hexadecimal is favored in computer science is its direct, mathematically perfect relationship with binary, the base-2 language of computers. A single hexadecimal digit can precisely represent exactly four binary bits, also known as a "nibble." Since a standard byte consists of eight bits, it can be perfectly represented by exactly two hexadecimal digits.</p>
+                    
+                    <p class="mb-5">This direct translation makes hexadecimal an incredibly efficient shorthand. A long, cumbersome binary string like <code>1101 0110</code> can be cleanly expressed as <code>D6</code> in hexadecimal. For programmers and IT professionals, reading, writing, and debugging <code>D6</code> is significantly less prone to error than tracking long strings of ones and zeros.</p>
+                    
+                    <p class="mb-5">Furthermore, the compact nature of hexadecimal saves valuable screen space in debuggers, memory dumps, and network logs. When an IT professional is analyzing a system crash or tracking memory leaks, they are often presented with massive blocks of raw data. Hexadecimal formatting makes these data blocks structured, legible, and easy to parse visually.</p>
+                    
+                    <p>Ultimately, hexadecimal serves as the perfect bridge between the machine's absolute reliance on binary hardware and the human need for a readable, organized numeral system. While computers never actually "think" in hexadecimal, it remains the standard translation layer for human interaction with raw digital data across the industry.</p>
+                `
+            },
+            'concept1-usecase': {
+                title: 'Introduction to Hexadecimal: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 1: Low-Level Programming</h4>
+                        <p class="mb-2">Programmers working directly with hardware or embedded systems must manipulate data at the bit level, making binary cumbersome and error-prone.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1:</strong> A programmer is writing firmware for a microcontroller. Instead of typing out 8 bits of binary (e.g., <code>10101111</code>) to control the electrical pins on a chip, they use the hex shorthand <code>0xAF</code>, making the code cleaner and easier to verify.</li>
+                            <li><strong>Example 2:</strong> A developer analyzing a raw memory dump after a software crash reviews data blocks presented entirely in hexadecimal grids. The visual alignment of 2-character hex pairs allows them to quickly spot anomalies that would be lost in a sea of binary ones and zeros.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 2: Digital Forensics</h4>
+                        <p class="mb-2">Cybersecurity analysts and forensic investigators frequently examine raw file structures to determine truth, bypassing standard operating system interpretations.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1:</strong> An analyst is examining a potentially malicious file using a Hex Editor. By reading the hex signatures at the beginning of the file (like <code>4D 5A</code> for a Windows executable), they can determine the true file type, even if a hacker disguised it by changing the file extension to .txt.</li>
+                            <li><strong>Example 2:</strong> When recovering deleted data from a corrupted hard drive, a forensic expert searches for specific hex patterns that indicate the start of JPEG images (<code>FF D8 FF E0</code>), successfully extracting photos from raw, unformatted disk sectors without needing a file system.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Code & Memory</p>
+                            <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=600&h=350" alt="Code on a screen representing hex data" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Forensics Analysis</p>
+                            <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=600&h=350" alt="Matrix style digital data representing low level investigation" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'concept2-details': {
+                title: 'Converting Hexadecimal to Decimal',
+                icon: '<i class="fa-solid fa-arrow-right-to-bracket text-green-600"></i>',
+                html: `
+                    <p class="mb-5">Converting numbers from hexadecimal to decimal is a fundamental skill for anyone working in IT, networking, or computer science. The process relies heavily on understanding place value, much like the decimal system we use every day to handle currency and counting. However, instead of using powers of 10, hexadecimal mathematics uses powers of 16.</p>
+                    
+                    <p class="mb-5">In a hexadecimal number, reading from right to left, the first position represents the 16<sup>0</sup> place (the ones place). The second position represents the 16<sup>1</sup> place (the sixteens place). The third position represents the 16<sup>2</sup> place (the 256s place), and so on. Understanding this escalating structure is the absolute key to accurate conversion.</p>
+                    
+                    <p class="mb-5">To begin a conversion calculation, you must evaluate each digit of the hexadecimal number individually. If the digit is a standard number between 0 and 9, you simply use that mathematical value. However, if the digit is a letter from A to F, you must first "pre-convert" it into its corresponding decimal value (10 to 15) before performing any multiplication.</p>
+                    
+                    <p class="mb-5">Once you have the individual decimal values, you multiply each digit by its respective place value based entirely on its position in the string. For example, if you have the hexadecimal number "2B", you evaluate the 'B' in the ones place (16<sup>0</sup>) and the '2' in the sixteens place (16<sup>1</sup>).</p>
+                    
+                    <p class="mb-5">Continuing the "2B" example step-by-step: you first pre-convert the letter 'B' to the number 11. You multiply 11 by 1 (the place value), which equals 11. Then, you multiply the '2' by 16 (its place value), which equals 32. Finally, you sum the results of these multiplications together: 32 + 11 equals 43. Therefore, 2B in hexadecimal is exactly 43 in decimal.</p>
+                    
+                    <p class="mb-5">A very common mistake beginners make during this process is forgetting to pre-convert the letters, or mistakenly multiplying from left to right instead of correctly moving right to left, which drastically skews the place values. Methodical, step-by-step calculation on paper is required to ensure accuracy, especially when dealing with larger, three-digit numbers like 3FA.</p>
+                    
+                    <p>While experienced IT professionals inherently understand the underlying math, they rarely perform complex, multi-digit conversions by hand in the real world. Instead, they utilize programmer calculators or script automated conversions. However, grasping the manual mathematical process is essential for troubleshooting and intuitively understanding how data scales within a digital system.</p>
+                `
+            },
+            'concept2-usecase': {
+                title: 'Hexadecimal to Decimal: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-green-800 mb-2 border-b-2 border-green-200 pb-1">Case 1: Translating Network Packets</h4>
+                        <p class="mb-2">Network engineers must frequently analyze raw data packets traversing a network to diagnose connectivity issues or identify protocols.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1:</strong> An engineer is using the software Wireshark to capture raw network traffic. The packet header displays a protocol value of <code>0x06</code> in hex. The engineer converts this to the decimal number 6, which they know from networking standards corresponds to the Transmission Control Protocol (TCP).</li>
+                            <li><strong>Example 2:</strong> While troubleshooting a misconfigured router, a technician sees a destination port number listed in hex as <code>0x0050</code>. They convert this to decimal by multiplying 5 by 16 (yielding 80). They now understand the traffic is standard HTTP web traffic operating on port 80.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-green-800 mb-2 border-b-2 border-green-200 pb-1">Case 2: Decoding System Error Logs</h4>
+                        <p class="mb-2">Operating systems often dump raw, unformatted error codes into system logs when software crashes, requiring translation for legacy documentation.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1:</strong> A Windows server experiences a "blue screen" and logs an error code. A junior admin looks up the hex code <code>0x1771</code>. To understand the underlying numerical error index used by older internal software, they convert 1771 hex to its decimal equivalent (6001).</li>
+                            <li><strong>Example 2:</strong> A custom corporate application fails to load and throws an exception code containing the hex value <code>3EB</code>. The developer converts this to decimal (1003) and checks the software's internal documentation, finding that error 1003 specifically indicates an "ERROR_CAN_NOT_COMPLETE" status.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Network Analysis</p>
+                            <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=600&h=350" alt="Server racks representing network traffic" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: System Diagnostics</p>
+                            <img src="https://images.unsplash.com/photo-1629654297299-c8506221ca97?auto=format&fit=crop&w=600&h=350" alt="Computer screen with error code representation" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'concept3-details': {
+                title: 'Converting Decimal to Hexadecimal',
+                icon: '<i class="fa-solid fa-arrow-right-from-bracket text-purple-600"></i>',
+                html: `
+                    <p class="mb-5">Converting standard decimal numbers into hexadecimal is the exact reverse process of hex-to-decimal, and it is equally important when configuring network systems or programming hardware. While hex-to-decimal relies heavily on multiplication, decimal-to-hexadecimal relies on repetitive division and the careful tracking of remainders.</p>
+                    
+                    <p class="mb-5">The most reliable and standard method for this conversion is known as the "divide by 16" technique. You take your starting decimal number and divide it by 16. The whole number result of this division becomes the starting point for the next division step, while the remainder of the division becomes a piece of your final hexadecimal answer.</p>
+                    
+                    <p class="mb-5">For example, to convert the decimal number 75 to hexadecimal, you first divide 75 by 16. The number 16 goes into 75 exactly four times (because 16 * 4 = 64), leaving a mathematical remainder of 11. You record the 4 for the next step, and you record the remainder 11 as part of your emerging hexadecimal value.</p>
+                    
+                    <p class="mb-5">Crucially, any remainder that falls between 10 and 15 must be converted into its corresponding hexadecimal letter before the final answer is assembled. You cannot simply write "11" in the hex string. In our example, the remainder 11 must be converted to the letter 'B'.</p>
+                    
+                    <p class="mb-5">You then take the whole number result from the previous step (which was 4) and divide it by 16 again. Since 16 goes into 4 zero times, the new remainder is simply 4. When your division process results in a whole number of zero, the mathematical process is complete and you can stop dividing.</p>
+                    
+                    <p class="mb-5">The final and most important step is to read the accumulated remainders from bottom to top, or from the last calculation to the first. In our example, the last remainder was 4, and the first remainder was 'B' (11). Therefore, reading bottom to top gives us the final, correct hexadecimal number: 4B.</p>
+                    
+                    <p>This systematic division works flawlessly for decimal numbers of any size. Whether you are converting a small number like 15 or a massive memory address like 48879 (which converts to the hex code BEEF), repeatedly dividing by 16 and tracking the remainders will always yield the correct hexadecimal format.</p>
+                `
+            },
+            'concept3-usecase': {
+                title: 'Decimal to Hexadecimal: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Case 1: Configuring Custom IP Settings</h4>
+                        <p class="mb-2">Network configurations often require translating decimal planning numbers into the hexadecimal formats required by modern networking equipment.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1:</strong> An IT student is learning to manually construct an IPv6 address for a specific lab configuration. They are given a decimal subnet identifier of 4660. They must convert this decimal number to hex (<code>1234</code>) to properly format and input the IPv6 string into the router.</li>
+                            <li><strong>Example 2:</strong> A network administrator needs to define a specific quality of service (QoS) tag on a core switch. The internal documentation lists the priority level as decimal 254. The admin converts this to the hex value <code>FE</code> to successfully enter it into the switch's command-line interface.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Case 2: Web Design & Graphics</h4>
+                        <p class="mb-2">Designers often work in decimal RGB values when creating graphics, but web developers require those exact colors in hexadecimal format for CSS.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1:</strong> A graphic designer creates a specific brand color using sliders in Photoshop, resulting in a Red value of 255, Green of 87, and Blue of 51. The web developer must convert these decimal values into a hex color code (<code>#FF5733</code>) to apply the color accurately in the website's stylesheet.</li>
+                            <li><strong>Example 2:</strong> A UI designer wants a pure white background for a new mobile app. Knowing white represents the maximum value for light in RGB (255, 255, 255), they convert the decimal 255 to hex (<code>FF</code>), resulting in the universally recognized hex code <code>#FFFFFF</code>.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Network Hardware</p>
+                            <img src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=600&h=350" alt="Networking cables plugged into a switch" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: UI/UX Design</p>
+                            <img src="https://images.unsplash.com/photo-1561070791-2526d30994b5?auto=format&fit=crop&w=600&h=350" alt="Designer working with color palettes on a screen" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'concept4-details': {
+                title: 'Real-World IT Applications',
+                icon: '<i class="fa-solid fa-network-wired text-red-600"></i>',
+                html: `
+                    <p class="mb-5">Hexadecimal is not just an abstract mathematical concept taught in classrooms; it is actively used every single day by IT professionals across various disciplines. Because it condenses lengthy binary data into a readable, structured format, it serves as the preferred notation for identifying hardware, mapping networks, and debugging software.</p>
+                    
+                    <p class="mb-5">One of the most visible and common applications of hexadecimal is in web design and graphics. Colors on a computer screen are created by mixing Red, Green, and Blue (RGB) light. Each color channel has 256 possible values (0-255). Instead of writing these out in decimal, designers use a 6-digit hex code, like <code>#FF5733</code>, where every two characters represent a specific color channel.</p>
+                    
+                    <p class="mb-5">In network administration, Media Access Control (MAC) addresses are a crucial application of hexadecimal. Every single network interface card in the world has a unique physical MAC address, formatted as six pairs of hexadecimal digits (e.g., <code>F0:CB:A1:12:34:56</code>). The first three pairs serve as an Organizationally Unique Identifier (OUI), allowing admins to instantly identify the device manufacturer, such as Apple or Cisco.</p>
+                    
+                    <p class="mb-5">As the internet has grown exponentially, the world literally ran out of traditional IPv4 addresses. The modern solution, IPv6, utilizes 128-bit addresses to provide a virtually infinite number of IP addresses. Because a 128-bit binary number is completely unreadable to humans, IPv6 addresses are exclusively written using eight groups of four hexadecimal digits (e.g., <code>2001:0db8::1</code>).</p>
+                    
+                    <p class="mb-5">System administrators and software developers also encounter hexadecimal constantly when dealing with system errors and memory crashes. When a Windows system experiences a critical failure (a Blue Screen of Death), it often provides a Stop Code or Error Code in hexadecimal format (such as <code>0xC0000005</code>). These precise codes help technicians pinpoint the exact memory violation or hardware fault causing the issue.</p>
+                    
+                    <p class="mb-5">Furthermore, low-level programmers use hexadecimal to map out physical RAM and storage locations. Instead of navigating millions of arbitrary decimal numbers, memory blocks are designated by hexadecimal addresses (like <code>0x3F4A</code>). This keeps documentation concise and aligns perfectly with the underlying binary architecture of the microchips.</p>
+                    
+                    <p>Ultimately, experienced IT professionals rely heavily on pattern recognition with hexadecimal rather than manual conversion. A veteran tech will immediately recognize that an IP address starting with <code>FE80</code> is a local IPv6 address, or that the hex color <code>#000000</code> represents pitch black, proving that fluency in hexadecimal is a vital, everyday language in the tech industry.</p>
+                `
+            },
+            'concept4-usecase': {
+                title: 'IT Applications: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-red-800 mb-2 border-b-2 border-red-200 pb-1">Case 1: Hardware Identification on Networks</h4>
+                        <p class="mb-2">Network security often relies on identifying the physical hardware connecting to the infrastructure using MAC addresses.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1:</strong> A network security appliance detects an unknown, rogue device connected to the corporate Wi-Fi. The admin looks at the device's MAC address (<code>F0:CB:A1:12:34:56</code>). By checking the first three hex pairs (<code>F0:CB:A1</code>) against an OUI database, they immediately identify the device as an Apple product, helping track it down to an employee's iPhone.</li>
+                            <li><strong>Example 2:</strong> A school IT department wants to block all gaming consoles from the dorm network to save bandwidth. They write a script that identifies MAC addresses starting with <code>98:E2:55</code> (Nintendo) or <code>58:18:62</code> (Sony) and automatically places those devices on a heavily restricted VLAN.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-red-800 mb-2 border-b-2 border-red-200 pb-1">Case 2: Advanced System Troubleshooting</h4>
+                        <p class="mb-2">When high-level software fails, technicians rely on low-level hexadecimal error codes generated by the OS kernel to diagnose the root cause.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1:</strong> A user reports they cannot access their online portal. The helpdesk technician bypasses the generic web error and checks the deep server logs, seeing "Win32 Error Code <code>0x525</code>". Based on standard hex error codes, the tech knows this specifically translates to "ERROR_NO_SUCH_USER", indicating the user simply typed their username incorrectly.</li>
+                            <li><strong>Example 2:</strong> An accountant's computer crashes violently while running a massive spreadsheet calculation. The system log shows "Win32 Error Code <code>0x216</code>". The IT support recognizes this hex code represents "ERROR_ARITHMETIC_OVERFLOW", meaning the specific calculation exceeded the software's memory capacity.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Device Networking</p>
+                            <img src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=600&h=350" alt="Networking equipment representing MAC addresses" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: System Errors</p>
+                            <img src="https://images.unsplash.com/photo-1593640408182-31c70c8268f5?auto=format&fit=crop&w=600&h=350" alt="Computer keyboard focusing on technical troubleshooting" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        // --- STREAMING_CHUNK:Setting up Modal functions... ---
+        // Modal Control Functions
+        function openBriefing(key) {
+            const modal = document.getElementById('briefing-modal');
+            const data = briefingData[key];
+            if(data) {
+                document.getElementById('briefing-modal-icon').innerHTML = data.icon;
+                document.getElementById('briefing-modal-title').innerText = data.title;
+                document.getElementById('briefing-modal-content').innerHTML = data.html;
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; 
+            }
+        }
+
+        function closeBriefing() {
+            document.getElementById('briefing-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto'; 
+        }
+
+        document.getElementById('briefing-modal').addEventListener('click', function(e) {
+            if(e.target === this) closeBriefing();
+        });
+        
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId + '-section').classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-green-900'));
+            const activeBtn = document.getElementById('nav-' + tabId);
+            if(activeBtn && tabId !== 'cert') activeBtn.classList.add('bg-green-900');
+            
+            document.querySelectorAll('.nav-btn-mobile').forEach(btn => btn.classList.remove('bg-green-900'));
+            const activeMobileBtn = document.getElementById('nav-' + tabId + '-mobile');
+            if(activeMobileBtn && tabId !== 'cert') activeMobileBtn.classList.add('bg-green-900');
+
+            window.scrollTo(0,0);
+        }
+
+        function showModal(title, message, type = 'info') {
+            const modal = document.getElementById('custom-modal');
+            const icon = document.getElementById('modal-icon');
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-msg').innerText = message;
+            
+            if(type === 'success') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-check text-green-500"></i>';
+            } else if (type === 'error') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500"></i>';
+            } else if (type === 'warning') {
+                icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-yellow-500"></i>';
+            } else {
+                icon.innerHTML = '<i class="fa-solid fa-circle-info text-blue-500"></i>';
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        // --- STREAMING_CHUNK:Implementing Interactive Mini-Labs Logic... ---
+        // --- LAB 1: Symbol Matcher ---
+        let lab1Count = 0;
+        let draggedHexItem = null;
+
+        document.querySelectorAll('#lab1-drags .io-item').forEach(item => {
+            item.addEventListener('dragstart', function() {
+                draggedHexItem = this;
+                setTimeout(() => this.classList.add('opacity-50'), 0);
+            });
+            item.addEventListener('dragend', function() {
+                setTimeout(() => this.classList.remove('opacity-50'), 0);
+                draggedHexItem = null;
+            });
+        });
+
+        document.querySelectorAll('#activity-section .cat-dropzone').forEach(zone => {
+            zone.addEventListener('dragover', e => e.preventDefault());
+            zone.addEventListener('dragenter', function(e) { e.preventDefault(); this.classList.add('brightness-95'); });
+            zone.addEventListener('dragleave', function() { this.classList.remove('brightness-95'); });
+            zone.addEventListener('drop', function() {
+                this.classList.remove('brightness-95');
+                if(draggedHexItem) {
+                    if(draggedHexItem.dataset.val === this.dataset.target) {
+                        this.appendChild(draggedHexItem);
+                        draggedHexItem.classList.remove('bg-blue-100', 'cursor-grab');
+                        draggedHexItem.classList.add('bg-green-100', 'text-green-800', 'cursor-default');
+                        draggedHexItem.setAttribute('draggable', 'false');
+                        lab1Count++;
+                        
+                        document.getElementById('lab1-fb').innerText = "Correct Match!";
+                        
+                        if(lab1Count === 3) {
+                            setTimeout(() => document.getElementById('lab1-fb').innerText = "Lab 1 Complete!", 500);
+                        }
+                    } else {
+                        document.getElementById('lab1-fb').innerText = "Incorrect. Try again.";
+                        document.getElementById('lab1-fb').classList.replace('text-green-600', 'text-red-600');
+                        setTimeout(() => {
+                            document.getElementById('lab1-fb').innerText = "";
+                            document.getElementById('lab1-fb').classList.replace('text-red-600', 'text-green-600');
+                        }, 1500);
+                    }
+                }
+            });
+        });
+
+        // --- LAB 2: Nibble Visualizer ---
+        let nibbleVal = 0;
+        document.querySelectorAll('.bit-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                let val = parseInt(this.dataset.val);
+                if(this.innerText === '0') {
+                    this.innerText = '1';
+                    this.classList.replace('bg-gray-200', 'bg-blue-500');
+                    this.classList.replace('text-gray-800', 'text-white');
+                    nibbleVal += val;
+                } else {
+                    this.innerText = '0';
+                    this.classList.replace('bg-blue-500', 'bg-gray-200');
+                    this.classList.replace('text-white', 'text-gray-800');
+                    nibbleVal -= val;
+                }
+                document.getElementById('lab2-dec').innerText = nibbleVal;
+                document.getElementById('lab2-hex').innerText = nibbleVal.toString(16).toUpperCase();
+            });
+        });
+
+        // --- LAB 3: Hex to Dec Calc ---
+        function calcLab3() {
+            let input = document.getElementById('lab3-input').value.toUpperCase();
+            let fb = document.getElementById('lab3-math');
+            if(!/^[0-9A-F]{1,2}$/.test(input)) {
+                fb.innerHTML = "<span class='text-red-500'>Please enter a valid 1 or 2 digit Hex number.</span>";
+                return;
+            }
+            if(input.length === 1) input = '0' + input;
+            
+            let d1 = parseInt(input[0], 16);
+            let d2 = parseInt(input[1], 16);
+            let result = (d1 * 16) + (d2 * 1);
+            
+            fb.innerHTML = `
+                Step 1: ${input[0]} = ${d1}, ${input[1]} = ${d2} <br>
+                Step 2: (${d1} * 16) + (${d2} * 1) <br>
+                Step 3: ${d1*16} + ${d2} = <strong>${result}</strong>
+            `;
+        }
+
+        // --- LAB 4: Hex Quiz ---
+        function checkLab4() {
+            let targetHex = document.getElementById('lab4-target').innerText;
+            let targetDec = parseInt(targetHex, 16);
+            let input = document.getElementById('lab4-input').value;
+            let fb = document.getElementById('lab4-fb');
+            
+            if(parseInt(input) === targetDec) {
+                fb.innerText = "Correct!";
+                fb.className = "text-center text-sm font-bold text-green-600 h-5";
+                // Generate new
+                let newHex = Math.floor(Math.random() * 256).toString(16).toUpperCase();
+                setTimeout(() => {
+                    document.getElementById('lab4-target').innerText = newHex.length === 1 ? '0'+newHex : newHex;
+                    document.getElementById('lab4-input').value = '';
+                    fb.innerText = '';
+                }, 1000);
+            } else {
+                fb.innerText = "Incorrect. Try converting place values.";
+                fb.className = "text-center text-sm font-bold text-red-600 h-5";
+            }
+        }
+
+        // --- LAB 5: Dec to Hex Calc ---
+        function calcLab5() {
+            let input = parseInt(document.getElementById('lab5-input').value);
+            let fb = document.getElementById('lab5-math');
+            if(isNaN(input) || input < 0 || input > 255) {
+                fb.innerHTML = "<span class='text-red-500'>Please enter a valid decimal between 0 and 255.</span>";
+                return;
+            }
+            
+            let quotient = Math.floor(input / 16);
+            let remainder = input % 16;
+            let hexRem = remainder.toString(16).toUpperCase();
+            let hexQuot = quotient.toString(16).toUpperCase();
+            
+            fb.innerHTML = `
+                ${input} / 16 = ${quotient} with remainder ${remainder} <br>
+                Remainder ${remainder} = Hex '${hexRem}' <br>
+                Result = <strong>${hexQuot}${hexRem}</strong>
+            `;
+        }
+
+        // --- LAB 6: Dec Quiz ---
+        function checkLab6() {
+            let targetDec = parseInt(document.getElementById('lab6-target').innerText);
+            let targetHex = targetDec.toString(16).toUpperCase();
+            let input = document.getElementById('lab6-input').value.toUpperCase();
+            let fb = document.getElementById('lab6-fb');
+            
+            // Allow without leading zero for single digits
+            if(input === targetHex || (targetHex.length === 1 && input === '0'+targetHex)) {
+                fb.innerText = "Correct!";
+                fb.className = "text-center text-sm font-bold text-green-600 h-5";
+                // Generate new
+                let newDec = Math.floor(Math.random() * 256);
+                setTimeout(() => {
+                    document.getElementById('lab6-target').innerText = newDec;
+                    document.getElementById('lab6-input').value = '';
+                    fb.innerText = '';
+                }, 1000);
+            } else {
+                fb.innerText = "Incorrect. Remember to divide by 16.";
+                fb.className = "text-center text-sm font-bold text-red-600 h-5";
+            }
+        }
+
+        // --- LAB 7: RGB Color Mixer ---
+        function updateColor() {
+            let r = parseInt(document.getElementById('r-slider').value);
+            let g = parseInt(document.getElementById('g-slider').value);
+            let b = parseInt(document.getElementById('b-slider').value);
+            
+            let hexR = r.toString(16).padStart(2, '0').toUpperCase();
+            let hexG = g.toString(16).padStart(2, '0').toUpperCase();
+            let hexB = b.toString(16).padStart(2, '0').toUpperCase();
+            
+            let hexCode = `#${hexR}${hexG}${hexB}`;
+            
+            document.getElementById('color-box').style.backgroundColor = hexCode;
+            document.getElementById('color-hex').innerText = hexCode;
+        }
+        document.getElementById('r-slider').addEventListener('input', updateColor);
+        document.getElementById('g-slider').addEventListener('input', updateColor);
+        document.getElementById('b-slider').addEventListener('input', updateColor);
+
+        // --- LAB 8: MAC OUI Lookup ---
+        const ouiMap = {
+            'F0:CB:A1:12:34:56': 'apple',
+            'F8:68:FF:12:34:56': 'cisco',
+            '6C:55:B1:12:34:56': 'amazon',
+            '98:E2:55:12:34:56': 'nintendo',
+            '58:18:62:12:34:56': 'sony'
+        };
+        const macKeys = Object.keys(ouiMap);
+        
+        function checkLab8() {
+            let currentMac = document.getElementById('lab8-mac').innerText;
+            let selected = document.getElementById('lab8-select').value;
+            let fb = document.getElementById('lab8-fb');
+            
+            if(!selected) return;
+            
+            if(ouiMap[currentMac] === selected) {
+                fb.innerText = "Verified! Correct OUI mapping.";
+                fb.className = "text-center text-sm font-bold text-green-600 h-5";
+                
+                setTimeout(() => {
+                    let nextMac = macKeys[Math.floor(Math.random() * macKeys.length)];
+                    document.getElementById('lab8-mac').innerText = nextMac;
+                    document.getElementById('lab8-select').value = "";
+                    fb.innerText = "";
+                }, 1500);
+            } else {
+                fb.innerText = "Incorrect Manufacturer. Check OUI documentation.";
+                fb.className = "text-center text-sm font-bold text-red-600 h-5";
+            }
+        }
+
+
+        // --- STREAMING_CHUNK:Building the Quiz Dataset... ---
+        // --- QUIZ LOGIC (20 Questions) ---
+        const quizData = [
+            // 10 provided from Document
+            { q: "Why is hexadecimal called a base-16 system?", options: ["It has 16 different place values.", "It uses 16 unique symbols, including letters and numbers.", "It is a shorthand for decimal numbers.", "It only represents even numbers."], answer: 1 },
+            { q: "What symbols are used in the hexadecimal system?", options: ["0-9 and A-Z", "0-9 and G-L", "1-10 and X-Z", "0-9 and A-F"], answer: 3 },
+            { q: "When converting a hexadecimal number to decimal, why must letters A-F be 'pre-converted'?", options: ["They need to be multiplied by 16 before converting.", "They represent values higher than 9 and must be written as decimal numbers before performing calculations.", "They are written differently in decimal form.", "Hexadecimal numbers must be simplified before conversion."], answer: 1 },
+            { q: "What decimal value does the hexadecimal letter 'D' represent?", options: ["10", "11", "12", "13"], answer: 3 },
+            { q: "How many hexadecimal digits are needed to represent a single byte (8 bits)?", options: ["1", "2", "4", "8"], answer: 1 },
+            { q: "What is the decimal equivalent of the hexadecimal number 3C?", options: ["48", "49", "59", "60"], answer: 3 },
+            { q: "Why do IT professionals prefer hexadecimal over binary?", options: ["Hexadecimal uses fewer digits to represent the same information.", "Hexadecimal makes computers process data faster.", "Binary is no longer used in modern computing.", "Hexadecimal is easier for computers to understand than binary."], answer: 0 },
+            { q: "The first three pairs of a MAC address identify what?", options: ["The device's IP address", "The manufacturer of the device", "The user's location", "The network speed"], answer: 1 },
+            { q: "Why was IPv6 introduced to replace IPv4?", options: ["IPv4 used too much memory.", "IPv4 did not work with hexadecimal.", "IPv4 did not support wireless connections.", "IPv4 ran out of unique addresses."], answer: 3 },
+            { q: "Which of the following is a hexadecimal color code?", options: ["#FF5733", "192.168.1.1", "255.255.255.0", "10010110"], answer: 0 },
+            
+            // 10 new questions based on briefing
+            { q: "In the hexadecimal number system, what decimal value does the letter 'A' represent?", options: ["10", "11", "15", "16"], answer: 0 },
+            { q: "What is the mathematical value of 16^0 (16 to the power of 0), which determines the ones place in Hex?", options: ["0", "1", "10", "16"], answer: 1 },
+            { q: "When converting from a decimal number to a hexadecimal number, what primary mathematical operation is utilized?", options: ["Multiplication by 16", "Addition of 16", "Division by 16", "Subtraction of 16"], answer: 2 },
+            { q: "If a hexadecimal number ends in the letter 'F' (e.g., 2F), what does that explicitly tell you about its decimal value?", options: ["It contributes exactly 16 to the total.", "It contributes exactly 15 to the total.", "It is an error code.", "It is a negative number."], answer: 1 },
+            { q: "Which of the following is a properly formatted IPv6 address utilizing hexadecimal notation?", options: ["192.168.0.1", "F0:CB:A1:12:34:56", "2001:0db8::1", "#FFFFFF"], answer: 2 },
+            { q: "How does hexadecimal specifically benefit web and UI designers?", options: ["It encrypts images.", "It compresses video files.", "It makes web pages load faster.", "It allows for precise, compact color definition using RGB hex codes."], answer: 3 },
+            { q: "What does the acronym OUI stand for in the context of MAC addresses?", options: ["Operating User Interface", "Organizationally Unique Identifier", "Over-the-air Update Index", "Object Uniformity Index"], answer: 1 },
+            { q: "Why are memory addresses within a computer commonly displayed using hexadecimal notation (e.g., 0x3F4A)?", options: ["Because RAM chips only understand letters.", "Because it is required by the internet.", "Because it provides a more compact, readable representation of underlying binary data.", "Because decimal numbers are too slow to process."], answer: 2 },
+            { q: "Convert the standard decimal number 15 into hexadecimal.", options: ["10", "E", "F", "15"], answer: 2 },
+            { q: "What exact decimal value does the hexadecimal code '10' represent?", options: ["10", "16", "100", "256"], answer: 1 }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        
+        quizData.forEach((item, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = "bg-gray-50 p-6 rounded-lg border border-gray-200 transition-all";
+            qDiv.id = `q-block-${index}`;
+            
+            const qTitle = document.createElement('h3');
+            qTitle.className = "font-bold text-lg text-gray-800 mb-4";
+            qTitle.innerText = `${index + 1}. ${item.q}`;
+            qDiv.appendChild(qTitle);
+            
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = "space-y-3";
+            
+            item.options.forEach((opt, optIndex) => {
+                const label = document.createElement('label');
+                label.className = "flex items-center space-x-3 p-3 rounded bg-white border border-gray-300 hover:bg-green-50 cursor-pointer transition";
+                
+                const radio = document.createElement('input');
+                radio.type = "radio";
+                radio.name = `q${index}`;
+                radio.value = optIndex;
+                radio.className = "form-radio h-5 w-5 text-green-600";
+                
+                const span = document.createElement('span');
+                span.className = "text-gray-700";
+                span.innerText = opt;
+                
+                label.appendChild(radio);
+                label.appendChild(span);
+                optionsDiv.appendChild(label);
+            });
+            
+            qDiv.appendChild(optionsDiv);
+            quizContainer.appendChild(qDiv);
+        });
+
+        function gradeQuiz() {
+            let score = 0;
+            let allAnswered = true;
+
+            for(let i = 0; i < quizData.length; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if(selected) {
+                    if(parseInt(selected.value) === quizData[i].answer) {
+                        score++;
+                    }
+                } else {
+                    allAnswered = false;
+                }
+            }
+            
+            if(!allAnswered) {
+                showModal('Incomplete Quiz', 'Please answer all 20 questions before submitting.', 'warning');
+                return;
+            }
+            
+            const percentage = (score / quizData.length) * 100;
+            
+            if(score >= 18) { 
+                const navGame = document.getElementById('nav-game');
+                const navGameMobile = document.getElementById('nav-game-mobile');
+                
+                navGame.classList.remove('text-gray-400', 'cursor-not-allowed');
+                navGame.classList.add('text-white', 'hover:bg-green-600');
+                navGame.disabled = false;
+                navGame.innerHTML = '<i class="fa-solid fa-gamepad mr-1"></i>Game';
+                
+                navGameMobile.classList.remove('text-gray-400', 'cursor-not-allowed');
+                navGameMobile.classList.add('text-white', 'hover:bg-green-600');
+                navGameMobile.disabled = false;
+                navGameMobile.innerHTML = '<i class="fa-solid fa-gamepad"></i> Game';
+
+                document.getElementById('nav-cert').classList.remove('hidden');
+                document.getElementById('nav-cert-mobile').classList.remove('hidden');
+                
+                document.getElementById('proceed-game-btn').classList.remove('hidden');
+                document.getElementById('submit-quiz-btn').classList.add('hidden');
+
+                showModal('Outstanding!', `You scored ${score}/20 (${percentage}%). You have unlocked your Certificate of Mastery AND the Retro Game!`, 'success');
+            } else {
+                quizData.forEach((_, i) => {
+                    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                    if(selected) selected.checked = false;
+                });
+                showModal('Keep Trying!', `You scored ${score}/20 (${percentage}%). You need 90% (18/20) to earn the certificate. Your answers have been reset so you can try again.`, 'error');
+                document.getElementById('quiz-section').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // --- STREAMING_CHUNK:Implementing Retro Memory Game... ---
+        // --- RETRO GAME LOGIC: Hex Matcher (Memory) ---
+        const pairs = [
+            {id: 1, val1: 'A', val2: '10'},
+            {id: 2, val1: 'B', val2: '11'},
+            {id: 3, val1: 'C', val2: '12'},
+            {id: 4, val1: 'D', val2: '13'},
+            {id: 5, val1: 'E', val2: '14'},
+            {id: 6, val1: 'F', val2: '15'},
+            {id: 7, val1: 'FF', val2: '255'},
+            {id: 8, val1: '10 (Hex)', val2: '16'}
+        ];
+
+        let cardsArray = [];
+        let firstCard = null;
+        let secondCard = null;
+        let lockBoard = false;
+        let gameMatches = 0;
+        let gameMoves = 0;
+
+        const board = document.getElementById('memory-board');
+        const overlay = document.getElementById('game-overlay');
+        const startBtn = document.getElementById('start-game-btn');
+        
+        startBtn.addEventListener('click', startMemoryGame);
+
+        function initCards() {
+            cardsArray = [];
+            pairs.forEach(pair => {
+                cardsArray.push({ id: pair.id, display: pair.val1 });
+                cardsArray.push({ id: pair.id, display: pair.val2 });
+            });
+            // Shuffle
+            cardsArray.sort(() => 0.5 - Math.random());
+        }
+
+        function createBoard() {
+            board.innerHTML = '';
+            cardsArray.forEach((card, index) => {
+                const cardElement = document.createElement('div');
+                cardElement.classList.add('memory-card');
+                cardElement.dataset.id = card.id;
+                
+                cardElement.innerHTML = `
+                    <div class="memory-face memory-front">${card.display}</div>
+                    <div class="memory-face memory-back"></div>
+                `;
+                
+                cardElement.addEventListener('click', flipCard);
+                board.appendChild(cardElement);
+            });
+        }
+
+        function flipCard() {
+            if (lockBoard) return;
+            if (this === firstCard) return;
+
+            this.classList.add('flipped');
+
+            if (!firstCard) {
+                firstCard = this;
+                return;
+            }
+
+            secondCard = this;
+            gameMoves++;
+            document.getElementById('game-moves').innerText = gameMoves;
+            checkForMatch();
+        }
+
+        function checkForMatch() {
+            let isMatch = firstCard.dataset.id === secondCard.dataset.id;
+
+            if (isMatch) {
+                disableCards();
+                gameMatches++;
+                document.getElementById('game-matches').innerText = gameMatches;
+                if(gameMatches === 8) {
+                    setTimeout(() => {
+                        overlay.classList.remove('hidden');
+                        startBtn.innerText = "System Cleared! Restart";
+                    }, 500);
+                }
+            } else {
+                unflipCards();
+            }
+        }
+
+        function disableCards() {
+            firstCard.removeEventListener('click', flipCard);
+            secondCard.removeEventListener('click', flipCard);
+            firstCard.classList.add('matched');
+            secondCard.classList.add('matched');
+            resetBoard();
+        }
+
+        function unflipCards() {
+            lockBoard = true;
+            setTimeout(() => {
+                firstCard.classList.remove('flipped');
+                secondCard.classList.remove('flipped');
+                resetBoard();
+            }, 1000);
+        }
+
+        function resetBoard() {
+            [firstCard, secondCard] = [null, null];
+            lockBoard = false;
+        }
+
+        function startMemoryGame() {
+            overlay.classList.add('hidden');
+            gameMatches = 0;
+            gameMoves = 0;
+            document.getElementById('game-matches').innerText = gameMatches;
+            document.getElementById('game-moves').innerText = gameMoves;
+            resetBoard();
+            initCards();
+            createBoard();
+        }
+
+
+        // --- STREAMING_CHUNK:Finalizing Certificate Generator... ---
+        // --- CERTIFICATE LOGIC ---
+        function updateCertName() {
+            let name = document.getElementById('student-name-input').value.trim();
+            if(name) {
+                if (name.includes(' ')) {
+                    name = name.split(' ')[0];
+                    document.getElementById('student-name-input').value = name;
+                    showModal('Notice', 'Only your first name has been applied to the certificate to fit the styling.', 'info');
+                }
+                document.getElementById('cert-student-name').innerText = name;
+            } else {
+                showModal('Wait!', 'Please enter your first name to update the certificate.', 'warning');
+            }
+        }
+
+        const today = new Date();
+        document.getElementById('cert-date').innerText = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        function downloadCert() {
+            const certEl = document.getElementById('certificate');
+            const name = document.getElementById('cert-student-name').innerText;
+            let filename = 'Certificate.png';
+            if (name && name !== 'Student') {
+                filename = `${name.replace(/\s+/g, '_')}_Hexadecimal_Certificate.png`;
+            }
+
+            const originalTransform = certEl.style.transform;
+            certEl.style.transform = 'none';
+
+            const btn = document.getElementById('download-btn');
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Generating...';
+            btn.disabled = true;
+
+            html2canvas(certEl, { 
+                scale: 2, 
+                useCORS: true,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+            }).catch(err => {
+                console.error(err);
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                showModal('Error', 'Failed to generate image. Try using a desktop browser.', 'error');
+            });
+        }
+    </script>
+</body>
+</html>

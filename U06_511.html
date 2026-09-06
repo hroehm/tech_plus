@@ -1,0 +1,1485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 06 Section 5.1.1 Mastery - Data and Information</title>
+    
+    <!-- Load Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load HTML2Canvas for Certificate Download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- Load Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Qwitcher+Grypen:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0fdf4; 
+            color: #1f2937;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        /* Interactive Elements CSS */
+        .io-dropzone { min-height: 70px; min-width: 130px; border: 2px dashed #9ca3af; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: #f9fafb; transition: all 0.2s; padding: 10px;}
+        .io-dropzone.drag-over { background: #e5e7eb; border-color: #16a34a; box-shadow: inset 0 0 10px rgba(22, 163, 74, 0.2);}
+        
+        .io-item { cursor: grab; transition: transform 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .io-item:active { cursor: grabbing; transform: scale(0.95); }
+        
+        .interactive-btn { transition: all 0.2s ease; }
+        .interactive-btn:active { transform: scale(0.95); }
+        
+        .grid-item { transition: all 0.3s ease; cursor: pointer; }
+        .grid-item.selected { border-color: #ef4444; background-color: #fee2e2; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #e5e7eb; }
+        ::-webkit-scrollbar-thumb { background: #10b981; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #059669; }
+
+        /* Retro Game Canvas */
+        #game-canvas {
+            background-color: #1e1b4b; /* Deep night blue */
+            border: 4px solid #374151;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+            max-width: 100%;
+            height: auto;
+            touch-action: none; 
+        }
+
+        /* --- CERTIFICATE STYLES --- */
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .font-body { font-family: 'Lora', serif; }
+        .font-script { font-family: 'Qwitcher Grypen', cursive; }
+        
+        .cert-preview-container {
+            width: 100%;
+            overflow: auto;
+            display: flex;
+            justify-content: center;
+            background: #e5e7eb;
+            padding: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        #certificate {
+            width: 1056px !important;
+            height: 816px !important;
+            flex-shrink: 0;
+            background-color: #ffffff;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1056" height="816"><polygon points="0,0 250,0 0,650" fill="%23a7f3d0"/><polygon points="0,0 350,0 0,900" fill="%23059669" opacity="0.8"/><polygon points="0,0 120,0 0,300" fill="%23a7f3d0"/><polygon points="0,450 650,816 0,816" fill="%23a7f3d0"/><polygon points="0,550 450,816 0,816" fill="%23059669" opacity="0.8"/><polygon points="800,0 1056,0 1056,256" fill="%23f3f4f6"/><polygon points="1056,500 1056,816 750,816" fill="%23f3f4f6"/></svg>');
+            background-size: cover;
+            border: 4px solid #e5e7eb;
+        }
+
+        .gold-seal {
+            position: absolute;
+            left: 110px;
+            top: 350px;
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c, #fcf6ba);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3), inset 0 0 15px rgba(255,255,255,0.7), inset 0 0 25px rgba(139,105,20,0.9);
+            z-index: 10;
+        }
+        .gold-seal::before {
+            content: '';
+            position: absolute;
+            top: -4px; bottom: -4px; left: -4px; right: -4px;
+            border-radius: 50%;
+            border: 6px dashed #d4af37;
+        }
+        .gold-seal-inner-1 {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 2px solid rgba(139, 105, 20, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #e8c678, #dbab46);
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.2), 0 2px 5px rgba(255,255,255,0.7);
+            z-index: 1;
+        }
+        .gold-seal-inner-2 {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: radial-gradient(circle, #fcf6ba, #d4af37);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            padding: 10px;
+        }
+        .embossed-text {
+            color: #b38728;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2);
+            font-family: 'Playfair Display', serif;
+            font-weight: 800;
+            line-height: 1.1;
+            text-transform: uppercase;
+        }
+        .embossed-text-large { font-size: 14px; letter-spacing: 1px; }
+        .embossed-text-small { font-size: 11px; letter-spacing: 2px; margin: 2px 0; }
+        .embossed-star { font-size: 12px; color: #b38728; text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2); margin: 2px 0; }
+
+        @media (max-width: 1100px) {
+            #certificate { transform: scale(0.7); transform-origin: top left; margin-bottom: -240px; margin-right: -310px; }
+        }
+        @media (max-width: 768px) {
+            #certificate { transform: scale(0.4); transform-origin: top left; margin-bottom: -490px; margin-right: -630px; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
+    <nav class="bg-teal-700 text-white shadow-lg sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-database text-2xl"></i>
+                    <span class="font-bold text-xl tracking-wider hidden sm:inline-block">Tech+ Unit 06 Section 5.1.1</span>
+                    <span class="font-bold text-xl tracking-wider sm:hidden">5.1.1</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-2">
+                        <button onclick="switchTab('briefing')" class="nav-btn bg-teal-900 px-3 py-2 rounded-md text-sm font-medium hover:bg-teal-600 transition" id="nav-briefing"><i class="fa-solid fa-book-open mr-1"></i>Briefing</button>
+                        <button onclick="switchTab('activity')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-teal-600 transition" id="nav-activity"><i class="fa-solid fa-flask mr-1"></i>Lab Activity</button>
+                        <button onclick="switchTab('quiz')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-teal-600 transition" id="nav-quiz"><i class="fa-solid fa-clipboard-check mr-1"></i>Quiz</button>
+                        <button onclick="switchTab('game')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-gray-400 cursor-not-allowed transition" id="nav-game" disabled><i class="fa-solid fa-lock mr-1"></i>Game</button>
+                        <button onclick="switchTab('cert')" class="nav-btn hidden px-3 py-2 rounded-md text-sm font-medium text-yellow-300 hover:bg-teal-600 transition" id="nav-cert"><i class="fa-solid fa-award mr-1"></i>Certificate</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Nav -->
+        <div class="md:hidden flex flex-wrap justify-center gap-2 py-2 px-2 bg-teal-800">
+            <button onclick="switchTab('briefing')" class="nav-btn-mobile px-3 py-1 text-sm rounded bg-teal-900" id="nav-briefing-mobile">Briefing</button>
+            <button onclick="switchTab('activity')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-activity-mobile">Lab</button>
+            <button onclick="switchTab('quiz')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-quiz-mobile">Quiz</button>
+            <button onclick="switchTab('game')" class="nav-btn-mobile px-3 py-1 text-sm rounded text-gray-400 cursor-not-allowed" id="nav-game-mobile" disabled><i class="fa-solid fa-lock"></i></button>
+            <button onclick="switchTab('cert')" id="nav-cert-mobile" class="hidden px-2 py-1 text-sm text-yellow-300 rounded"><i class="fa-solid fa-award"></i></button>
+        </div>
+    </nav>
+
+    <main class="flex-grow w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <!-- BRIEFING SECTION -->
+        <div id="briefing-section" class="tab-content active no-print">
+            <div class="text-center mb-10">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">Value of Data and Information</h1>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">Discover why data is considered the "new oil," understand the critical differences in data classification, and learn how to secure the digital assets that power our modern world.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- Tile 1 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-blue-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-blue-700"><i class="fa-solid fa-chart-line mr-2"></i>Value of Data (Asset)</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Data vs Information:</strong> Transforming raw facts into actionable insights.</li>
+                            <li><strong>Economic Value:</strong> Driving sales and customer retention through targeted marketing.</li>
+                            <li><strong>Operational Efficiency:</strong> Streamlining processes and predicting risks to save time and money.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('value-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('value-usecase')" class="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 2 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-red-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-red-700"><i class="fa-solid fa-triangle-exclamation mr-2"></i>Critical vs Non-Critical</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Critical Data:</strong> Essential for operations, legal compliance, or financial stability.</li>
+                            <li><strong>Non-Critical Data:</strong> Supportive information; loss is inconvenient but not disastrous.</li>
+                            <li><strong>Consequences:</strong> Understanding the severe risk of critical data exposure.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('critical-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('critical-usecase')" class="flex-1 bg-red-100 hover:bg-red-200 text-red-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 3 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-purple-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-purple-700"><i class="fa-solid fa-id-card mr-2"></i>PII (Personal Info)</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Definition:</strong> Data that can directly or indirectly reveal a person's identity.</li>
+                            <li><strong>Direct PII:</strong> Unique identifiers like SSNs, Passports, and Driver's Licenses.</li>
+                            <li><strong>Indirect PII:</strong> Data like ZIP codes or birth dates that pose a risk when aggregated.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('pii-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('pii-usecase')" class="flex-1 bg-purple-100 hover:bg-purple-200 text-purple-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 4 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-green-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-green-700"><i class="fa-solid fa-shield-halved mr-2"></i>Management & Protection</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Security Measures:</strong> Implementing robust protocols like encryption and strict access control.</li>
+                            <li><strong>Backup Strategies:</strong> Creating disaster recovery plans to survive data corruption.</li>
+                            <li><strong>Compliance:</strong> Adhering to legal standards and modifying approaches based on data tier.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('protect-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('protect-usecase')" class="flex-1 bg-green-100 hover:bg-green-200 text-green-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 flex justify-center">
+                <button onclick="switchTab('activity')" class="bg-teal-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-teal-500 shadow-lg transition transform hover:scale-105">Proceed to Lab Activity <i class="fa-solid fa-arrow-right ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- LAB ACTIVITY SECTION -->
+        <div id="activity-section" class="tab-content no-print">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Interactive Lab Activity</h1>
+                <p class="text-gray-600">Complete these 8 distinct modules to solidify your understanding of Data Classification and Protection.</p>
+            </div>
+
+            <!-- Lab 1: Data vs Information -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-blue-700"><i class="fa-solid fa-filter mr-2"></i>Lab 1: The Processing Pipeline</h2>
+                <p class="text-sm text-gray-600 mb-4">Drag the raw <strong>Data</strong> into the Processing Engine to reveal the actionable <strong>Information</strong> it becomes.</p>
+                
+                <div class="flex flex-col md:flex-row gap-6">
+                    <div class="flex flex-col gap-3 w-full md:w-1/3" id="lab1-items">
+                        <div class="io-item px-4 py-2 bg-blue-100 border border-blue-300 rounded font-bold text-sm text-center" draggable="true" data-info="75% of sales occur on weekends. We should increase weekend staffing.">List of 10,000 transaction timestamps</div>
+                        <div class="io-item px-4 py-2 bg-blue-100 border border-blue-300 rounded font-bold text-sm text-center" draggable="true" data-info="The average temperature is dropping; order more winter coats.">Spreadsheet of daily temperatures</div>
+                    </div>
+                    
+                    <div class="io-dropzone w-full md:w-2/3 border-4 border-dashed border-gray-300 bg-gray-50 flex flex-col items-center justify-center p-6 text-center" id="lab1-engine">
+                        <i class="fa-solid fa-gears text-4xl text-gray-400 mb-2"></i>
+                        <p class="font-bold text-gray-500">Drop Raw Data Here</p>
+                    </div>
+                </div>
+                <div id="lab1-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
+            </div>
+
+            <!-- Lab 2: Data Monetization -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-blue-700"><i class="fa-solid fa-chart-line mr-2"></i>Lab 2: Data-Driven Decisions</h2>
+                <p class="text-sm text-gray-600 mb-4">Review the consumer data chart below. Based on this information, click the correct business action to maximize your competitive advantage.</p>
+                
+                <div class="bg-gray-100 p-4 rounded text-center mb-4 border border-gray-300">
+                    <h3 class="font-bold text-gray-700 mb-2">Customer Web Traffic by Device</h3>
+                    <div class="flex justify-center items-end h-32 gap-4">
+                        <div class="flex flex-col items-center"><div class="bg-blue-500 w-12 h-8 rounded-t"></div><span class="text-xs mt-1">Desktop (15%)</span></div>
+                        <div class="flex flex-col items-center"><div class="bg-green-500 w-12 h-24 rounded-t"></div><span class="text-xs mt-1">Mobile (80%)</span></div>
+                        <div class="flex flex-col items-center"><div class="bg-yellow-500 w-12 h-4 rounded-t"></div><span class="text-xs mt-1">Tablet (5%)</span></div>
+                    </div>
+                </div>
+                
+                <div class="flex flex-col md:flex-row gap-4 justify-center">
+                    <button class="interactive-btn bg-white border-2 border-gray-300 px-4 py-2 rounded font-bold hover:bg-gray-50" onclick="checkLab2(false)">Invest in Desktop Software</button>
+                    <button class="interactive-btn bg-white border-2 border-gray-300 px-4 py-2 rounded font-bold hover:bg-gray-50" onclick="checkLab2(true)">Optimize Mobile App Experience</button>
+                    <button class="interactive-btn bg-white border-2 border-gray-300 px-4 py-2 rounded font-bold hover:bg-gray-50" onclick="checkLab2(false)">Increase Tablet Advertising</button>
+                </div>
+                <div id="lab2-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
+            </div>
+
+            <!-- Lab 3: Scenario Classification -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-red-700"><i class="fa-solid fa-scale-balanced mr-2"></i>Lab 3: Guess Who? Scenarios</h2>
+                <p class="text-sm text-gray-600 mb-4">Read the scenario and classify the data involved as Critical or Non-Critical.</p>
+                
+                <div class="space-y-4">
+                    <div class="flex flex-col md:flex-row justify-between items-center bg-gray-50 p-4 border rounded">
+                        <p class="text-sm font-medium w-full md:w-2/3 mb-2 md:mb-0">"A company's proprietary algorithm for their main software product was leaked."</p>
+                        <div class="flex gap-2">
+                            <button class="bg-red-100 text-red-700 px-3 py-1 rounded font-bold text-sm border border-red-300 hover:bg-red-200" onclick="checkLab3(this, true)">Critical</button>
+                            <button class="bg-gray-200 text-gray-700 px-3 py-1 rounded font-bold text-sm border border-gray-300 hover:bg-gray-300" onclick="checkLab3(this, false)">Non-Critical</button>
+                        </div>
+                    </div>
+                    <div class="flex flex-col md:flex-row justify-between items-center bg-gray-50 p-4 border rounded">
+                        <p class="text-sm font-medium w-full md:w-2/3 mb-2 md:mb-0">"An employee accidentally deleted the notes from last week's team lunch planning meeting."</p>
+                        <div class="flex gap-2">
+                            <button class="bg-red-100 text-red-700 px-3 py-1 rounded font-bold text-sm border border-red-300 hover:bg-red-200" onclick="checkLab3(this, false)">Critical</button>
+                            <button class="bg-gray-200 text-gray-700 px-3 py-1 rounded font-bold text-sm border border-gray-300 hover:bg-gray-300" onclick="checkLab3(this, true)">Non-Critical</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="lab3-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
+            </div>
+            
+            <!-- Lab 4: Data Identification -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-red-700"><i class="fa-solid fa-bullseye mr-2"></i>Lab 4: Critical Data Locator</h2>
+                <p class="text-sm text-gray-600 mb-4">Click all the items in the grid that represent <strong>Critical Data</strong> to secure them. Leave Non-Critical items unselected.</p>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-center" id="lab4-grid">
+                    <div class="grid-item bg-gray-100 border-2 border-gray-300 p-3 rounded font-bold text-sm" data-critical="true" onclick="toggleGrid(this)">Financial Tax Returns</div>
+                    <div class="grid-item bg-gray-100 border-2 border-gray-300 p-3 rounded font-bold text-sm" data-critical="false" onclick="toggleGrid(this)">Spotify Playlist</div>
+                    <div class="grid-item bg-gray-100 border-2 border-gray-300 p-3 rounded font-bold text-sm" data-critical="true" onclick="toggleGrid(this)">Customer Passwords</div>
+                    <div class="grid-item bg-gray-100 border-2 border-gray-300 p-3 rounded font-bold text-sm" data-critical="false" onclick="toggleGrid(this)">Company Newsletter</div>
+                    <div class="grid-item bg-gray-100 border-2 border-gray-300 p-3 rounded font-bold text-sm" data-critical="false" onclick="toggleGrid(this)">Funny Meme Folder</div>
+                    <div class="grid-item bg-gray-100 border-2 border-gray-300 p-3 rounded font-bold text-sm" data-critical="true" onclick="toggleGrid(this)">Corporate Bank Accounts</div>
+                </div>
+                <div class="mt-4 text-center">
+                    <button class="bg-red-600 text-white px-6 py-2 rounded font-bold hover:bg-red-700 transition" onclick="checkLab4()">Secure Selected Data</button>
+                </div>
+                <div id="lab4-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
+            </div>
+
+            <!-- Lab 5: PII Sorter -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-purple-700"><i class="fa-solid fa-id-badge mr-2"></i>Lab 5: PII Classification</h2>
+                <p class="text-sm text-gray-600 mb-4">Drag the data type into either the Direct PII or Indirect PII category.</p>
+                
+                <div class="flex flex-wrap gap-2 mb-6" id="lab5-items">
+                    <div class="io-item px-3 py-1 bg-purple-100 border border-purple-300 rounded font-bold text-sm" draggable="true" data-target="direct">Social Security Number</div>
+                    <div class="io-item px-3 py-1 bg-purple-100 border border-purple-300 rounded font-bold text-sm" draggable="true" data-target="indirect">ZIP Code</div>
+                    <div class="io-item px-3 py-1 bg-purple-100 border border-purple-300 rounded font-bold text-sm" draggable="true" data-target="direct">Driver's License</div>
+                    <div class="io-item px-3 py-1 bg-purple-100 border border-purple-300 rounded font-bold text-sm" draggable="true" data-target="indirect">Gender</div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="io-dropzone border-2 border-dashed border-indigo-400 bg-indigo-50 flex-col" data-zone="direct">
+                        <h3 class="font-bold text-indigo-800 mb-2 w-full border-b border-indigo-200 text-center pb-1">Direct PII (Unique)</h3>
+                    </div>
+                    <div class="io-dropzone border-2 border-dashed border-pink-400 bg-pink-50 flex-col" data-zone="indirect">
+                        <h3 class="font-bold text-pink-800 mb-2 w-full border-b border-pink-200 text-center pb-1">Indirect PII (Non-Unique)</h3>
+                    </div>
+                </div>
+                <div id="lab5-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
+            </div>
+
+            <!-- Lab 6: Aggregation Risk -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-purple-700"><i class="fa-solid fa-user-secret mr-2"></i>Lab 6: The Aggregation Threat</h2>
+                <p class="text-sm text-gray-600 mb-4">Individually, indirect PII is harmless. Select exactly 3 pieces of indirect data below to see how a hacker can aggregate them to identify a specific person.</p>
+                
+                <div class="flex justify-center gap-4 mb-6">
+                    <button class="agg-btn px-4 py-2 bg-gray-200 text-gray-700 rounded font-bold text-sm border border-gray-300" onclick="toggleAgg(this)">DOB: 10/12/1990</button>
+                    <button class="agg-btn px-4 py-2 bg-gray-200 text-gray-700 rounded font-bold text-sm border border-gray-300" onclick="toggleAgg(this)">Gender: Male</button>
+                    <button class="agg-btn px-4 py-2 bg-gray-200 text-gray-700 rounded font-bold text-sm border border-gray-300" onclick="toggleAgg(this)">ZIP: 71111</button>
+                </div>
+                
+                <div class="w-full bg-gray-200 rounded-full h-4 mb-4">
+                    <div class="bg-red-600 h-4 rounded-full transition-all duration-500" id="agg-meter" style="width: 0%"></div>
+                </div>
+                <p class="text-center text-sm font-bold text-gray-700" id="agg-text">Identity Reveal Risk: 0%</p>
+                <div id="lab6-feedback" class="text-center font-bold mt-2 h-6 text-green-600"></div>
+            </div>
+
+            <!-- Lab 7: Security Allocator -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-green-700"><i class="fa-solid fa-lock mr-2"></i>Lab 7: Security Control Allocator</h2>
+                <p class="text-sm text-gray-600 mb-4">Choose the most appropriate level of security for the given asset to balance protection and operational workflow.</p>
+                
+                <div class="bg-gray-50 p-4 border rounded mb-4 text-center">
+                    <h3 class="font-bold text-gray-800">Asset: Main Customer Credit Card Database</h3>
+                    <p class="text-sm text-red-600 font-bold mb-4">(Classification: Highly Critical Data)</p>
+                    <div class="flex flex-col md:flex-row justify-center gap-4">
+                        <button class="interactive-btn px-4 py-2 bg-white border border-gray-300 rounded text-sm hover:bg-gray-100" onclick="checkLab7(false)">Basic Password Only</button>
+                        <button class="interactive-btn px-4 py-2 bg-white border border-gray-300 rounded text-sm hover:bg-gray-100" onclick="checkLab7(false)">No Password (Open Access)</button>
+                        <button class="interactive-btn px-4 py-2 bg-white border-green-500 rounded text-sm font-bold hover:bg-green-50" onclick="checkLab7(true)">Encryption + MFA</button>
+                    </div>
+                </div>
+                <div id="lab7-feedback" class="text-center font-bold h-6 text-green-600"></div>
+            </div>
+            
+            <!-- Lab 8: Backup Strategy -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-green-700"><i class="fa-solid fa-server mr-2"></i>Lab 8: Backup Frequency Configurator</h2>
+                <p class="text-sm text-gray-600 mb-4">Assign the correct backup frequency for a Non-Critical asset (e.g., historical newsletters) to save company server costs.</p>
+                
+                <div class="flex flex-col md:flex-row justify-center gap-4">
+                    <button class="interactive-btn px-6 py-3 bg-blue-100 text-blue-800 border border-blue-300 rounded font-bold hover:bg-blue-200" onclick="checkLab8(false)">Real-time Continuous Sync</button>
+                    <button class="interactive-btn px-6 py-3 bg-blue-100 text-blue-800 border border-blue-300 rounded font-bold hover:bg-blue-200" onclick="checkLab8(false)">Hourly Snapshots</button>
+                    <button class="interactive-btn px-6 py-3 bg-blue-100 text-blue-800 border border-blue-300 rounded font-bold hover:bg-blue-200" onclick="checkLab8(true)">Weekly Batch Backup</button>
+                </div>
+                <div id="lab8-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
+            </div>
+
+            <div class="text-center">
+                <button onclick="switchTab('quiz')" class="bg-teal-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-teal-500 shadow-lg transition transform hover:scale-105">Take the Mastery Quiz <i class="fa-solid fa-clipboard-check ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- QUIZ SECTION -->
+        <div id="quiz-section" class="tab-content no-print">
+            <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-xl max-w-4xl mx-auto">
+                <div class="text-center mb-8 border-b pb-4">
+                    <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Unit 06 Section 5.1.1 Mastery Quiz</h1>
+                    <p class="text-gray-600">Score 90% or higher (18/20) to earn your Certificate of Mastery and unlock the Retro Game!</p>
+                </div>
+
+                <div id="quiz-container" class="space-y-8">
+                    <!-- Questions injected via JS -->
+                </div>
+
+                <div class="mt-10 text-center border-t pt-6 flex flex-col md:flex-row justify-center items-center gap-4">
+                    <button id="submit-quiz-btn" onclick="gradeQuiz()" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">Submit Quiz</button>
+                    <button id="proceed-game-btn" onclick="switchTab('game')" class="hidden bg-purple-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-purple-700 shadow-lg transition w-full md:w-auto">Play Retro Game <i class="fa-solid fa-gamepad ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RETRO GAME SECTION -->
+        <div id="game-section" class="tab-content no-print">
+            <div class="bg-gray-900 p-6 sm:p-8 rounded-2xl shadow-xl max-w-4xl mx-auto border-4 border-gray-700 flex flex-col items-center">
+                <div class="text-center mb-4 w-full">
+                    <h1 class="text-4xl font-extrabold text-yellow-400 mb-2 tracking-widest uppercase" style="font-family: monospace; text-shadow: 2px 2px 0px #ef4444;">DATA RUNNER</h1>
+                    <p class="text-gray-300 text-sm">Protect the assets! Press <kbd class="bg-gray-700 px-2 py-1 rounded text-white">SPACE</kbd> or Tap/Click the screen to jump. Collect the Golden Critical Data Files and avoid the Red Malware Spikes!</p>
+                </div>
+                
+                <div class="flex justify-between items-center w-full max-w-[600px] mb-2 px-4 text-white font-mono text-xl">
+                    <div>Data Recovered: <span id="game-score" class="text-yellow-400 font-bold">0</span></div>
+                    <div>Integrity: <span id="game-lives" class="text-green-400 font-bold">100%</span></div>
+                </div>
+
+                <div class="relative flex justify-center w-full">
+                    <!-- Game Canvas -->
+                    <canvas id="game-canvas" width="600" height="300" class="w-full max-w-[600px] bg-gray-800 border-2 border-gray-600 rounded shadow-lg"></canvas>
+                    
+                    <!-- Overlay Start Button -->
+                    <div id="game-overlay" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-70 rounded-lg max-w-[600px] mx-auto z-10">
+                        <button id="start-game-btn" class="bg-teal-600 hover:bg-teal-500 text-white font-bold font-mono py-3 px-6 rounded-lg text-xl border-4 border-teal-800 uppercase transform transition hover:scale-105">Execute Program</button>
+                    </div>
+                </div>
+
+                <div class="mt-8 text-center w-full border-t border-gray-700 pt-6">
+                    <button onclick="switchTab('cert')" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">View Certificate <i class="fa-solid fa-award ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CERTIFICATE SECTION -->
+        <div id="cert-section" class="tab-content">
+            <div class="max-w-5xl mx-auto">
+                
+                <!-- Controls -->
+                <div class="bg-white p-6 rounded shadow mb-6 no-print text-center border border-gray-200">
+                    <h2 class="text-2xl font-bold text-teal-600 mb-2">🎉 Congratulations! 🎉</h2>
+                    <p class="text-gray-700 mb-4">You have achieved mastery of Data and Information Value and Protection.</p>
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+                        <input type="text" id="student-name-input" value="Student" placeholder="Enter your first name" class="border-2 border-gray-300 rounded px-4 py-2 w-full md:w-64 focus:border-teal-500 focus:outline-none">
+                        <button onclick="updateCertName()" class="bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700 transition">Update Name</button>
+                        <button id="download-btn" onclick="downloadCert()" class="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900 transition flex items-center justify-center">
+                            <i class="fa-solid fa-download mr-2"></i>Download PNG
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Certificate Render Container -->
+                <div class="cert-preview-container print:p-0 print:bg-white">
+                    <div id="certificate">
+                        <div class="gold-seal">
+                            <div class="gold-seal-inner-1">
+                                <div class="gold-seal-inner-2">
+                                     <span class="embossed-text embossed-text-large">Certificate</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-small">Of</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-large">Excellence</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="relative z-20 w-full h-full flex flex-col pt-[48px] pl-[380px] pr-[48px]">
+                            <h1 class="text-[#064e3b] text-[4.5rem] leading-none font-serif font-bold tracking-wide uppercase mb-2">CERTIFICATE</h1>
+                            <h2 class="text-gray-800 text-3xl font-serif tracking-widest uppercase mb-10">Of Achievement</h2>
+                            
+                            <p class="text-[1.4rem] font-body text-gray-800 mb-4">This is to certify that</p>
+                            
+                            <div class="relative mb-8 w-full">
+                                <h3 id="cert-student-name" class="text-[4rem] text-[#064e3b] font-serif italic leading-none pb-2 relative z-10 text-center w-full block">Student</h3>
+                                <div class="w-full border-b-[2px] border-[#064e3b] absolute bottom-[4px] left-0 z-0"></div>
+                                <div class="w-full border-b-[2px] border-dotted border-red-500 absolute bottom-[0px] left-0 z-0"></div>
+                            </div>
+                            
+                            <p class="text-[1.3rem] font-body text-gray-800 leading-relaxed w-full pr-4">
+                                Has successfully completed the assessment for 
+                                <strong class="text-[1.8rem] text-[#064e3b] block mt-4 mb-2 font-serif">Cyber.org Tech+ Unit 06 Section 5.1.1</strong>
+                                <strong class="text-[1.5rem] text-black block mb-4 font-serif italic">Data and Information</strong>
+                                <span class="text-[1.1rem] text-gray-700 leading-snug block">Demonstrating proficiency in explaining the value of data as an asset, differentiating critical and non-critical data, identifying PII, and determining appropriate management strategies.</span>
+                            </p>
+                            
+                            <div class="flex justify-end gap-16 items-end mt-auto mb-[60px] w-full pr-8">
+                                <div class="w-64">
+                                    <div class="border-b border-gray-600 mb-2 h-20 flex items-end justify-center relative">
+                                        <span class="font-script text-[5rem] text-[#064e3b] absolute bottom-[-10px] transform -rotate-3 opacity-90">Dr. M. S</span>
+                                    </div>
+                                    <p class="font-serif text-xl text-gray-800 text-center">Administration</p>
+                                </div>
+                                
+                                <div class="w-64">
+                                    <div class="border-b border-gray-600 mb-2 text-center h-20 flex items-end justify-center">
+                                        <p id="cert-date" class="font-body text-2xl text-gray-800 pb-1">Date Here</p>
+                                    </div>
+                                    <p class="font-serif text-xl text-gray-800 text-center">Date</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Custom Modal for Alerts -->
+    <div id="custom-modal" class="fixed inset-0 bg-black bg-opacity-50 z-[100] hidden flex justify-center items-center backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all">
+            <div class="text-center">
+                <div id="modal-icon" class="text-5xl mb-4"></div>
+                <h3 id="modal-title" class="text-2xl font-bold mb-2 text-gray-900"></h3>
+                <p id="modal-msg" class="text-gray-600 mb-6"></p>
+                <button onclick="closeModal()" class="bg-teal-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-teal-700 transition w-full">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Briefing Modal -->
+    <div id="briefing-modal" class="fixed inset-0 bg-black bg-opacity-70 z-[120] hidden flex justify-center items-center backdrop-blur-sm p-4 sm:p-6">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col transform transition-all overflow-hidden border-4 border-teal-700">
+            <div class="p-6 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+                <div class="flex items-center gap-4">
+                    <div id="briefing-modal-icon" class="text-4xl"></div>
+                    <h3 id="briefing-modal-title" class="text-2xl md:text-3xl font-bold text-gray-900"></h3>
+                </div>
+                <button onclick="closeBriefing()" class="text-gray-400 hover:text-red-600 transition text-4xl leading-none">&times;</button>
+            </div>
+            <div id="briefing-modal-content" class="p-6 md:p-10 overflow-y-auto flex-grow text-gray-700 text-lg leading-relaxed bg-white">
+                <!-- Dynamic Content Injected Here -->
+            </div>
+            <div class="p-6 border-t border-gray-200 bg-gray-50 flex justify-end">
+                <button onclick="closeBriefing()" class="bg-teal-700 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-teal-800 transition shadow-md">Acknowledge & Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Extensive Briefing Content Data ---
+        const briefingData = {
+            'value-details': {
+                title: 'Value of Data and Information',
+                icon: '<i class="fa-solid fa-chart-line text-blue-600"></i>',
+                html: `
+                    <p class="mb-5">In the modern digital age, you may often hear the phrase, "Data is the new oil." Just as oil was the primary energy source that drove the industrial revolution, data is the valuable resource powering today's technological revolution. However, before data can be useful, it must be properly understood and processed.</p>
+                    
+                    <p class="mb-5">At its fundamental level, <strong>Data</strong> consists of distinct, raw pieces of facts and statistics. It is usually formatted in a special way for computers to store, but on its own, it lacks context. For example, a massive spreadsheet containing thousands of times, dates, and numbers is raw data. To a human glancing at it, it is virtually meaningless and impossible to use for decision-making.</p>
+                    
+                    <p class="mb-5">This is where transformation occurs. <strong>Information</strong> is data that has been processed, organized, structured, or presented in a given context to make it meaningful and useful. When that massive spreadsheet is processed by a software program to generate a colorful pie chart showing peak sales hours, the raw data has become valuable information.</p>
+                    
+                    <p class="mb-5">Data and information act as a tremendous asset by generating <strong>Economic Value</strong>. For instance, customer data can be legally gathered and analyzed to understand buying habits. Organizations can then use this information for highly targeted marketing. Instead of wasting money on generalized ads, a company can show specific ads to the exact demographic most likely to buy, leading to increased sales and higher customer retention.</p>
+                    
+                    <p class="mb-5">Furthermore, analyzing data provides a crucial <strong>Competitive Advantage</strong>. In a crowded marketplace, the companies that accurately track market trends, understand consumer desires, and pivot their strategies based on concrete data will innovate faster than their competitors who rely merely on guesswork or intuition.</p>
+                    
+                    <p class="mb-5">Internally, data drives <strong>Operational Efficiency</strong>. By studying how long certain manufacturing processes take or tracking supply chain bottlenecks, an organization can streamline its operations. This reduces wasted time, cuts unnecessary costs, and significantly improves the overall productivity of the workforce.</p>
+                    
+                    <p>Finally, data is essential for <strong>Risk Management and Strategic Planning</strong>. By examining historical data and current metrics, leaders can identify potential risks—such as a drop in seasonal revenue or an emerging cybersecurity threat—before they become catastrophic. This informed decision-making forms the backbone of long-term organizational success and strong customer relationships.</p>
+                `
+            },
+            'value-usecase': {
+                title: 'Value of Data: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 1: Optimizing Retail Sales</h4>
+                        <p class="mb-2">A national retail chain relies on data to maximize their profits and keep their stores running smoothly across the country.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Economic Value):</strong> The marketing department analyzes loyalty card data to see that customers buying diapers frequently buy baby food. They create a targeted coupon combining these items, driving up total sales per visit.</li>
+                            <li><strong>Example 2 (Operational Efficiency):</strong> The logistics team uses historical sales data to predict that winter coats will sell out rapidly in the Northeast in November. They preemptively ship more inventory there, avoiding empty shelves and lost revenue.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 2: Daily Consumer Problem Solving</h4>
+                        <p class="mb-2">Average consumers leverage information derived from data every single day to make their lives easier and more convenient.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Decision Making):</strong> Before driving to work, a user checks a GPS app. The app aggregates raw traffic speed data from thousands of other phones and presents it as a "red line" on a map, prompting the user to take an alternate route to avoid a 30-minute delay.</li>
+                            <li><strong>Example 2 (Evaluating Performance):</strong> A student logs into their school's grade portal to view their test scores (data) organized into a neat summary. Realizing their math average is dropping, they make the informed decision to hire a tutor.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Data Analytics</p>
+                            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&h=350" alt="Data analytics dashboards on a screen" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Targeted Application</p>
+                            <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=600&h=350" alt="Business person reviewing charts" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'critical-details': {
+                title: 'Critical vs Non-Critical Data',
+                icon: '<i class="fa-solid fa-triangle-exclamation text-red-600"></i>',
+                html: `
+                    <p class="mb-5">In the realm of cybersecurity and data management, it is impossible—and financially irresponsible—to protect every single byte of data with maximum security. Therefore, organizations and individuals must classify their data into distinct tiers based on its importance. The two primary categories are Critical Data and Non-Critical Data.</p>
+                    
+                    <p class="mb-5"><strong>Critical Data</strong> is defined as the essential information an organization or individual absolutely needs to operate, meet legal requirements, or protect themselves from severe harm. It is the lifeblood of an entity. If this data is lost, corrupted, or stolen, the immediate consequences are usually catastrophic, involving massive financial loss or legal prosecution.</p>
+                    
+                    <p class="mb-5">In a business environment, critical data includes financial statements, tax records, and corporate banking details. It also heavily features Customer Data, such as payment details and purchase histories. A major subset is Intellectual Property (IP)—the trade secrets, proprietary algorithms, and private research findings that give a company its competitive edge. If a competitor stole this IP, the business could collapse.</p>
+                    
+                    <p class="mb-5">For an individual, personal critical data includes items that can ruin their financial stability or identity if exposed. This includes usernames and passwords to bank accounts, Social Security numbers, credit or debit card numbers, birth certificates, and driver's license numbers. The loss of this data directly enables identity theft and fraud.</p>
+                    
+                    <p class="mb-5">Conversely, <strong>Non-Critical Data</strong> is information that supports an organization's or person's work and daily life, but isn't strictly essential for day-to-day operations or legal compliance. While it is certainly useful and its loss would be annoying, it does not pose any immediate or severe risk.</p>
+                    
+                    <p class="mb-5">Business examples of non-critical data include internal company newsletters, routine meeting notes from a casual lunch planning committee, or historical performance reports from five years ago. Personal examples include a text message to a friend about dinner plans, a saved recipe, a music playlist, or a list of movies you want to watch.</p>
+                    
+                    <p>Understanding this difference is vital because the consequences dictate the response. The exposure of a company's internal meme folder (non-critical) might cause brief embarrassment, but the exposure of 10,000 customer credit cards (critical) will trigger lawsuits, massive fines, and a shattered reputation that the company may never recover from.</p>
+                `
+            },
+            'critical-usecase': {
+                title: 'Critical vs Non-Critical: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-red-800 mb-2 border-b-2 border-red-200 pb-1">Case 1: Corporate Breach Response</h4>
+                        <p class="mb-2">When a company server is hacked, the incident response team immediately categorizes the stolen data to determine the severity of the breach.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Critical Consequence):</strong> Hackers steal a database containing 50,000 user passwords and billing addresses. The company must immediately notify federal authorities, freeze accounts, issue a public apology, and prepare for millions of dollars in legal fines and customer compensation.</li>
+                            <li><strong>Example 2 (Non-Critical Consequence):</strong> Hackers steal the PDF files of the company's monthly internal newsletter from 2021. The IT team secures the server loophole, but the business continues operating normally without needing to involve lawyers or the press.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-red-800 mb-2 border-b-2 border-red-200 pb-1">Case 2: Personal Device Management</h4>
+                        <p class="mb-2">An individual managing their smartphone must understand what data on their device needs the highest level of protection.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Critical Protection):</strong> A user uses a secure, encrypted Password Manager app to store their banking logins and Social Security Number, knowing that if someone accessed their phone, this data could bankrupt them.</li>
+                            <li><strong>Example 2 (Non-Critical Loss):</strong> A user's younger sibling accidentally deletes a carefully curated workout music playlist. While the user is highly annoyed and inconvenienced, they suffer no financial loss or identity theft, demonstrating the non-critical nature of the data.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: High Stakes Security</p>
+                            <img src="https://images.unsplash.com/photo-1614064641913-6b71a30f5eb5?auto=format&fit=crop&w=600&h=350" alt="Cybersecurity padlock graphic" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Analyzing Documents</p>
+                            <img src="https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=600&h=350" alt="Financial documents and calculator" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'pii-details': {
+                title: 'Personally Identifiable Information (PII)',
+                icon: '<i class="fa-solid fa-id-card text-purple-600"></i>',
+                html: `
+                    <p class="mb-5">A highly specific and deeply important subset of critical data is <strong>Personally Identifiable Information (PII)</strong>. PII is formally defined as any data that could potentially identify a specific individual. In an era where digital identities are directly tied to real-world bank accounts, reputations, and legal standing, protecting PII is a paramount concern for everyone.</p>
+                    
+                    <p class="mb-5">The danger of exposed PII lies in impersonation and identity theft. If a malicious actor possesses enough of your PII, they can trick a bank into thinking they are you, allowing them to open credit cards in your name, empty your accounts, or even commit crimes that are subsequently linked to your digital footprint.</p>
+                    
+                    <p class="mb-5">PII is divided into two distinct categories based on how easily it identifies someone. The first is <strong>Direct PII</strong>. This is information that is entirely unique to one specific person. If someone has this data, they immediately know exactly who it belongs to without needing any other clues. Direct PII strictly correlates with critical data.</p>
+                    
+                    <p class="mb-5">Examples of Direct PII include a Social Security Number (SSN), a Passport Number, a Driver's License number, a biometric record (like a fingerprint or retina scan), or a specific computer's IP address. Because these are unique identifiers, they must be guarded with the absolute highest level of security.</p>
+                    
+                    <p class="mb-5">The second category is <strong>Indirect PII</strong>. This is information that is tied to you, but in less obvious, non-unique ways. On its own, Indirect PII cannot identify you. For example, knowing someone's gender, their height, or their ZIP code does not reveal who they are, because millions of people share those exact traits.</p>
+                    
+                    <p class="mb-5">However, the true danger of Indirect PII lies in <strong>Aggregation</strong>. Hackers act like detectives; if they collect enough pieces of harmless Indirect PII, they can combine them to pinpoint a single individual. For example, knowing someone is "Male" is harmless. Knowing they are "Male, born on October 12, 1990, living in ZIP code 71111, with the first name John" drastically narrows the pool down from millions of people to perhaps only one or two.</p>
+                    
+                    <p>Because of this aggregation risk, all forms of PII should be kept private. Individuals must be highly cautious about what they post on public social media profiles or share in surveys. Companies are legally obligated by privacy frameworks to securely encrypt databases containing PII and carefully limit which employees are authorized to view it.</p>
+                `
+            },
+            'pii-usecase': {
+                title: 'PII: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Case 1: Social Engineering Attacks</h4>
+                        <p class="mb-2">Malicious actors frequently use social engineering to trick individuals into willingly handing over their Direct PII.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Direct PII Request):</strong> A stranger calls Carlos, claiming to be from his bank's fraud department. The caller asks Carlos to verify his Social Security Number and account password to "stop an attack." This is a scam to steal Direct PII. Carlos should hang up immediately.</li>
+                            <li><strong>Example 2 (Phishing Email):</strong> An employee receives an urgent email looking like it's from HR, asking them to click a link and re-enter their Driver's License number for a background check update. The link goes to a fake site designed to harvest this critical PII.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Case 2: Protecting Digital Privacy</h4>
+                        <p class="mb-2">Users must be vigilant about the trails of Indirect PII they leave across the internet, which data brokers or hackers can collect.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Aggregation Risk):</strong> A teenager has their age and hometown on their public Instagram, their school name on a public Facebook post, and their specific hobbies on a public forum. A hacker aggregates these three pieces of Indirect PII to guess their security question answers and breach their email account.</li>
+                            <li><strong>Example 2 (Anonymization):</strong> A medical research company wants to publish statistics about heart disease. Before releasing the data, they carefully strip away all patient names and exact addresses, leaving only age ranges and general regions, ensuring the remaining data cannot be aggregated to identify specific patients.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Digital Identity</p>
+                            <img src="https://images.unsplash.com/photo-1512314889357-e157c22f938d?auto=format&fit=crop&w=600&h=350" alt="Person typing representing identity online" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Phishing Scams</p>
+                            <img src="https://images.unsplash.com/photo-1563206767-5b18f218e8de?auto=format&fit=crop&w=600&h=350" alt="Hacker screen stealing passwords" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'protect-details': {
+                title: 'Management and Protection Strategies',
+                icon: '<i class="fa-solid fa-shield-halved text-green-600"></i>',
+                html: `
+                    <p class="mb-5">Knowing the difference between Critical and Non-Critical data is only the first step; the ultimate goal is applying the correct <strong>Management and Protection Strategies</strong>. Applying maximum security to all data is too expensive and slows down business operations, while applying too little security to critical data invites disaster. Therefore, strategies must be tiered.</p>
+                    
+                    <p class="mb-5">For <strong>Critical Data</strong>, organizations must implement robust security measures. This begins with rigorous Access Controls (like the Principle of Least Privilege) ensuring only authorized employees can view the data. Furthermore, Critical Data must always be secured using strong Encryption, both when it is stored on the hard drive (data at rest) and when it is being sent over the internet (data in transit).</p>
+                    
+                    <p class="mb-5">Because the loss of Critical Data is catastrophic, the <strong>Backup and Recovery</strong> protocols must be aggressive. Organizations must maintain highly frequent, automated backups. They must also have a formal Disaster Recovery Plan in place, meaning if the main server building burns down, an off-site backup server can be spun up immediately to prevent the business from collapsing.</p>
+                    
+                    <p class="mb-5">Another major factor for Critical Data is <strong>Legal Compliance</strong>. Governments enforce strict laws on how certain data is handled. For example, hospitals must comply with HIPAA for patient medical records, and international companies must comply with GDPR for European customer data. Failure to enforce these legal standards results in massive fines and criminal charges.</p>
+                    
+                    <p class="mb-5">Conversely, <strong>Non-Critical Data</strong> requires a lighter touch. It still requires basic security practices—you don't want a competitor freely browsing your internal memos—but the level of protection is less strict. Basic password protection and standard corporate firewalls are usually sufficient, without the need for expensive military-grade encryption.</p>
+                    
+                    <p class="mb-5">The <strong>Backup Strategy</strong> for Non-Critical Data is also relaxed. While backups are still important to prevent annoyance, the frequency and level of detail can be much lower. Backing up a folder of company picnic photos once a week to a cheap, slow, external hard drive is perfectly acceptable, saving the company money on premium cloud storage.</p>
+                    
+                    <p>Finally, the <strong>Access Controls</strong> for non-critical data are less restrictive. If a file contains non-critical general knowledge, allowing the entire company network "Read-Only" access promotes collaboration and workflow without posing any major security risk to the organization.</p>
+                `
+            },
+            'protect-usecase': {
+                title: 'Management & Protection: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-green-800 mb-2 border-b-2 border-green-200 pb-1">Case 1: Implementing Backup Systems</h4>
+                        <p class="mb-2">An IT administrator is configuring the automated backup servers for a regional hospital, allocating resources based on data priority.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Critical Data Backup):</strong> The hospital's active patient records and surgical schedules (Critical Data) are configured to back up to a secure off-site cloud server every 15 minutes, ensuring zero data loss if a server crashes during an emergency.</li>
+                            <li><strong>Example 2 (Non-Critical Data Backup):</strong> The hospital's folder containing templates for holiday party flyers and cafeteria menus (Non-Critical Data) is configured to back up locally just once a month, saving expensive cloud storage bandwidth.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-green-800 mb-2 border-b-2 border-green-200 pb-1">Case 2: Managing Access Controls</h4>
+                        <p class="mb-2">A retail business uses Access Controls to ensure employees can only view the data necessary for their specific job role, maintaining compliance.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Strict Compliance):</strong> A standard sales floor employee tries to open a folder named "Employee_Direct_Deposit_Info". The robust access controls instantly block them, as this folder contains highly critical financial PII meant only for the HR Director.</li>
+                            <li><strong>Example 2 (Relaxed Access):</strong> The same sales floor employee accesses a folder named "Current_Sales_Promotions.pdf". Because this is Non-Critical operational data designed for public use, the access controls allow any authenticated employee to open and read it easily.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Data Backups</p>
+                            <img src="https://images.unsplash.com/photo-1600267185393-e158a98703de?auto=format&fit=crop&w=600&h=350" alt="Server room representing backups" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Access Control</p>
+                            <img src="https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?auto=format&fit=crop&w=600&h=350" alt="Security badge scan" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        // Modal Control Functions
+        function openBriefing(key) {
+            const modal = document.getElementById('briefing-modal');
+            const data = briefingData[key];
+            if(data) {
+                document.getElementById('briefing-modal-icon').innerHTML = data.icon;
+                document.getElementById('briefing-modal-title').innerText = data.title;
+                document.getElementById('briefing-modal-content').innerHTML = data.html;
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; 
+            }
+        }
+
+        function closeBriefing() {
+            document.getElementById('briefing-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto'; 
+        }
+
+        document.getElementById('briefing-modal').addEventListener('click', function(e) {
+            if(e.target === this) closeBriefing();
+        });
+        
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId + '-section').classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-teal-900'));
+            const activeBtn = document.getElementById('nav-' + tabId);
+            if(activeBtn && tabId !== 'cert') activeBtn.classList.add('bg-teal-900');
+            
+            document.querySelectorAll('.nav-btn-mobile').forEach(btn => btn.classList.remove('bg-teal-900'));
+            const activeMobileBtn = document.getElementById('nav-' + tabId + '-mobile');
+            if(activeMobileBtn && tabId !== 'cert') activeMobileBtn.classList.add('bg-teal-900');
+
+            window.scrollTo(0,0);
+
+            if (tabId === 'game' && !gameRunning) {
+                drawGameStatic();
+            } else if (tabId !== 'game') {
+                if(gameRunning) gameOver();
+            }
+        }
+
+        function showModal(title, message, type = 'info') {
+            const modal = document.getElementById('custom-modal');
+            const icon = document.getElementById('modal-icon');
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-msg').innerText = message;
+            
+            if(type === 'success') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-check text-green-500"></i>';
+            } else if (type === 'error') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500"></i>';
+            } else if (type === 'warning') {
+                icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-yellow-500"></i>';
+            } else {
+                icon.innerHTML = '<i class="fa-solid fa-circle-info text-blue-500"></i>';
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        // --- LAB 1 Logic (Drag & Drop) ---
+        let draggedLab1 = null;
+        let lab1Count = 0;
+        
+        document.querySelectorAll('#lab1-items .io-item').forEach(item => {
+            item.addEventListener('dragstart', function() { draggedLab1 = this; this.classList.add('opacity-50'); });
+            item.addEventListener('dragend', function() { this.classList.remove('opacity-50'); draggedLab1 = null; });
+        });
+
+        const engine = document.getElementById('lab1-engine');
+        engine.addEventListener('dragover', e => e.preventDefault());
+        engine.addEventListener('dragenter', e => { e.preventDefault(); engine.classList.add('bg-gray-200'); });
+        engine.addEventListener('dragleave', e => { engine.classList.remove('bg-gray-200'); });
+        engine.addEventListener('drop', function() {
+            engine.classList.remove('bg-gray-200');
+            if(draggedLab1) {
+                // Transform it
+                draggedLab1.innerText = draggedLab1.dataset.info;
+                draggedLab1.classList.replace('bg-blue-100', 'bg-green-100');
+                draggedLab1.classList.replace('border-blue-300', 'border-green-300');
+                draggedLab1.setAttribute('draggable', 'false');
+                this.appendChild(draggedLab1);
+                lab1Count++;
+                
+                if(lab1Count === 2) {
+                    document.getElementById('lab1-feedback').innerText = "Data processed into actionable Information!";
+                    setTimeout(() => showModal('Lab 1 Complete', 'You transformed raw data into valuable information.', 'success'), 500);
+                }
+            }
+        });
+
+        // --- LAB 2 Logic ---
+        function checkLab2(isCorrect) {
+            if(isCorrect) {
+                document.getElementById('lab2-feedback').innerText = "Correct! Capitalizing on mobile trends generates economic value.";
+                document.getElementById('lab2-feedback').className = "text-center font-bold mt-4 h-6 text-green-600";
+            } else {
+                document.getElementById('lab2-feedback').innerText = "Incorrect. The data shows mobile is 80% of traffic. Invest where the data points.";
+                document.getElementById('lab2-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
+            }
+        }
+
+        // --- LAB 3 Logic ---
+        let lab3Score = 0;
+        function checkLab3(btn, isCorrect) {
+            let parent = btn.parentElement.parentElement;
+            if(parent.dataset.solved === "true") return;
+            
+            if(isCorrect) {
+                parent.dataset.solved = "true";
+                parent.classList.replace('bg-gray-50', 'bg-green-50');
+                parent.classList.add('border-green-300');
+                btn.classList.add('ring-2', 'ring-offset-1', 'ring-green-500');
+                lab3Score++;
+                
+                if(lab3Score === 2) {
+                    document.getElementById('lab3-feedback').innerText = "All scenarios accurately classified!";
+                    setTimeout(() => showModal('Lab 3 Complete', 'You understand the consequences of data exposure.', 'success'), 500);
+                }
+            } else {
+                document.getElementById('lab3-feedback').innerText = "Incorrect classification for that scenario.";
+                document.getElementById('lab3-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
+                setTimeout(() => { document.getElementById('lab3-feedback').innerText = ""; }, 2000);
+            }
+        }
+
+        // --- LAB 4 Logic ---
+        function toggleGrid(item) {
+            item.classList.toggle('selected');
+        }
+        function checkLab4() {
+            const items = document.querySelectorAll('.grid-item');
+            let correct = true;
+            let noneSelected = true;
+            
+            items.forEach(item => {
+                let isCritical = item.dataset.critical === "true";
+                let isSelected = item.classList.contains('selected');
+                if(isSelected) noneSelected = false;
+                if(isCritical !== isSelected) correct = false;
+            });
+            
+            if(noneSelected) return;
+            
+            if(correct) {
+                document.getElementById('lab4-feedback').innerText = "Security locks engaged! Critical data secured.";
+                document.getElementById('lab4-feedback').className = "text-center font-bold mt-4 h-6 text-green-600";
+                setTimeout(() => showModal('Lab 4 Complete', 'You correctly identified and secured all critical assets.', 'success'), 500);
+            } else {
+                document.getElementById('lab4-feedback').innerText = "Error. You either missed critical data or locked non-critical data.";
+                document.getElementById('lab4-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
+            }
+        }
+
+        // --- LAB 5 Logic ---
+        let draggedLab5 = null;
+        let lab5Count = 0;
+        
+        document.querySelectorAll('#lab5-items .io-item').forEach(item => {
+            item.addEventListener('dragstart', function() { draggedLab5 = this; this.classList.add('opacity-50'); });
+            item.addEventListener('dragend', function() { this.classList.remove('opacity-50'); draggedLab5 = null; });
+        });
+
+        document.querySelectorAll('[data-zone]').forEach(zone => {
+            zone.addEventListener('dragover', e => e.preventDefault());
+            zone.addEventListener('dragenter', e => { e.preventDefault(); zone.classList.add('brightness-95'); });
+            zone.addEventListener('dragleave', e => { zone.classList.remove('brightness-95'); });
+            zone.addEventListener('drop', function() {
+                this.classList.remove('brightness-95');
+                if(draggedLab5) {
+                    if(draggedLab5.dataset.target === this.dataset.zone) {
+                        this.appendChild(draggedLab5);
+                        draggedLab5.classList.replace('bg-purple-100', 'bg-gray-100');
+                        draggedLab5.classList.remove('cursor-grab');
+                        draggedLab5.setAttribute('draggable', 'false');
+                        lab5Count++;
+                        document.getElementById('lab5-feedback').innerText = "Correct Classification.";
+                        document.getElementById('lab5-feedback').className = "text-center font-bold mt-4 h-6 text-green-600";
+                        if(lab5Count === 4) {
+                            setTimeout(() => showModal('Lab 5 Complete', 'You successfully sorted the PII by uniqueness.', 'success'), 500);
+                        }
+                    } else {
+                        document.getElementById('lab5-feedback').innerText = "Incorrect. Is that data completely unique to one person on its own?";
+                        document.getElementById('lab5-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
+                    }
+                }
+            });
+        });
+
+        // --- LAB 6 Logic ---
+        let aggCount = 0;
+        function toggleAgg(btn) {
+            if(btn.classList.contains('bg-red-500')) return; // locked
+            
+            btn.classList.remove('bg-gray-200', 'text-gray-700');
+            btn.classList.add('bg-red-500', 'text-white', 'border-red-700');
+            aggCount++;
+            
+            let meter = document.getElementById('agg-meter');
+            let txt = document.getElementById('agg-text');
+            
+            if(aggCount === 1) {
+                meter.style.width = "33%";
+                txt.innerText = "Identity Reveal Risk: 33% (Anonymous)";
+            } else if (aggCount === 2) {
+                meter.style.width = "66%";
+                txt.innerText = "Identity Reveal Risk: 66% (Vulnerable)";
+            } else if (aggCount === 3) {
+                meter.style.width = "100%";
+                txt.innerText = "Identity Reveal Risk: 100% (Identity Pinpointed!)";
+                txt.classList.replace('text-gray-700', 'text-red-600');
+                document.getElementById('lab6-feedback').innerText = "Aggregation complete. Identity exposed.";
+                document.getElementById('lab6-feedback').className = "text-center font-bold mt-2 h-6 text-red-600";
+                setTimeout(() => showModal('Lab 6 Complete', 'You demonstrated how harmless indirect PII becomes dangerous when aggregated.', 'warning'), 1000);
+            }
+        }
+
+        // --- LAB 7 Logic ---
+        function checkLab7(isCorrect) {
+            if(isCorrect) {
+                document.getElementById('lab7-feedback').innerText = "Correct! Highly Critical Data requires robust security measures.";
+                document.getElementById('lab7-feedback').className = "text-center font-bold h-6 text-green-600";
+            } else {
+                document.getElementById('lab7-feedback').innerText = "Insufficient Security! That data tier requires strict protection.";
+                document.getElementById('lab7-feedback').className = "text-center font-bold h-6 text-red-600";
+            }
+        }
+
+        // --- LAB 8 Logic ---
+        function checkLab8(isCorrect) {
+            if(isCorrect) {
+                document.getElementById('lab8-feedback').innerText = "Correct! Batch backups are sufficient for non-critical data, saving money.";
+                document.getElementById('lab8-feedback').className = "text-center font-bold mt-4 h-6 text-green-600";
+            } else {
+                document.getElementById('lab8-feedback').innerText = "Wasteful! Continuous sync is too expensive for non-critical data.";
+                document.getElementById('lab8-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
+            }
+        }
+
+        // --- QUIZ LOGIC (20 Questions) ---
+        const quizData = [
+            // 10 provided (adapted for multiple choice structure)
+            { q: "Data should be used for the following purposes EXCEPT:", options: ["Making decisions", "Causing harm to others", "Solving problems", "Improving processes"], answer: 1 },
+            { q: "Which of the following could happen if critical data is exposed?", options: ["It can help an organization gain customers.", "It can improve an organization's reputation.", "It can cost an organization money and be used to cause harm.", "It is inconvenient but harmless."], answer: 2 },
+            { q: "All the following are examples of critical data EXCEPT:", options: ["Financial statements", "Social Security Number", "Purchase history", "Meeting notes"], answer: 3 },
+            { q: "Which of the following could happen if non-critical data is exposed?", options: ["It can be used to cause massive harm.", "It is inconvenient but generally does not cause severe harm.", "It can give competitors a massive advantage.", "It causes immediate legal action."], answer: 1 },
+            { q: "All the following are examples of non-critical data EXCEPT:", options: ["Personally Identifiable Information (PII)", "Routine reports", "Social media usernames", "Newsletters"], answer: 0 },
+            { q: "Which of the following is considered Personally Identifiable Information (PII) and should be protected as critical data?", options: ["A list of your favorite restaurants", "A common first name like John", "A driver's license number", "A picture of your pet"], answer: 2 },
+            { q: "Which of the following is a good management and protection strategy for critical data?", options: ["A disaster recovery plan", "Regular security audits", "Robust security protocols (encryption)", "All of the above"], answer: 3 },
+            { q: "Which of the following is a way data can be used as a business asset?", options: ["Sharing internal jokes in newsletters", "Archiving outdated employee memos", "Tracking market trends to guide decisions", "Printing weekly cafeteria menus"], answer: 2 },
+            { q: "Which of the following is a way information can help an organization?", options: ["Making decisions based on context and analysis", "Sending automatic out-of-office replies", "Printing weekly cafeteria menus", "Collecting recycling data for fun"], answer: 0 },
+            { q: "Bob got a text message saying his bank account was under attack. The message asked for his account information to fix the issue. What type of data is being requested, and what should Bob do?", options: ["Non-critical data; Bob should send the info.", "Critical data; Bob should send the info.", "Non-critical data; Bob should ignore it.", "Critical data; Bob should not respond to the text message."], answer: 3 },
+            
+            // 10 new from briefing
+            { q: "Data is distinct pieces of information usually formatted in a special way. Information is:", options: ["Data that has been processed, organized, or structured.", "Hardware that stores binary code.", "A type of physical peripheral.", "An unorganized spreadsheet."], answer: 0 },
+            { q: "Which business asset principle explains how data can streamline processes and reduce operational costs?", options: ["Competitive Advantage", "Operational Efficiency", "Risk Management", "Data Aggregation"], answer: 1 },
+            { q: "Why is it dangerous if an attacker gains access to multiple pieces of Indirect PII?", options: ["They can instantly drain your bank account.", "They can crash the company servers.", "They can aggregate the pieces to identify a specific individual.", "Indirect PII is illegal to possess."], answer: 2 },
+            { q: "Which of the following is an example of Direct PII?", options: ["A 5-digit ZIP Code", "Eye color", "Gender", "A Passport Number"], answer: 3 },
+            { q: "Which of the following is an example of Indirect PII?", options: ["Social Security Number", "Retina scan", "Birth Date (e.g., Oct 12, 1990)", "Credit Card Number"], answer: 2 },
+            { q: "In terms of data protection, how should backups for non-critical data be handled compared to critical data?", options: ["They require military-grade encryption in the cloud.", "They do not need to be backed up ever.", "Regular backups are needed, but frequency and detail may be lower.", "They require immediate real-time sync."], answer: 2 },
+            { q: "Which of the following would be an example of operational data classified as critical data?", options: ["The cafeteria lunch schedule.", "Manufacturing specifications and emergency protocols.", "A list of employee birthdays.", "Historical weather patterns from 2010."], answer: 1 },
+            { q: "What is the primary risk of not enforcing strict compliance (like HIPAA or GDPR) on critical data?", options: ["Severe legal penalties and industry fines.", "The data will slowly delete itself.", "Employees will get bored.", "The hardware will overheat."], answer: 0 },
+            { q: "Why might a company's past historical data be considered non-critical?", options: ["Because old data is always deleted.", "Because it is useful for reference but not crucial for current day-to-day operations.", "Because historical data cannot be stored digitally.", "Because the government bans storing old data."], answer: 1 },
+            { q: "The phrase 'Data is the new oil' implies that:", options: ["Data is physically heavy.", "Data is a highly valuable resource that powers modern society.", "Data is bad for the environment.", "Data can only be found deep underground."], answer: 1 }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        
+        quizData.forEach((item, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = "bg-gray-50 p-6 rounded-lg border border-gray-200 transition-all";
+            qDiv.id = `q-block-${index}`;
+            
+            const qTitle = document.createElement('h3');
+            qTitle.className = "font-bold text-lg text-gray-800 mb-4";
+            qTitle.innerText = `${index + 1}. ${item.q}`;
+            qDiv.appendChild(qTitle);
+            
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = "space-y-3";
+            
+            item.options.forEach((opt, optIndex) => {
+                const label = document.createElement('label');
+                label.className = "flex items-center space-x-3 p-3 rounded bg-white border border-gray-300 hover:bg-teal-50 cursor-pointer transition";
+                
+                const radio = document.createElement('input');
+                radio.type = "radio";
+                radio.name = `q${index}`;
+                radio.value = optIndex;
+                radio.className = "form-radio h-5 w-5 text-teal-600";
+                
+                const span = document.createElement('span');
+                span.className = "text-gray-700";
+                span.innerText = opt;
+                
+                label.appendChild(radio);
+                label.appendChild(span);
+                optionsDiv.appendChild(label);
+            });
+            
+            qDiv.appendChild(optionsDiv);
+            quizContainer.appendChild(qDiv);
+        });
+
+        function gradeQuiz() {
+            let score = 0;
+            let allAnswered = true;
+
+            for(let i = 0; i < quizData.length; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if(selected) {
+                    if(parseInt(selected.value) === quizData[i].answer) {
+                        score++;
+                    }
+                } else {
+                    allAnswered = false;
+                }
+            }
+            
+            if(!allAnswered) {
+                showModal('Incomplete Quiz', 'Please answer all 20 questions before submitting.', 'warning');
+                return;
+            }
+            
+            const percentage = (score / quizData.length) * 100;
+            
+            if(score >= 18) { 
+                const navGame = document.getElementById('nav-game');
+                const navGameMobile = document.getElementById('nav-game-mobile');
+                
+                navGame.classList.remove('text-gray-400', 'cursor-not-allowed');
+                navGame.classList.add('text-white', 'hover:bg-teal-600');
+                navGame.disabled = false;
+                navGame.innerHTML = '<i class="fa-solid fa-gamepad mr-1"></i>Game';
+                
+                navGameMobile.classList.remove('text-gray-400', 'cursor-not-allowed');
+                navGameMobile.classList.add('text-white', 'hover:bg-teal-600');
+                navGameMobile.disabled = false;
+                navGameMobile.innerHTML = '<i class="fa-solid fa-gamepad"></i> Game';
+
+                document.getElementById('nav-cert').classList.remove('hidden');
+                document.getElementById('nav-cert-mobile').classList.remove('hidden');
+                
+                document.getElementById('proceed-game-btn').classList.remove('hidden');
+                document.getElementById('submit-quiz-btn').classList.add('hidden');
+
+                showModal('Outstanding!', `You scored ${score}/20 (${percentage}%). You have unlocked your Certificate of Mastery AND the Retro Game!`, 'success');
+            } else {
+                quizData.forEach((_, i) => {
+                    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                    if(selected) selected.checked = false;
+                });
+                showModal('Keep Trying!', `You scored ${score}/20 (${percentage}%). You need 90% (18/20) to earn the certificate. Your answers have been reset so you can try again.`, 'error');
+                document.getElementById('quiz-section').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // --- RETRO GAME LOGIC: Data Runner (Platformer) ---
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let gameRunning = false;
+        let animationId;
+        
+        let score = 0;
+        let lives = 3;
+        let gameSpeed = 5;
+        let frameCount = 0;
+        
+        // Player Object
+        const player = {
+            x: 50,
+            y: 200,
+            width: 30,
+            height: 30,
+            dy: 0,
+            jumpForce: -12,
+            originalJumpForce: -12,
+            grounded: false,
+            color: '#38bdf8' // Cyan
+        };
+        
+        const gravity = 0.6;
+        let obstacles = [];
+        let collectibles = [];
+        
+        const overlay = document.getElementById('game-overlay');
+        const startBtn = document.getElementById('start-game-btn');
+        startBtn.addEventListener('click', startGame);
+
+        // Input
+        function jump(e) {
+            if(!gameRunning) return;
+            if(e.type === 'keydown' && e.code !== 'Space') return;
+            if(e.type === 'keydown') e.preventDefault();
+            
+            if(player.grounded) {
+                player.dy = player.jumpForce;
+                player.grounded = false;
+            }
+        }
+
+        window.addEventListener('keydown', jump);
+        canvas.addEventListener('mousedown', jump);
+        canvas.addEventListener('touchstart', jump, {passive: false});
+
+        function resetGame() {
+            score = 0;
+            lives = 3;
+            gameSpeed = 5;
+            frameCount = 0;
+            obstacles = [];
+            collectibles = [];
+            player.y = 200;
+            player.dy = 0;
+            document.getElementById('game-score').innerText = score;
+            document.getElementById('game-lives').innerText = "100%";
+            document.getElementById('game-lives').className = "text-green-400 font-bold";
+        }
+
+        function startGame() {
+            overlay.classList.add('hidden');
+            if(!gameRunning) {
+                resetGame();
+                gameRunning = true;
+                gameLoop();
+            }
+        }
+        
+        function drawGameStatic() {
+            ctx.fillStyle = '#1e1b4b'; // bg
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            // ground
+            ctx.fillStyle = '#374151';
+            ctx.fillRect(0, canvas.height - 40, canvas.width, 40);
+            
+            ctx.fillStyle = '#9ca3af';
+            ctx.font = '20px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('SYSTEM READY: AWAITING EXECUTION', canvas.width/2, canvas.height/2);
+        }
+
+        function spawnObstacle() {
+            let size = 30 + Math.random() * 20;
+            let type = Math.random() > 0.5 ? 'spike' : 'block';
+            obstacles.push({
+                x: canvas.width,
+                y: canvas.height - 40 - size,
+                width: size,
+                height: size,
+                type: type
+            });
+        }
+        
+        function spawnCollectible() {
+            // Spawn high or low
+            let yPos = Math.random() > 0.5 ? canvas.height - 120 : canvas.height - 60;
+            collectibles.push({
+                x: canvas.width + 100, // Spawn slightly offscreen behind obstacle
+                y: yPos,
+                radius: 12
+            });
+        }
+
+        function gameLoop() {
+            if(!gameRunning) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw background grid (scrolling effect)
+            ctx.strokeStyle = '#312e81'; // dark indigo
+            ctx.lineWidth = 1;
+            let offset = (frameCount * 2) % 40;
+            for(let i=0; i<canvas.width + 40; i+=40) {
+                ctx.beginPath(); ctx.moveTo(i - offset, 0); ctx.lineTo(i - offset, canvas.height); ctx.stroke();
+            }
+            
+            // Draw Ground
+            ctx.fillStyle = '#374151';
+            ctx.fillRect(0, canvas.height - 40, canvas.width, 40);
+            ctx.strokeStyle = '#10b981'; // green laser edge
+            ctx.lineWidth = 3;
+            ctx.beginPath(); ctx.moveTo(0, canvas.height - 40); ctx.lineTo(canvas.width, canvas.height-40); ctx.stroke();
+            
+            // Physics
+            player.dy += gravity;
+            player.y += player.dy;
+            
+            // Ground Collision
+            if(player.y + player.height > canvas.height - 40) {
+                player.y = canvas.height - 40 - player.height;
+                player.dy = 0;
+                player.grounded = true;
+            }
+            
+            // Draw Player
+            ctx.fillStyle = player.color;
+            ctx.shadowColor = player.color;
+            ctx.shadowBlur = 10;
+            ctx.fillRect(player.x, player.y, player.width, player.height);
+            ctx.shadowBlur = 0;
+            
+            // Spawning
+            frameCount++;
+            if(frameCount % Math.floor(90 - gameSpeed*2) === 0) {
+                spawnObstacle();
+            }
+            if(frameCount % Math.floor(120 - gameSpeed) === 0) {
+                spawnCollectible();
+            }
+            
+            // Increase difficulty
+            if(frameCount % 600 === 0 && gameSpeed < 12) {
+                gameSpeed += 0.5;
+            }
+            
+            // Update & Draw Collectibles
+            for(let i=0; i<collectibles.length; i++) {
+                let c = collectibles[i];
+                c.x -= gameSpeed;
+                
+                // Draw Coin (Critical Data)
+                ctx.beginPath();
+                ctx.arc(c.x, c.y, c.radius, 0, Math.PI*2);
+                ctx.fillStyle = '#facc15'; // Yellow
+                ctx.fill();
+                ctx.strokeStyle = '#ca8a04';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                // Collision with player (AABB approx)
+                let distX = Math.abs(c.x - (player.x + player.width/2));
+                let distY = Math.abs(c.y - (player.y + player.height/2));
+                
+                if(distX < (player.width/2 + c.radius) && distY < (player.height/2 + c.radius)) {
+                    score += 10;
+                    document.getElementById('game-score').innerText = score;
+                    collectibles.splice(i, 1);
+                    i--;
+                    continue;
+                }
+                
+                if(c.x + c.radius < 0) {
+                    collectibles.splice(i, 1);
+                    i--;
+                }
+            }
+            
+            // Update & Draw Obstacles
+            for(let i=0; i<obstacles.length; i++) {
+                let obs = obstacles[i];
+                obs.x -= gameSpeed;
+                
+                // Draw Malware (Red)
+                ctx.fillStyle = '#ef4444';
+                ctx.shadowColor = '#dc2626';
+                ctx.shadowBlur = 10;
+                if(obs.type === 'spike') {
+                    ctx.beginPath();
+                    ctx.moveTo(obs.x, obs.y + obs.height);
+                    ctx.lineTo(obs.x + obs.width/2, obs.y);
+                    ctx.lineTo(obs.x + obs.width, obs.y + obs.height);
+                    ctx.fill();
+                } else {
+                    ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
+                }
+                ctx.shadowBlur = 0;
+                
+                // Collision logic
+                if(player.x < obs.x + obs.width && 
+                   player.x + player.width > obs.x && 
+                   player.y < obs.y + obs.height && 
+                   player.y + player.height > obs.y) {
+                    
+                    // Hit!
+                    lives--;
+                    obstacles.splice(i, 1); // remove to prevent multiple hits
+                    i--;
+                    
+                    // Visual hit flash
+                    ctx.fillStyle = "rgba(239,68,68,0.4)";
+                    ctx.fillRect(0,0,canvas.width,canvas.height);
+                    
+                    if(lives === 2) {
+                        document.getElementById('game-lives').innerText = "66%";
+                        document.getElementById('game-lives').className = "text-yellow-400 font-bold";
+                    } else if (lives === 1) {
+                        document.getElementById('game-lives').innerText = "33%";
+                        document.getElementById('game-lives').className = "text-red-400 font-bold";
+                    }
+                    
+                    if(lives <= 0) {
+                        document.getElementById('game-lives').innerText = "SYSTEM FAILURE";
+                        gameOver();
+                        return;
+                    }
+                    continue;
+                }
+                
+                if(obs.x + obs.width < 0) {
+                    obstacles.splice(i, 1);
+                    i--;
+                }
+            }
+
+            animationId = requestAnimationFrame(gameLoop);
+        }
+
+        function gameOver() {
+            gameRunning = false;
+            cancelAnimationFrame(animationId);
+            overlay.classList.remove('hidden');
+            startBtn.innerText = "Fatal Error! Reboot";
+            startBtn.classList.replace('bg-teal-600', 'bg-red-700');
+            startBtn.classList.replace('border-teal-800', 'border-red-900');
+            startBtn.classList.replace('hover:bg-teal-500', 'hover:bg-red-600');
+        }
+
+        // --- CERTIFICATE LOGIC ---
+        function updateCertName() {
+            let name = document.getElementById('student-name-input').value.trim();
+            if(name) {
+                if (name.includes(' ')) {
+                    name = name.split(' ')[0];
+                    document.getElementById('student-name-input').value = name;
+                    showModal('Notice', 'Only your first name has been applied to the certificate.', 'info');
+                }
+                document.getElementById('cert-student-name').innerText = name;
+            } else {
+                showModal('Wait!', 'Please enter your first name to update the certificate.', 'warning');
+            }
+        }
+
+        const today = new Date();
+        document.getElementById('cert-date').innerText = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        function downloadCert() {
+            const certEl = document.getElementById('certificate');
+            const name = document.getElementById('cert-student-name').innerText;
+            let filename = 'Certificate.png';
+            if (name && name !== 'Student') {
+                filename = `${name.replace(/\s+/g, '_')}_Certificate.png`;
+            }
+
+            const originalTransform = certEl.style.transform;
+            certEl.style.transform = 'none';
+
+            const btn = document.getElementById('download-btn');
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Generating...';
+            btn.disabled = true;
+
+            html2canvas(certEl, { 
+                scale: 2, 
+                useCORS: true,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+            }).catch(err => {
+                console.error(err);
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                showModal('Error', 'Failed to generate image. Try using a desktop browser.', 'error');
+            });
+        }
+
+        window.onload = () => {
+            drawGameStatic();
+        }
+    </script>
+</body>
+</html>
+```eof

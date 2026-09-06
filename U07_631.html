@@ -1,0 +1,1432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 07 Section 6.3.1 Mastery - Password Best Practices</title>
+    
+    <!-- Load Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load HTML2Canvas for Certificate Download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- Load Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Qwitcher+Grypen:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; 
+            color: #0f172a;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease-in-out; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Interactive Elements CSS */
+        .dropzone-container { min-height: 60px; border: 2px dashed #94a3b8; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: #f1f5f9; transition: all 0.2s;}
+        .dropzone-container.drag-over { background: #e2e8f0; border-color: #3b82f6; box-shadow: inset 0 0 10px rgba(59, 130, 246, 0.2);}
+        
+        .draggable-item { cursor: grab; transition: transform 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .draggable-item:active { cursor: grabbing; transform: scale(0.95); }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #e2e8f0; }
+        ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #2563eb; }
+
+        /* Retro Game Canvas */
+        #game-canvas {
+            background-color: #020617;
+            border: 4px solid #334155;
+            border-radius: 8px;
+            box-shadow: 0 0 25px rgba(59, 130, 246, 0.4);
+            max-width: 100%;
+            height: auto;
+            touch-action: none;
+        }
+
+        /* --- CERTIFICATE STYLES --- */
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .font-body { font-family: 'Lora', serif; }
+        .font-script { font-family: 'Qwitcher Grypen', cursive; }
+        
+        .cert-preview-container {
+            width: 100%;
+            overflow: auto;
+            display: flex;
+            justify-content: center;
+            background: #cbd5e1;
+            padding: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        #certificate {
+            width: 1056px !important;
+            height: 816px !important;
+            flex-shrink: 0;
+            background-color: #ffffff;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1056" height="816"><polygon points="0,0 250,0 0,650" fill="%2360a5fa"/><polygon points="0,0 350,0 0,900" fill="%231e3a8a" opacity="0.8"/><polygon points="0,0 120,0 0,300" fill="%2393c5fd"/><polygon points="0,450 650,816 0,816" fill="%2360a5fa"/><polygon points="0,550 450,816 0,816" fill="%231e3a8a" opacity="0.8"/><polygon points="800,0 1056,0 1056,256" fill="%23f8fafc"/><polygon points="1056,500 1056,816 750,816" fill="%23f8fafc"/></svg>');
+            background-size: cover;
+            border: 4px solid #94a3b8;
+        }
+
+        .silver-seal {
+            position: absolute;
+            left: 110px;
+            top: 350px;
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #94a3b8, #f8fafc, #64748b, #f1f5f9, #475569, #e2e8f0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3), inset 0 0 15px rgba(255,255,255,0.7), inset 0 0 25px rgba(51,65,85,0.9);
+            z-index: 10;
+        }
+        .silver-seal::before {
+            content: '';
+            position: absolute;
+            top: -4px; bottom: -4px; left: -4px; right: -4px;
+            border-radius: 50%;
+            border: 6px dashed #64748b;
+        }
+        .silver-seal-inner-1 {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 2px solid rgba(51, 65, 85, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #cbd5e1, #94a3b8);
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.2), 0 2px 5px rgba(255,255,255,0.7);
+            z-index: 1;
+        }
+        .silver-seal-inner-2 {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: radial-gradient(circle, #f8fafc, #94a3b8);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            padding: 10px;
+        }
+        .embossed-text {
+            color: #334155;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2);
+            font-family: 'Playfair Display', serif;
+            font-weight: 800;
+            line-height: 1.1;
+            text-transform: uppercase;
+        }
+        .embossed-text-large { font-size: 14px; letter-spacing: 1px; }
+        .embossed-text-small { font-size: 11px; letter-spacing: 2px; margin: 2px 0; }
+        .embossed-star { font-size: 12px; color: #334155; text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2); margin: 2px 0; }
+
+        @media (max-width: 1100px) {
+            #certificate { transform: scale(0.7); transform-origin: top left; margin-bottom: -240px; margin-right: -310px; }
+        }
+        @media (max-width: 768px) {
+            #certificate { transform: scale(0.4); transform-origin: top left; margin-bottom: -490px; margin-right: -630px; }
+        }
+
+        /* Password Input Feedback visualizer */
+        .pwd-bar { height: 8px; border-radius: 4px; transition: all 0.3s ease; }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen flex flex-col">
+
+    <nav class="bg-slate-800 text-white shadow-lg sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-shield-halved text-2xl text-blue-400"></i>
+                    <span class="font-bold text-xl tracking-wider hidden sm:inline-block">Tech+ Unit 07 Section 6.3.1</span>
+                    <span class="font-bold text-xl tracking-wider sm:hidden">6.3.1 Password Best Practices</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-2">
+                        <button onclick="switchTab('briefing')" class="nav-btn bg-slate-900 px-3 py-2 rounded-md text-sm font-medium hover:bg-slate-700 transition" id="nav-briefing"><i class="fa-solid fa-book-open mr-1"></i>Briefing</button>
+                        <button onclick="switchTab('activity')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-slate-700 transition" id="nav-activity"><i class="fa-solid fa-flask mr-1"></i>Lab Activity</button>
+                        <button onclick="switchTab('quiz')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-slate-700 transition" id="nav-quiz"><i class="fa-solid fa-clipboard-check mr-1"></i>Quiz</button>
+                        <button onclick="switchTab('game')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-slate-500 cursor-not-allowed transition" id="nav-game" disabled><i class="fa-solid fa-lock mr-1"></i>Game</button>
+                        <button onclick="switchTab('cert')" class="nav-btn hidden px-3 py-2 rounded-md text-sm font-medium text-blue-300 hover:bg-slate-700 transition" id="nav-cert"><i class="fa-solid fa-award mr-1"></i>Certificate</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Nav -->
+        <div class="md:hidden flex flex-wrap justify-center gap-2 py-2 px-2 bg-slate-700">
+            <button onclick="switchTab('briefing')" class="nav-btn-mobile px-3 py-1 text-sm rounded bg-slate-900 text-white" id="nav-briefing-mobile">Briefing</button>
+            <button onclick="switchTab('activity')" class="nav-btn-mobile px-3 py-1 text-sm rounded text-white" id="nav-activity-mobile">Lab</button>
+            <button onclick="switchTab('quiz')" class="nav-btn-mobile px-3 py-1 text-sm rounded text-white" id="nav-quiz-mobile">Quiz</button>
+            <button onclick="switchTab('game')" class="nav-btn-mobile px-3 py-1 text-sm rounded text-slate-400 cursor-not-allowed" id="nav-game-mobile" disabled><i class="fa-solid fa-lock"></i></button>
+            <button onclick="switchTab('cert')" id="nav-cert-mobile" class="hidden px-2 py-1 text-sm text-blue-300 rounded"><i class="fa-solid fa-award"></i></button>
+        </div>
+    </nav>
+
+    <main class="flex-grow w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <!-- BRIEFING SECTION -->
+        <div id="briefing-section" class="tab-content active no-print">
+            <div class="text-center mb-10">
+                <h1 class="text-3xl md:text-5xl font-extrabold text-slate-900 mb-4">Password Best Practices</h1>
+                <p class="text-lg text-slate-600 max-w-3xl mx-auto">Passwords are the first line of defense in the digital world. They act as digital keys protecting sensitive data, identity, and assets. Learn the critical rules to ensure your digital keys are unbreakable.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- Tile 1 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-blue-500 overflow-hidden flex flex-col hover:shadow-xl transition-shadow">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-blue-700"><i class="fa-solid fa-key mr-2"></i>Length & Complexity</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>Length is King:</strong> Passwords must be at least 12 characters; 16+ is highly recommended.</li>
+                            <li><strong>Complexity:</strong> Must include uppercase, lowercase, numbers, and special characters (!, @, #).</li>
+                            <li><strong>Passphrases:</strong> Using multiple words (e.g., <i>Red$Monkey@RunsFast</i>) maximizes length and memorability.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('length-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('length-usecase')" class="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 2 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-indigo-500 overflow-hidden flex flex-col hover:shadow-xl transition-shadow">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-indigo-700"><i class="fa-solid fa-clock-rotate-left mr-2"></i>History & Expiration</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>Password History:</strong> Policies that prevent users from reusing their previous passwords.</li>
+                            <li><strong>Password Expiration:</strong> Mandates changing passwords after a set period (e.g., 30, 60, 90 days).</li>
+                            <li><strong>Risk Reduction:</strong> Reduces the time a stolen, compromised password remains valid on a network.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('history-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('history-usecase')" class="flex-1 bg-indigo-100 hover:bg-indigo-200 text-indigo-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 3 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-violet-500 overflow-hidden flex flex-col hover:shadow-xl transition-shadow">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-violet-700"><i class="fa-solid fa-user-secret mr-2"></i>Privacy & Site Reuse</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>No Sharing:</strong> Passwords should NEVER be shared with friends, family, or IT support.</li>
+                            <li><strong>Avoid Reuse:</strong> Never use the same password across multiple websites.</li>
+                            <li><strong>Credential Stuffing:</strong> Attackers use breached passwords from one site to unlock your other accounts.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('privacy-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('privacy-usecase')" class="flex-1 bg-violet-100 hover:bg-violet-200 text-violet-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 4 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-cyan-500 overflow-hidden flex flex-col hover:shadow-xl transition-shadow">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-cyan-700"><i class="fa-solid fa-vault mr-2"></i>Managers, Resets & Defaults</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>Password Managers:</strong> Secure tools that generate and store unique, complex passwords for you.</li>
+                            <li><strong>Default Credentials:</strong> Factory-set usernames and passwords (like admin/admin) must be changed instantly.</li>
+                            <li><strong>Secure Resets:</strong> Reset compromised passwords via verified email/SMS links immediately upon suspicion.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('managers-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('managers-usecase')" class="flex-1 bg-cyan-100 hover:bg-cyan-200 text-cyan-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 flex justify-center">
+                <button onclick="switchTab('activity')" class="bg-blue-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-blue-700 shadow-lg transition transform hover:scale-105">Proceed to Lab Activity <i class="fa-solid fa-arrow-right ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- LAB ACTIVITY SECTION -->
+        <div id="activity-section" class="tab-content no-print">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-extrabold text-slate-900 mb-2">Interactive Lab Activities</h1>
+                <p class="text-slate-600">Complete all 8 mini-labs to master the 4 core concepts of Password Best Practices.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Concept 1: Length & Complexity -->
+                <!-- Lab 1A: Password Strength Tester -->
+                <div class="bg-white p-6 rounded-xl shadow-md border-t-4 border-blue-500">
+                    <h2 class="text-lg font-bold mb-2 text-blue-700"><i class="fa-solid fa-dumbbell mr-2"></i>Lab 1A: Strength Tester</h2>
+                    <p class="text-sm text-slate-600 mb-4">Type a password that meets all complexity rules (Upper, Lower, Number, Symbol, 12+ Chars) to pass.</p>
+                    <input type="text" id="lab1a-input" class="w-full border-2 border-slate-300 rounded px-4 py-2 mb-2 focus:outline-none focus:border-blue-500" placeholder="Enter a test password..." oninput="checkLab1A()">
+                    <div class="w-full bg-slate-200 rounded-full h-2 mb-2">
+                        <div id="lab1a-bar" class="pwd-bar bg-red-500 w-0"></div>
+                    </div>
+                    <p id="lab1a-feedback" class="text-xs font-bold text-red-500 h-4"></p>
+                </div>
+
+                <!-- Lab 1B: Passphrase Builder -->
+                <div class="bg-white p-6 rounded-xl shadow-md border-t-4 border-blue-500">
+                    <h2 class="text-lg font-bold mb-2 text-blue-700"><i class="fa-solid fa-puzzle-piece mr-2"></i>Lab 1B: Passphrase Builder</h2>
+                    <p class="text-sm text-slate-600 mb-4">Drag the random words and symbols into the box to create a long, highly secure passphrase.</p>
+                    <div class="flex gap-2 mb-4 flex-wrap" id="lab1b-source">
+                        <div class="draggable-item bg-blue-100 px-3 py-1 rounded border border-blue-300 text-sm font-bold" draggable="true" data-val="Purple">Purple</div>
+                        <div class="draggable-item bg-blue-100 px-3 py-1 rounded border border-blue-300 text-sm font-bold" draggable="true" data-val="$">$</div>
+                        <div class="draggable-item bg-blue-100 px-3 py-1 rounded border border-blue-300 text-sm font-bold" draggable="true" data-val="Dinosaur">Dinosaur</div>
+                        <div class="draggable-item bg-blue-100 px-3 py-1 rounded border border-blue-300 text-sm font-bold" draggable="true" data-val="99">99</div>
+                        <div class="draggable-item bg-blue-100 px-3 py-1 rounded border border-blue-300 text-sm font-bold" draggable="true" data-val="Jumps">Jumps</div>
+                    </div>
+                    <div id="lab1b-drop" class="dropzone-container p-2 flex flex-wrap gap-2 w-full mb-2"></div>
+                    <p id="lab1b-feedback" class="text-xs font-bold text-slate-500 h-4">Drag all 5 items to build the phrase.</p>
+                </div>
+
+                <!-- Concept 2: History & Expiration -->
+                <!-- Lab 2A: Password History Validator -->
+                <div class="bg-white p-6 rounded-xl shadow-md border-t-4 border-indigo-500">
+                    <h2 class="text-lg font-bold mb-2 text-indigo-700"><i class="fa-solid fa-clock-rotate-left mr-2"></i>Lab 2A: History Validator</h2>
+                    <p class="text-sm text-slate-600 mb-2">The system remembers your last 3 passwords. Enter a NEW, complex password that is not in your history.</p>
+                    <ul class="text-xs text-red-600 mb-3 font-mono bg-red-50 p-2 rounded border border-red-100">
+                        <li>History 1: Summer2023!</li>
+                        <li>History 2: Fall2023!</li>
+                        <li>History 3: Winter2024!</li>
+                    </ul>
+                    <input type="text" id="lab2a-input" class="w-full border-2 border-slate-300 rounded px-4 py-2 mb-2 focus:outline-none focus:border-indigo-500" placeholder="Type new password...">
+                    <button onclick="checkLab2A()" class="bg-indigo-600 text-white px-4 py-1 rounded text-sm hover:bg-indigo-700 w-full mb-2">Submit New Password</button>
+                    <p id="lab2a-feedback" class="text-xs font-bold text-slate-500 h-4"></p>
+                </div>
+
+                <!-- Lab 2B: Expiration Slider -->
+                <div class="bg-white p-6 rounded-xl shadow-md border-t-4 border-indigo-500 flex flex-col justify-between">
+                    <div>
+                        <h2 class="text-lg font-bold mb-2 text-indigo-700"><i class="fa-solid fa-calendar-xmark mr-2"></i>Lab 2B: Expiration Policy</h2>
+                        <p class="text-sm text-slate-600 mb-4">You are the IT Admin. Set the corporate password expiration policy to the recommended 60-90 day window.</p>
+                        <input type="range" id="lab2b-slider" min="0" max="365" value="365" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer" oninput="updateLab2B()">
+                        <div class="flex justify-between text-xs text-slate-500 font-bold mt-2">
+                            <span>0 Days</span><span>180 Days</span><span>365 Days</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 text-center">
+                        <span id="lab2b-val" class="text-2xl font-black text-slate-700">365 Days</span>
+                        <p id="lab2b-feedback" class="text-xs font-bold text-red-500 mt-1">High Risk: Passwords are valid too long.</p>
+                    </div>
+                </div>
+
+                <!-- Concept 3: Privacy & Reuse -->
+                <!-- Lab 3A: Credential Stuffing -->
+                <div class="bg-white p-6 rounded-xl shadow-md border-t-4 border-violet-500">
+                    <h2 class="text-lg font-bold mb-2 text-violet-700"><i class="fa-solid fa-users-viewfinder mr-2"></i>Lab 3A: Credential Stuffing</h2>
+                    <p class="text-sm text-slate-600 mb-4">A hacker breaches "Site A". See what happens to your other accounts based on your habits.</p>
+                    <div class="flex justify-around mb-4 text-3xl">
+                        <i id="siteA" class="fa-solid fa-server text-slate-300 transition-colors duration-500"></i>
+                        <i id="siteB" class="fa-solid fa-building-columns text-slate-300 transition-colors duration-500"></i>
+                        <i id="siteC" class="fa-solid fa-envelope text-slate-300 transition-colors duration-500"></i>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="checkLab3A('same')" class="flex-1 bg-red-100 text-red-800 border border-red-300 px-2 py-2 rounded text-xs font-bold hover:bg-red-200">Test Same Password</button>
+                        <button onclick="checkLab3A('unique')" class="flex-1 bg-green-100 text-green-800 border border-green-300 px-2 py-2 rounded text-xs font-bold hover:bg-green-200">Test Unique Passwords</button>
+                    </div>
+                    <p id="lab3a-feedback" class="text-xs font-bold text-slate-500 mt-2 h-4 text-center"></p>
+                </div>
+
+                <!-- Lab 3B: Phishing / Privacy Filter -->
+                <div class="bg-white p-6 rounded-xl shadow-md border-t-4 border-violet-500">
+                    <h2 class="text-lg font-bold mb-2 text-violet-700"><i class="fa-solid fa-user-secret mr-2"></i>Lab 3B: Privacy Filter</h2>
+                    <p class="text-sm text-slate-600 mb-4">Read the message below. Should you share your password or keep it private?</p>
+                    <div class="bg-slate-100 p-3 rounded border border-slate-200 mb-4 text-sm relative">
+                        <i class="fa-brands fa-discord text-indigo-500 absolute top-2 right-2 text-xl"></i>
+                        <strong>BestFriend99:</strong> "Hey! My account is glitched and won't let me claim the free game. Can I login to yours real quick to get it? I promise I won't look at anything."
+                    </div>
+                    <div class="flex gap-4">
+                        <button onclick="checkLab3B('share')" class="flex-1 bg-slate-200 text-slate-700 px-4 py-2 rounded font-bold hover:bg-slate-300">Share Password</button>
+                        <button onclick="checkLab3B('block')" class="flex-1 bg-violet-600 text-white px-4 py-2 rounded font-bold hover:bg-violet-700">Keep Private</button>
+                    </div>
+                    <p id="lab3b-feedback" class="text-xs font-bold mt-2 h-4 text-center"></p>
+                </div>
+
+                <!-- Concept 4: Managers & Defaults -->
+                <!-- Lab 4A: Password Manager Vault -->
+                <div class="bg-white p-6 rounded-xl shadow-md border-t-4 border-cyan-500">
+                    <h2 class="text-lg font-bold mb-2 text-cyan-700"><i class="fa-solid fa-vault mr-2"></i>Lab 4A: Secure Vault</h2>
+                    <p class="text-sm text-slate-600 mb-4">You generated a highly secure password via a manager. Drag it to the vault to save it securely, rather than putting it on a sticky note.</p>
+                    <div class="flex justify-center mb-6">
+                        <div class="draggable-item bg-green-100 border-2 border-green-400 px-4 py-2 rounded font-mono font-bold text-green-800" draggable="true" id="lab4a-pwd">v7$kL9#mP2@qX</div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div id="lab4a-vault" class="dropzone-container flex-1 flex-col p-2 text-center text-slate-400">
+                            <i class="fa-solid fa-vault text-2xl mb-1"></i><span class="text-xs">Password Vault</span>
+                        </div>
+                        <div id="lab4a-trash" class="dropzone-container flex-1 flex-col p-2 text-center text-slate-400">
+                            <i class="fa-regular fa-note-sticky text-2xl mb-1 text-yellow-500"></i><span class="text-xs">Physical Note</span>
+                        </div>
+                    </div>
+                    <p id="lab4a-feedback" class="text-xs font-bold mt-2 h-4 text-center"></p>
+                </div>
+
+                <!-- Lab 4B: Default Router Config -->
+                <div class="bg-white p-6 rounded-xl shadow-md border-t-4 border-cyan-500">
+                    <h2 class="text-lg font-bold mb-2 text-cyan-700"><i class="fa-solid fa-wifi mr-2"></i>Lab 4B: Default Credentials</h2>
+                    <p class="text-sm text-slate-600 mb-4">You just bought a new router. Change the factory default credentials immediately to secure your home network.</p>
+                    <div class="bg-slate-800 p-4 rounded text-white font-mono text-sm">
+                        <div class="mb-2">
+                            <label class="block text-slate-400 text-xs">Username:</label>
+                            <input type="text" id="lab4b-user" value="admin" class="w-full bg-slate-700 text-white px-2 py-1 rounded border border-slate-600">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-slate-400 text-xs">Password:</label>
+                            <input type="text" id="lab4b-pass" value="password" class="w-full bg-slate-700 text-white px-2 py-1 rounded border border-slate-600">
+                        </div>
+                        <button onclick="checkLab4B()" class="bg-cyan-600 hover:bg-cyan-500 px-4 py-2 rounded w-full font-bold uppercase tracking-wider text-xs">Apply Config</button>
+                    </div>
+                    <p id="lab4b-feedback" class="text-xs font-bold mt-2 h-4 text-center"></p>
+                </div>
+            </div>
+
+            <div class="text-center mt-10">
+                <button onclick="switchTab('quiz')" class="bg-blue-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-blue-700 shadow-lg transition transform hover:scale-105">Take the Mastery Quiz <i class="fa-solid fa-clipboard-check ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- QUIZ SECTION -->
+        <div id="quiz-section" class="tab-content no-print">
+            <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-xl max-w-4xl mx-auto">
+                <div class="text-center mb-8 border-b pb-4">
+                    <h1 class="text-3xl font-extrabold text-slate-900 mb-2">Unit 07 Section 6.3.1 Mastery Quiz</h1>
+                    <p class="text-slate-600">Score 90% or higher (18/20) to earn your Certificate of Mastery and unlock the Password Buster game!</p>
+                </div>
+
+                <div id="quiz-container" class="space-y-8">
+                    <!-- Questions injected via JS -->
+                </div>
+
+                <div class="mt-10 text-center border-t pt-6 flex flex-col md:flex-row justify-center items-center gap-4">
+                    <button id="submit-quiz-btn" onclick="gradeQuiz()" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">Submit Quiz</button>
+                    <button id="proceed-game-btn" onclick="switchTab('game')" class="hidden bg-indigo-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-indigo-700 shadow-lg transition w-full md:w-auto">Play Password Buster <i class="fa-solid fa-gamepad ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RETRO GAME SECTION -->
+        <div id="game-section" class="tab-content no-print">
+            <div class="bg-slate-900 p-6 sm:p-8 rounded-2xl shadow-xl max-w-4xl mx-auto border-4 border-slate-700 flex flex-col items-center">
+                <div class="text-center mb-4 w-full">
+                    <h1 class="text-3xl font-extrabold text-cyan-400 mb-2 tracking-widest uppercase" style="font-family: monospace;">Password Buster</h1>
+                    <p class="text-slate-300 text-sm">Hackers are sending weak password bubbles to breach your system! Use <strong class="text-white bg-slate-700 px-1 rounded">LEFT/RIGHT</strong> arrows to move your security node and <strong class="text-white bg-slate-700 px-1 rounded">SPACEBAR</strong> to shoot lasers to split and destroy the bubbles before they hit you.</p>
+                </div>
+                
+                <div class="flex justify-between items-center w-full max-w-[600px] mb-2 px-4 text-white font-mono text-xl">
+                    <div>Score: <span id="game-score" class="text-cyan-400 font-bold">0</span></div>
+                    <div>Lives: <span id="game-lives" class="text-red-400 font-bold">3</span></div>
+                </div>
+
+                <div class="relative flex justify-center w-full">
+                    <canvas id="game-canvas" width="600" height="450" class="w-full max-w-[600px]"></canvas>
+                    
+                    <div id="game-overlay" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-80 rounded-lg max-w-[600px] mx-auto z-10">
+                        <button id="start-game-btn" class="bg-cyan-600 hover:bg-cyan-500 text-white font-bold font-mono py-3 px-6 rounded-lg text-xl border-4 border-cyan-800 uppercase transform transition hover:scale-105">Initialize Defense</button>
+                    </div>
+                </div>
+
+                <div class="mt-8 text-center w-full border-t border-slate-700 pt-6">
+                    <button onclick="switchTab('cert')" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">View Certificate <i class="fa-solid fa-award ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CERTIFICATE SECTION -->
+        <div id="cert-section" class="tab-content">
+            <div class="max-w-5xl mx-auto">
+                
+                <!-- Controls -->
+                <div class="bg-white p-6 rounded shadow mb-6 no-print text-center border border-slate-200">
+                    <h2 class="text-2xl font-bold text-blue-600 mb-2">🎉 Congratulations! 🎉</h2>
+                    <p class="text-slate-700 mb-4">You have achieved mastery of Password Best Practices.</p>
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+                        <input type="text" id="student-name-input" value="Student" placeholder="Enter your first name" class="border-2 border-slate-300 rounded px-4 py-2 w-full md:w-64 focus:border-blue-500 focus:outline-none">
+                        <button onclick="updateCertName()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">Update Name</button>
+                        <button id="download-btn" onclick="downloadCert()" class="bg-slate-800 text-white px-4 py-2 rounded hover:bg-slate-900 transition flex items-center justify-center">
+                            <i class="fa-solid fa-download mr-2"></i>Download PNG
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Certificate Render Container -->
+                <div class="cert-preview-container print:p-0 print:bg-white">
+                    <div id="certificate">
+                        <div class="silver-seal">
+                            <div class="silver-seal-inner-1">
+                                <div class="silver-seal-inner-2">
+                                     <span class="embossed-text embossed-text-large">Certificate</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-small">Of</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-large">Mastery</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="relative z-20 w-full h-full flex flex-col pt-[48px] pl-[380px] pr-[48px]">
+                            <h1 class="text-[#0f172a] text-[4.5rem] leading-none font-serif font-bold tracking-wide uppercase mb-2">CERTIFICATE</h1>
+                            <h2 class="text-slate-800 text-3xl font-serif tracking-widest uppercase mb-10">Of Achievement</h2>
+                            
+                            <p class="text-[1.4rem] font-body text-slate-800 mb-4">This is to certify that</p>
+                            
+                            <div class="relative mb-8 w-full">
+                                <h3 id="cert-student-name" class="text-[4rem] text-[#1e3a8a] font-serif italic leading-none pb-2 relative z-10 text-center w-full block">Student</h3>
+                                <div class="w-full border-b-[2px] border-[#1e3a8a] absolute bottom-[4px] left-0 z-0"></div>
+                                <div class="w-full border-b-[2px] border-dotted border-blue-500 absolute bottom-[0px] left-0 z-0"></div>
+                            </div>
+                            
+                            <p class="text-[1.3rem] font-body text-slate-800 leading-relaxed w-full pr-4">
+                                Has successfully completed the assessment for 
+                                <strong class="text-[1.8rem] text-[#1e3a8a] block mt-4 mb-2 font-serif">Tech+ Unit 07 Section 6.3.1</strong>
+                                <strong class="text-[1.5rem] text-black block mb-4 font-serif italic">Password Best Practices</strong>
+                                <span class="text-[1.1rem] text-slate-700 leading-snug block">Demonstrating profound comprehension of password complexity, expiration policies, privacy enforcement, credential stuffing defense, and secure vault management.</span>
+                            </p>
+                            
+                            <div class="flex justify-end gap-16 items-end mt-auto mb-[60px] w-full pr-8">
+                                <div class="w-64">
+                                    <div class="border-b border-slate-600 mb-2 h-20 flex items-end justify-center relative">
+                                        <span class="font-script text-[5rem] text-[#1e3a8a] absolute bottom-[-10px] transform -rotate-3 opacity-90">Dr. M. S</span>
+                                    </div>
+                                    <p class="font-serif text-xl text-slate-800 text-center">Administration</p>
+                                </div>
+                                
+                                <div class="w-64">
+                                    <div class="border-b border-slate-600 mb-2 text-center h-20 flex items-end justify-center">
+                                        <p id="cert-date" class="font-body text-2xl text-slate-800 pb-1">Date Here</p>
+                                    </div>
+                                    <p class="font-serif text-xl text-slate-800 text-center">Date</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Custom Modal for Alerts -->
+    <div id="custom-modal" class="fixed inset-0 bg-black bg-opacity-50 z-[100] hidden flex justify-center items-center backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all">
+            <div class="text-center">
+                <div id="modal-icon" class="text-5xl mb-4"></div>
+                <h3 id="modal-title" class="text-2xl font-bold mb-2 text-slate-900"></h3>
+                <p id="modal-msg" class="text-slate-600 mb-6"></p>
+                <button onclick="closeModal()" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-700 transition w-full">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Briefing Modal -->
+    <div id="briefing-modal" class="fixed inset-0 bg-black bg-opacity-70 z-[120] hidden flex justify-center items-center backdrop-blur-sm p-4 sm:p-6">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col transform transition-all overflow-hidden border-4 border-blue-600">
+            <div class="p-6 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+                <div class="flex items-center gap-4">
+                    <div id="briefing-modal-icon" class="text-4xl"></div>
+                    <h3 id="briefing-modal-title" class="text-2xl md:text-3xl font-bold text-slate-900"></h3>
+                </div>
+                <button onclick="closeBriefing()" class="text-slate-400 hover:text-red-600 transition text-4xl leading-none">&times;</button>
+            </div>
+            <div id="briefing-modal-content" class="p-6 md:p-10 overflow-y-auto flex-grow text-slate-700 text-lg leading-relaxed bg-white">
+                <!-- Dynamic Content Injected Here -->
+            </div>
+            <div class="p-6 border-t border-slate-200 bg-slate-50 flex justify-end">
+                <button onclick="closeBriefing()" class="bg-slate-700 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-slate-800 transition shadow-md">Acknowledge & Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- BRIEFING CONTENT DATA ---
+        const briefingData = {
+            'length-details': {
+                title: 'Password Length & Complexity',
+                icon: '<i class="fa-solid fa-key text-blue-600"></i>',
+                html: `
+                    <p class="mb-5">The foundation of modern digital security rests entirely on the strength of a user's password. A password serves as a digital key, verifying the identity of the person sitting at the keyboard and granting them access to highly sensitive, private information. As automated hacking tools become increasingly sophisticated, the rules governing what constitutes a "strong" password have evolved significantly.</p>
+                    <p class="mb-5">Length is universally recognized by security professionals as the single most critical factor in password creation. While legacy systems previously allowed for 8-character passwords, modern computing power renders these obsolete; an 8-character password consisting only of lowercase letters can be cracked by a standard graphics card in fractions of a second. Consequently, modern best practices dictate an absolute minimum of 12 characters, with 16 or more characters strongly recommended for critical accounts like banking or primary email.</p>
+                    <p class="mb-5">Complexity works hand-in-hand with length to create an exponentially more difficult mathematical puzzle for brute-force cracking software. A complex password must draw from a wide pool of character types. Every secure password must include a mix of uppercase letters (A-Z), lowercase letters (a-z), numbers (0-9), and special characters or symbols (!, @, #, $, etc.). The broader the character set, the harder the password is to guess.</p>
+                    <p class="mb-5">A highly effective modern strategy for achieving both immense length and required complexity is the use of <strong>passphrases</strong>. A passphrase is a sequence of seemingly random words combined together, interspersed with symbols and numbers (e.g., <i>P!nk$L0th$3@tL0t$0Ffru!T</i>). Because passphrases leverage entire words, they easily reach 20+ characters, making them virtually impossible for a computer to crack, yet remarkably easy for a human user to memorize.</p>
+                    <p class="mb-5">While humans naturally gravitate toward memorable patterns, computers are exceptionally good at guessing them. Users must ruthlessly avoid common words, sequential patterns (like <i>Qwerty!23</i> or <i>Password123</i>), and any personally identifiable information. Birthdays, pet names, favorite sports teams, and anniversaries are the first things a malicious actor will attempt when trying to compromise an account, often scraping this data directly from the user's public social media profiles.</p>
+                    <p class="mb-5">Furthermore, the creation of strong passwords should always be supplemented by Multi-Factor Authentication (MFA). MFA acknowledges that even the strongest password might occasionally be compromised. By requiring a secondary form of verification—such as a biometric scan or a time-sensitive code sent to a mobile device—MFA ensures that the password alone is not enough to grant access.</p>
+                    <p>Ultimately, balancing usability and extreme security is the fundamental goal of creating strong passwords. A password is useless if it is so complicated that the user is forced to write it down on a sticky note attached to their monitor. By utilizing lengthy, random passphrases, users can secure their digital lives without overwhelming their memory.</p>
+                `
+            },
+            'length-usecase': {
+                title: 'Length & Complexity: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 1: Creating a Master Password</h4>
+                        <p class="mb-2">When securing an extremely sensitive asset like a password manager vault or a bank account, users must prioritize sheer length and randomness over simple words.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Passphrase):</strong> Instead of using "Fido1980!", a user creates the passphrase "Purple$Dinosaur99Jumps!". This is easily memorized as a mental image but incredibly difficult for a brute-force algorithm to compute.</li>
+                            <li><strong>Example 2 (MFA Integration):</strong> A user sets a 16-character complex password for their email. Even though the password is secure, they also enable SMS-based MFA. If a hacker somehow guesses the password, they are still blocked by the MFA prompt on the user's phone.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 2: Avoiding Predictable Patterns</h4>
+                        <p class="mb-2">Hackers use automated dictionaries containing millions of common words and keyboard patterns. Users must actively avoid these predictable traps.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Social Scraping):</strong> An attacker reviews a target's Facebook page, sees their dog is named "Bella" and they were born in 1995. The attacker tries "Bella1995!" and instantly breaches the account because the user relied on personal info.</li>
+                            <li><strong>Example 2 (Keyboard Walking):</strong> A lazy employee sets their password to "Qazwsx123!". While it meets complexity requirements (upper, lower, numbers, symbols), it is a simple sequential keyboard walk and will be cracked instantly by a dictionary attack.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Complex Passphrases</p>
+                            <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=600&h=350" alt="Matrix code showing complexity" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: MFA on Mobile</p>
+                            <img src="https://images.unsplash.com/photo-1614064641913-6b71f92e21b9?auto=format&fit=crop&w=600&h=350" alt="Smartphone displaying MFA code" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'history-details': {
+                title: 'Password History & Expiration',
+                icon: '<i class="fa-solid fa-clock-rotate-left text-indigo-600"></i>',
+                html: `
+                    <p class="mb-5">While an individual strong password provides excellent initial security, it is not a permanent shield. The cybersecurity landscape is highly volatile, and even the best passwords can be compromised through third-party data breaches, keyloggers, or accidental exposure. To mitigate the risk of long-term credential theft, IT administrators rely heavily on two systemic policies: Password Expiration and Password History.</p>
+                    <p class="mb-5">Password expiration is a formal security policy, most prevalent in enterprise, government, and corporate environments. It mandates that a user must completely change their password after a predetermined period has elapsed—typically every 30, 60, or 90 days. When the password expires, the user is locked out of the system until a new, compliant password is created and verified.</p>
+                    <p class="mb-5">The rationale behind forced expiration is based on the reality that passwords are often compromised without the user's knowledge. If a hacker steals an employee's password and lurks in the network silently, an expiration policy acts as a ticking clock. Once the 60-day limit hits, the stolen password becomes useless, and the hacker's unauthorized access is immediately revoked, severing their connection to the corporate assets.</p>
+                    <p class="mb-5">Alongside expiration, organizations must stringently enforce a password history policy. Without a history policy, users frustrated by the expiration prompt will simply change their password from "SecurePass1!" to "SecurePass2!" and then immediately back to "SecurePass1!". This circumvents the entire purpose of the expiration policy and leaves the network highly vulnerable to minor variations in dictionary attacks.</p>
+                    <p class="mb-5">A robust history policy actively records and remembers a specified number of a user's previous passwords. A standard corporate configuration might remember the last 10 passwords. If the user attempts to recycle any password on that historical list, the system strictly rejects it. This forces the user to generate entirely new, conceptually different credentials.</p>
+                    <p class="mb-5">However, it is important to note that the philosophy around password expiration is evolving. Some security agencies now argue that forcing humans to change passwords too frequently causes them to write the passwords down or create predictable, weak iterations (like adding a '1' at the end). Thus, expiration is slowly being phased out for everyday consumer websites in favor of real-time breach monitoring.</p>
+                    <p>Despite this shift in consumer sites, enterprise networks dealing with confidential health data, financial records, or government secrets continue to mandate both expiration and history policies. To successfully navigate these strict corporate rules, employees are highly encouraged to utilize password managers, completely removing the burden of remembering a brand new 16-character password every 60 days.</p>
+                `
+            },
+            'history-usecase': {
+                title: 'History & Expiration: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-indigo-800 mb-2 border-b-2 border-indigo-200 pb-1">Case 1: Corporate Network Compliance</h4>
+                        <p class="mb-2">A hospital's IT department must strictly control access to patient records to comply with healthcare laws (HIPAA). They utilize systemic password policies to enforce security.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Expiration):</strong> A nurse's login credentials automatically expire every 90 days. Even if a bad actor secretly observed the nurse typing their password in January, that stolen credential becomes totally worthless by April.</li>
+                            <li><strong>Example 2 (History Enforcement):</strong> When prompted to change their password, a doctor tries to reuse the password they had last summer. The system rejects it with an error stating "Password does not meet History Requirements," forcing the creation of a new, unique key.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-indigo-800 mb-2 border-b-2 border-indigo-200 pb-1">Case 2: Addressing Suspected Breaches</h4>
+                        <p class="mb-2">While general expiration is an automated timeline, manual expiration is a critical response tool when a security incident is suspected.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Manual Reset):</strong> An IT admin notices unusual login attempts from a foreign country on an executive's account. The admin immediately clicks "Force Expiration," instantly logging the executive out and requiring them to establish a new password before they can read emails again.</li>
+                            <li><strong>Example 2 (User Initiated):</strong> A user accidentally clicks a phishing link and types their password into a fake website. Realizing their mistake minutes later, the user immediately navigates to the real site and changes their password, manually expiring the stolen one before the hackers can use it.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Security Timelines</p>
+                            <img src="https://images.unsplash.com/photo-1501139083538-0139583c060f?auto=format&fit=crop&w=600&h=350" alt="Clock face representing time and expiration" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Corporate Workstations</p>
+                            <img src="https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=600&h=350" alt="Empty modern office representing enterprise security" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'privacy-details': {
+                title: 'Privacy & Site Reuse',
+                icon: '<i class="fa-solid fa-user-secret text-violet-600"></i>',
+                html: `
+                    <p class="mb-5">One of the most dangerous and pervasive habits among computer users today is password reuse. It is incredibly tempting for a user to create one exceptionally strong password—like "B@tmanRidesTheB@tmobile99!"—and then use that exact same password for their bank, their email, their social media, and their favorite online gaming forum. This single practice is responsible for millions of compromised accounts globally every year.</p>
+                    <p class="mb-5">The internet is vast, and unfortunately, not every website maintains the same rigorous security standards. While your bank might invest millions in military-grade encryption to protect your password, a small, independent gaming forum might store passwords in plain text. If that small forum gets hacked—and small sites frequently do—the hackers now possess your email address and your favorite "secure" password.</p>
+                    <p class="mb-5">This cascading failure is primarily executed through an automated cyberattack known as <strong>credential stuffing</strong>. Once hackers obtain a database of stolen emails and passwords from a small, vulnerable site, they do not manually log in. Instead, they use powerful botnets to automatically test those exact same email/password combinations across thousands of major websites, including banks, Amazon, Netflix, and PayPal.</p>
+                    <p class="mb-5">Credential stuffing relies entirely on the human habit of password reuse to be successful. If a user maintains a unique password for every single account they own, a breach at the small gaming forum is isolated; the hacker only gains access to a meaningless forum profile. The user's bank account and primary email remain perfectly secure because the passwords do not match.</p>
+                    <p class="mb-5">Password privacy is the other side of this critical security coin. A password is only secure if it is entirely secret. This means passwords should never, under any circumstances, be shared with anyone. Students frequently share passwords with close friends, and employees sometimes share logins for convenience. However, relationships change, and shared passwords often lead to severe privacy violations and unauthorized data access.</p>
+                    <p class="mb-5">Social engineering attacks frequently target password privacy by tricking users into willingly handing over their credentials. Phishing emails, fake login pages, or individuals impersonating "IT Support" over the phone will boldly ask for a password to "fix an issue." Because humans inherently want to be helpful, many fall for this ruse and surrender their private keys directly to the attacker.</p>
+                    <p>Cultivating a mindset of absolute password privacy means recognizing that no legitimate organization—not Microsoft, not Google, and not your school's IT department—will ever ask for your password. IT administrators have systemic backdoors and tools to fix accounts; they do not need your password. Guarding your passwords as closely as you would your social security number is a fundamental requirement of digital citizenship.</p>
+                `
+            },
+            'privacy-usecase': {
+                title: 'Privacy & Reuse: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-violet-800 mb-2 border-b-2 border-violet-200 pb-1">Case 1: The Dangers of Credential Stuffing</h4>
+                        <p class="mb-2">When users reuse passwords across different platforms, a security failure at a minor website can result in catastrophic financial loss elsewhere.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (The Breach):</strong> A user signs up for a free recipe blog using their standard email and the password "MyDogMax2020!". The blog is poorly secured and is hacked. The attacker downloads a list of 10,000 emails and passwords.</li>
+                            <li><strong>Example 2 (The Stuffing Attack):</strong> The attacker uses a script to automatically test all 10,000 emails and passwords on major banking websites. Because our user reused "MyDogMax2020!" for their checking account, the attacker successfully logs in and drains their funds.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-violet-800 mb-2 border-b-2 border-violet-200 pb-1">Case 2: Social Engineering and Privacy</h4>
+                        <p class="mb-2">Malicious actors often rely on deception rather than technical hacking to steal passwords. Maintaining absolute privacy is the only defense.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Phishing):</strong> A user receives a frantic text message appearing to be from Netflix stating: "Your account is locked. Reply with your password to verify your identity." The educated user knows this is a scam, ignores the text, and their password remains private.</li>
+                            <li><strong>Example 2 (Internal Threats):</strong> A student shares their social media password with their best friend so they can post pictures. Three months later, the friends have a massive falling out. The former friend logs into the account and deletes all the photos, proving that sharing passwords always destroys privacy.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Site Breaches</p>
+                            <img src="https://images.unsplash.com/photo-1510511459019-5efa32dc8b92?auto=format&fit=crop&w=600&h=350" alt="Server room representing vulnerable websites" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Phishing Scams</p>
+                            <img src="https://images.unsplash.com/photo-1563986768494-4dee2763ff3f?auto=format&fit=crop&w=600&h=350" alt="Person looking suspiciously at a mobile phone message" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'managers-details': {
+                title: 'Password Managers, Resets & Defaults',
+                icon: '<i class="fa-solid fa-vault text-cyan-600"></i>',
+                html: `
+                    <p class="mb-5">The human brain is simply not equipped to memorize dozens of unique, complex, and lengthy passwords. As the demand for perfect password hygiene increases, technology has provided a solution: Password Managers. A password manager is a highly secure application designed to act as a digital vault, safely managing hundreds of credentials so the user only has to remember one single, extremely strong "Master Password."</p>
+                    <p class="mb-5">Password managers operate by storing all of a user's credentials in a highly encrypted database. Most modern web browsers and smartphones have basic password managers built-in, but dedicated third-party apps often provide superior security and cross-platform syncing. When a user navigates to a website, the manager auto-fills the complex credentials, entirely bypassing the need for human memorization and dramatically speeding up the login process.</p>
+                    <p class="mb-5">Beyond storage, password managers are exceptional at generating truly random, unbreakable passwords. When creating a new account, the manager can instantly produce a string like "xK9#mP2@vQ7!cL", completely removing human bias and the temptation to use predictable dictionary words. Furthermore, managers often feature dark-web scanning, actively alerting the user if one of their stored passwords appears in a known data breach.</p>
+                    <p class="mb-5">Another critical aspect of digital security involves hardware and initial software setups, specifically regarding default credentials. When you purchase a new Wi-Fi router, smart TV, or IoT camera, it arrives from the factory with a default username and password printed on the box—most commonly "admin" and "password".</p>
+                    <p class="mb-5">Attackers maintain massive databases of these default factory usernames and passwords for thousands of devices. If a user connects a new device to the internet without changing these defaults, hackers use automated scanners to find the device and log in instantly. Changing default usernames and passwords immediately upon device initialization is an absolute, non-negotiable security requirement.</p>
+                    <p class="mb-5">Even with the best tools and practices, users inevitably forget passwords or need to secure an account after a suspected breach. This requires navigating the Password Reset Process. A secure password reset must rigorously verify the user's identity before granting access to change the keys. This is typically achieved by sending a time-sensitive, single-use reset link to a verified backup email address or a numeric code via SMS to a registered phone number.</p>
+                    <p>Users must be vigilant during the reset process. Because reset links bypass the existing password, they are highly sought after by hackers. A user should only ever click a password reset link if they specifically requested it moments prior. Unprompted password reset emails are almost always phishing attempts designed to steal the account.</p>
+                `
+            },
+            'managers-usecase': {
+                title: 'Managers, Resets & Defaults: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-cyan-800 mb-2 border-b-2 border-cyan-200 pb-1">Case 1: Utilizing a Password Manager</h4>
+                        <p class="mb-2">Password managers are the only realistic way to maintain perfect security across the dozens of accounts a modern internet user possesses.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Generation):</strong> A user creates a new account for a streaming service. Instead of typing a password, they click their password manager extension, which generates a random 20-character string, saves it to the vault, and autofills the form automatically.</li>
+                            <li><strong>Example 2 (Security Alerts):</strong> The password manager scans the dark web and notifies the user that their old forum password was compromised. The manager then guides the user to the forum site and automatically helps them generate and save a new, secure replacement.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-cyan-800 mb-2 border-b-2 border-cyan-200 pb-1">Case 2: Securing New Hardware & Resets</h4>
+                        <p class="mb-2">Securing the perimeter of a network requires addressing factory defaults and understanding how to safely recover lost access.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Default Defaults):</strong> A user buys a new smart thermostat. The manual says the login is "admin" and the password is "12345". During setup, the very first thing the user does is navigate to the security settings and change both the username and password to prevent local hackers from controlling their home's temperature.</li>
+                            <li><strong>Example 2 (Safe Resetting):</strong> A user forgets their banking password. They click "Forgot Password", and the bank emails a temporary link. Because the user initiated the request, they safely click the link, answer a security question, and establish a new, strong passphrase.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Password Vaults</p>
+                            <img src="https://images.unsplash.com/photo-1614064641368-b11470b4b248?auto=format&fit=crop&w=600&h=350" alt="Digital lock and vault concept" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Device Configuration</p>
+                            <img src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=600&h=350" alt="Networking equipment representing default setups" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        // Modal Control Functions
+        function openBriefing(key) {
+            const modal = document.getElementById('briefing-modal');
+            const data = briefingData[key];
+            if(data) {
+                document.getElementById('briefing-modal-icon').innerHTML = data.icon;
+                document.getElementById('briefing-modal-title').innerText = data.title;
+                document.getElementById('briefing-modal-content').innerHTML = data.html;
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; 
+            }
+        }
+
+        function closeBriefing() {
+            document.getElementById('briefing-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto'; 
+        }
+
+        document.getElementById('briefing-modal').addEventListener('click', function(e) {
+            if(e.target === this) closeBriefing();
+        });
+        
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId + '-section').classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-slate-900', 'text-white'));
+            const activeBtn = document.getElementById('nav-' + tabId);
+            if(activeBtn && tabId !== 'cert') activeBtn.classList.add('bg-slate-900', 'text-white');
+            
+            document.querySelectorAll('.nav-btn-mobile').forEach(btn => btn.classList.remove('bg-slate-900'));
+            const activeMobileBtn = document.getElementById('nav-' + tabId + '-mobile');
+            if(activeMobileBtn && tabId !== 'cert') activeMobileBtn.classList.add('bg-slate-900');
+
+            window.scrollTo(0,0);
+
+            if (tabId === 'game' && !gameRunning) {
+                resetGame();
+                drawGame();
+            }
+        }
+
+        function showModal(title, message, type = 'info') {
+            const modal = document.getElementById('custom-modal');
+            const icon = document.getElementById('modal-icon');
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-msg').innerText = message;
+            
+            if(type === 'success') {
+                icon.innerHTML = '<i class="fa-solid fa-shield-check text-green-500"></i>';
+            } else if (type === 'error') {
+                icon.innerHTML = '<i class="fa-solid fa-shield-virus text-red-500"></i>';
+            } else if (type === 'warning') {
+                icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-yellow-500"></i>';
+            } else {
+                icon.innerHTML = '<i class="fa-solid fa-circle-info text-blue-500"></i>';
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        // --- LAB 1A: Strength Tester Logic ---
+        function checkLab1A() {
+            const val = document.getElementById('lab1a-input').value;
+            const bar = document.getElementById('lab1a-bar');
+            const feedback = document.getElementById('lab1a-feedback');
+            
+            let score = 0;
+            if(val.length >= 8) score += 20;
+            if(val.length >= 12) score += 20;
+            if(/[A-Z]/.test(val)) score += 20;
+            if(/[a-z]/.test(val)) score += 10;
+            if(/[0-9]/.test(val)) score += 10;
+            if(/[^A-Za-z0-9]/.test(val)) score += 20;
+
+            bar.style.width = score + '%';
+            
+            if(score < 40) {
+                bar.className = 'pwd-bar bg-red-500';
+                feedback.innerText = "Weak: Instant Crack";
+                feedback.className = "text-xs font-bold text-red-500 h-4";
+            } else if (score < 80) {
+                bar.className = 'pwd-bar bg-yellow-500';
+                feedback.innerText = "Moderate: 2 Days to Crack. Add symbols/length.";
+                feedback.className = "text-xs font-bold text-yellow-600 h-4";
+            } else {
+                bar.className = 'pwd-bar bg-green-500';
+                feedback.innerText = "Strong: 4,000 Centuries to Crack! Lab Passed.";
+                feedback.className = "text-xs font-bold text-green-600 h-4";
+            }
+        }
+
+        // --- LAB 1B: Passphrase Builder Logic ---
+        let draggedItem = null;
+        let lab1bCount = 0;
+
+        document.querySelectorAll('#lab1b-source .draggable-item').forEach(item => {
+            item.addEventListener('dragstart', function() {
+                draggedItem = this;
+                setTimeout(() => this.classList.add('opacity-50'), 0);
+            });
+            item.addEventListener('dragend', function() {
+                setTimeout(() => this.classList.remove('opacity-50'), 0);
+                draggedItem = null;
+            });
+        });
+
+        const dropzone1b = document.getElementById('lab1b-drop');
+        dropzone1b.addEventListener('dragover', e => e.preventDefault());
+        dropzone1b.addEventListener('dragenter', function(e) { e.preventDefault(); this.classList.add('drag-over'); });
+        dropzone1b.addEventListener('dragleave', function() { this.classList.remove('drag-over'); });
+        dropzone1b.addEventListener('drop', function() {
+            this.classList.remove('drag-over');
+            if(draggedItem && draggedItem.parentElement.id !== 'lab1b-drop') {
+                this.appendChild(draggedItem);
+                draggedItem.classList.replace('bg-blue-100', 'bg-green-100');
+                draggedItem.classList.replace('border-blue-300', 'border-green-400');
+                lab1bCount++;
+                
+                if(lab1bCount === 5) {
+                    document.getElementById('lab1b-feedback').innerText = "Passphrase Assembled! Lab Passed.";
+                    document.getElementById('lab1b-feedback').className = "text-xs font-bold text-green-600 h-4";
+                }
+            }
+        });
+
+        // --- LAB 2A: History Validator ---
+        function checkLab2A() {
+            const val = document.getElementById('lab2a-input').value.trim();
+            const feedback = document.getElementById('lab2a-feedback');
+            const history = ["Summer2023!", "Fall2023!", "Winter2024!"];
+            
+            if(val.length < 8) {
+                feedback.innerText = "Error: Must be at least 8 characters.";
+                feedback.className = "text-xs font-bold text-red-500 h-4";
+                return;
+            }
+            
+            if(history.includes(val)) {
+                feedback.innerText = "Error: Password found in history. Reuse forbidden.";
+                feedback.className = "text-xs font-bold text-red-500 h-4";
+            } else {
+                feedback.innerText = "Success! Unique password accepted. Lab Passed.";
+                feedback.className = "text-xs font-bold text-green-600 h-4";
+            }
+        }
+
+        // --- LAB 2B: Expiration Slider ---
+        function updateLab2B() {
+            const val = parseInt(document.getElementById('lab2b-slider').value);
+            const valText = document.getElementById('lab2b-val');
+            const feedback = document.getElementById('lab2b-feedback');
+            
+            valText.innerText = val + " Days";
+            
+            if(val < 30) {
+                feedback.innerText = "Too Frequent: Users will write passwords down.";
+                feedback.className = "text-xs font-bold text-yellow-600 mt-1";
+                valText.className = "text-2xl font-black text-yellow-600";
+            } else if (val > 90) {
+                feedback.innerText = "High Risk: Passwords are valid too long.";
+                feedback.className = "text-xs font-bold text-red-500 mt-1";
+                valText.className = "text-2xl font-black text-red-600";
+            } else {
+                feedback.innerText = "Optimal Enterprise Policy. Lab Passed.";
+                feedback.className = "text-xs font-bold text-green-600 mt-1";
+                valText.className = "text-2xl font-black text-green-600";
+            }
+        }
+
+        // --- LAB 3A: Credential Stuffing ---
+        function checkLab3A(type) {
+            const a = document.getElementById('siteA');
+            const b = document.getElementById('siteB');
+            const c = document.getElementById('siteC');
+            const feedback = document.getElementById('lab3a-feedback');
+            
+            a.className = "fa-solid fa-server transition-colors duration-500";
+            b.className = "fa-solid fa-building-columns transition-colors duration-500";
+            c.className = "fa-solid fa-envelope transition-colors duration-500";
+            
+            setTimeout(() => {
+                a.classList.add('text-red-500'); // Site A hacked
+                if(type === 'same') {
+                    setTimeout(() => { b.classList.add('text-red-500'); c.classList.add('text-red-500'); }, 500);
+                    feedback.innerText = "Failed: Hackers used credential stuffing to breach all accounts!";
+                    feedback.className = "text-xs font-bold text-red-500 mt-2 h-4 text-center";
+                } else {
+                    setTimeout(() => { b.classList.add('text-green-500'); c.classList.add('text-green-500'); }, 500);
+                    feedback.innerText = "Protected! Unique passwords stopped the spread. Lab Passed.";
+                    feedback.className = "text-xs font-bold text-green-600 mt-2 h-4 text-center";
+                }
+            }, 50);
+        }
+
+        // --- LAB 3B: Phishing Filter ---
+        function checkLab3B(action) {
+            const feedback = document.getElementById('lab3b-feedback');
+            if(action === 'share') {
+                feedback.innerText = "Failed: Never share your password, even with friends. Privacy compromised.";
+                feedback.className = "text-xs font-bold text-red-500 mt-2 h-4 text-center";
+            } else {
+                feedback.innerText = "Correct! Absolute privacy maintained. Lab Passed.";
+                feedback.className = "text-xs font-bold text-green-600 mt-2 h-4 text-center";
+            }
+        }
+
+        // --- LAB 4A: Vault ---
+        const pwdVault = document.getElementById('lab4a-pwd');
+        pwdVault.addEventListener('dragstart', function() { setTimeout(() => this.classList.add('opacity-50'), 0); });
+        pwdVault.addEventListener('dragend', function() { setTimeout(() => this.classList.remove('opacity-50'), 0); });
+
+        ['lab4a-vault', 'lab4a-trash'].forEach(id => {
+            const zone = document.getElementById(id);
+            zone.addEventListener('dragover', e => e.preventDefault());
+            zone.addEventListener('dragenter', function(e) { e.preventDefault(); this.classList.add('drag-over'); });
+            zone.addEventListener('dragleave', function() { this.classList.remove('drag-over'); });
+            zone.addEventListener('drop', function() {
+                this.classList.remove('drag-over');
+                if(pwdVault.parentElement.id !== id) {
+                    this.appendChild(pwdVault);
+                    pwdVault.classList.remove('cursor-grab');
+                    const feedback = document.getElementById('lab4a-feedback');
+                    if(id === 'lab4a-vault') {
+                        feedback.innerText = "Secure! Stored safely encrypted in the manager. Lab Passed.";
+                        feedback.className = "text-xs font-bold text-green-600 mt-2 h-4 text-center";
+                    } else {
+                        feedback.innerText = "Danger! Writing passwords on physical notes violates privacy.";
+                        feedback.className = "text-xs font-bold text-red-500 mt-2 h-4 text-center";
+                    }
+                }
+            });
+        });
+
+        // --- LAB 4B: Default Router ---
+        function checkLab4B() {
+            const user = document.getElementById('lab4b-user').value.toLowerCase();
+            const pass = document.getElementById('lab4b-pass').value.toLowerCase();
+            const feedback = document.getElementById('lab4b-feedback');
+            
+            if(user === 'admin' || pass === 'password' || pass === 'admin') {
+                feedback.innerText = "Vulnerable! Default credentials easily guessed by bots.";
+                feedback.className = "text-xs font-bold text-red-500 mt-2 h-4 text-center";
+            } else if (pass.length < 8) {
+                feedback.innerText = "Changed, but password is too short to be secure.";
+                feedback.className = "text-xs font-bold text-yellow-500 mt-2 h-4 text-center";
+            } else {
+                feedback.innerText = "Secure Network Established. Defaults eradicated. Lab Passed.";
+                feedback.className = "text-xs font-bold text-green-600 mt-2 h-4 text-center";
+            }
+        }
+
+
+        // --- QUIZ LOGIC (20 Questions) ---
+        const quizData = [
+            // 10 provided from Document
+            { q: "What is the primary purpose of a password?", options: ["To make logging in faster", "To prove your identity and protect access", "To share with friends", "To personalize your account"], answer: 1 },
+            { q: "Which of the following is an important factor in password strength?", options: ["Using only numbers", "Using your birthday", "Writing it down", "Password length"], answer: 3 },
+            { q: "Why should you avoid reusing the same password across multiple sites?", options: ["It makes it harder to remember.", "If one site is breached, all your accounts are at risk.", "It confuses your friend.", "It makes logging in slower."], answer: 1 },
+            { q: "What is the purpose of password history rules on websites?", options: ["To make passwords easier to guess", "To limit how often you log in", "To prevent users from using old passwords", "To save memory on the server"], answer: 2 },
+            { q: "Why do some organizations enforce password expiration policies?", options: ["To make sure passwords are changed regularly", "To annoy users", "To prevent strong passwords from being used", "To make systems run faster"], answer: 0 },
+            { q: "Which of the following is a poor password practice?", options: ["Using a password manager", "Changing the default password on a new device", "Creating a unique password for each account", "Sharing your password with a friend"], answer: 3 },
+            { q: "What is the benefit of using a password manager?", options: ["It makes your passwords shorter", "It eliminates the need for security updates", "It stores and generates strong, unique passwords", "It automatically logs you into every website"], answer: 2 },
+            { q: "What is the safest way to reset a forgotten password?", options: ["Ask a friend to log in for you.", "Click the reset link from an email you requested.", "Use the same password as another site.", "Search for the password on Google."], answer: 1 },
+            { q: "Why should default usernames and passwords be changed on new devices?", options: ["They are easy to guess", "They are too long", "They are too hard to type", "They make devices slower"], answer: 0 },
+            { q: "What is the best advice for creating a new password?", options: ["Make it short and easy to type", "Use personal information", "Reuse one you already remember", "Use a long, unique and complex passphrase"], answer: 3 },
+            
+            // 10 new questions based on briefing
+            { q: "What is a 'passphrase'?", options: ["A short 4-digit PIN.", "A long password made of multiple words and symbols.", "A physical keycard.", "A password that expires every day."], answer: 1 },
+            { q: "Why is Multi-Factor Authentication (MFA) recommended alongside strong passwords?", options: ["It makes the password shorter.", "It stops the website from crashing.", "It adds a secondary layer of verification if the password is stolen.", "It encrypts the hard drive automatically."], answer: 2 },
+            { q: "What is 'credential stuffing'?", options: ["Filling a password vault with data.", "Using automated bots to test stolen passwords across multiple other websites.", "Typing passwords too fast.", "Creating a password with too many symbols."], answer: 1 },
+            { q: "How does a password manager protect your saved passwords?", options: ["It prints them out.", "It stores them in plain text for easy reading.", "It locks them in a highly encrypted digital vault.", "It emails them to you daily."], answer: 2 },
+            { q: "When setting up a brand new smart TV, what is the very first security step you should take?", options: ["Connect it to public Wi-Fi.", "Change the factory default username and password.", "Share the default password with guests.", "Download all updates simultaneously."], answer: 1 },
+            { q: "How many characters is generally recommended for a highly secure, modern password?", options: ["4", "8", "12 or more", "No more than 6"], answer: 2 },
+            { q: "According to the principle of password privacy, who is authorized to ask for your password?", options: ["No one, ever.", "Your IT department.", "Your manager.", "The website administrator."], answer: 0 },
+            { q: "What is a common method websites use to securely verify your identity during a password reset?", options: ["Asking for your street address.", "Sending a one-time code to a registered email or phone.", "Letting you guess your old password 10 times.", "Requiring a video call."], answer: 1 },
+            { q: "Why do attackers love it when users pick passwords like 'Password123'?", options: ["It is too long to type.", "It uses too much memory.", "They use automated dictionaries to guess common patterns instantly.", "It triggers a system overload."], answer: 2 },
+            { q: "If an attacker wants to bypass your complex 20-character password, what non-technical method might they use?", options: ["Brute-force mathematics.", "Social engineering (like phishing) to trick you into revealing it.", "Overclocking their CPU.", "Changing the website's code."], answer: 1 }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        
+        quizData.forEach((item, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = "bg-slate-50 p-6 rounded-lg border border-slate-200 transition-all";
+            qDiv.id = `q-block-${index}`;
+            
+            const qTitle = document.createElement('h3');
+            qTitle.className = "font-bold text-lg text-slate-800 mb-4";
+            qTitle.innerText = `${index + 1}. ${item.q}`;
+            qDiv.appendChild(qTitle);
+            
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = "space-y-3";
+            
+            item.options.forEach((opt, optIndex) => {
+                const label = document.createElement('label');
+                label.className = "flex items-center space-x-3 p-3 rounded bg-white border border-slate-300 hover:bg-blue-50 cursor-pointer transition";
+                
+                const radio = document.createElement('input');
+                radio.type = "radio";
+                radio.name = `q${index}`;
+                radio.value = optIndex;
+                radio.className = "form-radio h-5 w-5 text-blue-600";
+                
+                const span = document.createElement('span');
+                span.className = "text-slate-700";
+                span.innerText = opt;
+                
+                label.appendChild(radio);
+                label.appendChild(span);
+                optionsDiv.appendChild(label);
+            });
+            
+            qDiv.appendChild(optionsDiv);
+            quizContainer.appendChild(qDiv);
+        });
+
+        function gradeQuiz() {
+            let score = 0;
+            let allAnswered = true;
+
+            for(let i = 0; i < quizData.length; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if(selected) {
+                    if(parseInt(selected.value) === quizData[i].answer) {
+                        score++;
+                    }
+                } else {
+                    allAnswered = false;
+                }
+            }
+            
+            if(!allAnswered) {
+                showModal('Incomplete Quiz', 'Please answer all 20 questions before submitting.', 'warning');
+                return;
+            }
+            
+            const percentage = (score / quizData.length) * 100;
+            
+            if(score >= 18) { 
+                const navGame = document.getElementById('nav-game');
+                const navGameMobile = document.getElementById('nav-game-mobile');
+                
+                navGame.classList.remove('text-slate-500', 'cursor-not-allowed');
+                navGame.classList.add('text-white', 'hover:bg-slate-700');
+                navGame.disabled = false;
+                navGame.innerHTML = '<i class="fa-solid fa-gamepad mr-1"></i>Game';
+                
+                navGameMobile.classList.remove('text-slate-400', 'cursor-not-allowed');
+                navGameMobile.classList.add('text-white', 'hover:bg-slate-700');
+                navGameMobile.disabled = false;
+                navGameMobile.innerHTML = '<i class="fa-solid fa-gamepad"></i> Game';
+
+                document.getElementById('nav-cert').classList.remove('hidden');
+                document.getElementById('nav-cert-mobile').classList.remove('hidden');
+                
+                document.getElementById('proceed-game-btn').classList.remove('hidden');
+                document.getElementById('submit-quiz-btn').classList.add('hidden');
+
+                showModal('Outstanding!', `You scored ${score}/20 (${percentage}%). You have unlocked your Certificate of Mastery AND the Retro Game!`, 'success');
+            } else {
+                quizData.forEach((_, i) => {
+                    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                    if(selected) selected.checked = false;
+                });
+                showModal('Keep Trying!', `You scored ${score}/20 (${percentage}%). You need 90% (18/20) to earn the certificate. Your answers have been reset so you can try again.`, 'error');
+                document.getElementById('quiz-section').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // --- RETRO GAME LOGIC: Password Buster (Pang / Buster Bros clone) ---
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let score = 0;
+        let lives = 3;
+        let gameRunning = false;
+        let animationId;
+        
+        const overlay = document.getElementById('game-overlay');
+        const startBtn = document.getElementById('start-game-btn');
+        startBtn.addEventListener('click', startGame);
+
+        // Player object
+        let player = { x: 300, width: 24, height: 24, speed: 5 };
+        // Laser object
+        let laser = { active: false, x: 0, y: 0, speed: 12 };
+        // Bubbles array
+        let bubbles = [];
+        
+        let keys = { ArrowLeft: false, ArrowRight: false, a: false, d: false, Space: false };
+
+        // Input Listeners
+        window.addEventListener('keydown', e => {
+            if(keys.hasOwnProperty(e.code)) keys[e.code] = true;
+            if(keys.hasOwnProperty(e.key)) keys[e.key] = true;
+            if((e.code === 'Space' || e.key === ' ') && !laser.active && gameRunning) {
+                e.preventDefault();
+                fireLaser();
+            }
+            // Prevent scrolling on arrows
+            if(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].indexOf(e.code) > -1 && gameRunning) {
+                e.preventDefault();
+            }
+        });
+        window.addEventListener('keyup', e => {
+            if(keys.hasOwnProperty(e.code)) keys[e.code] = false;
+            if(keys.hasOwnProperty(e.key)) keys[e.key] = false;
+        });
+
+        // Touch/Mouse controls for mobile
+        canvas.addEventListener('pointerdown', e => {
+            if(!gameRunning) return;
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            let x = (e.clientX - rect.left) * scaleX;
+            if (x < player.x) { keys.ArrowLeft = true; keys.ArrowRight = false; }
+            else { keys.ArrowRight = true; keys.ArrowLeft = false; }
+            if(!laser.active) fireLaser();
+        });
+        canvas.addEventListener('pointerup', e => {
+            keys.ArrowLeft = false; keys.ArrowRight = false;
+        });
+
+        class Bubble {
+            constructor(x, y, radius, vx, vy, color, text) {
+                this.x = x; this.y = y; this.radius = radius;
+                this.vx = vx; this.vy = vy; 
+                this.color = color; this.text = text;
+            }
+            update() {
+                this.x += this.vx;
+                this.vy += 0.15; // Gravity
+                this.y += this.vy;
+                
+                // Floor bounce
+                if(this.y + this.radius > canvas.height) {
+                    this.y = canvas.height - this.radius;
+                    // Bounce height depends on radius
+                    this.vy = -(6 + (this.radius/10)); 
+                }
+                // Wall bounce
+                if(this.x - this.radius < 0) {
+                    this.x = this.radius;
+                    this.vx = -this.vx;
+                }
+                if(this.x + this.radius > canvas.width) {
+                    this.x = canvas.width - this.radius;
+                    this.vx = -this.vx;
+                }
+            }
+            draw(ctx) {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                if(this.radius > 15) {
+                    ctx.fillStyle = '#fff';
+                    ctx.font = '10px monospace';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(this.text, this.x, this.y);
+                }
+            }
+        }
+
+        function fireLaser() {
+            laser.active = true;
+            laser.x = player.x;
+            laser.y = canvas.height - player.height;
+        }
+
+        function spawnWave() {
+            if(bubbles.length === 0) {
+                bubbles.push(new Bubble(100, 100, 40, 2, 0, '#ef4444', '123456'));
+                bubbles.push(new Bubble(500, 100, 40, -2, 0, '#f97316', 'qwerty'));
+            }
+        }
+
+        function resetGame() {
+            player.x = 300;
+            laser.active = false;
+            bubbles = [];
+            score = 0;
+            lives = 3;
+            document.getElementById('game-score').innerText = score;
+            document.getElementById('game-lives').innerText = lives;
+            spawnWave();
+        }
+
+        function startGame() {
+            overlay.classList.add('hidden');
+            if(!gameRunning) {
+                resetGame();
+                gameRunning = true;
+                drawGame();
+            }
+        }
+
+        function loseLife() {
+            lives--;
+            document.getElementById('game-lives').innerText = lives;
+            bubbles = []; // Clear screen
+            laser.active = false;
+            
+            // Visual red flash
+            ctx.fillStyle = "rgba(255,0,0,0.5)";
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            
+            if(lives <= 0) {
+                gameOver();
+            } else {
+                setTimeout(spawnWave, 1000);
+            }
+        }
+
+        function gameOver() {
+            gameRunning = false;
+            cancelAnimationFrame(animationId);
+            overlay.classList.remove('hidden');
+            startBtn.innerText = "Breached! Reboot System";
+            startBtn.classList.replace('bg-cyan-600', 'bg-slate-700');
+            startBtn.classList.replace('border-cyan-800', 'border-slate-900');
+        }
+
+        function drawGame() {
+            if(!gameRunning) return;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Background Grid
+            ctx.strokeStyle = '#1e293b';
+            ctx.lineWidth = 1;
+            for(let i=0; i<canvas.width; i+=40) { ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke(); }
+            for(let i=0; i<canvas.height; i+=40) { ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(canvas.width, i); ctx.stroke(); }
+            
+            // Player Movement
+            if(keys.ArrowLeft || keys.a) player.x -= player.speed;
+            if(keys.ArrowRight || keys.d) player.x += player.speed;
+            if(player.x < player.width/2) player.x = player.width/2;
+            if(player.x > canvas.width - player.width/2) player.x = canvas.width - player.width/2;
+
+            // Draw Player (Security Node)
+            ctx.fillStyle = '#0ea5e9';
+            ctx.beginPath();
+            ctx.moveTo(player.x, canvas.height - player.height);
+            ctx.lineTo(player.x - player.width/2, canvas.height);
+            ctx.lineTo(player.x + player.width/2, canvas.height);
+            ctx.fill();
+
+            // Laser Logic
+            if(laser.active) {
+                laser.y -= laser.speed;
+                ctx.strokeStyle = '#38bdf8';
+                ctx.lineWidth = 4;
+                ctx.beginPath();
+                ctx.moveTo(laser.x, canvas.height);
+                ctx.lineTo(laser.x, laser.y);
+                ctx.stroke();
+                
+                if(laser.y < 0) laser.active = false;
+            }
+
+            // Bubble Logic
+            for(let i = bubbles.length - 1; i >= 0; i--) {
+                let b = bubbles[i];
+                b.update();
+                b.draw(ctx);
+                
+                // Collision with player
+                let dx = player.x - b.x;
+                let dy = (canvas.height - player.height/2) - b.y;
+                let dist = Math.sqrt(dx*dx + dy*dy);
+                if(dist < b.radius + (player.width/2)) {
+                    loseLife();
+                    return; // Stop processing this frame
+                }
+
+                // Collision with laser
+                if(laser.active && Math.abs(b.x - laser.x) < b.radius && b.y > laser.y) {
+                    laser.active = false; // consume laser
+                    
+                    // Split bubble
+                    if(b.radius > 15) {
+                        let newRadius = b.radius - 10;
+                        let text = newRadius > 15 ? 'admin' : '';
+                        bubbles.push(new Bubble(b.x, b.y, newRadius, -2.5, -4, b.color, text));
+                        bubbles.push(new Bubble(b.x, b.y, newRadius, 2.5, -4, b.color, text));
+                    }
+                    
+                    bubbles.splice(i, 1);
+                    score += 50;
+                    document.getElementById('game-score').innerText = score;
+                }
+            }
+            
+            // Level complete
+            if(bubbles.length === 0 && lives > 0) {
+                spawnWave();
+                score += 100;
+            }
+
+            animationId = requestAnimationFrame(drawGame);
+        }
+
+
+        // --- CERTIFICATE LOGIC ---
+        function updateCertName() {
+            let name = document.getElementById('student-name-input').value.trim();
+            if(name) {
+                if (name.includes(' ')) {
+                    name = name.split(' ')[0];
+                    document.getElementById('student-name-input').value = name;
+                    showModal('Notice', 'Only your first name has been applied to the certificate.', 'info');
+                }
+                document.getElementById('cert-student-name').innerText = name;
+            } else {
+                showModal('Wait!', 'Please enter your first name to update the certificate.', 'warning');
+            }
+        }
+
+        const today = new Date();
+        document.getElementById('cert-date').innerText = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        function downloadCert() {
+            const certEl = document.getElementById('certificate');
+            const name = document.getElementById('cert-student-name').innerText;
+            let filename = 'Certificate.png';
+            if (name && name !== 'Student') {
+                filename = `${name.replace(/\s+/g, '_')}_Certificate.png`;
+            }
+
+            const originalTransform = certEl.style.transform;
+            certEl.style.transform = 'none';
+
+            const btn = document.getElementById('download-btn');
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Generating...';
+            btn.disabled = true;
+
+            html2canvas(certEl, { 
+                scale: 2, 
+                useCORS: true,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+            }).catch(err => {
+                console.error(err);
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                showModal('Error', 'Failed to generate image. Try using a desktop browser.', 'error');
+            });
+        }
+
+        window.onload = () => {
+            // Draw static background for game preview
+            ctx.fillStyle = '#020617';
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle = '#475569';
+            ctx.font = '20px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('SYSTEM SECURE - AWAITING INITIALIZATION', canvas.width/2, canvas.height/2);
+        }
+    </script>
+</body>
+</html>

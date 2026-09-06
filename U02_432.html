@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 02 Section 4.3.2 Mastery - Arrays</title>
+    
+    <!-- Load Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load HTML2Canvas for Certificate Download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- Load Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Qwitcher+Grypen:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f9ff; /* Light blue theme */
+            color: #1f2937;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        /* Interactive Elements CSS */
+        .shoe-slot { transition: transform 0.2s, box-shadow 0.2s; }
+        .shoe-slot:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        
+        .inv-slot { min-height: 80px; transition: all 0.2s; }
+        .inv-slot.drag-over { background: #dbeafe; border-color: #3b82f6; box-shadow: inset 0 0 10px rgba(59, 130, 246, 0.2);}
+        
+        .magic-staff { cursor: pointer; transition: transform 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .magic-staff:active { cursor: grabbing; transform: scale(0.95); }
+        .magic-staff.selected { box-shadow: 0 0 0 4px #3b82f6; transform: scale(1.05); }
+
+        .grid-cell { transition: all 0.2s; }
+        .grid-cell:hover { background-color: #bfdbfe; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #e5e7eb; }
+        ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #2563eb; }
+
+        /* Retro Game Canvas */
+        #game-canvas {
+            background-color: #1e1b4b; /* Deep night blue */
+            border: 4px solid #4338ca;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+            max-width: 100%;
+            height: auto;
+            touch-action: none; /* Prevent scrolling while playing */
+            cursor: crosshair;
+        }
+
+        /* --- CERTIFICATE STYLES --- */
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .font-body { font-family: 'Lora', serif; }
+        .font-script { font-family: 'Qwitcher Grypen', cursive; }
+        
+        .cert-preview-container {
+            width: 100%;
+            overflow: auto;
+            display: flex;
+            justify-content: center;
+            background: #e5e7eb;
+            padding: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        #certificate {
+            width: 1056px !important;
+            height: 816px !important;
+            flex-shrink: 0;
+            background-color: #ffffff;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1056" height="816"><polygon points="0,0 250,0 0,650" fill="%23bfdbfe"/><polygon points="0,0 350,0 0,900" fill="%2360a5fa" opacity="0.8"/><polygon points="0,0 120,0 0,300" fill="%233b82f6"/><polygon points="0,450 650,816 0,816" fill="%23bfdbfe"/><polygon points="0,550 450,816 0,816" fill="%2360a5fa" opacity="0.8"/><polygon points="800,0 1056,0 1056,256" fill="%23f3f4f6"/><polygon points="1056,500 1056,816 750,816" fill="%23f3f4f6"/></svg>');
+            background-size: cover;
+            border: 4px solid #e5e7eb;
+        }
+
+        .gold-seal {
+            position: absolute;
+            left: 110px;
+            top: 350px;
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6, #1e40af, #60a5fa, #1d4ed8, #93c5fd);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3), inset 0 0 15px rgba(255,255,255,0.7);
+            z-index: 10;
+        }
+        .gold-seal::before {
+            content: '';
+            position: absolute;
+            top: -4px; bottom: -4px; left: -4px; right: -4px;
+            border-radius: 50%;
+            border: 6px dashed #bfdbfe;
+        }
+        .gold-seal-inner-1 {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #2563eb, #1e3a8a);
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.2), 0 2px 5px rgba(255,255,255,0.7);
+            z-index: 1;
+        }
+        .gold-seal-inner-2 {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: radial-gradient(circle, #60a5fa, #1e3a8a);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            padding: 10px;
+        }
+        .embossed-text {
+            color: #ffffff;
+            text-shadow: 1px 1px 0px rgba(0,0,0,0.4);
+            font-family: 'Playfair Display', serif;
+            font-weight: 800;
+            line-height: 1.1;
+            text-transform: uppercase;
+        }
+        .embossed-text-large { font-size: 14px; letter-spacing: 1px; }
+        .embossed-text-small { font-size: 11px; letter-spacing: 2px; margin: 2px 0; }
+        .embossed-star { font-size: 12px; color: #ffffff; text-shadow: 1px 1px 0px rgba(0,0,0,0.4); margin: 2px 0; }
+
+        @media (max-width: 1100px) {
+            #certificate { transform: scale(0.7); transform-origin: top left; margin-bottom: -240px; margin-right: -310px; }
+        }
+        @media (max-width: 768px) {
+            #certificate { transform: scale(0.4); transform-origin: top left; margin-bottom: -490px; margin-right: -630px; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
+    <nav class="bg-blue-800 text-white shadow-lg sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-bars-staggered text-2xl"></i>
+                    <span class="font-bold text-xl tracking-wider hidden sm:inline-block">Tech+ Unit 02 Section 4.3.2</span>
+                    <span class="font-bold text-xl tracking-wider sm:hidden">4.3.2</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-2">
+                        <button onclick="switchTab('briefing')" class="nav-btn bg-blue-900 px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-600 transition" id="nav-briefing"><i class="fa-solid fa-book-open mr-1"></i>Briefing</button>
+                        <button onclick="switchTab('activity')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-600 transition" id="nav-activity"><i class="fa-solid fa-flask mr-1"></i>Lab Activity</button>
+                        <button onclick="switchTab('quiz')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-600 transition" id="nav-quiz"><i class="fa-solid fa-clipboard-check mr-1"></i>Quiz</button>
+                        <button onclick="switchTab('game')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-gray-400 cursor-not-allowed transition" id="nav-game" disabled><i class="fa-solid fa-lock mr-1"></i>Game</button>
+                        <button onclick="switchTab('cert')" class="nav-btn hidden px-3 py-2 rounded-md text-sm font-medium text-yellow-300 hover:bg-blue-600 transition" id="nav-cert"><i class="fa-solid fa-award mr-1"></i>Certificate</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Nav -->
+        <div class="md:hidden flex flex-wrap justify-center gap-2 py-2 px-2 bg-blue-900">
+            <button onclick="switchTab('briefing')" class="nav-btn-mobile px-3 py-1 text-sm rounded bg-blue-950" id="nav-briefing-mobile">Briefing</button>
+            <button onclick="switchTab('activity')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-activity-mobile">Lab</button>
+            <button onclick="switchTab('quiz')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-quiz-mobile">Quiz</button>
+            <button onclick="switchTab('game')" class="nav-btn-mobile px-3 py-1 text-sm rounded text-gray-400 cursor-not-allowed" id="nav-game-mobile" disabled><i class="fa-solid fa-lock"></i></button>
+            <button onclick="switchTab('cert')" id="nav-cert-mobile" class="hidden px-2 py-1 text-sm text-yellow-300 rounded"><i class="fa-solid fa-award"></i></button>
+        </div>
+    </nav>
+
+    <main class="flex-grow w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <!-- BRIEFING SECTION -->
+        <div id="briefing-section" class="tab-content active no-print">
+            <div class="text-center mb-10">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-blue-900 mb-4">Arrays: Organizing Data</h1>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">Arrays are one of the most fundamental data structures in programming. They bring order to chaos by allowing developers to store and manipulate massive collections of related data efficiently.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                
+                <!-- Tile 1 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-blue-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-blue-800"><i class="fa-solid fa-boxes-stacked mr-2"></i>Array Foundation & Modification</h2>
+                        <p class="text-gray-600 mb-4">Learn what an array is, how it utilizes memory, zero-based indexing, and how to safely access and modify individual elements.</p>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Contiguous Memory:</strong> Elements sit side-by-side.</li>
+                            <li><strong>Zero-Based Indexing:</strong> The first slot is always [0].</li>
+                            <li><strong>Modifying:</strong> Instantly overwrite data using the index.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('foundation-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('foundation-usecase')" class="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 2 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-indigo-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-indigo-800"><i class="fa-solid fa-layer-group mr-2"></i>Iteration & Advanced Arrays</h2>
+                        <p class="text-gray-600 mb-4">Discover the true power of arrays through iteration loops, linking parallel data, 2D multidimensional matrices, and flexible Vectors.</p>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Iteration:</strong> Loop by value or by index.</li>
+                            <li><strong>Parallel Arrays:</strong> Connecting two related lists using `i`.</li>
+                            <li><strong>Multidimensional:</strong> 2D Grids (rows and columns).</li>
+                        </ul>
+                    </div>
+                     <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('advanced-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('advanced-usecase')" class="flex-1 bg-indigo-100 hover:bg-indigo-200 text-indigo-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            
+            <div class="mt-8 flex justify-center">
+                <button onclick="switchTab('activity')" class="bg-blue-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-blue-700 shadow-lg transition transform hover:scale-105">Proceed to Lab Activity <i class="fa-solid fa-arrow-right ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- LAB ACTIVITY SECTION -->
+        <div id="activity-section" class="tab-content no-print">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-extrabold text-blue-900 mb-2">Interactive Array Labs</h1>
+                <p class="text-gray-600">Complete these 4 distinct simulations covering Array Fundamentals and Advanced Operations.</p>
+            </div>
+
+            <!-- Lab 1: Shoe Rack Indexer -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-blue-800"><i class="fa-solid fa-shoe-prints mr-2"></i>Lab 1: The Shoe Rack Indexer</h2>
+                <p class="text-sm text-gray-600 mb-4">An array is like a shoe rack. Remember that <strong>Zero-Based Indexing</strong> means the first slot is 0! Your task: <strong class="text-blue-600">Click the shoe located at Index [3].</strong></p>
+                
+                <div class="flex flex-col md:flex-row gap-4 justify-center items-center p-6 bg-gray-100 rounded-lg" id="shoe-rack">
+                    <!-- Shoes injected via JS -->
+                </div>
+                <div id="lab1-feedback" class="text-center font-bold mt-4 h-6 text-blue-600"></div>
+            </div>
+
+            <!-- Lab 2: Inventory Fixer -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-blue-800"><i class="fa-solid fa-wand-magic-sparkles mr-2"></i>Lab 2: Array Modification</h2>
+                <p class="text-sm text-gray-600 mb-4">You have an array `inventory = ["Sword", "Shield", "Potion"]`. We need to run the code: <code class="bg-gray-200 px-1 rounded text-red-600">inventory[1] = "Magic Staff"</code>. <br>Select the Magic Staff and click the correct array slot to overwrite the data.</p>
+                
+                <div class="flex flex-col items-center mb-6">
+                    <div id="staff-item" class="magic-staff bg-purple-100 border-2 border-purple-400 text-purple-800 font-bold px-6 py-3 rounded-lg mb-6 flex items-center" onclick="selectStaff()">
+                        <i class="fa-solid fa-wand-sparkles mr-2"></i> Magic Staff
+                    </div>
+                    
+                    <div class="flex gap-2 sm:gap-6 w-full justify-center">
+                        <div class="inv-slot border-4 border-dashed border-gray-300 rounded-lg w-24 h-24 sm:w-32 sm:h-32 flex flex-col items-center justify-center cursor-pointer bg-white" onclick="dropStaff(0)">
+                            <i class="fa-solid fa-khanda text-3xl text-gray-400 mb-2"></i>
+                            <span class="text-xs font-bold text-gray-500">Index [0]<br>Sword</span>
+                        </div>
+                        <div class="inv-slot border-4 border-dashed border-gray-300 rounded-lg w-24 h-24 sm:w-32 sm:h-32 flex flex-col items-center justify-center cursor-pointer bg-white" onclick="dropStaff(1)" id="slot-1">
+                            <i class="fa-solid fa-shield text-3xl text-gray-400 mb-2"></i>
+                            <span class="text-xs font-bold text-gray-500">Index [1]<br>Shield</span>
+                        </div>
+                        <div class="inv-slot border-4 border-dashed border-gray-300 rounded-lg w-24 h-24 sm:w-32 sm:h-32 flex flex-col items-center justify-center cursor-pointer bg-white" onclick="dropStaff(2)">
+                            <i class="fa-solid fa-flask text-3xl text-gray-400 mb-2"></i>
+                            <span class="text-xs font-bold text-gray-500">Index [2]<br>Potion</span>
+                        </div>
+                    </div>
+                </div>
+                <div id="lab2-feedback" class="text-center font-bold mt-2 h-6 text-blue-600"></div>
+            </div>
+            
+            <!-- Lab 3: Parallel Arrays Iteration -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-indigo-800"><i class="fa-solid fa-arrows-left-right mr-2"></i>Lab 3: Parallel Array Iteration</h2>
+                <p class="text-sm text-gray-600 mb-4">When using a `for` loop to iterate by index, the variable `i` can link two separate arrays. Slide the `i` value to see how it extracts data from both arrays simultaneously. <strong>Set the slider to the index containing "Jordan's" score, then click Submit.</strong></p>
+                
+                <div class="flex flex-col md:flex-row gap-8 justify-center items-center mb-6">
+                    <div class="w-full max-w-xs">
+                        <label class="font-mono text-sm block mb-2 font-bold text-center">Loop Index Variable: <span id="loop-i-val" class="text-blue-600 text-lg">0</span></label>
+                        <input type="range" min="0" max="2" value="0" class="w-full accent-blue-600" id="loop-slider" oninput="updateLab3Slider()">
+                    </div>
+                    
+                    <div class="flex gap-4">
+                        <!-- Array 1 -->
+                        <div class="border rounded border-gray-300 overflow-hidden bg-white">
+                            <div class="bg-gray-200 px-3 py-1 text-xs font-bold text-center border-b border-gray-300">players[i]</div>
+                            <div class="px-4 py-2 border-b border-gray-100 parallel-name font-mono text-sm" id="p-name-0">"Sam"</div>
+                            <div class="px-4 py-2 border-b border-gray-100 parallel-name font-mono text-sm" id="p-name-1">"Jordan"</div>
+                            <div class="px-4 py-2 parallel-name font-mono text-sm" id="p-name-2">"Riley"</div>
+                        </div>
+                        <!-- Linker -->
+                        <div class="flex items-center justify-center text-gray-400"><i class="fa-solid fa-link"></i></div>
+                        <!-- Array 2 -->
+                        <div class="border rounded border-gray-300 overflow-hidden bg-white">
+                            <div class="bg-gray-200 px-3 py-1 text-xs font-bold text-center border-b border-gray-300">points[i]</div>
+                            <div class="px-4 py-2 border-b border-gray-100 parallel-score font-mono text-sm text-right" id="p-score-0">1200</div>
+                            <div class="px-4 py-2 border-b border-gray-100 parallel-score font-mono text-sm text-right" id="p-score-1">800</div>
+                            <div class="px-4 py-2 parallel-score font-mono text-sm text-right" id="p-score-2">950</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center">
+                    <div class="font-mono bg-gray-900 text-green-400 p-2 rounded mb-4 inline-block mx-auto min-w-[200px]" id="lab3-console">> Sam - 1200</div><br>
+                    <button class="bg-indigo-600 text-white px-6 py-2 rounded font-bold hover:bg-indigo-700" onclick="checkLab3()">Submit Iteration</button>
+                </div>
+                <div id="lab3-feedback" class="text-center font-bold mt-4 h-6 text-indigo-600"></div>
+            </div>
+            
+            <!-- Lab 4: 2D Grid Coordinate -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-indigo-800"><i class="fa-solid fa-table-cells mr-2"></i>Lab 4: Multidimensional Coordinates</h2>
+                <p class="text-sm text-gray-600 mb-4">A 2D Array is a matrix (a grid). Accessing it requires two indexes: <code>matrix[row][col]</code>. Remember they are both zero-based!<br><strong class="text-indigo-600">Click the cell located at <code>matrix[2][1]</code> to find the hidden data.</strong></p>
+                
+                <div class="flex justify-center mb-6">
+                    <div class="inline-block relative pl-6 pt-6">
+                        <!-- Col Labels -->
+                        <div class="absolute top-0 left-6 flex w-full">
+                            <div class="w-16 text-center text-xs font-bold text-gray-500">Col 0</div>
+                            <div class="w-16 text-center text-xs font-bold text-gray-500">Col 1</div>
+                            <div class="w-16 text-center text-xs font-bold text-gray-500">Col 2</div>
+                        </div>
+                        <!-- Row Labels -->
+                        <div class="absolute left-0 top-6 flex flex-col h-full">
+                            <div class="h-16 flex items-center text-xs font-bold text-gray-500 transform -rotate-90 origin-left ml-4 w-16 -mt-8">Row 0</div>
+                            <div class="h-16 flex items-center text-xs font-bold text-gray-500 transform -rotate-90 origin-left ml-4 w-16 -mt-8">Row 1</div>
+                            <div class="h-16 flex items-center text-xs font-bold text-gray-500 transform -rotate-90 origin-left ml-4 w-16 -mt-8">Row 2</div>
+                        </div>
+                        
+                        <!-- The 3x3 Grid -->
+                        <div class="grid grid-cols-3 border-2 border-gray-800 bg-gray-800 gap-px p-px rounded" id="matrix-grid">
+                            <!-- Generated via JS -->
+                        </div>
+                    </div>
+                </div>
+                <div id="lab4-feedback" class="text-center font-bold mt-4 h-6 text-indigo-600"></div>
+            </div>
+
+            <div class="text-center">
+                <button onclick="switchTab('quiz')" class="bg-blue-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-blue-700 shadow-lg transition transform hover:scale-105">Take the Mastery Quiz <i class="fa-solid fa-clipboard-check ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- QUIZ SECTION -->
+        <div id="quiz-section" class="tab-content no-print">
+            <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-xl max-w-4xl mx-auto border-t-8 border-blue-600">
+                <div class="text-center mb-8 border-b pb-4">
+                    <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Unit 02 Section 4.3.2 Quiz</h1>
+                    <p class="text-gray-600">Score 90% or higher (18/20) to earn your Certificate of Mastery and unlock the Retro Game!</p>
+                </div>
+
+                <div id="quiz-container" class="space-y-8">
+                    <!-- Questions injected via JS -->
+                </div>
+
+                <div class="mt-10 text-center border-t pt-6 flex flex-col md:flex-row justify-center items-center gap-4">
+                    <button id="submit-quiz-btn" onclick="gradeQuiz()" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">Submit Quiz</button>
+                    <button id="proceed-game-btn" onclick="switchTab('game')" class="hidden bg-indigo-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-indigo-700 shadow-lg transition w-full md:w-auto">Play Array Delivery <i class="fa-solid fa-truck-fast ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RETRO GAME SECTION -->
+        <div id="game-section" class="tab-content no-print">
+            <div class="bg-gray-900 p-6 sm:p-8 rounded-2xl shadow-xl max-w-4xl mx-auto border-4 border-indigo-500 flex flex-col items-center">
+                <div class="text-center mb-4 w-full">
+                    <h1 class="text-3xl font-extrabold text-blue-400 mb-2 tracking-widest uppercase" style="font-family: monospace;">Array Delivery</h1>
+                    <p class="text-gray-300 text-sm">A retro arcade shooter! Move the delivery truck left/right and shoot Data Payloads upwards into the falling Index Mailboxes to populate the array! Avoid the red Syntax Bugs!</p>
+                    <p class="text-gray-400 text-xs mt-2 font-mono">Controls: Mouse Movement / Touch drag to aim truck. Click / Tap to Shoot!</p>
+                </div>
+                
+                <div class="flex justify-between items-center w-full max-w-[400px] sm:max-w-[600px] mb-2 px-4 text-white font-mono text-xl">
+                    <div>Data Delivered: <span id="game-score" class="text-green-400 font-bold">0</span></div>
+                    <div>Integrity: <span id="game-lives" class="text-red-400 font-bold">3</span></div>
+                </div>
+
+                <div class="relative flex justify-center w-full">
+                    <!-- Game Canvas -->
+                    <canvas id="game-canvas" width="600" height="450" class="w-full max-w-[400px] sm:max-w-[600px] bg-black rounded shadow-lg"></canvas>
+                    
+                    <!-- Overlay Start Button -->
+                    <div id="game-overlay" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-80 rounded max-w-[400px] sm:max-w-[600px] mx-auto z-10">
+                        <button id="start-game-btn" class="bg-blue-600 hover:bg-blue-500 text-white font-bold font-mono py-3 px-6 rounded-lg text-xl border-4 border-blue-800 uppercase transform transition hover:scale-105">Compile (Start Game)</button>
+                    </div>
+                </div>
+
+                <div class="mt-8 text-center w-full border-t border-gray-700 pt-6">
+                    <button onclick="switchTab('cert')" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">View Certificate <i class="fa-solid fa-award ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CERTIFICATE SECTION -->
+        <div id="cert-section" class="tab-content">
+            <div class="max-w-5xl mx-auto">
+                
+                <!-- Controls -->
+                <div class="bg-white p-6 rounded shadow mb-6 no-print text-center border border-gray-200">
+                    <h2 class="text-2xl font-bold text-blue-600 mb-2">🎉 Congratulations! 🎉</h2>
+                    <p class="text-gray-700 mb-4">You have achieved mastery of Arrays.</p>
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+                        <input type="text" id="student-name-input" value="Student" placeholder="Enter your first name" class="border-2 border-gray-300 rounded px-4 py-2 w-full md:w-64 focus:border-blue-500 focus:outline-none">
+                        <button onclick="updateCertName()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">Update Name</button>
+                        <button id="download-btn" onclick="downloadCert()" class="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900 transition flex items-center justify-center">
+                            <i class="fa-solid fa-download mr-2"></i>Download PNG
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Certificate Render Container -->
+                <div class="cert-preview-container print:p-0 print:bg-white">
+                    <div id="certificate">
+                        <div class="gold-seal">
+                            <div class="gold-seal-inner-1">
+                                <div class="gold-seal-inner-2">
+                                     <span class="embossed-text embossed-text-large">Certificate</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-small">Of</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-large">Excellence</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="relative z-20 w-full h-full flex flex-col pt-[48px] pl-[380px] pr-[48px]">
+                            <h1 class="text-[#1e3a8a] text-[4.5rem] leading-none font-serif font-bold tracking-wide uppercase mb-2">CERTIFICATE</h1>
+                            <h2 class="text-gray-800 text-3xl font-serif tracking-widest uppercase mb-10">Of Achievement</h2>
+                            
+                            <p class="text-[1.4rem] font-body text-gray-800 mb-4">This is to certify that</p>
+                            
+                            <div class="relative mb-8 w-full">
+                                <h3 id="cert-student-name" class="text-[4rem] text-[#1e3a8a] font-serif italic leading-none pb-2 relative z-10 text-center w-full block">Student</h3>
+                                <div class="w-full border-b-[2px] border-[#1e3a8a] absolute bottom-[4px] left-0 z-0"></div>
+                                <div class="w-full border-b-[2px] border-dotted border-blue-500 absolute bottom-[0px] left-0 z-0"></div>
+                            </div>
+                            
+                            <p class="text-[1.3rem] font-body text-gray-800 leading-relaxed w-full pr-4">
+                                Has successfully completed the assessment for 
+                                <strong class="text-[1.8rem] text-[#1e3a8a] block mt-4 mb-2 font-serif">Cyber.org Tech+ Unit 02 Section 4.3.2</strong>
+                                <strong class="text-[1.5rem] text-black block mb-4 font-serif italic">Arrays</strong>
+                                <span class="text-[1.1rem] text-gray-700 leading-snug block">Demonstrating proficiency in defining array structures, understanding contiguous memory allocation, utilizing zero-based indexing, performing data iteration, and differentiating fixed arrays from dynamic vectors and multidimensional structures.</span>
+                            </p>
+                            
+                            <div class="flex justify-end gap-16 items-end mt-auto mb-[60px] w-full pr-8">
+                                <div class="w-64">
+                                    <div class="border-b border-gray-600 mb-2 h-20 flex items-end justify-center relative">
+                                        <span class="font-script text-[5rem] text-[#1e3a8a] absolute bottom-[-10px] transform -rotate-3 opacity-90">Dr. M. S</span>
+                                    </div>
+                                    <p class="font-serif text-xl text-gray-800 text-center">Administration</p>
+                                </div>
+                                
+                                <div class="w-64">
+                                    <div class="border-b border-gray-600 mb-2 text-center h-20 flex items-end justify-center">
+                                        <p id="cert-date" class="font-body text-2xl text-gray-800 pb-1">Date Here</p>
+                                    </div>
+                                    <p class="font-serif text-xl text-gray-800 text-center">Date</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Custom Modal for Alerts -->
+    <div id="custom-modal" class="fixed inset-0 bg-black bg-opacity-50 z-[100] hidden flex justify-center items-center backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all">
+            <div class="text-center">
+                <div id="modal-icon" class="text-5xl mb-4"></div>
+                <h3 id="modal-title" class="text-2xl font-bold mb-2 text-gray-900"></h3>
+                <p id="modal-msg" class="text-gray-600 mb-6"></p>
+                <button onclick="closeModal()" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-700 transition w-full">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Briefing Modal -->
+    <div id="briefing-modal" class="fixed inset-0 bg-black bg-opacity-70 z-[120] hidden flex justify-center items-center backdrop-blur-sm p-4 sm:p-6">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col transform transition-all overflow-hidden border-4 border-blue-700">
+            <div class="p-6 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+                <div class="flex items-center gap-4">
+                    <div id="briefing-modal-icon" class="text-4xl"></div>
+                    <h3 id="briefing-modal-title" class="text-2xl md:text-3xl font-bold text-gray-900"></h3>
+                </div>
+                <button onclick="closeBriefing()" class="text-gray-400 hover:text-red-600 transition text-4xl leading-none">&times;</button>
+            </div>
+            <div id="briefing-modal-content" class="p-6 md:p-10 overflow-y-auto flex-grow text-gray-700 text-lg leading-relaxed bg-white">
+                <!-- Dynamic Content Injected Here -->
+            </div>
+            <div class="p-6 border-t border-gray-200 bg-gray-50 flex justify-end">
+                <button onclick="closeBriefing()" class="bg-blue-700 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-800 transition shadow-md">Acknowledge & Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Extensive Briefing Content Data ---
+        const briefingData = {
+            'foundation-details': {
+                title: 'Array Foundation & Modification',
+                icon: '<i class="fa-solid fa-boxes-stacked text-blue-600"></i>',
+                html: `
+                    <p class="mb-5">Imagine writing a program to keep track of student test scores for a class of 100 students. Using basic variables, you would have to type out <code>score1 = 95</code>, <code>score2 = 87</code>, all the way to <code>score100 = 92</code>. This approach is chaotic, inefficient, and nearly impossible to manage when you need to calculate an average. To solve this, computer scientists created <strong>Arrays</strong>.</p>
+                    
+                    <p class="mb-5">An array is a foundational data structure that acts as a collection of elements. Instead of creating a hundred separate variables, an array allows you to store all those related values together under one single, unified identifier. For example, you can create a single array named <code>scores</code> that holds every test result in the entire class. By organizing related data, your code becomes incredibly streamlined and powerful.</p>
+                    
+                    <p class="mb-5">One of the most important concepts to grasp is that arrays utilize <strong>Contiguous Memory Locations</strong>. When you tell a computer to create an array of 5 integers, the operating system finds a block of RAM that has enough empty, consecutive space to fit all 5 numbers side-by-side. Because the elements are physically next to each other in the hardware memory, the processor can read them at blistering speeds without having to hunt across the RAM for the next piece of data.</p>
+                    
+                    <p class="mb-5">To understand how we retrieve specific data, consider the <strong>Shoe Rack Analogy</strong>. Think of an array as a wooden shoe rack built into a wall. The entire rack represents the array itself (the container). Each individual slot carved into the wood represents an index (a specific location). Finally, the pair of shoes you place into a slot represents the element (the actual data value). Just like a wooden shoe rack, traditional arrays have a fixed size; once built to hold 10 shoes, you cannot squeeze an 11th shoe in without building a brand new rack.</p>
+                    
+                    <p class="mb-5">When accessing these slots, programmers use a system called <strong>Zero-Based Indexing</strong>. Unlike humans who start counting at 1, computers start counting positions at 0. Therefore, the first element of an array is always located at index 0, the second element is at index 1, and so on. This is due to how memory is calculated: index 0 literally means "zero spaces away from the very beginning of the array's memory block." If an array has 5 items, the final index is 4.</p>
+                    
+                    <p class="mb-5">To read or modify data in an array, you use bracket notation. If you want to see the first score in our array, you write <code>print(scores[0])</code>. This explicitly tells the computer to look at the identifier 'scores', jump to the 0th index, and retrieve the data stored there. Because of the contiguous memory design, jumping directly to index 99 is exactly as fast as jumping to index 0.</p>
+                    
+                    <p>Modifying an array is just as straightforward. If you discover a grading error and need to change the second student's score to 100, you simply write <code>scores[1] = 100</code>. This command instantly overwrites whatever old data was sitting in that specific memory slot with the new value. It is important to remember that in strict programming languages, arrays are "homogeneous"—meaning every slot must hold the exact same data type (e.g., all integers, or all strings). You cannot mix a text string into an array meant exclusively for numerical scores.</p>
+                `
+            },
+            'foundation-usecase': {
+                title: 'Foundation & Modification: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 1: Video Game High Score Trackers</h4>
+                        <p class="mb-2">Arcade cabinets and modern games need to track the top 10 highest scores. They use a fixed-size array of 10 elements to maintain this leaderboard in active memory.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Accessing Data):</strong> When the game boots up, it reads <code>top_scores[0]</code> to instantly grab the absolute highest score and display it flashing at the top of the title screen.</li>
+                            <li><strong>Example 2 (Modifying Data):</strong> If a player beats the 5th place score, the game logic shifts the lower scores down and executes <code>top_scores[4] = new_player_score</code> to overwrite that specific index.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 2: Role-Playing Game Inventory Systems</h4>
+                        <p class="mb-2">In an RPG, a character's backpack is heavily restricted to a set number of slots. An array perfectly represents this fixed, slot-based inventory.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Initialization):</strong> When a new character is created, the system initializes an array <code>inventory = ["Wooden Sword", "Empty", "Empty", "Empty"]</code> representing their 4 starting slots.</li>
+                            <li><strong>Example 2 (Swapping Items):</strong> When the player finds a healing potion and decides to place it in their second slot, the game engine runs <code>inventory[1] = "Health Potion"</code>, instantly replacing the "Empty" string placeholder.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Organized Storage Slots</p>
+                            <img src="https://images.unsplash.com/photo-1590725140246-2003ea265697?auto=format&fit=crop&w=600&h=350" alt="Organized shoe rack conceptually representing array slots" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Game Leaderboards</p>
+                            <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=600&h=350" alt="Arcade game screen representing high scores array" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'advanced-details': {
+                title: 'Iteration & Advanced Arrays',
+                icon: '<i class="fa-solid fa-layer-group text-indigo-600"></i>',
+                html: `
+                    <p class="mb-5">While storing massive amounts of data in a single array is useful, the true power of programming emerges when we begin to process that data automatically. This process is called <strong>Iteration</strong>. Instead of writing out one hundred distinct print statements to display every student's score, a programmer writes a single loop (like a <code>for</code> loop) that tells the computer to rapidly step through the entire array and execute a command on every element it finds.</p>
+                    
+                    <p class="mb-5">There are two primary ways to iterate through an array. The first is <strong>Iterating by Value</strong>. In this structure (often written as <code>for item in array:</code> in Python), the computer automatically looks at the first value, does something with it, and moves to the next value until the array ends. This is incredibly clean syntax and is perfect when you simply want to print every item or add them all together to find a total sum, and you don't care exactly where they are located.</p>
+                    
+                    <p class="mb-5">The second method is <strong>Iterating by Index</strong> (e.g., <code>for i in range(len(array)):</code>). In this scenario, the loop variable <code>i</code> acts as a numeric counter starting at 0 and counting up. You then use that counter to access the array: <code>array[i]</code>. This is required when you need to know the exact position of the data you are altering, or when you are implementing complex sorting algorithms.</p>
+                    
+                    <p class="mb-5">Iterating by index unlocks the technique of <strong>Parallel Arrays</strong>. Imagine you have an array of player names and a completely separate array of their scores. As long as the data is aligned (meaning the name at index 0 belongs to the score at index 0), a single loop variable <code>i</code> can pull matching data from both arrays simultaneously. You can execute <code>print(names[i] + " scored " + scores[i])</code>, effortlessly linking the two distinct data structures together.</p>
+                    
+                    <p class="mb-5">Data is not always a single flat list. When data represents a grid, we use <strong>Multidimensional Arrays</strong>. A 2-Dimensional (2D) array is essentially an "array of arrays," representing rows and columns. Think of a spreadsheet or a chessboard. To access a specific square, you must provide two indexes: <code>matrix[row][col]</code>. If you need to map a 3D physical space, like blocks in Minecraft, you use a 3D array requiring X, Y, and Z indexes (<code>world[x][y][z]</code>).</p>
+                    
+                    <p class="mb-5">It's critical to note the limitations of strict arrays in languages like C or Java: their size is fixed. If you create an array of 5 elements, it can never hold 6. To solve this, computer scientists developed <strong>Vectors</strong> (also called Lists in Python or ArrayLists in Java). A Vector functions identically to an array for the programmer, allowing zero-based indexing and iteration.</p>
+                    
+                    <p>However, under the hood, a <strong>Vector is Dynamic</strong>. It can grow or shrink in size while the program is actively running. If a Vector is full and you use an <code>append()</code> command to add a new item, the software silently allocates a larger chunk of contiguous memory in the background, copies all the old data over, adds the new item, and deletes the old memory block. While Vectors offer massive flexibility, this dynamic resizing requires more processing overhead than a simple, static array.</p>
+                `
+            },
+            'advanced-usecase': {
+                title: 'Iteration & Advanced Arrays: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-indigo-800 mb-2 border-b-2 border-indigo-200 pb-1">Case 1: Parallel Data Processing</h4>
+                        <p class="mb-2">School administration software often tracks disparate types of student data in separate database tables that act like parallel arrays when loaded into software.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Teacher Roster):</strong> A teacher clicks "Print Roster". The software loops by index <code>i</code>, pulling data from the <code>studentNames</code> array and the <code>studentGrades</code> array to generate a combined printable report line by line.</li>
+                            <li><strong>Example 2 (Automated Attendance):</strong> An automated script iterates through a boolean array <code>isPresent</code>. If <code>isPresent[i]</code> is false, the script automatically triggers an email to the parent's address stored in <code>parentEmails[i]</code>.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-indigo-800 mb-2 border-b-2 border-indigo-200 pb-1">Case 2: Grids and Dynamic Lists</h4>
+                        <p class="mb-2">Advanced software requires complex structural representations that a simple flat list cannot provide.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (2D Matrices in Games):</strong> A game of Battleship utilizes a 10x10 2D array. When a player calls out a shot at coordinates (C, 4), the game translates this to <code>board[2][3]</code> and checks if that specific memory block contains a ship or water.</li>
+                            <li><strong>Example 2 (Vectors in E-Commerce):</strong> A digital shopping cart uses a dynamic Vector, not a fixed array. Because the store doesn't know if a customer will buy 1 item or 50 items, the Vector starts empty and dynamically <code>appends()</code> items as the user clicks "Add to Cart", expanding memory exactly as needed.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: 2D Matrix Grids</p>
+                            <img src="https://images.unsplash.com/photo-1611956108151-a15d97f394df?auto=format&fit=crop&w=600&h=350" alt="Chessboard representing a 2D multidimensional array grid" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Dynamic Shopping Carts</p>
+                            <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=600&h=350" alt="Shopping basket representing dynamically growing vectors" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        // Modal Control Functions
+        function openBriefing(key) {
+            const modal = document.getElementById('briefing-modal');
+            const data = briefingData[key];
+            if(data) {
+                document.getElementById('briefing-modal-icon').innerHTML = data.icon;
+                document.getElementById('briefing-modal-title').innerText = data.title;
+                document.getElementById('briefing-modal-content').innerHTML = data.html;
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; 
+            }
+        }
+
+        function closeBriefing() {
+            document.getElementById('briefing-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto'; 
+        }
+
+        document.getElementById('briefing-modal').addEventListener('click', function(e) {
+            if(e.target === this) closeBriefing();
+        });
+        
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId + '-section').classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-blue-900'));
+            const activeBtn = document.getElementById('nav-' + tabId);
+            if(activeBtn && tabId !== 'cert') activeBtn.classList.add('bg-blue-900');
+            
+            document.querySelectorAll('.nav-btn-mobile').forEach(btn => btn.classList.remove('bg-blue-950'));
+            const activeMobileBtn = document.getElementById('nav-' + tabId + '-mobile');
+            if(activeMobileBtn && tabId !== 'cert') activeMobileBtn.classList.add('bg-blue-950');
+
+            window.scrollTo(0,0);
+
+            if (tabId === 'game' && !gameRunning) {
+                resetGame();
+                drawGame();
+            }
+        }
+
+        function showModal(title, message, type = 'info') {
+            const modal = document.getElementById('custom-modal');
+            const icon = document.getElementById('modal-icon');
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-msg').innerText = message;
+            
+            if(type === 'success') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-check text-green-500"></i>';
+            } else if (type === 'error') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500"></i>';
+            } else if (type === 'warning') {
+                icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-yellow-500"></i>';
+            } else {
+                icon.innerHTML = '<i class="fa-solid fa-circle-info text-blue-500"></i>';
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        // --- LAB 1: Shoe Rack ---
+        const shoeRack = document.getElementById('shoe-rack');
+        let lab1Solved = false;
+        const shoeColors = ['text-red-500', 'text-green-500', 'text-yellow-500', 'text-purple-500', 'text-blue-500'];
+        
+        for(let i=0; i<5; i++) {
+            let slot = document.createElement('div');
+            slot.className = "shoe-slot bg-white border-2 border-gray-300 rounded-lg p-4 flex flex-col items-center cursor-pointer w-24";
+            slot.innerHTML = `
+                <i class="fa-solid fa-shoe-prints text-3xl ${shoeColors[i]} mb-2"></i>
+                <span class="text-xs font-bold text-gray-500 bg-gray-100 px-2 py-1 rounded">Index [${i}]</span>
+            `;
+            slot.onclick = function() {
+                if(lab1Solved) return;
+                if(i === 3) {
+                    lab1Solved = true;
+                    this.classList.replace('border-gray-300', 'border-green-500');
+                    this.classList.add('bg-green-50');
+                    document.getElementById('lab1-feedback').innerText = "Correct! Zero-based indexing means Index [3] is the 4th item.";
+                    document.getElementById('lab1-feedback').className = "text-center font-bold mt-4 h-6 text-green-600";
+                    setTimeout(() => showModal('Lab 1 Complete!', 'You successfully located data using zero-based indexing offsets.', 'success'), 500);
+                } else {
+                    document.getElementById('lab1-feedback').innerText = `Incorrect. You clicked Index [${i}]. Keep zero-based indexing in mind!`;
+                    document.getElementById('lab1-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
+                }
+            };
+            shoeRack.appendChild(slot);
+        }
+
+        // --- LAB 2: Inventory Fixer ---
+        let lab2Solved = false;
+        let staffSelected = false;
+
+        function selectStaff() {
+            if(lab2Solved) return;
+            staffSelected = true;
+            document.getElementById('staff-item').classList.add('selected');
+        }
+
+        function dropStaff(index) {
+            if(lab2Solved || !staffSelected) return;
+            
+            if(index === 1) {
+                lab2Solved = true;
+                const slot = document.getElementById('slot-1');
+                slot.innerHTML = `
+                    <i class="fa-solid fa-wand-sparkles text-3xl text-purple-600 mb-2"></i>
+                    <span class="text-xs font-bold text-purple-600">Index [1]<br>Magic Staff</span>
+                `;
+                slot.classList.replace('border-gray-300', 'border-green-500');
+                slot.classList.replace('border-dashed', 'border-solid');
+                slot.classList.add('bg-green-50');
+                
+                document.getElementById('staff-item').style.display = 'none';
+                
+                document.getElementById('lab2-feedback').innerText = "Data Overwritten! The Magic Staff is now at inventory[1].";
+                document.getElementById('lab2-feedback').className = "text-center font-bold mt-2 h-6 text-green-600";
+                setTimeout(() => showModal('Lab 2 Complete!', 'You successfully used array indexing to modify and overwrite existing data.', 'success'), 500);
+            } else {
+                staffSelected = false;
+                document.getElementById('staff-item').classList.remove('selected');
+                document.getElementById('lab2-feedback').innerText = `Error: You tried to drop it in inventory[${index}]. Look at the code again.`;
+                document.getElementById('lab2-feedback').className = "text-center font-bold mt-2 h-6 text-red-600";
+            }
+        }
+
+        // --- LAB 3: Parallel Arrays Iteration ---
+        let lab3Solved = false;
+        
+        function updateLab3Slider() {
+            if(lab3Solved) return;
+            const i = document.getElementById('loop-slider').value;
+            document.getElementById('loop-i-val').innerText = i;
+            
+            // Reset styles
+            for(let n=0; n<3; n++) {
+                document.getElementById(`p-name-${n}`).classList.remove('bg-indigo-100', 'font-bold', 'text-indigo-800');
+                document.getElementById(`p-score-${n}`).classList.remove('bg-indigo-100', 'font-bold', 'text-indigo-800');
+            }
+            
+            // Apply highlight
+            const nameDiv = document.getElementById(`p-name-${i}`);
+            const scoreDiv = document.getElementById(`p-score-${i}`);
+            
+            nameDiv.classList.add('bg-indigo-100', 'font-bold', 'text-indigo-800');
+            scoreDiv.classList.add('bg-indigo-100', 'font-bold', 'text-indigo-800');
+            
+            // Console text
+            const cleanName = nameDiv.innerText.replace(/"/g, '');
+            document.getElementById('lab3-console').innerText = `> ${cleanName} - ${scoreDiv.innerText}`;
+        }
+        
+        // Init highlight
+        updateLab3Slider();
+
+        function checkLab3() {
+            if(lab3Solved) return;
+            const i = document.getElementById('loop-slider').value;
+            
+            if(i === "1") { // Jordan is at index 1
+                lab3Solved = true;
+                document.getElementById('loop-slider').disabled = true;
+                document.getElementById('lab3-feedback').innerText = "Correct! The index Variable 'i' successfully linked the parallel data.";
+                document.getElementById('lab3-feedback').className = "text-center font-bold mt-4 h-6 text-green-600";
+                setTimeout(() => showModal('Lab 3 Complete!', 'You demonstrated how to iterate by index to synchronize parallel arrays.', 'success'), 500);
+            } else {
+                document.getElementById('lab3-feedback').innerText = "Incorrect Iteration Step. Find the index where Jordan's score is stored.";
+                document.getElementById('lab3-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
+            }
+        }
+
+        // --- LAB 4: 2D Grid Coordinate ---
+        const matrixGrid = document.getElementById('matrix-grid');
+        let lab4Solved = false;
+        
+        // 3x3 Grid
+        for(let r=0; r<3; r++) {
+            for(let c=0; c<3; c++) {
+                let cell = document.createElement('div');
+                cell.className = "grid-cell bg-white w-16 h-16 flex items-center justify-center cursor-pointer font-mono text-[10px] text-gray-400";
+                cell.innerText = `[${r}][${c}]`;
+                
+                cell.onclick = function() {
+                    if(lab4Solved) return;
+                    if(r === 2 && c === 1) {
+                        lab4Solved = true;
+                        this.className = "bg-green-500 w-16 h-16 flex flex-col items-center justify-center cursor-default text-white";
+                        this.innerHTML = `<i class="fa-solid fa-gem text-xl mb-1"></i><span class="text-[10px] font-bold">Found!</span>`;
+                        document.getElementById('lab4-feedback').innerText = "Target Located! Row 2, Column 1.";
+                        document.getElementById('lab4-feedback').className = "text-center font-bold mt-4 h-6 text-green-600";
+                        setTimeout(() => showModal('Lab 4 Complete!', 'You successfully navigated a Multidimensional Array matrix!', 'success'), 500);
+                    } else {
+                        document.getElementById('lab4-feedback').innerText = `Miss! You clicked matrix[${r}][${c}]. Remember: [row][col].`;
+                        document.getElementById('lab4-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
+                    }
+                };
+                matrixGrid.appendChild(cell);
+            }
+        }
+
+
+        // --- QUIZ LOGIC (20 Questions) ---
+        const quizData = [
+            // 10 provided from Document
+            { q: "What is an array?", options: ["A single number stored in memory", "A collection of elements stored together under one identifier", "A random collection of unrelated values", "A variable that cannot change"], answer: 1 },
+            { q: "True or False: Arrays usually hold elements of different data types (e.g., a string, an integer, and a float in one array).", options: ["True", "False"], answer: 1 },
+            { q: "Where are array elements stored in computer memory?", options: ["Scattered randomly", "In alphabetical order", "In contiguous memory locations", "In separate files"], answer: 2 },
+            { q: "What index would you use to access the first element in most programming languages?", options: ["0", "1", "-1", "First"], answer: 0 },
+            { q: "Which of the following are reasons to use arrays?", options: ["Organize related data", "Efficient access with an index", "Iteration through elements", "All of the above"], answer: 3 },
+            { q: "Fill in the blank: In the shoe rack analogy, the rack is the _____, each slot is an _____, and each pair of shoes is an _____.", options: ["array, element, index", "element, array, index", "index, array, element", "array, index, element"], answer: 3 },
+            { q: "Which code would correctly change the second element in the array `scores = [85, 92, 78, 90]` to 95?", options: ["scores[0] = 95", "scores[1] = 95", "scores[2] = 95", "scores[3] = 95"], answer: 1 },
+            { q: "True or False: Iterating “by index” is especially useful when working with two arrays in parallel.", options: ["True", "False"], answer: 0 },
+            { q: "What would `print(matrix[1][2])` output given the following code?\nmatrix = [\n[1, 3, 5],\n[2, 4, 6],\n[7, 8, 9]\n]", options: ["2", "4", "6", "9"], answer: 2 },
+            { q: "How do vectors differ from arrays?", options: ["Vectors store data in random locations.", "Vectors only store numbers.", "Vectors start indexing at 1.", "Vectors can grow or shrink as a program runs."], answer: 3 },
+            
+            // 10 new questions based on briefing
+            { q: "Why is contiguous memory allocation important for traditional arrays?", options: ["It encrypts the data.", "It allows for fast, predictable read speeds by the processor.", "It stops syntax errors.", "It prevents variables from overlapping."], answer: 1 },
+            { q: "What does \"zero-based indexing\" fundamentally mean?", options: ["The array contains zero elements.", "The position counter starts measuring from 0 instead of 1.", "The array is filled with zeros.", "The index can go backwards to -0."], answer: 1 },
+            { q: "What do we call a single, specific piece of data stored inside an array?", options: ["An identifier", "An element", "A function", "A dimension"], answer: 1 },
+            { q: "If a fixed-size array has exactly 5 elements, what is the highest valid index number you can use?", options: ["3", "4", "5", "6"], answer: 1 },
+            { q: "Which looping pattern is generally preferred if you only care about reading the values and do not need to know their specific positions?", options: ["Iterating by Index", "Iterating by Matrix", "Iterating by Value", "Iterating by Vector"], answer: 2 },
+            { q: "When you have an array of names and a separate array of emails, what specific technique allows you to link them together using a loop variable like 'i'?", options: ["Contiguous Memory", "Zero-based logic", "Multidimensional grids", "Parallel Arrays"], answer: 3 },
+            { q: "What real-world structure is most commonly represented by a 2D Array?", options: ["A straight line", "A grid or table with rows and columns", "A single file", "A 3D cube"], answer: 1 },
+            { q: "In Python, which built-in data structure functions similarly to a dynamically resizing vector under the hood?", options: ["Tuple", "Integer", "List", "Matrix"], answer: 2 },
+            { q: "What term describes an array where the data types of all elements must be absolutely identical (e.g., all integers)?", options: ["Homogeneous", "Dynamic", "Heterogeneous", "Parallel"], answer: 0 },
+            { q: "If you need to digitally map out blocks in a 3D video game space using X, Y, and Z coordinates, what data structure is most appropriate?", options: ["A 1D Array", "A 2D Matrix", "A 3D Array", "A Parallel Vector"], answer: 2 }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        
+        quizData.forEach((item, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = "bg-blue-50 p-6 rounded-lg border border-blue-100 transition-all";
+            qDiv.id = `q-block-${index}`;
+            
+            const qTitle = document.createElement('h3');
+            qTitle.className = "font-bold text-lg text-gray-800 mb-4 whitespace-pre-wrap";
+            qTitle.innerText = `${index + 1}. ${item.q}`;
+            qDiv.appendChild(qTitle);
+            
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = "space-y-3";
+            
+            item.options.forEach((opt, optIndex) => {
+                const label = document.createElement('label');
+                label.className = "flex items-center space-x-3 p-3 rounded bg-white border border-gray-300 hover:bg-blue-100 cursor-pointer transition";
+                
+                const radio = document.createElement('input');
+                radio.type = "radio";
+                radio.name = `q${index}`;
+                radio.value = optIndex;
+                radio.className = "form-radio h-5 w-5 text-blue-600";
+                
+                const span = document.createElement('span');
+                span.className = "text-gray-700";
+                span.innerText = opt;
+                
+                label.appendChild(radio);
+                label.appendChild(span);
+                optionsDiv.appendChild(label);
+            });
+            
+            qDiv.appendChild(optionsDiv);
+            quizContainer.appendChild(qDiv);
+        });
+
+        function gradeQuiz() {
+            let score = 0;
+            let allAnswered = true;
+
+            for(let i = 0; i < quizData.length; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if(selected) {
+                    if(parseInt(selected.value) === quizData[i].answer) {
+                        score++;
+                    }
+                } else {
+                    allAnswered = false;
+                }
+            }
+            
+            if(!allAnswered) {
+                showModal('Incomplete Quiz', 'Please answer all 20 questions before submitting.', 'warning');
+                return;
+            }
+            
+            const percentage = (score / quizData.length) * 100;
+            
+            if(score >= 18) { 
+                const navGame = document.getElementById('nav-game');
+                const navGameMobile = document.getElementById('nav-game-mobile');
+                
+                navGame.classList.remove('text-gray-400', 'cursor-not-allowed');
+                navGame.classList.add('text-white', 'hover:bg-blue-600');
+                navGame.disabled = false;
+                navGame.innerHTML = '<i class="fa-solid fa-gamepad mr-1"></i>Game';
+                
+                navGameMobile.classList.remove('text-gray-400', 'cursor-not-allowed');
+                navGameMobile.classList.add('text-white', 'hover:bg-blue-600');
+                navGameMobile.disabled = false;
+                navGameMobile.innerHTML = '<i class="fa-solid fa-gamepad"></i> Game';
+
+                document.getElementById('nav-cert').classList.remove('hidden');
+                document.getElementById('nav-cert-mobile').classList.remove('hidden');
+                
+                document.getElementById('proceed-game-btn').classList.remove('hidden');
+                document.getElementById('submit-quiz-btn').classList.add('hidden');
+
+                showModal('Outstanding!', `You scored ${score}/20 (${percentage}%). You have unlocked your Certificate of Mastery AND the Retro Game!`, 'success');
+            } else {
+                quizData.forEach((_, i) => {
+                    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                    if(selected) selected.checked = false;
+                });
+                showModal('Keep Trying!', `You scored ${score}/20 (${percentage}%). You need 90% (18/20) to earn the certificate. Your answers have been reset so you can try again.`, 'error');
+                document.getElementById('quiz-section').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // --- RETRO GAME LOGIC: Array Delivery (Paperboy/Shooter Arcade Style) ---
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let score = 0;
+        let lives = 3;
+        let gameRunning = false;
+        let animationId;
+        
+        // Game Entities
+        let truck = { x: canvas.width/2, y: canvas.height - 40, width: 40, height: 30, speed: 5 };
+        let payloads = [];
+        let targets = []; // mailboxes
+        let bugs = []; // syntax bugs
+
+        let lastTime = 0;
+        let targetTimer = 0;
+        let bugTimer = 0;
+        
+        const overlay = document.getElementById('game-overlay');
+        const startBtn = document.getElementById('start-game-btn');
+        startBtn.addEventListener('click', startGame);
+
+        // Input handling - Mouse / Touch position mapped to truck X
+        function getPos(e) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            let clientX = e.clientX;
+            
+            if(e.touches && e.touches.length > 0) {
+                clientX = e.touches[0].clientX;
+            }
+            return (clientX - rect.left) * scaleX;
+        }
+
+        function handleInputMove(e) {
+            if(!gameRunning) return;
+            e.preventDefault();
+            let newX = getPos(e);
+            truck.x = Math.max(truck.width/2, Math.min(canvas.width - truck.width/2, newX));
+        }
+
+        function handleShoot(e) {
+            if(!gameRunning) return;
+            e.preventDefault();
+            // Fire payload upwards
+            payloads.push({
+                x: truck.x,
+                y: truck.y - 15,
+                radius: 4,
+                speed: 8
+            });
+        }
+
+        canvas.addEventListener('mousemove', handleInputMove);
+        canvas.addEventListener('mousedown', handleShoot);
+        canvas.addEventListener('touchmove', handleInputMove, {passive: false});
+        canvas.addEventListener('touchstart', handleShoot, {passive: false});
+
+        function resetGame() {
+            score = 0;
+            lives = 3;
+            payloads = [];
+            targets = [];
+            bugs = [];
+            truck.x = canvas.width/2;
+            
+            document.getElementById('game-score').innerText = score;
+            document.getElementById('game-lives').innerText = lives;
+            lastTime = Date.now();
+        }
+
+        function startGame() {
+            overlay.classList.add('hidden');
+            if(!gameRunning) {
+                resetGame();
+                gameRunning = true;
+                drawGame();
+            }
+        }
+
+        function loseLife() {
+            lives--;
+            document.getElementById('game-lives').innerText = lives;
+            
+            // Visual red flash
+            ctx.fillStyle = "rgba(239,68,68,0.5)"; // tailwind red-500
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            
+            if(lives <= 0) {
+                gameOver();
+            }
+        }
+
+        function gameOver() {
+            gameRunning = false;
+            cancelAnimationFrame(animationId);
+            overlay.classList.remove('hidden');
+            startBtn.innerText = "Fatal Exception! Restart";
+            startBtn.classList.replace('bg-blue-600', 'bg-red-700');
+            startBtn.classList.replace('border-blue-800', 'border-red-900');
+        }
+
+        function drawGame() {
+            if(!gameRunning) return;
+            
+            let now = Date.now();
+            let dt = now - lastTime;
+            lastTime = now;
+            
+            // Background
+            ctx.fillStyle = '#0f172a'; // tailwind slate-900
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw 'Road' lines scrolling down
+            ctx.strokeStyle = '#334155';
+            ctx.lineWidth = 2;
+            let offset = (now / 10) % 40;
+            for(let i=0; i<canvas.height; i+=40) {
+                ctx.beginPath();
+                ctx.moveTo(canvas.width/3, i + offset);
+                ctx.lineTo(canvas.width/3, i + 20 + offset);
+                ctx.stroke();
+                
+                ctx.beginPath();
+                ctx.moveTo(canvas.width*2/3, i + offset);
+                ctx.lineTo(canvas.width*2/3, i + 20 + offset);
+                ctx.stroke();
+            }
+
+            // Spawn Mailboxes (Targets)
+            targetTimer += dt;
+            if(targetTimer > 1500 - (Math.min(score, 500))) { // speeds up slightly
+                let sz = 30;
+                targets.push({
+                    x: Math.random() * (canvas.width - sz*2) + sz,
+                    y: -sz,
+                    size: sz,
+                    speed: 2 + Math.random()*2,
+                    index: Math.floor(Math.random() * 10)
+                });
+                targetTimer = 0;
+            }
+
+            // Spawn Bugs (Obstacles)
+            bugTimer += dt;
+            if(bugTimer > 2000 - (Math.min(score, 800))) {
+                let r = 12;
+                bugs.push({
+                    x: Math.random() * (canvas.width - r*2) + r,
+                    y: -r,
+                    radius: r,
+                    speed: 3 + Math.random()*3
+                });
+                bugTimer = 0;
+            }
+
+            // Update & Draw Payloads
+            ctx.fillStyle = '#fde047'; // yellow
+            for(let i = payloads.length - 1; i >= 0; i--) {
+                let p = payloads[i];
+                p.y -= p.speed;
+                
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI*2);
+                ctx.fill();
+                
+                if(p.y < 0) payloads.splice(i, 1);
+            }
+
+            // Update & Draw Targets (Mailboxes)
+            for(let i = targets.length - 1; i >= 0; i--) {
+                let t = targets[i];
+                t.y += t.speed;
+                
+                // Draw Mailbox
+                ctx.fillStyle = '#3b82f6'; // blue
+                ctx.fillRect(t.x - t.size/2, t.y - t.size/2, t.size, t.size);
+                ctx.strokeStyle = '#93c5fd';
+                ctx.strokeRect(t.x - t.size/2, t.y - t.size/2, t.size, t.size);
+                
+                ctx.fillStyle = 'white';
+                ctx.font = '10px monospace';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(`[${t.index}]`, t.x, t.y);
+
+                // Collision with Payload
+                for(let j = payloads.length - 1; j >= 0; j--) {
+                    let p = payloads[j];
+                    if(Math.abs(p.x - t.x) < t.size/2 && Math.abs(p.y - t.y) < t.size/2) {
+                        targets.splice(i, 1);
+                        payloads.splice(j, 1);
+                        score += 10;
+                        document.getElementById('game-score').innerText = score;
+                        break;
+                    }
+                }
+                
+                if(t.y > canvas.height + t.size) targets.splice(i, 1);
+            }
+
+            // Update & Draw Bugs
+            for(let i = bugs.length - 1; i >= 0; i--) {
+                let b = bugs[i];
+                b.y += b.speed;
+                
+                // Draw Bug (Spiky red circle)
+                ctx.fillStyle = '#ef4444'; // red
+                ctx.beginPath();
+                ctx.arc(b.x, b.y, b.radius, 0, Math.PI*2);
+                ctx.fill();
+                ctx.strokeStyle = 'white';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(b.x-b.radius-2, b.y-b.radius-2); ctx.lineTo(b.x+b.radius+2, b.y+b.radius+2);
+                ctx.moveTo(b.x+b.radius+2, b.y-b.radius-2); ctx.lineTo(b.x-b.radius-2, b.y+b.radius+2);
+                ctx.stroke();
+                
+                // Collision with Payload (can shoot bugs)
+                let bugDestroyed = false;
+                for(let j = payloads.length - 1; j >= 0; j--) {
+                    let p = payloads[j];
+                    let dx = p.x - b.x;
+                    let dy = p.y - b.y;
+                    if(dx*dx + dy*dy < (b.radius + p.radius)*(b.radius + p.radius)) {
+                        bugs.splice(i, 1);
+                        payloads.splice(j, 1);
+                        score += 5; // tiny points for bugs
+                        document.getElementById('game-score').innerText = score;
+                        bugDestroyed = true;
+                        break;
+                    }
+                }
+                if(bugDestroyed) continue;
+
+                // Collision with Truck
+                let truckRect = { x: truck.x - truck.width/2, y: truck.y - truck.height/2, w: truck.width, h: truck.height };
+                // simple rect/circle AABB overlap approximation
+                let testX = b.x; let testY = b.y;
+                if (b.x < truckRect.x) testX = truckRect.x; else if (b.x > truckRect.x + truckRect.w) testX = truckRect.x + truckRect.w;
+                if (b.y < truckRect.y) testY = truckRect.y; else if (b.y > truckRect.y + truckRect.h) testY = truckRect.y + truckRect.h;
+                let distX = b.x - testX; let distY = b.y - testY;
+                let distance = Math.sqrt((distX*distX) + (distY*distY));
+                
+                if (distance <= b.radius) {
+                    bugs.splice(i, 1);
+                    loseLife();
+                }
+
+                if(b.y > canvas.height + b.radius) {
+                    if (bugs[i]) bugs.splice(i, 1);
+                }
+            }
+
+            // Draw Truck
+            ctx.fillStyle = '#cbd5e1'; // silver truck body
+            ctx.fillRect(truck.x - truck.width/2, truck.y - truck.height/2, truck.width, truck.height);
+            ctx.fillStyle = '#38bdf8'; // blue cab window
+            ctx.fillRect(truck.x - truck.width/4, truck.y - truck.height/2 - 10, truck.width/2, 10);
+            
+            // Engine exhaust
+            ctx.fillStyle = '#f97316';
+            ctx.beginPath();
+            ctx.arc(truck.x - 10, truck.y + truck.height/2, 3 + Math.random()*2, 0, Math.PI*2);
+            ctx.arc(truck.x + 10, truck.y + truck.height/2, 3 + Math.random()*2, 0, Math.PI*2);
+            ctx.fill();
+
+            animationId = requestAnimationFrame(drawGame);
+        }
+
+        // --- CERTIFICATE LOGIC ---
+        function updateCertName() {
+            let name = document.getElementById('student-name-input').value.trim();
+            if(name) {
+                if (name.includes(' ')) {
+                    name = name.split(' ')[0];
+                    document.getElementById('student-name-input').value = name;
+                    showModal('Notice', 'Only your first name has been applied to the certificate.', 'info');
+                }
+                document.getElementById('cert-student-name').innerText = name;
+            } else {
+                showModal('Wait!', 'Please enter your first name to update the certificate.', 'warning');
+            }
+        }
+
+        const today = new Date();
+        document.getElementById('cert-date').innerText = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        function downloadCert() {
+            const certEl = document.getElementById('certificate');
+            const name = document.getElementById('cert-student-name').innerText;
+            let filename = 'Certificate.png';
+            if (name && name !== 'Student') {
+                filename = `${name.replace(/\s+/g, '_')}_Certificate.png`;
+            }
+
+            const originalTransform = certEl.style.transform;
+            certEl.style.transform = 'none';
+
+            const btn = document.getElementById('download-btn');
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Generating...';
+            btn.disabled = true;
+
+            html2canvas(certEl, { 
+                scale: 2, 
+                useCORS: true,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+            }).catch(err => {
+                console.error(err);
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                showModal('Error', 'Failed to generate image. Try using a desktop browser.', 'error');
+            });
+        }
+
+        window.onload = () => {
+            // Draw static background for game preview
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle = '#475569';
+            ctx.font = '20px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('PRESS COMPILE TO RUN', canvas.width/2, canvas.height/2);
+        }
+    </script>
+</body>
+</html>

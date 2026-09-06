@@ -1,0 +1,1480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 07 Section 6.4.2 Mastery - Data Types & Encryption</title>
+    
+    <!-- Load Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load HTML2Canvas for Certificate Download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- Load Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Qwitcher+Grypen:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f4f9; 
+            color: #1f2937;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        /* Interactive Elements CSS */
+        .io-dropzone { min-height: 70px; min-width: 130px; border: 2px dashed #9ca3af; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: #f9fafb; transition: all 0.2s; text-align: center; padding: 10px;}
+        .io-dropzone.drag-over { background: #e5e7eb; border-color: #3b82f6; box-shadow: inset 0 0 10px rgba(59, 130, 246, 0.2);}
+        
+        .io-item { cursor: grab; transition: transform 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .io-item:active { cursor: grabbing; transform: scale(0.95); }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #e5e7eb; }
+        ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #2563eb; }
+
+        /* Retro Game Canvas */
+        #game-canvas {
+            background-color: #0f172a;
+            border: 4px solid #334155;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+            max-width: 100%;
+            height: auto;
+            touch-action: none; 
+        }
+
+        /* --- CERTIFICATE STYLES --- */
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .font-body { font-family: 'Lora', serif; }
+        .font-script { font-family: 'Qwitcher Grypen', cursive; }
+        
+        .cert-preview-container {
+            width: 100%;
+            overflow: auto;
+            display: flex;
+            justify-content: center;
+            background: #e5e7eb;
+            padding: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        #certificate {
+            width: 1056px !important;
+            height: 816px !important;
+            flex-shrink: 0;
+            background-color: #ffffff;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1056" height="816"><polygon points="0,0 250,0 0,650" fill="%2360a5fa"/><polygon points="0,0 350,0 0,900" fill="%232563eb" opacity="0.8"/><polygon points="0,0 120,0 0,300" fill="%2393c5fd"/><polygon points="0,450 650,816 0,816" fill="%2360a5fa"/><polygon points="0,550 450,816 0,816" fill="%232563eb" opacity="0.8"/><polygon points="800,0 1056,0 1056,256" fill="%23f3f4f6"/><polygon points="1056,500 1056,816 750,816" fill="%23f3f4f6"/></svg>');
+            background-size: cover;
+            border: 4px solid #e5e7eb;
+        }
+
+        .gold-seal {
+            position: absolute;
+            left: 110px;
+            top: 350px;
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c, #fcf6ba);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3), inset 0 0 15px rgba(255,255,255,0.7), inset 0 0 25px rgba(139,105,20,0.9);
+            z-index: 10;
+        }
+        .gold-seal::before {
+            content: '';
+            position: absolute;
+            top: -4px; bottom: -4px; left: -4px; right: -4px;
+            border-radius: 50%;
+            border: 6px dashed #d4af37;
+        }
+        .gold-seal-inner-1 {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 2px solid rgba(139, 105, 20, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #e8c678, #dbab46);
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.2), 0 2px 5px rgba(255,255,255,0.7);
+            z-index: 1;
+        }
+        .gold-seal-inner-2 {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: radial-gradient(circle, #fcf6ba, #d4af37);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            padding: 10px;
+        }
+        .embossed-text {
+            color: #b38728;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2);
+            font-family: 'Playfair Display', serif;
+            font-weight: 800;
+            line-height: 1.1;
+            text-transform: uppercase;
+        }
+        .embossed-text-large { font-size: 14px; letter-spacing: 1px; }
+        .embossed-text-small { font-size: 11px; letter-spacing: 2px; margin: 2px 0; }
+        .embossed-star { font-size: 12px; color: #b38728; text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2); margin: 2px 0; }
+
+        @media (max-width: 1100px) {
+            #certificate { transform: scale(0.7); transform-origin: top left; margin-bottom: -240px; margin-right: -310px; }
+        }
+        @media (max-width: 768px) {
+            #certificate { transform: scale(0.4); transform-origin: top left; margin-bottom: -490px; margin-right: -630px; }
+        }
+
+        /* Packet Animation */
+        @keyframes slideRight {
+            0% { transform: translateX(0); opacity: 1; }
+            45% { transform: translateX(100px); opacity: 1; }
+            50% { transform: translateX(120px); opacity: 0; } /* Hacker intercepts */
+            100% { transform: translateX(250px); opacity: 0; }
+        }
+        @keyframes slideRightSecure {
+            0% { transform: translateX(0); opacity: 1; }
+            100% { transform: translateX(250px); opacity: 1; }
+        }
+        .packet-animate-insecure { animation: slideRight 2s linear infinite; }
+        .packet-animate-secure { animation: slideRightSecure 2s linear infinite; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
+    <nav class="bg-blue-800 text-white shadow-lg sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-shield-halved text-2xl text-blue-300"></i>
+                    <span class="font-bold text-xl tracking-wider hidden sm:inline-block">Tech+ Unit 07 Section 6.4.2</span>
+                    <span class="font-bold text-xl tracking-wider sm:hidden">6.4.2</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-2">
+                        <button onclick="switchTab('briefing')" class="nav-btn bg-blue-900 px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-600 transition" id="nav-briefing"><i class="fa-solid fa-book-open mr-1"></i>Briefing</button>
+                        <button onclick="switchTab('activity')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-600 transition" id="nav-activity"><i class="fa-solid fa-flask mr-1"></i>Lab Activity</button>
+                        <button onclick="switchTab('quiz')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-600 transition" id="nav-quiz"><i class="fa-solid fa-clipboard-check mr-1"></i>Quiz</button>
+                        <button onclick="switchTab('game')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-gray-400 cursor-not-allowed transition" id="nav-game" disabled><i class="fa-solid fa-lock mr-1"></i>Game</button>
+                        <button onclick="switchTab('cert')" class="nav-btn hidden px-3 py-2 rounded-md text-sm font-medium text-yellow-300 hover:bg-blue-600 transition" id="nav-cert"><i class="fa-solid fa-award mr-1"></i>Certificate</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Nav -->
+        <div class="md:hidden flex flex-wrap justify-center gap-2 py-2 px-2 bg-blue-900 border-t border-blue-700">
+            <button onclick="switchTab('briefing')" class="nav-btn-mobile px-3 py-1 text-sm rounded bg-blue-700 text-white" id="nav-briefing-mobile">Briefing</button>
+            <button onclick="switchTab('activity')" class="nav-btn-mobile px-3 py-1 text-sm rounded text-white" id="nav-activity-mobile">Lab</button>
+            <button onclick="switchTab('quiz')" class="nav-btn-mobile px-3 py-1 text-sm rounded text-white" id="nav-quiz-mobile">Quiz</button>
+            <button onclick="switchTab('game')" class="nav-btn-mobile px-3 py-1 text-sm rounded text-gray-400 cursor-not-allowed" id="nav-game-mobile" disabled><i class="fa-solid fa-lock"></i></button>
+            <button onclick="switchTab('cert')" id="nav-cert-mobile" class="hidden px-2 py-1 text-sm text-yellow-300 rounded"><i class="fa-solid fa-award"></i></button>
+        </div>
+    </nav>
+
+    <main class="flex-grow w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <!-- BRIEFING SECTION -->
+        <div id="briefing-section" class="tab-content active no-print">
+            <div class="text-center mb-10">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">Encryption & Data Types</h1>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">Understanding how encryption protects data based on its current state: Data at Rest and Data in Transit.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- Tile 1 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-emerald-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-emerald-700"><i class="fa-solid fa-hard-drive mr-2"></i>Data at Rest: File & Disk</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Data at Rest:</strong> Digital information stored physically that is not actively moving across networks.</li>
+                            <li><strong>File-Level Encryption:</strong> Protects specific, individual files or folders on a device.</li>
+                            <li><strong>Disk-Level Encryption:</strong> Protects the entire storage volume (Full Disk Encryption), securing everything if the hardware is lost.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('rest-disk-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('rest-disk-usecase')" class="flex-1 bg-emerald-100 hover:bg-emerald-200 text-emerald-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 2 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-indigo-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-indigo-700"><i class="fa-solid fa-mobile-screen-button mr-2"></i>Data at Rest: Mobile Devices</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Mobile Encryption:</strong> Specialized protection for highly portable, easily lost devices like smartphones and tablets.</li>
+                            <li><strong>Built-In Mechanisms:</strong> Modern mobile OSs encrypt storage by default out of the box.</li>
+                            <li><strong>Authentication:</strong> Relies on strong PINs, passwords, or biometrics to unlock the decryption key.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('rest-mobile-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('rest-mobile-usecase')" class="flex-1 bg-indigo-100 hover:bg-indigo-200 text-indigo-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 3 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-rose-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-rose-700"><i class="fa-solid fa-envelope-open-text mr-2"></i>Data in Transit: Email & HTTPS</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Data in Transit:</strong> Data actively moving from one location to another across a network.</li>
+                            <li><strong>Email Encryption:</strong> Uses TLS (server-to-server) or End-to-End Encryption (E2EE) to stop interception.</li>
+                            <li><strong>HTTPS:</strong> Secures website traffic (like passwords/credit cards) using SSL/TLS, indicated by a padlock.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('transit-web-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('transit-web-usecase')" class="flex-1 bg-rose-100 hover:bg-rose-200 text-rose-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 4 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-amber-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-amber-700"><i class="fa-solid fa-network-wired mr-2"></i>Data in Transit: VPN & Apps</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>VPN (Virtual Private Network):</strong> Creates a secure, encrypted tunnel masking the user's IP and securing all traffic.</li>
+                            <li><strong>Mobile App Encryption:</strong> Uses transport encryption (TLS) and application-level encryption for data moving from apps to servers.</li>
+                            <li><strong>Public Wi-Fi Defense:</strong> Essential tools for protecting data on open, untrusted networks.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('transit-vpn-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('transit-vpn-usecase')" class="flex-1 bg-amber-100 hover:bg-amber-200 text-amber-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 flex justify-center">
+                <button onclick="switchTab('activity')" class="bg-blue-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-blue-500 shadow-lg transition transform hover:scale-105">Proceed to Lab Activity <i class="fa-solid fa-arrow-right ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- LAB ACTIVITY SECTION -->
+        <div id="activity-section" class="tab-content no-print">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Interactive Lab Activity</h1>
+                <p class="text-gray-600">Complete the following 4 labs applying your knowledge of Data at Rest and Data in Transit.</p>
+            </div>
+
+            <!-- Lab 1: Data at Rest Categorization -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-emerald-700"><i class="fa-solid fa-hard-drive mr-2"></i>Lab 1: Data at Rest Targets</h2>
+                <p class="text-sm text-gray-600 mb-4">Drag the specific data storage scenario and drop it onto the correct type of Data at Rest encryption that would best protect it.</p>
+                
+                <div class="flex flex-wrap gap-3 mb-6" id="cat-items">
+                    <div class="io-item px-4 py-2 bg-gray-100 border border-gray-300 rounded font-bold text-sm" draggable="true" data-type="file">A specific "Taxes_2024.pdf" document</div>
+                    <div class="io-item px-4 py-2 bg-gray-100 border border-gray-300 rounded font-bold text-sm" draggable="true" data-type="disk">An entire stolen corporate Windows laptop</div>
+                    <div class="io-item px-4 py-2 bg-gray-100 border border-gray-300 rounded font-bold text-sm" draggable="true" data-type="mobile">A lost Apple iPhone left on a bus</div>
+                    <div class="io-item px-4 py-2 bg-gray-100 border border-gray-300 rounded font-bold text-sm" draggable="true" data-type="file">A shared folder containing HR records</div>
+                    <div class="io-item px-4 py-2 bg-gray-100 border border-gray-300 rounded font-bold text-sm" draggable="true" data-type="disk">A raw 2TB external hard drive used for system backups</div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="cat-dropzone border-2 border-dashed border-emerald-400 bg-emerald-50 rounded-lg flex flex-col items-center" data-target="file">
+                        <h3 class="font-bold text-emerald-800 mb-2 border-b border-emerald-200 w-full text-center pb-2">File-Level Encryption</h3>
+                    </div>
+                    <div class="cat-dropzone border-2 border-dashed border-teal-400 bg-teal-50 rounded-lg flex flex-col items-center" data-target="disk">
+                        <h3 class="font-bold text-teal-800 mb-2 border-b border-teal-200 w-full text-center pb-2">Disk-Level Encryption</h3>
+                    </div>
+                    <div class="cat-dropzone border-2 border-dashed border-indigo-400 bg-indigo-50 rounded-lg flex flex-col items-center" data-target="mobile">
+                        <h3 class="font-bold text-indigo-800 mb-2 border-b border-indigo-200 w-full text-center pb-2">Mobile Device Encryption</h3>
+                    </div>
+                </div>
+                <div id="lab1-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
+            </div>
+
+            <!-- Lab 2: Authentication Simulator -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-indigo-700"><i class="fa-solid fa-key mr-2"></i>Lab 2: Unlocking Data at Rest</h2>
+                <p class="text-sm text-gray-600 mb-4">Without authentication, encrypted Data at Rest is completely unreadable. Solve the clue to enter the 4-digit PIN and decrypt the drive.</p>
+                
+                <div class="flex flex-col md:flex-row items-center justify-center gap-8 bg-gray-50 p-6 rounded-lg border border-gray-200">
+                    <div class="w-full max-w-sm text-center">
+                        <div class="bg-gray-800 text-green-400 p-4 rounded-t-lg font-mono text-sm h-32 overflow-hidden flex items-center justify-center border-b-4 border-gray-600" id="encrypted-display">
+                            <span class="break-all opacity-70">e4b7 9a1c 3f8d 22e1<br>88c9 0f4a 11b2 7d6e<br>...[DATA ENCRYPTED]...</span>
+                        </div>
+                        <div class="bg-gray-200 p-4 rounded-b-lg shadow-inner border border-gray-300">
+                            <p class="font-bold text-gray-700 text-sm mb-2">Clue: The standard port number for HTTPS (443) plus exactly 1000.</p>
+                            <div class="flex justify-center gap-2 mb-3">
+                                <input type="password" id="pin-input" maxlength="4" class="w-24 text-center text-2xl tracking-widest font-bold py-2 border-2 border-gray-400 rounded focus:border-indigo-500 focus:outline-none" placeholder="****">
+                            </div>
+                            <button onclick="checkLab2()" class="bg-indigo-600 text-white px-6 py-2 rounded font-bold hover:bg-indigo-700 w-full">Decrypt Device</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="lab2-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
+            </div>
+            
+            <!-- Lab 3: Data In Transit Interception -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-rose-700"><i class="fa-solid fa-wifi mr-2"></i>Lab 3: Data In Transit Interception</h2>
+                <p class="text-sm text-gray-600 mb-4">A malicious actor is listening on this public Wi-Fi network. Toggle the network encryption to protect your sensitive data packets before clicking "Send Packet". You must successfully transmit 3 secure packets.</p>
+                
+                <div class="bg-gray-100 p-6 rounded-lg relative overflow-hidden h-40 flex items-center justify-between border-2 border-gray-300 mb-4">
+                    <!-- Client -->
+                    <div class="z-10 flex flex-col items-center">
+                        <i class="fa-solid fa-laptop text-4xl text-gray-700 mb-2"></i>
+                        <span class="font-bold text-xs uppercase">Your Device</span>
+                    </div>
+                    
+                    <!-- Hacker -->
+                    <div class="absolute left-1/2 transform -translate-x-1/2 z-0 flex flex-col items-center">
+                        <i class="fa-solid fa-user-secret text-4xl text-red-500 mb-2"></i>
+                        <span class="font-bold text-xs uppercase text-red-600">Packet Sniffer</span>
+                    </div>
+
+                    <!-- Server -->
+                    <div class="z-10 flex flex-col items-center">
+                        <i class="fa-solid fa-server text-4xl text-gray-700 mb-2"></i>
+                        <span class="font-bold text-xs uppercase">Bank Server</span>
+                    </div>
+
+                    <!-- Animated Packet -->
+                    <div id="data-packet" class="absolute left-16 top-1/2 transform -translate-y-1/2 text-3xl hidden">
+                        <i class="fa-solid fa-envelope-open-text text-red-500"></i>
+                    </div>
+                </div>
+                
+                <div class="flex flex-col md:flex-row justify-between items-center bg-gray-50 p-4 rounded border border-gray-200">
+                    <div class="flex items-center gap-3 mb-4 md:mb-0">
+                        <span class="font-bold text-red-600" id="lbl-http">HTTP (Cleartext)</span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="encryption-toggle" class="sr-only peer" onchange="toggleEncryption()">
+                            <div class="w-14 h-7 bg-red-500 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-green-500"></div>
+                        </label>
+                        <span class="font-bold text-gray-400" id="lbl-https">HTTPS (Encrypted)</span>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div class="text-sm font-bold bg-white px-3 py-1 rounded border border-gray-300 shadow-sm">Secure Packets Sent: <span id="secure-count" class="text-green-600 text-lg">0</span>/3</div>
+                        <button onclick="sendPacket()" class="bg-blue-600 text-white px-6 py-2 rounded font-bold hover:bg-blue-700">Send Packet</button>
+                    </div>
+                </div>
+                <div id="lab3-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
+            </div>
+            
+            <!-- Lab 4: Scenario Mapping -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-amber-700"><i class="fa-solid fa-map-location-dot mr-2"></i>Lab 4: Destination Encryption Scenarios</h2>
+                <p class="text-sm text-gray-600 mb-4">Review the real-world scenarios below. For each, select the state of the data and the most appropriate encryption type to protect it.</p>
+                
+                <div class="space-y-4">
+                    <!-- Scenario 1 -->
+                    <div class="bg-gray-50 p-4 rounded border border-gray-200 flex flex-col md:flex-row md:items-center gap-4">
+                        <div class="flex-grow">
+                            <p class="text-sm font-semibold text-gray-800">1. A person transfers money to a friend using a mobile banking app. The details of the transaction cannot be read by anyone else on the internet.</p>
+                        </div>
+                        <div class="flex gap-2 w-full md:w-auto shrink-0">
+                            <select id="s1-state" class="border border-gray-300 rounded p-1 text-sm bg-white focus:outline-none focus:border-amber-500">
+                                <option value="">-- State --</option>
+                                <option value="rest">At Rest</option>
+                                <option value="transit">In Transit</option>
+                            </select>
+                            <select id="s1-type" class="border border-gray-300 rounded p-1 text-sm bg-white focus:outline-none focus:border-amber-500">
+                                <option value="">-- Type --</option>
+                                <option value="disk">Disk-Level</option>
+                                <option value="app">Mobile App</option>
+                                <option value="file">File-Level</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- Scenario 2 -->
+                    <div class="bg-gray-50 p-4 rounded border border-gray-200 flex flex-col md:flex-row md:items-center gap-4">
+                        <div class="flex-grow">
+                            <p class="text-sm font-semibold text-gray-800">2. A photographer saves a collection of private images on an external USB drive. If the drive is stolen, the files won't open without permission.</p>
+                        </div>
+                        <div class="flex gap-2 w-full md:w-auto shrink-0">
+                            <select id="s2-state" class="border border-gray-300 rounded p-1 text-sm bg-white focus:outline-none focus:border-amber-500">
+                                <option value="">-- State --</option>
+                                <option value="rest">At Rest</option>
+                                <option value="transit">In Transit</option>
+                            </select>
+                            <select id="s2-type" class="border border-gray-300 rounded p-1 text-sm bg-white focus:outline-none focus:border-amber-500">
+                                <option value="">-- Type --</option>
+                                <option value="email">Email Enc.</option>
+                                <option value="vpn">VPN</option>
+                                <option value="file">File-Level</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- Scenario 3 -->
+                    <div class="bg-gray-50 p-4 rounded border border-gray-200 flex flex-col md:flex-row md:items-center gap-4">
+                        <div class="flex-grow">
+                            <p class="text-sm font-semibold text-gray-800">3. An employee working from home uses special software to create a secure "tunnel" to the corporate private network to send/receive data.</p>
+                        </div>
+                        <div class="flex gap-2 w-full md:w-auto shrink-0">
+                            <select id="s3-state" class="border border-gray-300 rounded p-1 text-sm bg-white focus:outline-none focus:border-amber-500">
+                                <option value="">-- State --</option>
+                                <option value="rest">At Rest</option>
+                                <option value="transit">In Transit</option>
+                            </select>
+                            <select id="s3-type" class="border border-gray-300 rounded p-1 text-sm bg-white focus:outline-none focus:border-amber-500">
+                                <option value="">-- Type --</option>
+                                <option value="disk">Disk-Level</option>
+                                <option value="vpn">VPN</option>
+                                <option value="mobile">Mobile Device</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-6">
+                    <button class="bg-amber-600 text-white px-6 py-2 rounded font-bold hover:bg-amber-700" onclick="checkLab4()">Verify Scenarios</button>
+                </div>
+                <div id="lab4-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
+            </div>
+
+            <div class="text-center">
+                <button onclick="switchTab('quiz')" class="bg-blue-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-blue-500 shadow-lg transition transform hover:scale-105">Take the Mastery Quiz <i class="fa-solid fa-clipboard-check ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- QUIZ SECTION -->
+        <div id="quiz-section" class="tab-content no-print">
+            <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-xl max-w-4xl mx-auto">
+                <div class="text-center mb-8 border-b pb-4">
+                    <h1 class="text-3xl font-extrabold text-gray-900 mb-2">6.4.2 Mastery Quiz</h1>
+                    <p class="text-gray-600">Score 90% or higher (18/20) to earn your Certificate of Mastery and unlock the Retro Game!</p>
+                </div>
+
+                <div id="quiz-container" class="space-y-8">
+                    <!-- Questions injected via JS -->
+                </div>
+
+                <div class="mt-10 text-center border-t pt-6 flex flex-col md:flex-row justify-center items-center gap-4">
+                    <button id="submit-quiz-btn" onclick="gradeQuiz()" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">Submit Quiz</button>
+                    <button id="proceed-game-btn" onclick="switchTab('game')" class="hidden bg-purple-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-purple-700 shadow-lg transition w-full md:w-auto">Play Cyber Scramble <i class="fa-solid fa-gamepad ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RETRO GAME SECTION -->
+        <div id="game-section" class="tab-content no-print">
+            <div class="bg-slate-900 p-6 sm:p-8 rounded-2xl shadow-xl max-w-4xl mx-auto border-4 border-slate-700 flex flex-col items-center">
+                <div class="text-center mb-4 w-full">
+                    <h1 class="text-3xl font-extrabold text-blue-400 mb-2 tracking-widest uppercase" style="font-family: monospace;">Cyber Scramble</h1>
+                    <p class="text-gray-300 text-sm">Secure the data in transit! You are the Packet Pilot. Use your mouse, touch, or W/S/Up/Down keys to move your ship vertically. The ship auto-fires Encryption Keys. Destroy the red Hacker Ships and Malware blocks before they breach your network. Do not get hit!</p>
+                </div>
+                
+                <div class="flex justify-between items-center w-full max-w-[600px] mb-2 px-4 text-white font-mono text-xl">
+                    <div>Data Secured: <span id="game-score" class="text-emerald-400 font-bold">0</span></div>
+                    <div>Integrity: <span id="game-lives" class="text-rose-400 font-bold">3</span></div>
+                </div>
+
+                <div class="relative flex justify-center w-full">
+                    <!-- Game Canvas -->
+                    <canvas id="game-canvas" width="600" height="400" class="w-full max-w-[600px] bg-slate-800 border-2 border-slate-600 rounded shadow-lg"></canvas>
+                    
+                    <!-- Overlay Start Button -->
+                    <div id="game-overlay" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-70 rounded-lg max-w-[600px] mx-auto z-10">
+                        <button id="start-game-btn" class="bg-blue-600 hover:bg-blue-500 text-white font-bold font-mono py-3 px-6 rounded-lg text-xl border-4 border-blue-800 uppercase transform transition hover:scale-105">Launch Pilot (Start)</button>
+                    </div>
+                </div>
+
+                <div class="mt-8 text-center w-full border-t border-slate-700 pt-6">
+                    <button onclick="switchTab('cert')" class="bg-emerald-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-emerald-700 shadow-lg transition w-full md:w-auto">Claim Certificate <i class="fa-solid fa-award ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CERTIFICATE SECTION -->
+        <div id="cert-section" class="tab-content">
+            <div class="max-w-5xl mx-auto">
+                
+                <!-- Controls -->
+                <div class="bg-white p-6 rounded shadow mb-6 no-print text-center border border-gray-200">
+                    <h2 class="text-2xl font-bold text-blue-600 mb-2">🎉 Congratulations! 🎉</h2>
+                    <p class="text-gray-700 mb-4">You have mastered the concepts of Data at Rest and Data in Transit.</p>
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+                        <input type="text" id="student-name-input" value="Student" placeholder="Enter your first name" class="border-2 border-gray-300 rounded px-4 py-2 w-full md:w-64 focus:border-blue-500 focus:outline-none">
+                        <button onclick="updateCertName()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">Update Name</button>
+                        <button id="download-btn" onclick="downloadCert()" class="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900 transition flex items-center justify-center">
+                            <i class="fa-solid fa-download mr-2"></i>Download PNG
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Certificate Render Container -->
+                <div class="cert-preview-container print:p-0 print:bg-white">
+                    <div id="certificate">
+                        <div class="gold-seal">
+                            <div class="gold-seal-inner-1">
+                                <div class="gold-seal-inner-2">
+                                     <span class="embossed-text embossed-text-large">Certificate</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-small">Of</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-large">Excellence</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="relative z-20 w-full h-full flex flex-col pt-[48px] pl-[380px] pr-[48px]">
+                            <h1 class="text-[#1e3a8a] text-[4.5rem] leading-none font-serif font-bold tracking-wide uppercase mb-2">CERTIFICATE</h1>
+                            <h2 class="text-gray-800 text-3xl font-serif tracking-widest uppercase mb-10">Of Achievement</h2>
+                            
+                            <p class="text-[1.4rem] font-body text-gray-800 mb-4">This is to certify that</p>
+                            
+                            <div class="relative mb-8 w-full">
+                                <h3 id="cert-student-name" class="text-[4rem] text-[#1e3a8a] font-serif italic leading-none pb-2 relative z-10 text-center w-full block">Student</h3>
+                                <div class="w-full border-b-[2px] border-[#1e3a8a] absolute bottom-[4px] left-0 z-0"></div>
+                                <div class="w-full border-b-[2px] border-dotted border-red-500 absolute bottom-[0px] left-0 z-0"></div>
+                            </div>
+                            
+                            <p class="text-[1.3rem] font-body text-gray-800 leading-relaxed w-full pr-4">
+                                Has successfully completed the assessment for 
+                                <strong class="text-[1.8rem] text-[#1e3a8a] block mt-4 mb-2 font-serif">Cyber.org Tech+ Unit 07 Section 6.4.2</strong>
+                                <strong class="text-[1.5rem] text-black block mb-4 font-serif italic">Data Types & Encryption</strong>
+                                <span class="text-[1.1rem] text-gray-700 leading-snug block">Demonstrating comprehensive proficiency in identifying, differentiating, and applying appropriate encryption methodologies to protect the confidentiality and integrity of both Data at Rest and Data in Transit.</span>
+                            </p>
+                            
+                            <div class="flex justify-end gap-16 items-end mt-auto mb-[60px] w-full pr-8">
+                                <div class="w-64">
+                                    <div class="border-b border-gray-600 mb-2 h-20 flex items-end justify-center relative">
+                                        <span class="font-script text-[5rem] text-[#1e3a8a] absolute bottom-[-10px] transform -rotate-3 opacity-90">Dr. M. S</span>
+                                    </div>
+                                    <p class="font-serif text-xl text-gray-800 text-center">Administration</p>
+                                </div>
+                                
+                                <div class="w-64">
+                                    <div class="border-b border-gray-600 mb-2 text-center h-20 flex items-end justify-center">
+                                        <p id="cert-date" class="font-body text-2xl text-gray-800 pb-1">Date Here</p>
+                                    </div>
+                                    <p class="font-serif text-xl text-gray-800 text-center">Date</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Custom Modal for Alerts -->
+    <div id="custom-modal" class="fixed inset-0 bg-black bg-opacity-50 z-[100] hidden flex justify-center items-center backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all">
+            <div class="text-center">
+                <div id="modal-icon" class="text-5xl mb-4"></div>
+                <h3 id="modal-title" class="text-2xl font-bold mb-2 text-gray-900"></h3>
+                <p id="modal-msg" class="text-gray-600 mb-6"></p>
+                <button onclick="closeModal()" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-700 transition w-full">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Briefing Modal -->
+    <div id="briefing-modal" class="fixed inset-0 bg-black bg-opacity-70 z-[120] hidden flex justify-center items-center backdrop-blur-sm p-4 sm:p-6">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col transform transition-all overflow-hidden border-4 border-blue-700">
+            <div class="p-6 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+                <div class="flex items-center gap-4">
+                    <div id="briefing-modal-icon" class="text-4xl"></div>
+                    <h3 id="briefing-modal-title" class="text-2xl md:text-3xl font-bold text-gray-900"></h3>
+                </div>
+                <button onclick="closeBriefing()" class="text-gray-400 hover:text-red-600 transition text-4xl leading-none">&times;</button>
+            </div>
+            <div id="briefing-modal-content" class="p-6 md:p-10 overflow-y-auto flex-grow text-gray-700 text-lg leading-relaxed bg-white">
+                <!-- Dynamic Content Injected Here -->
+            </div>
+            <div class="p-6 border-t border-gray-200 bg-gray-50 flex justify-end">
+                <button onclick="closeBriefing()" class="bg-blue-700 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-800 transition shadow-md">Acknowledge & Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Extensive Briefing Content Data (Min 7 Paragraphs per detail, specific structure for Use Cases) ---
+        const briefingData = {
+            'rest-disk-details': {
+                title: 'Data at Rest: File & Disk Encryption',
+                icon: '<i class="fa-solid fa-hard-drive text-emerald-600"></i>',
+                html: `
+                    <p class="mb-5">In the realm of cybersecurity, information generally exists in one of two fundamental states: Data at Rest or Data in Transit. Understanding these states is critical for applying the correct security measures. <strong>Data at Rest</strong> refers to any digital information that is stored physically on a medium and is not actively moving across a network. This encompasses a vast array of storage types, including traditional spinning hard drives, modern solid-state drives (SSDs), USB flash drives, database servers, and long-term cloud backups.</p>
+                    
+                    <p class="mb-5">Because Data at Rest is static, it is highly susceptible to physical theft or unauthorized local access. If a malicious actor gains physical possession of a hard drive, bypassing the operating system's login screen is trivial. They can simply remove the drive, plug it into their own computer, and read every document on it. To prevent this catastrophic breach of confidentiality, organizations rely heavily on encryption—the mathematical scrambling of data so that it appears as gibberish without the correct decryption key.</p>
+                    
+                    <p class="mb-5">The most granular approach to securing stored information is <strong>File-Level Encryption</strong>. As the name suggests, this method applies cryptographic algorithms directly to individual files or specific folders, leaving the rest of the storage drive untouched. The primary advantage of file-level encryption is its precision. An administrator can encrypt a highly sensitive human resources document while leaving the surrounding company policy documents in plaintext for anyone to read.</p>
+                    
+                    <p class="mb-5">File-level encryption is particularly useful in multi-user environments. For example, on a shared corporate server, different departments can have their own encrypted folders. Even if the server administrator has overarching system privileges, they cannot read the contents of the HR folder without the specific decryption key assigned to the HR director. This granular control supports the principle of least privilege, ensuring data is only accessible on a strict need-to-know basis.</p>
+                    
+                    <p class="mb-5">In contrast to targeting specific files, <strong>Disk-Level Encryption</strong> (often called Full Disk Encryption or FDE) takes a blunt, all-encompassing approach. FDE encrypts every single bit of data on the entire storage volume, including the operating system files, hidden temporary files, and empty space. When a computer with FDE is powered off, the entire hard drive is mathematically scrambled and completely unreadable.</p>
+                    
+                    <p class="mb-5">The primary purpose of Disk-Level Encryption is to protect against physical hardware loss or theft. If an employee leaves their laptop in a taxi, the thief who finds it will be unable to extract any meaningful data, even if they physically dismantle the machine. Because everything is encrypted, the user must provide a pre-boot authentication credential (like a password, PIN, or smartcard) before the operating system is even allowed to load.</p>
+                    
+                    <p class="mb-5">Historically, encrypting an entire hard drive caused significant performance slowdowns because the CPU had to constantly decrypt data on-the-fly as it was being read. However, modern computers utilize dedicated hardware chips, such as the Trusted Platform Module (TPM), and CPUs with built-in cryptographic instruction sets (like AES-NI). These hardware advancements mean that modern Full Disk Encryption (like Microsoft BitLocker or Apple FileVault) operates silently in the background with virtually zero noticeable impact on system speed.</p>
+                    
+                    <p>Finally, it is vital to remember that encryption is a double-edged sword. While it keeps malicious actors out, losing the decryption key means the rightful owner is also permanently locked out of their own Data at Rest. Therefore, robust encryption strategies must always be paired with secure key management and reliable, safely stored backups to prevent catastrophic data loss in the event of forgotten passwords or hardware failure.</p>
+                `
+            },
+            'rest-disk-usecase': {
+                title: 'File & Disk Encryption: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-emerald-800 mb-2 border-b-2 border-emerald-200 pb-1">Case 1: Protecting Stolen Hardware</h4>
+                        <p class="mb-2">Corporate laptops frequently travel with employees to coffee shops, airports, and hotels, making them highly vulnerable to physical theft. Disk-level encryption is the primary defense against this threat.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1:</strong> An accountant's laptop containing thousands of unencrypted client tax returns is stolen from their car. Because the IT department enabled Full Disk Encryption (BitLocker) prior to issuing the laptop, the company avoids a massive regulatory fine, as the data is entirely unreadable to the thief.</li>
+                            <li><strong>Example 2:</strong> A school district recycles old desktop computers. Instead of physically shredding the hard drives, they utilize disk-level encryption and simply destroy the decryption key (a process called crypto-erasing), instantly rendering all historical student data on the drives permanently inaccessible.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-emerald-800 mb-2 border-b-2 border-emerald-200 pb-1">Case 2: Granular Access on Shared Systems</h4>
+                        <p class="mb-2">When multiple users share the same physical server or cloud storage drive, applying blanket encryption isn't enough; specific files must be isolated using file-level encryption.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1:</strong> A photographer saves a collection of private, copyrighted images onto a shared external USB drive used by the whole office. By applying file-level encryption to just that specific image folder, they ensure colleagues can use the drive for other tasks without being able to open the private photos.</li>
+                            <li><strong>Example 2:</strong> The CEO of a company stores highly sensitive merger documents on a shared network drive. The documents are protected with file-level encryption requiring a specific smartcard, ensuring that even the IT system administrators who maintain the server cannot secretly read the files.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Physical Storage</p>
+                            <img src="https://images.unsplash.com/photo-1597852074816-d933c7d2b988?auto=format&fit=crop&w=600&h=350" alt="Physical hard drive representing Data at Rest" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Encrypted Laptops</p>
+                            <img src="https://images.unsplash.com/photo-1496096265110-f83ad7f96608?auto=format&fit=crop&w=600&h=350" alt="Laptop with a padlock representing Full Disk Encryption" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'rest-mobile-details': {
+                title: 'Data at Rest: Mobile Devices',
+                icon: '<i class="fa-solid fa-mobile-screen-button text-indigo-600"></i>',
+                html: `
+                    <p class="mb-5">In the modern era, the distinction between a traditional computer and a mobile phone has completely blurred. Smartphones and tablets are extraordinarily powerful pocket-sized computers that hold a staggering amount of highly sensitive Data at Rest. From personal photo galleries and text message histories to saved banking credentials and corporate emails, a single lost smartphone represents a massive security liability. Consequently, <strong>Mobile Device Encryption</strong> has become an absolute necessity for personal privacy and corporate security.</p>
+                    
+                    <p class="mb-5">Because mobile devices are carried everywhere—on buses, in restaurants, and during travel—they are statistically the most likely piece of technology to be lost, dropped, or stolen. Recognizing this immense risk, major mobile operating system developers (like Apple with iOS and Google with Android) have made device encryption a foundational standard. Unlike older desktop systems where users had to manually enable encryption, modern smartphones encrypt their internal flash storage automatically out of the box the moment a user sets a passcode.</p>
+                    
+                    <p class="mb-5">The strength of mobile device encryption relies entirely on the user's authentication method. The device's internal encryption key is mathematically tied to the lock screen credential. This means that setting a weak PIN (like 1234 or 0000) makes the incredibly strong AES-256 encryption effectively useless, as an attacker can easily guess the PIN and unlock the decryption key. Strong passwords or complex patterns are critical for maintaining the integrity of the scrambled Data at Rest.</p>
+                    
+                    <p class="mb-5">To alleviate the friction of typing complex passwords dozens of times a day, modern mobile devices utilize biometric authentication, such as fingerprint scanners (Touch ID) and facial recognition (Face ID). It is important to understand that your fingerprint itself is not the encryption key. Instead, the biometric scan unlocks a secure enclave within the processor, which in turn releases the complex mathematical key required to decrypt the flash storage and allow the operating system to boot.</p>
+                    
+                    <p class="mb-5">When a mobile device is locked and powered off (a state known as Before First Unlock), the Data at Rest is at its most secure. If a thief attempts to physically extract the flash memory chips from the phone's motherboard and read them on special hardware, they will only retrieve scrambled ciphertext. The data remains totally incomprehensible without the unique decryption key securely generated by the specific device's processor in conjunction with the user's passcode.</p>
+                    
+                    <p class="mb-5">Mobile encryption also facilitates a crucial secondary defense mechanism: Remote Wipe. If a smartphone is stolen and the owner realizes it cannot be recovered, they can issue a command over the internet to wipe the device. Because the device is heavily encrypted, the remote wipe command doesn't actually have to spend hours deleting every file; it simply destroys the master encryption key. Once the key is deleted, all the Data at Rest instantly and permanently becomes unreadable gibberish.</p>
+                    
+                    <p class="mb-5">A common vulnerability associated with mobile encryption is the issue of backups. While the data on the physical phone might be heavily encrypted, users frequently back up their phones to local computers or cloud services (like iCloud or Google Drive). If these backups are stored in plaintext or secured with weak passwords, an attacker doesn't need to break the strong mobile encryption on the stolen phone; they can simply hack the user's cloud account and download the unencrypted backup.</p>
+                    
+                    <p>Finally, the security of Data at Rest on mobile devices is heavily dependent on software updates. Cybersecurity is a constant arms race, and researchers occasionally find flaws in how mobile operating systems handle encryption keys. Keeping the device updated ensures that the latest cryptographic patches are applied, maintaining the secure barrier between the user's private data and the outside world.</p>
+                `
+            },
+            'rest-mobile-usecase': {
+                title: 'Mobile Device Encryption: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-indigo-800 mb-2 border-b-2 border-indigo-200 pb-1">Case 1: The Lost Smartphone</h4>
+                        <p class="mb-2">Due to their size and portability, smartphones are frequently lost in public spaces. Mobile device encryption ensures that a moment of forgetfulness doesn't result in identity theft.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1:</strong> A person drops their phone while rushing off a city bus. Although the phone is found by a stranger, the finder cannot see the user's personal photos, read their text messages, or access their social media apps because the device storage is fully encrypted and secured behind a complex passcode.</li>
+                            <li><strong>Example 2:</strong> A corporate executive loses their tablet containing sensitive trade secrets. Realizing it's gone, they use a Mobile Device Management (MDM) portal to send a remote wipe command. The command instantly deletes the tablet's encryption keys, immediately crypto-erasing the data before the thief can attempt to brute-force the PIN.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-indigo-800 mb-2 border-b-2 border-indigo-200 pb-1">Case 2: Protecting Biometric Security</h4>
+                        <p class="mb-2">Modern users rely heavily on biometrics to balance convenience with strong Data at Rest encryption on their mobile devices.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1:</strong> A user creates a highly complex, 16-character alphanumeric password for their phone's core encryption key. Because typing this constantly would be annoying, they enable facial recognition. The phone uses the facial scan to quickly unlock the complex encryption key stored in the hardware's secure enclave, allowing fast, secure access to the data.</li>
+                            <li><strong>Example 2:</strong> A user is traveling and needs to cross a security checkpoint where they fear their biometric data might be forced from them. They press a specific button combination to temporarily disable biometric unlock on their phone, forcing the device back into a strict "Before First Unlock" state where the encrypted data can only be accessed by typing the manual password.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Mobile Data Storage</p>
+                            <img src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=600&h=350" alt="Smartphone displaying various apps" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Biometric Access</p>
+                            <img src="https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?auto=format&fit=crop&w=600&h=350" alt="Person unlocking phone with fingerprint" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'transit-web-details': {
+                title: 'Data in Transit: Email & HTTPS',
+                icon: '<i class="fa-solid fa-envelope-open-text text-rose-600"></i>',
+                html: `
+                    <p class="mb-5">While encrypting Data at Rest protects information physically sitting on a device, a completely different approach is required when that information needs to be shared. <strong>Data in Transit</strong> (or Data in Motion) refers to any digital information that is actively moving from one location to another across a network—whether it's an email traveling across the globe, a text message sent via cellular towers, or a credit card number sent from a web browser to an online store.</p>
+                    
+                    <p class="mb-5">The inherent danger of Data in Transit is the architecture of the internet itself. The internet is a massive web of interconnected routers and servers owned by countless different entities. When you send data, it bounces through dozens of these intermediary nodes before reaching its destination. If that data is sent in plaintext, any malicious actor controlling a node along the path can easily intercept, read, and even alter the information using packet-sniffing software. This is known as a Man-in-the-Middle (MitM) attack.</p>
+                    
+                    <p class="mb-5">One of the oldest and most vulnerable forms of Data in Transit is standard email. Sending a traditional, unencrypted email is exactly like sending a postcard through the physical mail: anyone who handles the postcard along its journey can easily flip it over and read the message. To combat this, modern email providers utilize <strong>Transport Layer Security (TLS)</strong>. TLS encrypts the communication tunnel between your email provider's server and the recipient's server, preventing eavesdropping while the email is traveling across the internet backbone.</p>
+                    
+                    <p class="mb-5">However, while TLS protects the email while it is actively jumping between servers, it does not protect the email once it arrives. The email provider itself (e.g., Google or Microsoft) still holds the keys and can read the message. For true privacy, users employ <strong>End-to-End Encryption (E2EE)</strong>. With E2EE, the message is scrambled by the sender's device and can only be unscrambled by the recipient's specific device. The email provider only sees encrypted gibberish, guaranteeing absolute confidentiality.</p>
+                    
+                    <p class="mb-5">Beyond email, the vast majority of our daily Data in Transit involves browsing the World Wide Web. Originally, web traffic used standard HTTP (Hypertext Transfer Protocol), which sent all data—including passwords and credit card numbers—in raw, readable text. As e-commerce grew, this became a massive security liability. The solution was the widespread adoption of <strong>HTTPS (Hypertext Transfer Protocol Secure)</strong>.</p>
+                    
+                    <p class="mb-5">HTTPS works by wrapping standard HTTP data inside a secure cryptographic tunnel, typically utilizing TLS/SSL protocols. When you navigate to a secure website, your browser and the website's server engage in a complex, invisible "handshake." The server presents a digital certificate proving its identity, and the two machines mathematically agree on a temporary, unique encryption key. Once established, all data flowing back and forth is heavily scrambled.</p>
+                    
+                    <p class="mb-5">For the average user, the presence of HTTPS is vital to look out for. Modern web browsers indicate a secure HTTPS connection by displaying a small padlock icon next to the website address in the URL bar. If a user is on a login screen or a checkout page and the padlock is missing (or the browser warns the connection is "Not Secure"), they should never input sensitive information, as any hacker on the network could be intercepting their keystrokes.</p>
+                    
+                    <p>It is important to note that HTTPS encrypts the <em>contents</em> of your communication, but not necessarily the destination. An eavesdropper on your network can see that you are connected to a specific banking website, but because of HTTPS, they cannot see your account balance, your password, or the specific pages you are clicking on within that site. Securing Data in Transit ensures that the highways of the internet remain safe for commerce and private communication.</p>
+                `
+            },
+            'transit-web-usecase': {
+                title: 'Email & HTTPS: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-rose-800 mb-2 border-b-2 border-rose-200 pb-1">Case 1: Secure Online Browsing and Commerce</h4>
+                        <p class="mb-2">Every time a user inputs personal or financial information into a website, HTTPS is the critical technology that prevents widespread credit card theft over the internet.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1:</strong> A shopper enters their name, address, and credit card details on an online checkout page. Because the browser shows a small padlock symbol indicating HTTPS is active, the shopper knows that their credit card data is being scrambled into a secure tunnel before it leaves their computer, protecting it from hackers on the network.</li>
+                            <li><strong>Example 2:</strong> A user attempts to log into their social media account while at a coffee shop. If the site only used HTTP, a hacker on the same Wi-Fi could use packet-sniffing software to see the password in plain text. Because the site uses HTTPS, the hacker only intercepts useless, encrypted ciphertext.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-rose-800 mb-2 border-b-2 border-rose-200 pb-1">Case 2: Protecting Sensitive Communications</h4>
+                        <p class="mb-2">When confidential information must be transmitted via email, organizations must choose the correct level of encryption to secure the Data in Transit.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (TLS):</strong> A college student emails a job application containing sensitive personal information to a potential employer. Because both email servers support TLS, the email is encrypted while traveling across the internet backbone, preventing it from being intercepted and read along the way.</li>
+                            <li><strong>Example 2 (End-to-End):</strong> Two journalists need to share highly confidential whistleblower documents. Instead of standard email, they use an application featuring End-to-End Encryption (E2EE). The documents are encrypted on the first journalist's laptop and can only be decrypted by the second journalist's laptop, ensuring that even the email service provider cannot read the data.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Network Interception</p>
+                            <img src="https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=600&h=350" alt="Money and code representing intercepted data" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Secure Web Browsing</p>
+                            <img src="https://images.unsplash.com/photo-1563986768494-4dee2763ff3f?auto=format&fit=crop&w=600&h=350" alt="Computer screen with padlock symbol" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'transit-vpn-details': {
+                title: 'Data in Transit: VPNs & Mobile Apps',
+                icon: '<i class="fa-solid fa-network-wired text-amber-600"></i>',
+                html: `
+                    <p class="mb-5">While HTTPS is excellent for securing specific interactions between a web browser and a website, it is not a cure-all for all Data in Transit vulnerabilities. Modern devices run dozens of background applications, system updates, and non-web protocols that might not utilize HTTPS. To comprehensively secure all data leaving a device, especially on untrusted networks, users and organizations rely on <strong>Virtual Private Networks (VPNs)</strong>.</p>
+                    
+                    <p class="mb-5">A VPN creates a secure, heavily encrypted "tunnel" through the chaotic, public internet. When a user activates a VPN client on their device, every single piece of data—whether it's a web request, a background email sync, or a game update—is encrypted before it leaves the machine. This encrypted bundle is sent to a remote VPN server, which decrypts the data and forwards it to its final destination on the internet.</p>
+                    
+                    <p class="mb-5">One of the primary functions of a VPN is to mask the user's IP address and physical location. Because all the traffic is routed through the VPN server, external websites see the IP address of the VPN server, not the user's actual home network. This enhances digital privacy and protects against location-tracking and targeted eavesdropping. Common VPN encryption protocols include OpenVPN, IPsec, and WireGuard, each offering different balances of speed and security.</p>
+                    
+                    <p class="mb-5">VPNs are absolutely critical when utilizing public Wi-Fi networks, such as those in airports, hotels, or coffee shops. Public Wi-Fi is notoriously insecure; it is trivial for a hacker sitting in the same room to intercept unencrypted traffic from other users connected to the same router. By activating a VPN, a user ensures that even if a local hacker captures their data packets, they will only intercept unbreakable ciphertext.</p>
+                    
+                    <p class="mb-5">In the corporate world, VPNs serve a slightly different purpose: secure remote access. When an employee works from home, they are outside the physical security perimeter of the corporate office. A corporate VPN allows the employee to establish a secure tunnel directly into the company's internal, private network. This allows them to safely access internal databases and shared folders as if they were sitting at their office desk, without exposing those internal resources to the public internet.</p>
+                    
+                    <p class="mb-5">Another critical area of Data in Transit involves <strong>Mobile Application Encryption</strong>. Unlike web browsers, which universally understand and enforce HTTPS, mobile apps (like social media apps, games, or banking apps) are custom-built software. They communicate with their backend servers using APIs (Application Programming Interfaces). Developers must explicitly code these apps to utilize transport encryption (like TLS/SSL) to protect the data moving between the app and the server.</p>
+                    
+                    <p class="mb-5">For highly sensitive apps, such as mobile banking or healthcare portals, developers often implement <strong>Application-Level Encryption</strong>. This provides an additional layer of security beyond standard transport encryption. With application-level encryption, the app encrypts the payload (like a money transfer request) before it is even handed off to the phone's networking hardware. This ensures that even if the network's TLS connection is compromised, the core payload remains secure.</p>
+                    
+                    <p>Both VPNs and robust Mobile Application Encryption are vital components of a "Defense in Depth" strategy. By encrypting the network tunnel (VPN) and encrypting the specific app data traveling within that tunnel, cybersecurity professionals ensure that Data in Transit remains confidential and maintains its integrity, regardless of how hostile the network environment might be.</p>
+                `
+            },
+            'transit-vpn-usecase': {
+                title: 'VPNs & Mobile Apps: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-amber-800 mb-2 border-b-2 border-amber-200 pb-1">Case 1: Public Wi-Fi and Remote Work</h4>
+                        <p class="mb-2">When users connect to networks they do not control, Virtual Private Networks (VPNs) are necessary to create a secure perimeter around their Data in Transit.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Public Wi-Fi):</strong> A traveler at an airport connects to the free "Airport_Guest" Wi-Fi to check their email. Knowing public networks are frequently monitored by hackers, they launch a commercial VPN app on their phone. The VPN creates a secure, encrypted tunnel, ensuring that any local hackers intercepting the Wi-Fi signal only see scrambled data.</li>
+                            <li><strong>Example 2 (Corporate Remote Access):</strong> An employee working from home needs to pull a confidential client file from the internal company server. They use special corporate VPN software that creates a secure tunnel through the public internet directly to the office firewall, allowing them to send and receive the internal data safely.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-amber-800 mb-2 border-b-2 border-amber-200 pb-1">Case 2: Securing Custom App Traffic</h4>
+                        <p class="mb-2">Because mobile applications don't rely on standard web browsers, they require dedicated encryption protocols built into their code to protect user data over the network.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Transport Encryption):</strong> A person transfers money to a friend using a mobile banking app. The developers of the app utilized TLS/SSL to encrypt the connection. Therefore, the details of the financial transaction cannot be read or altered by anyone else on the internet while the data travels to the bank's servers.</li>
+                            <li><strong>Example 2 (Application-Level Encryption):</strong> A secure messaging app encrypts a user's text message on the device itself before it is even sent to the phone's Wi-Fi antenna. This application-level encryption ensures that even if the cellular network provider attempts to monitor the traffic, they cannot read the contents of the message.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Network Tunnels</p>
+                            <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=600&h=350" alt="Server racks representing VPN routing" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Working Remotely</p>
+                            <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=600&h=350" alt="Person working on laptop in a cafe" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        function openBriefing(key) {
+            const modal = document.getElementById('briefing-modal');
+            const data = briefingData[key];
+            if(data) {
+                document.getElementById('briefing-modal-icon').innerHTML = data.icon;
+                document.getElementById('briefing-modal-title').innerText = data.title;
+                document.getElementById('briefing-modal-content').innerHTML = data.html;
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; 
+            }
+        }
+
+        function closeBriefing() {
+            document.getElementById('briefing-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto'; 
+        }
+
+        document.getElementById('briefing-modal').addEventListener('click', function(e) {
+            if(e.target === this) closeBriefing();
+        });
+        
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId + '-section').classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-blue-900'));
+            const activeBtn = document.getElementById('nav-' + tabId);
+            if(activeBtn && tabId !== 'cert') activeBtn.classList.add('bg-blue-900');
+            
+            document.querySelectorAll('.nav-btn-mobile').forEach(btn => btn.classList.remove('bg-blue-700'));
+            const activeMobileBtn = document.getElementById('nav-' + tabId + '-mobile');
+            if(activeMobileBtn && tabId !== 'cert') activeMobileBtn.classList.add('bg-blue-700');
+
+            window.scrollTo(0,0);
+
+            if (tabId === 'game' && !gameRunning) {
+                resetGame();
+                drawGame();
+            }
+        }
+
+        function showModal(title, message, type = 'info') {
+            const modal = document.getElementById('custom-modal');
+            const icon = document.getElementById('modal-icon');
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-msg').innerText = message;
+            
+            if(type === 'success') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-check text-green-500"></i>';
+            } else if (type === 'error') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500"></i>';
+            } else if (type === 'warning') {
+                icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-yellow-500"></i>';
+            } else {
+                icon.innerHTML = '<i class="fa-solid fa-circle-info text-blue-500"></i>';
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        // --- LAB 1: Drag & Drop Logic ---
+        let draggedCatItem = null;
+        let lab1Count = 0;
+
+        document.querySelectorAll('.io-item').forEach(item => {
+            item.addEventListener('dragstart', function() {
+                draggedCatItem = this;
+                setTimeout(() => this.classList.add('opacity-50'), 0);
+            });
+            item.addEventListener('dragend', function() {
+                setTimeout(() => this.classList.remove('opacity-50'), 0);
+                draggedCatItem = null;
+            });
+        });
+
+        document.querySelectorAll('.cat-dropzone').forEach(zone => {
+            zone.addEventListener('dragover', e => e.preventDefault());
+            zone.addEventListener('dragenter', function(e) { e.preventDefault(); this.classList.add('brightness-95'); });
+            zone.addEventListener('dragleave', function() { this.classList.remove('brightness-95'); });
+            zone.addEventListener('drop', function() {
+                this.classList.remove('brightness-95');
+                if(draggedCatItem) {
+                    if(draggedCatItem.dataset.type === this.dataset.target) {
+                        this.appendChild(draggedCatItem);
+                        draggedCatItem.classList.remove('bg-gray-100', 'cursor-grab');
+                        draggedCatItem.classList.add('bg-green-100', 'text-green-800', 'cursor-default', 'mt-2', 'w-[90%]');
+                        draggedCatItem.setAttribute('draggable', 'false');
+                        lab1Count++;
+                        
+                        document.getElementById('lab1-feedback').innerText = "Correct Encryption Applied!";
+                        document.getElementById('lab1-feedback').className = "text-center font-bold mt-4 h-6 text-green-600";
+                        
+                        if(lab1Count === 5) {
+                            setTimeout(() => showModal('Lab 1 Complete!', 'You successfully categorized the Data at Rest encryption scenarios.', 'success'), 500);
+                        }
+                    } else {
+                        document.getElementById('lab1-feedback').innerText = "Incorrect. Think about the scope of the storage medium.";
+                        document.getElementById('lab1-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
+                    }
+                }
+            });
+        });
+
+        // --- LAB 2: Decryption PIN ---
+        let lab2Solved = false;
+        function checkLab2() {
+            if(lab2Solved) return;
+            const pin = document.getElementById('pin-input').value;
+            if(pin === '1443') {
+                lab2Solved = true;
+                const display = document.getElementById('encrypted-display');
+                display.classList.remove('bg-gray-800', 'text-green-400', 'font-mono');
+                display.classList.add('bg-white', 'text-gray-800');
+                display.innerHTML = '<i class="fa-solid fa-lock-open text-3xl text-emerald-500 mb-2"></i><br><strong>DEVICE DECRYPTED</strong><br>Data Restored Successfully.';
+                
+                document.getElementById('lab2-feedback').innerText = "Authentication Successful! Key Released.";
+                document.getElementById('lab2-feedback').className = "text-center font-bold mt-4 h-6 text-green-600";
+                setTimeout(() => showModal('Lab 2 Complete!', 'You authenticated and decrypted the Data at Rest.', 'success'), 500);
+            } else {
+                document.getElementById('lab2-feedback').innerText = "Incorrect PIN. Data remains encrypted.";
+                document.getElementById('lab2-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
+            }
+        }
+
+        // --- LAB 3: Network Interception ---
+        let isEncrypted = false;
+        let securePackets = 0;
+        let packetAnimating = false;
+
+        function toggleEncryption() {
+            isEncrypted = document.getElementById('encryption-toggle').checked;
+            const lblHttp = document.getElementById('lbl-http');
+            const lblHttps = document.getElementById('lbl-https');
+            
+            if(isEncrypted) {
+                lblHttp.classList.replace('text-red-600', 'text-gray-400');
+                lblHttps.classList.replace('text-gray-400', 'text-green-600');
+            } else {
+                lblHttps.classList.replace('text-green-600', 'text-gray-400');
+                lblHttp.classList.replace('text-gray-400', 'text-red-600');
+            }
+        }
+
+        function sendPacket() {
+            if(packetAnimating || securePackets >= 3) return;
+            packetAnimating = true;
+            
+            const packet = document.getElementById('data-packet');
+            packet.classList.remove('hidden', 'packet-animate-insecure', 'packet-animate-secure');
+            
+            // Force reflow to restart animation
+            void packet.offsetWidth;
+            
+            if(isEncrypted) {
+                packet.innerHTML = '<i class="fa-solid fa-lock text-green-500"></i>';
+                packet.classList.add('packet-animate-secure');
+                document.getElementById('lab3-feedback').innerText = "Encrypted Tunnel active. Data safely reached the server.";
+                document.getElementById('lab3-feedback').className = "text-center font-bold mt-4 h-6 text-green-600";
+                
+                setTimeout(() => {
+                    securePackets++;
+                    document.getElementById('secure-count').innerText = securePackets;
+                    packetAnimating = false;
+                    packet.classList.add('hidden');
+                    
+                    if(securePackets >= 3) {
+                        setTimeout(() => showModal('Lab 3 Complete!', 'You successfully secured Data in Transit using HTTPS/VPN.', 'success'), 300);
+                    }
+                }, 2000);
+                
+            } else {
+                packet.innerHTML = '<i class="fa-solid fa-envelope-open-text text-red-500"></i>';
+                packet.classList.add('packet-animate-insecure');
+                document.getElementById('lab3-feedback').innerText = "Data Intercepted! The packet sniffer stole your plaintext data.";
+                document.getElementById('lab3-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
+                
+                setTimeout(() => {
+                    packetAnimating = false;
+                    packet.classList.add('hidden');
+                }, 2000);
+            }
+        }
+
+        // --- LAB 4: Scenario Matcher ---
+        let lab4Solved = false;
+        function checkLab4() {
+            if(lab4Solved) return;
+            
+            const s1State = document.getElementById('s1-state').value;
+            const s1Type = document.getElementById('s1-type').value;
+            const s2State = document.getElementById('s2-state').value;
+            const s2Type = document.getElementById('s2-type').value;
+            const s3State = document.getElementById('s3-state').value;
+            const s3Type = document.getElementById('s3-type').value;
+            
+            if(s1State === 'transit' && s1Type === 'app' && 
+               s2State === 'rest' && s2Type === 'file' && 
+               s3State === 'transit' && s3Type === 'vpn') {
+                
+                lab4Solved = true;
+                document.getElementById('lab4-feedback').innerText = "All Scenarios Correctly Identified!";
+                document.getElementById('lab4-feedback').className = "text-center font-bold mt-4 h-6 text-green-600";
+                setTimeout(() => showModal('Lab 4 Complete!', 'You accurately matched the real-world scenarios to their encryption types.', 'success'), 500);
+            } else {
+                document.getElementById('lab4-feedback').innerText = "One or more selections are incorrect. Review the scenarios carefully.";
+                document.getElementById('lab4-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
+            }
+        }
+
+        // --- QUIZ LOGIC (20 Questions) ---
+        const quizData = [
+            // 1-10 Provided
+            { q: "Which type of encryption is used to protect individual files?", options: ["Email encryption", "File level encryption", "Mobile device encryption", "Disk level encryption"], answer: 1 },
+            { q: "Which of the following is an example of data at rest?", options: ["A photo saved on a smartphone's storage", "An email being sent", "A video call on Zoom", "A text message traveling over Wi-Fi"], answer: 0 },
+            { q: "Which of the following is an example of data in transit?", options: ["A password stored in a database", "A document saved on a flash drive", "A backup stored on a hard drive", "Payment details sent through HTTPS during an online purchase"], answer: 3 },
+            { q: "Which type of encryption protects an entire storage device, like a laptop or hard drive?", options: ["VPN", "Disk level encryption", "File level encryption", "Mobile application encryption"], answer: 1 },
+            { q: "If a smartphone is stolen but cannot be accessed, which type of encryption is being used?", options: ["Mobile device encryption", "Mobile app encryption", "File level encryption", "Disk level encryption"], answer: 0 },
+            { q: "What does a VPN do?", options: ["Delete internet history", "Speeds up Wi-Fi", "Creates a secure tunnel by encrypting internet traffic", "Blocks all ads"], answer: 2 },
+            { q: "Which encryption method is commonly used to secure websites for safe web browsing?", options: ["File level encryption", "HTTPS", "VPN", "Email encryption"], answer: 1 },
+            { q: "Which of the following protects messages and data sent between apps and their servers?", options: ["Mobile app encryption", "VPN encryption", "HTTPS", "Disk level encryption"], answer: 0 },
+            { q: "Which of the following is the best reason why schools or businesses use encryption?", options: ["To make files look more professional", "To reduce the size of their data", "To increase internet speed", "To keep sensitive or private information safe from unauthorized access"], answer: 3 },
+            { q: "Which method can use end-to-end encryption or TLS to encrypt communication?", options: ["File level encryption", "Disk level encryption", "Email encryption", "Mobile device encryption"], answer: 2 },
+            
+            // 11-20 Extracted from Briefing
+            { q: "When referring to Data at Rest, what happens if an unauthorized person bypasses the lock screen on a computer that does NOT have encryption?", options: ["The computer deletes all data automatically", "They can physically remove the hard drive and easily read all the documents", "The internet connection is severed", "The CPU requires biometric authentication to proceed"], answer: 1 },
+            { q: "Which encryption strategy allows different departments on a shared server to have their own securely locked folders without locking the entire system?", options: ["Full Disk Encryption (FDE)", "File-Level Encryption", "HTTPS", "VPN"], answer: 1 },
+            { q: "Modern Full Disk Encryption operates with almost zero noticeable impact on computer speed. What hardware advancement makes this possible?", options: ["Dedicated chips like the TPM and CPU cryptographic instruction sets", "Faster Wi-Fi antennas", "Larger battery capacities", "External USB storage drives"], answer: 0 },
+            { q: "Why is setting a weak PIN (like 0000) on a modern smartphone dangerous for Data at Rest?", options: ["It drains the battery quickly.", "It allows an attacker to easily guess the PIN and unlock the strong encryption key.", "It turns off the Wi-Fi connection.", "It deletes the device's cloud backups."], answer: 1 },
+            { q: "If a smartphone is stolen, what secondary defense mechanism allows the owner to instantly render all encrypted data permanently unreadable over the internet?", options: ["A remote wipe command that destroys the encryption key", "Changing their email password", "Downloading a VPN", "Sending a TLS request"], answer: 0 },
+            { q: "When sending an unencrypted email, why is it commonly compared to sending a physical postcard?", options: ["Because it requires a stamp.", "Because anyone handling the email along its network journey can easily read the plaintext message.", "Because it takes several days to arrive.", "Because it only contains images."], answer: 1 },
+            { q: "What is the primary difference between TLS email encryption and End-to-End Encryption (E2EE)?", options: ["TLS is faster but E2EE is cheaper.", "TLS encrypts server-to-server, but E2EE ensures even the email provider cannot read the message.", "TLS only works on smartphones, while E2EE works on desktops.", "There is no difference; they are the same thing."], answer: 1 },
+            { q: "When browsing an online store, how does a user visually confirm that HTTPS is actively encrypting their Data in Transit?", options: ["The screen turns green.", "A small padlock icon appears next to the website address in the URL bar.", "A popup window asks for a password.", "The website loads faster than usual."], answer: 1 },
+            { q: "A user is sitting in an airport using the free, unencrypted 'Airport_Guest' Wi-Fi. What technology should they use to encrypt ALL their device's traffic against local hackers?", options: ["File-Level Encryption", "A Virtual Private Network (VPN)", "A stronger lock screen PIN", "Biometric authentication"], answer: 1 },
+            { q: "To protect sensitive payloads (like money transfers) before they even reach the phone's networking hardware, what do mobile developers implement?", options: ["Application-Level Encryption", "Disk-Level Encryption", "Physical hardware locks", "HTTP protocols"], answer: 0 }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        
+        quizData.forEach((item, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = "bg-gray-50 p-6 rounded-lg border border-gray-200 transition-all";
+            qDiv.id = `q-block-${index}`;
+            
+            const qTitle = document.createElement('h3');
+            qTitle.className = "font-bold text-lg text-gray-800 mb-4";
+            qTitle.innerText = `${index + 1}. ${item.q}`;
+            qDiv.appendChild(qTitle);
+            
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = "space-y-3";
+            
+            item.options.forEach((opt, optIndex) => {
+                const label = document.createElement('label');
+                label.className = "flex items-center space-x-3 p-3 rounded bg-white border border-gray-300 hover:bg-blue-50 cursor-pointer transition";
+                
+                const radio = document.createElement('input');
+                radio.type = "radio";
+                radio.name = `q${index}`;
+                radio.value = optIndex;
+                radio.className = "form-radio h-5 w-5 text-blue-600";
+                
+                const span = document.createElement('span');
+                span.className = "text-gray-700";
+                span.innerText = opt;
+                
+                label.appendChild(radio);
+                label.appendChild(span);
+                optionsDiv.appendChild(label);
+            });
+            
+            qDiv.appendChild(optionsDiv);
+            quizContainer.appendChild(qDiv);
+        });
+
+        function gradeQuiz() {
+            let score = 0;
+            let allAnswered = true;
+
+            for(let i = 0; i < quizData.length; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if(selected) {
+                    if(parseInt(selected.value) === quizData[i].answer) {
+                        score++;
+                    }
+                } else {
+                    allAnswered = false;
+                }
+            }
+            
+            if(!allAnswered) {
+                showModal('Incomplete Quiz', 'Please answer all 20 questions before submitting.', 'warning');
+                return;
+            }
+            
+            const percentage = (score / quizData.length) * 100;
+            
+            if(score >= 18) { 
+                const navGame = document.getElementById('nav-game');
+                const navGameMobile = document.getElementById('nav-game-mobile');
+                
+                navGame.classList.remove('text-gray-400', 'cursor-not-allowed');
+                navGame.classList.add('text-white', 'hover:bg-blue-600');
+                navGame.disabled = false;
+                navGame.innerHTML = '<i class="fa-solid fa-gamepad mr-1"></i>Game';
+                
+                navGameMobile.classList.remove('text-gray-400', 'cursor-not-allowed');
+                navGameMobile.classList.add('text-white', 'hover:bg-blue-600');
+                navGameMobile.disabled = false;
+                navGameMobile.innerHTML = '<i class="fa-solid fa-gamepad"></i> Game';
+
+                document.getElementById('nav-cert').classList.remove('hidden');
+                document.getElementById('nav-cert-mobile').classList.remove('hidden');
+                
+                document.getElementById('proceed-game-btn').classList.remove('hidden');
+                document.getElementById('submit-quiz-btn').classList.add('hidden');
+
+                showModal('Outstanding!', `You scored ${score}/20 (${percentage}%). You have unlocked your Certificate of Mastery AND the Retro Game!`, 'success');
+            } else {
+                quizData.forEach((_, i) => {
+                    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                    if(selected) selected.checked = false;
+                });
+                showModal('Keep Trying!', `You scored ${score}/20 (${percentage}%). You need 90% (18/20) to earn the certificate. Your answers have been reset so you can try again.`, 'error');
+                document.getElementById('quiz-section').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // --- RETRO GAME LOGIC: Cyber Scramble (Horizontal Space Shooter) ---
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let score = 0;
+        let lives = 3;
+        let gameRunning = false;
+        let animationId;
+        
+        let player = { x: 50, y: 200, width: 30, height: 20, speed: 5, color: '#3b82f6' };
+        let projectiles = [];
+        let enemies = [];
+        let particles = [];
+        let lastTime = 0;
+        let spawnTimer = 0;
+        let fireTimer = 0;
+        
+        // Input state
+        let keys = { w: false, a: false, s: false, d: false, ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false };
+        let targetY = player.y; // For touch/mouse control
+
+        const overlay = document.getElementById('game-overlay');
+        const startBtn = document.getElementById('start-game-btn');
+        startBtn.addEventListener('click', startGame);
+
+        window.addEventListener('keydown', e => { if(keys.hasOwnProperty(e.key)) keys[e.key] = true; });
+        window.addEventListener('keyup', e => { if(keys.hasOwnProperty(e.key)) keys[e.key] = false; });
+        
+        // Mouse/Touch controls (Moves Y position)
+        function updateTargetY(e) {
+            if(!gameRunning) return;
+            e.preventDefault();
+            const rect = canvas.getBoundingClientRect();
+            const scaleY = canvas.height / rect.height;
+            let clientY = e.clientY;
+            if(e.touches && e.touches.length > 0) clientY = e.touches[0].clientY;
+            targetY = (clientY - rect.top) * scaleY;
+        }
+        canvas.addEventListener('mousemove', updateTargetY);
+        canvas.addEventListener('touchmove', updateTargetY, {passive: false});
+        canvas.addEventListener('touchstart', updateTargetY, {passive: false});
+
+        function spawnEnemy() {
+            // 70% Hacker Ship (moves fast, shoots?), 30% Malware Block (slow, big)
+            let isBlock = Math.random() < 0.3;
+            enemies.push({
+                x: canvas.width + 50,
+                y: Math.random() * (canvas.height - 40) + 20,
+                width: isBlock ? 40 : 30,
+                height: isBlock ? 40 : 20,
+                speed: isBlock ? (Math.random() * 1 + 1) : (Math.random() * 2 + 2),
+                type: isBlock ? 'malware' : 'hacker',
+                hp: isBlock ? 3 : 1
+            });
+        }
+
+        function createExplosion(x, y, color) {
+            for(let i=0; i<15; i++) {
+                particles.push({
+                    x: x, y: y,
+                    vx: (Math.random() - 0.5) * 6,
+                    vy: (Math.random() - 0.5) * 6,
+                    life: 1.0,
+                    color: color
+                });
+            }
+        }
+
+        function checkCollisions() {
+            // Projectiles hitting enemies
+            for(let i = projectiles.length - 1; i >= 0; i--) {
+                let p = projectiles[i];
+                let hit = false;
+                for(let j = enemies.length - 1; j >= 0; j--) {
+                    let e = enemies[j];
+                    if(p.x < e.x + e.width && p.x + p.width > e.x && p.y < e.y + e.height && p.y + p.height > e.y) {
+                        e.hp--;
+                        hit = true;
+                        if(e.hp <= 0) {
+                            createExplosion(e.x + e.width/2, e.y + e.height/2, e.type === 'malware' ? '#f59e0b' : '#ef4444');
+                            enemies.splice(j, 1);
+                            score += (e.type === 'malware' ? 50 : 100);
+                            document.getElementById('game-score').innerText = score;
+                        }
+                        break; // projectile destroyed
+                    }
+                }
+                if(hit) projectiles.splice(i, 1);
+            }
+
+            // Enemies hitting player
+            for(let j = enemies.length - 1; j >= 0; j--) {
+                let e = enemies[j];
+                if(player.x < e.x + e.width && player.x + player.width > e.x && player.y < e.y + e.height && player.y + player.height > e.y) {
+                    createExplosion(player.x + player.width/2, player.y + player.height/2, '#3b82f6');
+                    enemies.splice(j, 1);
+                    loseLife();
+                }
+            }
+        }
+
+        function loseLife() {
+            lives--;
+            document.getElementById('game-lives').innerText = lives;
+            ctx.fillStyle = "rgba(255,0,0,0.4)";
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            if(lives <= 0) gameOver();
+        }
+
+        function resetGame() {
+            player.y = canvas.height / 2;
+            targetY = player.y;
+            projectiles = [];
+            enemies = [];
+            particles = [];
+            score = 0;
+            lives = 3;
+            document.getElementById('game-score').innerText = score;
+            document.getElementById('game-lives').innerText = lives;
+            lastTime = Date.now();
+        }
+
+        function startGame() {
+            overlay.classList.add('hidden');
+            if(!gameRunning) {
+                resetGame();
+                gameRunning = true;
+                drawGame();
+            }
+        }
+
+        function drawGame() {
+            if(!gameRunning) return;
+            
+            let now = Date.now();
+            let dt = now - lastTime;
+            lastTime = now;
+            
+            // Clear screen
+            ctx.fillStyle = '#0f172a'; // slate 900
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw background stars/grid scrolling left
+            ctx.strokeStyle = '#1e293b';
+            ctx.lineWidth = 1;
+            let offset = (now / 20) % 40;
+            for(let i=0; i<canvas.width + 40; i+=40) {
+                ctx.beginPath(); ctx.moveTo(i - offset, 0); ctx.lineTo(i - offset, canvas.height); ctx.stroke();
+            }
+            
+            // Handle Player Movement (Keyboard)
+            if(keys.w || keys.ArrowUp) targetY -= player.speed;
+            if(keys.s || keys.ArrowDown) targetY += player.speed;
+            
+            // Smooth follow for touch/mouse/keys
+            player.y += (targetY - player.y) * 0.2;
+            
+            // Clamp player to screen
+            if(player.y < 0) { player.y = 0; targetY = 0; }
+            if(player.y > canvas.height - player.height) { player.y = canvas.height - player.height; targetY = canvas.height - player.height; }
+
+            // Auto-fire
+            fireTimer += dt;
+            if(fireTimer > 250) { // fire rate
+                projectiles.push({ x: player.x + player.width, y: player.y + player.height/2 - 2, width: 12, height: 4, speed: 8 });
+                fireTimer = 0;
+            }
+
+            // Spawn Enemies
+            spawnTimer += dt;
+            if(spawnTimer > 1200 - (Math.min(score, 5000) / 10)) { // Gets faster
+                spawnEnemy();
+                spawnTimer = 0;
+            }
+
+            // Update & Draw Projectiles
+            ctx.fillStyle = '#10b981'; // Emerald/Green encryption keys
+            for(let i = projectiles.length - 1; i >= 0; i--) {
+                let p = projectiles[i];
+                p.x += p.speed;
+                ctx.fillRect(p.x, p.y, p.width, p.height);
+                if(p.x > canvas.width) projectiles.splice(i, 1);
+            }
+
+            // Update & Draw Enemies
+            for(let i = enemies.length - 1; i >= 0; i--) {
+                let e = enemies[i];
+                e.x -= e.speed;
+                
+                if(e.type === 'hacker') {
+                    // Draw red ship
+                    ctx.fillStyle = '#ef4444';
+                    ctx.beginPath();
+                    ctx.moveTo(e.x + e.width, e.y + e.height/2);
+                    ctx.lineTo(e.x, e.y);
+                    ctx.lineTo(e.x, e.y + e.height);
+                    ctx.fill();
+                } else {
+                    // Draw orange malware block
+                    ctx.fillStyle = '#f59e0b';
+                    ctx.fillRect(e.x, e.y, e.width, e.height);
+                    ctx.strokeStyle = '#b45309';
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(e.x, e.y, e.width, e.height);
+                }
+                
+                if(e.x + e.width < 0) {
+                    enemies.splice(i, 1);
+                    loseLife(); // Lose life if enemy passes
+                }
+            }
+
+            // Check Collisions
+            checkCollisions();
+
+            // Update & Draw Particles
+            for(let i = particles.length - 1; i >= 0; i--) {
+                let p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.life -= 0.05;
+                if(p.life <= 0) {
+                    particles.splice(i, 1);
+                } else {
+                    ctx.fillStyle = p.color;
+                    ctx.globalAlpha = p.life;
+                    ctx.fillRect(p.x, p.y, 4, 4);
+                    ctx.globalAlpha = 1.0;
+                }
+            }
+
+            // Draw Player Ship
+            ctx.fillStyle = player.color;
+            ctx.beginPath();
+            ctx.moveTo(player.x, player.y);
+            ctx.lineTo(player.x + player.width, player.y + player.height/2);
+            ctx.lineTo(player.x, player.y + player.height);
+            ctx.fill();
+            // Engine flame
+            ctx.fillStyle = '#38bdf8';
+            ctx.fillRect(player.x - 10 + Math.random()*5, player.y + player.height/2 - 3, 10, 6);
+
+            animationId = requestAnimationFrame(drawGame);
+        }
+
+        function gameOver() {
+            gameRunning = false;
+            cancelAnimationFrame(animationId);
+            overlay.classList.remove('hidden');
+            startBtn.innerText = "Network Breach! Reboot";
+            startBtn.classList.replace('bg-blue-600', 'bg-red-700');
+            startBtn.classList.replace('border-blue-800', 'border-red-900');
+        }
+
+        // --- CERTIFICATE LOGIC ---
+        function updateCertName() {
+            let name = document.getElementById('student-name-input').value.trim();
+            if(name) {
+                if (name.includes(' ')) {
+                    name = name.split(' ')[0];
+                    document.getElementById('student-name-input').value = name;
+                    showModal('Notice', 'Only your first name has been applied to the certificate.', 'info');
+                }
+                document.getElementById('cert-student-name').innerText = name;
+            } else {
+                showModal('Wait!', 'Please enter your first name to update the certificate.', 'warning');
+            }
+        }
+
+        const today = new Date();
+        document.getElementById('cert-date').innerText = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        function downloadCert() {
+            const certEl = document.getElementById('certificate');
+            const name = document.getElementById('cert-student-name').innerText;
+            let filename = 'Certificate.png';
+            if (name && name !== 'Student') {
+                filename = `${name.replace(/\s+/g, '_')}_Certificate.png`;
+            }
+
+            const originalTransform = certEl.style.transform;
+            certEl.style.transform = 'none';
+
+            const btn = document.getElementById('download-btn');
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Generating...';
+            btn.disabled = true;
+
+            html2canvas(certEl, { 
+                scale: 2, 
+                useCORS: true,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+            }).catch(err => {
+                console.error(err);
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                showModal('Error', 'Failed to generate image. Try using a desktop browser.', 'error');
+            });
+        }
+
+        window.onload = () => {
+            // Draw static background for game preview
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle = '#64748b';
+            ctx.font = '20px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('NETWORK OFFLINE - PRESS START', canvas.width/2, canvas.height/2);
+        }
+    </script>
+</body>
+</html>

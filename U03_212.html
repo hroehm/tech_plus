@@ -1,0 +1,1535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 03 Section 2.1.2 Mastery - IoT Devices</title>
+    
+    <!-- Load Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load HTML2Canvas for Certificate Download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- Load Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Qwitcher+Grypen:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0fdf4; 
+            color: #1f2937;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        /* Interactive Drag and Drop CSS */
+        .io-dropzone { min-height: 70px; min-width: 130px; border: 2px dashed #9ca3af; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: #f9fafb; transition: all 0.2s;}
+        .io-dropzone.drag-over { background: #e5e7eb; border-color: #16a34a; box-shadow: inset 0 0 10px rgba(22, 163, 74, 0.2);}
+        
+        .io-item { cursor: grab; transition: transform 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .io-item:active { cursor: grabbing; transform: scale(0.95); }
+        
+        .cat-dropzone { transition: background-color 0.2s ease; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #e5e7eb; }
+        ::-webkit-scrollbar-thumb { background: #10b981; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #059669; }
+
+        /* Simon Game Styling */
+        .simon-pad {
+            transition: filter 0.1s ease, transform 0.1s ease;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.4);
+        }
+        .simon-pad:active {
+            transform: scale(0.96);
+        }
+        .simon-active {
+            filter: brightness(1.6) drop-shadow(0 0 15px currentColor);
+            transform: scale(1.03);
+        }
+
+        /* --- CERTIFICATE STYLES --- */
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .font-body { font-family: 'Lora', serif; }
+        .font-script { font-family: 'Qwitcher Grypen', cursive; }
+        
+        .cert-preview-container {
+            width: 100%;
+            overflow: auto;
+            display: flex;
+            justify-content: center;
+            background: #e5e7eb;
+            padding: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        #certificate {
+            width: 1056px !important;
+            height: 816px !important;
+            flex-shrink: 0;
+            background-color: #ffffff;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1056" height="816"><polygon points="0,0 250,0 0,650" fill="%23fcd34d"/><polygon points="0,0 350,0 0,900" fill="%23d97706" opacity="0.8"/><polygon points="0,0 120,0 0,300" fill="%23fcd34d"/><polygon points="0,450 650,816 0,816" fill="%23fcd34d"/><polygon points="0,550 450,816 0,816" fill="%23d97706" opacity="0.8"/><polygon points="800,0 1056,0 1056,256" fill="%23f3f4f6"/><polygon points="1056,500 1056,816 750,816" fill="%23f3f4f6"/></svg>');
+            background-size: cover;
+            border: 4px solid #e5e7eb;
+        }
+
+        .gold-seal {
+            position: absolute;
+            left: 110px;
+            top: 350px;
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c, #fcf6ba);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3), inset 0 0 15px rgba(255,255,255,0.7), inset 0 0 25px rgba(139,105,20,0.9);
+            z-index: 10;
+        }
+        .gold-seal::before {
+            content: '';
+            position: absolute;
+            top: -4px; bottom: -4px; left: -4px; right: -4px;
+            border-radius: 50%;
+            border: 6px dashed #d4af37;
+        }
+        .gold-seal-inner-1 {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 2px solid rgba(139, 105, 20, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #e8c678, #dbab46);
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.2), 0 2px 5px rgba(255,255,255,0.7);
+            z-index: 1;
+        }
+        .gold-seal-inner-2 {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: radial-gradient(circle, #fcf6ba, #d4af37);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            padding: 10px;
+        }
+        .embossed-text {
+            color: #b38728;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2);
+            font-family: 'Playfair Display', serif;
+            font-weight: 800;
+            line-height: 1.1;
+            text-transform: uppercase;
+        }
+        .embossed-text-large { font-size: 14px; letter-spacing: 1px; }
+        .embossed-text-small { font-size: 11px; letter-spacing: 2px; margin: 2px 0; }
+        .embossed-star { font-size: 12px; color: #b38728; text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2); margin: 2px 0; }
+
+        @media (max-width: 1100px) {
+            #certificate { transform: scale(0.7); transform-origin: top left; margin-bottom: -240px; margin-right: -310px; }
+        }
+        @media (max-width: 768px) {
+            #certificate { transform: scale(0.4); transform-origin: top left; margin-bottom: -490px; margin-right: -630px; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
+    <nav class="bg-green-700 text-white shadow-lg sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-wifi text-2xl"></i>
+                    <span class="font-bold text-xl tracking-wider hidden sm:inline-block">Tech+ Unit 03 Section 2.1.2 - IoT Devices</span>
+                    <span class="font-bold text-xl tracking-wider sm:hidden">2.1.2 IoT</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-2">
+                        <button onclick="switchTab('briefing')" class="nav-btn bg-green-900 px-3 py-2 rounded-md text-sm font-medium hover:bg-green-600 transition" id="nav-briefing"><i class="fa-solid fa-book-open mr-1"></i>Briefing</button>
+                        <button onclick="switchTab('activity')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-green-600 transition" id="nav-activity"><i class="fa-solid fa-flask mr-1"></i>Lab Activity</button>
+                        <button onclick="switchTab('quiz')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-green-600 transition" id="nav-quiz"><i class="fa-solid fa-clipboard-check mr-1"></i>Quiz</button>
+                        <button onclick="switchTab('game')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-gray-400 cursor-not-allowed transition" id="nav-game" disabled><i class="fa-solid fa-lock mr-1"></i>Game</button>
+                        <button onclick="switchTab('cert')" class="nav-btn hidden px-3 py-2 rounded-md text-sm font-medium text-yellow-300 hover:bg-green-600 transition" id="nav-cert"><i class="fa-solid fa-award mr-1"></i>Certificate</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Nav -->
+        <div class="md:hidden flex flex-wrap justify-center gap-2 py-2 px-2 bg-green-800">
+            <button onclick="switchTab('briefing')" class="nav-btn-mobile px-3 py-1 text-sm rounded bg-green-900" id="nav-briefing-mobile">Briefing</button>
+            <button onclick="switchTab('activity')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-activity-mobile">Lab</button>
+            <button onclick="switchTab('quiz')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-quiz-mobile">Quiz</button>
+            <button onclick="switchTab('game')" class="nav-btn-mobile px-3 py-1 text-sm rounded text-gray-400 cursor-not-allowed" id="nav-game-mobile" disabled><i class="fa-solid fa-lock"></i></button>
+            <button onclick="switchTab('cert')" id="nav-cert-mobile" class="hidden px-2 py-1 text-sm text-yellow-300 rounded"><i class="fa-solid fa-award"></i></button>
+        </div>
+    </nav>
+
+    <main class="flex-grow w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <!-- BRIEFING SECTION -->
+        <div id="briefing-section" class="tab-content active no-print">
+            <div class="text-center mb-10">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">Internet of Things (IoT) Devices & Communication</h1>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">Smart devices are transforming our homes, workplaces, and daily routines. Explore the core communication protocols, appliances, automation systems, vehicles, media devices, medical monitors, exercise gear, and wearables that comprise the IoT ecosystem.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                
+                <!-- Tile 1: Communication Methods -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-blue-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-xl font-bold mb-3 text-blue-700"><i class="fa-solid fa-network-wired mr-2"></i>IoT Communication</h2>
+                        <p class="text-sm text-gray-600 mb-4">Wi-Fi, Bluetooth, NFC, Cellular, LoRaWAN, Ethernet, and Powerline Communication protocols linking smart devices.</p>
+                    </div>
+                    <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-2">
+                            <button onclick="openBriefing('comm-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded text-xs font-bold transition flex items-center justify-center"><i class="fa-solid fa-book-open mr-1"></i> Details</button>
+                            <button onclick="openBriefing('comm-usecase')" class="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-900 py-2 rounded text-xs font-bold transition flex items-center justify-center"><i class="fa-solid fa-lightbulb text-yellow-600 mr-1"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 2: Home Appliances -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-green-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-xl font-bold mb-3 text-green-700"><i class="fa-solid fa-blender mr-2"></i>Home Appliances</h2>
+                        <p class="text-sm text-gray-600 mb-4">Smart refrigerators, washers, and pet feeders featuring remote control, automation, and energy monitoring.</p>
+                    </div>
+                    <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-2">
+                            <button onclick="openBriefing('appliances-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded text-xs font-bold transition flex items-center justify-center"><i class="fa-solid fa-book-open mr-1"></i> Details</button>
+                            <button onclick="openBriefing('appliances-usecase')" class="flex-1 bg-green-100 hover:bg-green-200 text-green-900 py-2 rounded text-xs font-bold transition flex items-center justify-center"><i class="fa-solid fa-lightbulb text-yellow-600 mr-1"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 3: Home Automation -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-purple-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-xl font-bold mb-3 text-purple-700"><i class="fa-solid fa-house-signal mr-2"></i>Home Automation</h2>
+                        <p class="text-sm text-gray-600 mb-4">Thermostats, security systems, smart assistants, smart locks, and video doorbells for complete residence integration.</p>
+                    </div>
+                    <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-2">
+                            <button onclick="openBriefing('automation-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded text-xs font-bold transition flex items-center justify-center"><i class="fa-solid fa-book-open mr-1"></i> Details</button>
+                            <button onclick="openBriefing('automation-usecase')" class="flex-1 bg-purple-100 hover:bg-purple-200 text-purple-900 py-2 rounded text-xs font-bold transition flex items-center justify-center"><i class="fa-solid fa-lightbulb text-yellow-600 mr-1"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 4: Vehicles -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-red-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-xl font-bold mb-3 text-red-700"><i class="fa-solid fa-car-rear mr-2"></i>IoT Vehicles</h2>
+                        <p class="text-sm text-gray-600 mb-4">Connected automobiles utilizing telematics, real-time GPS route optimization, and remote diagnostics.</p>
+                    </div>
+                    <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-2">
+                            <button onclick="openBriefing('vehicles-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded text-xs font-bold transition flex items-center justify-center"><i class="fa-solid fa-book-open mr-1"></i> Details</button>
+                            <button onclick="openBriefing('vehicles-usecase')" class="flex-1 bg-red-100 hover:bg-red-200 text-red-900 py-2 rounded text-xs font-bold transition flex items-center justify-center"><i class="fa-solid fa-lightbulb text-yellow-600 mr-1"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 5: IP Cameras -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-indigo-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-xl font-bold mb-3 text-indigo-700"><i class="fa-solid fa-video mr-2"></i>IP / Security Cameras</h2>
+                        <p class="text-sm text-gray-600 mb-4">Internet-connected surveillance cameras providing high-definition live feeds and motion detection alerts.</p>
+                    </div>
+                    <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-2">
+                            <button onclick="openBriefing('cameras-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded text-xs font-bold transition flex items-center justify-center"><i class="fa-solid fa-book-open mr-1"></i> Details</button>
+                            <button onclick="openBriefing('cameras-usecase')" class="flex-1 bg-indigo-100 hover:bg-indigo-200 text-indigo-900 py-2 rounded text-xs font-bold transition flex items-center justify-center"><i class="fa-solid fa-lightbulb text-yellow-600 mr-1"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 6: Streaming Media -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-amber-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-xl font-bold mb-3 text-amber-700"><i class="fa-solid fa-tv mr-2"></i>Streaming Media</h2>
+                        <p class="text-sm text-gray-600 mb-4">Smart TVs and streaming boxes delivering on-demand internet video, voice control, and recommendations.</p>
+                    </div>
+                    <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-2">
+                            <button onclick="openBriefing('streaming-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded text-xs font-bold transition flex items-center justify-center"><i class="fa-solid fa-book-open mr-1"></i> Details</button>
+                            <button onclick="openBriefing('streaming-usecase')" class="flex-1 bg-amber-100 hover:bg-amber-200 text-amber-900 py-2 rounded text-xs font-bold transition flex items-center justify-center"><i class="fa-solid fa-lightbulb text-yellow-600 mr-1"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 7: Medical & Exercise -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-teal-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-xl font-bold mb-3 text-teal-700"><i class="fa-solid fa-heart-pulse mr-2"></i>Medical & Fitness</h2>
+                        <p class="text-sm text-gray-600 mb-4">Remote patient monitors, smart scales, and connected workout bikes tracking health metrics and metrics.</p>
+                    </div>
+                    <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-2">
+                            <button onclick="openBriefing('medical-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded text-xs font-bold transition flex items-center justify-center"><i class="fa-solid fa-book-open mr-1"></i> Details</button>
+                            <button onclick="openBriefing('medical-usecase')" class="flex-1 bg-teal-100 hover:bg-teal-200 text-teal-900 py-2 rounded text-xs font-bold transition flex items-center justify-center"><i class="fa-solid fa-lightbulb text-yellow-600 mr-1"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 8: Wearables -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-pink-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-xl font-bold mb-3 text-pink-700"><i class="fa-solid fa-時計 mr-2"><i class="fa-solid fa-stopwatch mr-2"></i></i>Wearable Devices</h2>
+                        <p class="text-sm text-gray-600 mb-4">Smartwatches and fitness bands providing continuous health tracking, sleep monitoring, and notifications.</p>
+                    </div>
+                    <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-2">
+                            <button onclick="openBriefing('wearables-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded text-xs font-bold transition flex items-center justify-center"><i class="fa-solid fa-book-open mr-1"></i> Details</button>
+                            <button onclick="openBriefing('wearables-usecase')" class="flex-1 bg-pink-100 hover:bg-pink-200 text-pink-900 py-2 rounded text-xs font-bold transition flex items-center justify-center"><i class="fa-solid fa-lightbulb text-yellow-600 mr-1"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            
+            <div class="mt-8 flex justify-center">
+                <button onclick="switchTab('activity')" class="bg-green-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-green-500 shadow-lg transition transform hover:scale-105">Proceed to Lab Activity <i class="fa-solid fa-arrow-right ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- LAB ACTIVITY SECTION -->
+        <div id="activity-section" class="tab-content no-print">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Interactive Lab Activity</h1>
+                <p class="text-gray-600">Complete all 8 interactive lab simulations below covering IoT communication, appliances, automation, vehicles, cameras, streaming, medical/fitness, and wearables.</p>
+            </div>
+
+            <!-- Lab 1: IoT Communication Protocol Sorter -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-blue-700"><i class="fa-solid fa-network-wired mr-2"></i>Lab 1: Communication Protocol Matcher</h2>
+                <p class="text-sm text-gray-600 mb-4">Drag each communication technology to its correct data rate and range profile.</p>
+                <div class="flex flex-wrap gap-3 mb-6" id="lab1-items">
+                    <div class="io-item px-4 py-2 bg-blue-100 border border-blue-300 rounded font-bold text-sm" draggable="true" data-type="wifi">Wi-Fi (High Data / Short Range)</div>
+                    <div class="io-item px-4 py-2 bg-blue-100 border border-blue-300 rounded font-bold text-sm" draggable="true" data-type="ble">Bluetooth / BLE (Medium / Short)</div>
+                    <div class="io-item px-4 py-2 bg-blue-100 border border-blue-300 rounded font-bold text-sm" draggable="true" data-type="nfc">NFC (Low Data / Very Short)</div>
+                    <div class="io-item px-4 py-2 bg-blue-100 border border-blue-300 rounded font-bold text-sm" draggable="true" data-type="cellular">Cellular (High Data / Long Range)</div>
+                    <div class="io-item px-4 py-2 bg-blue-100 border border-blue-300 rounded font-bold text-sm" draggable="true" data-type="lorawan">LoRaWAN (Low Data / Long Range)</div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                    <div class="cat-dropzone border-2 border-dashed border-blue-400 bg-blue-50 rounded-lg p-2 min-h-[90px] flex flex-col items-center" data-target="wifi"><span class="font-bold text-blue-800 text-xs text-center pb-1 border-b w-full">Wi-Fi</span></div>
+                    <div class="cat-dropzone border-2 border-dashed border-blue-400 bg-blue-50 rounded-lg p-2 min-h-[90px] flex flex-col items-center" data-target="ble"><span class="font-bold text-blue-800 text-xs text-center pb-1 border-b w-full">Bluetooth</span></div>
+                    <div class="cat-dropzone border-2 border-dashed border-blue-400 bg-blue-50 rounded-lg p-2 min-h-[90px] flex flex-col items-center" data-target="nfc"><span class="font-bold text-blue-800 text-xs text-center pb-1 border-b w-full">NFC</span></div>
+                    <div class="cat-dropzone border-2 border-dashed border-blue-400 bg-blue-50 rounded-lg p-2 min-h-[90px] flex flex-col items-center" data-target="cellular"><span class="font-bold text-blue-800 text-xs text-center pb-1 border-b w-full">Cellular</span></div>
+                    <div class="cat-dropzone border-2 border-dashed border-blue-400 bg-blue-50 rounded-lg p-2 min-h-[90px] flex flex-col items-center" data-target="lorawan"><span class="font-bold text-blue-800 text-xs text-center pb-1 border-b w-full">LoRaWAN</span></div>
+                </div>
+                <div id="lab1-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
+            </div>
+
+            <!-- Lab 2: Smart Appliance Dashboard -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-green-700"><i class="fa-solid fa-blender mr-2"></i>Lab 2: Smart Appliance Automation Simulator</h2>
+                <p class="text-sm text-gray-600 mb-4">Configure the smart refrigerator and washer settings to optimize energy usage and remote alerts.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50 p-4 rounded-lg border">
+                    <div class="bg-white p-4 rounded border">
+                        <h3 class="font-bold text-green-800 mb-2">Smart Refrigerator Diagnostic</h3>
+                        <p class="text-xs text-gray-600 mb-3">Filter status & temperature monitoring.</p>
+                        <label class="flex items-center space-x-2 text-sm mb-2 cursor-pointer">
+                            <input type="checkbox" id="app-c1" class="w-4 h-4 text-green-600"> <span>Enable Eco-Mode Power Saving</span>
+                        </label>
+                        <label class="flex items-center space-x-2 text-sm mb-2 cursor-pointer">
+                            <input type="checkbox" id="app-c2" class="w-4 h-4 text-green-600"> <span>Receive Maintenance Alert Push Notifications</span>
+                        </label>
+                    </div>
+                    <div class="bg-white p-4 rounded border">
+                        <h3 class="font-bold text-green-800 mb-2">Smart Washer Scheduler</h3>
+                        <p class="text-xs text-gray-600 mb-3">Delay start for off-peak electricity hours.</p>
+                        <label class="flex items-center space-x-2 text-sm mb-2 cursor-pointer">
+                            <input type="checkbox" id="app-c3" class="w-4 h-4 text-green-600"> <span>Sync with Smart Energy Grid Schedule</span>
+                        </label>
+                        <label class="flex items-center space-x-2 text-sm mb-2 cursor-pointer">
+                            <input type="checkbox" id="app-c4" class="w-4 h-4 text-green-600"> <span>Auto-reorder detergent via subscription API</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="mt-4 text-center">
+                    <button onclick="checkLab2()" class="bg-green-600 text-white px-6 py-2 rounded font-bold hover:bg-green-700">Deploy Appliance Automation</button>
+                </div>
+                <div id="lab2-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
+            </div>
+
+            <!-- Lab 3: Home Automation Security & Climate -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-purple-700"><i class="fa-solid fa-house-signal mr-2"></i>Lab 3: Smart Home Automation Hub</h2>
+                <p class="text-sm text-gray-600 mb-4">Set the smart thermostat schedule and lock status for "Away Mode".</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="p-4 bg-purple-50 rounded border border-purple-200">
+                        <label class="block font-bold text-sm text-purple-900 mb-1">Thermostat Away Temp</label>
+                        <select id="lab3-temp" class="w-full p-2 border rounded text-sm">
+                            <option value="normal">72°F (Comfort)</option>
+                            <option value="eco">62°F (Eco-Saving Away)</option>
+                            <option value="high">80°F (Hot)</option>
+                        </select>
+                    </div>
+                    <div class="p-4 bg-purple-50 rounded border border-purple-200">
+                        <label class="block font-bold text-sm text-purple-900 mb-1">Front Door Deadbolt</label>
+                        <select id="lab3-lock" class="w-full p-2 border rounded text-sm">
+                            <option value="unlocked">Unlocked</option>
+                            <option value="locked">Locked Securely</option>
+                        </select>
+                    </div>
+                    <div class="p-4 bg-purple-50 rounded border border-purple-200">
+                        <label class="block font-bold text-sm text-purple-900 mb-1">Video Doorbell Guard</label>
+                        <select id="lab3-cam" class="w-full p-2 border rounded text-sm">
+                            <option value="off">Off</option>
+                            <option value="armed">Armed (Motion Alerts ON)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mt-4 text-center">
+                    <button onclick="checkLab3()" class="bg-purple-600 text-white px-6 py-2 rounded font-bold hover:bg-purple-700">Activate Away Mode</button>
+                </div>
+                <div id="lab3-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
+            </div>
+
+            <!-- Lab 4: Vehicle Telematics Inspector -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-red-700"><i class="fa-solid fa-car-rear mr-2"></i>Lab 4: Vehicle Telematics & Diagnostics</h2>
+                <p class="text-sm text-gray-600 mb-4">Review the connected vehicle telemetry report and click the system warning needing immediate remote attention.</p>
+                <div class="border rounded overflow-hidden">
+                    <div class="bg-gray-100 px-4 py-2 font-bold flex text-sm border-b">
+                        <div class="w-1/2">Subsystem</div>
+                        <div class="w-1/4">Status</div>
+                        <div class="w-1/4 text-right">Action</div>
+                    </div>
+                    <div class="px-4 py-3 border-b flex text-sm cursor-pointer hover:bg-red-50" onclick="checkLab4(false)">
+                        <div class="w-1/2">Tire Pressure Monitoring System (TPMS)</div>
+                        <div class="w-1/4 text-green-600 font-bold">Optimal (34 PSI)</div>
+                        <div class="w-1/4 text-right text-gray-500">None</div>
+                    </div>
+                    <div class="px-4 py-3 border-b flex text-sm cursor-pointer hover:bg-red-50" onclick="checkLab4(true)">
+                        <div class="w-1/2 text-red-700 font-bold">EV Battery Thermal Management & Charge Level</div>
+                        <div class="w-1/4 text-red-600 font-bold">Critical (12% - Overheating)</div>
+                        <div class="w-1/4 text-right text-red-700 font-bold underline">Route to Supercharger</div>
+                    </div>
+                    <div class="px-4 py-3 flex text-sm cursor-pointer hover:bg-red-50" onclick="checkLab4(false)">
+                        <div class="w-1/2">GPS Telematics & Route Optimization</div>
+                        <div class="w-1/4 text-green-600 font-bold">Connected</div>
+                        <div class="w-1/4 text-right text-gray-500">None</div>
+                    </div>
+                </div>
+                <div id="lab4-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
+            </div>
+
+            <!-- Lab 5: IP Camera Zone Configurator -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-indigo-700"><i class="fa-solid fa-video mr-2"></i>Lab 5: IP Camera Motion Zone Setup</h2>
+                <p class="text-sm text-gray-600 mb-4">Click and enable high-definition motion detection zones on the perimeter security camera grid.</p>
+                <div class="grid grid-cols-3 gap-3 max-w-md mx-auto mb-4" id="cam-grid">
+                    <div class="cam-cell bg-gray-200 h-20 rounded border-2 border-dashed border-gray-400 flex items-center justify-center cursor-pointer font-bold text-xs text-gray-600" onclick="toggleCamCell(this)">Zone 1: Driveway</div>
+                    <div class="cam-cell bg-gray-200 h-20 rounded border-2 border-dashed border-gray-400 flex items-center justify-center cursor-pointer font-bold text-xs text-gray-600" onclick="toggleCamCell(this)">Zone 2: Front Porch</div>
+                    <div class="cam-cell bg-gray-200 h-20 rounded border-2 border-dashed border-gray-400 flex items-center justify-center cursor-pointer font-bold text-xs text-gray-600" onclick="toggleCamCell(this)">Zone 3: Backyard</div>
+                </div>
+                <div class="text-center">
+                    <button onclick="checkLab5()" class="bg-indigo-600 text-white px-6 py-2 rounded font-bold hover:bg-indigo-700">Save Camera Surveillance Profile</button>
+                </div>
+                <div id="lab5-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
+            </div>
+
+            <!-- Lab 6: Streaming Media Queue -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-amber-700"><i class="fa-solid fa-tv mr-2"></i>Lab 6: Smart TV & Media Integrator</h2>
+                <p class="text-sm text-gray-600 mb-4">Configure voice control and smart lighting integration for home theater streaming mode.</p>
+                <div class="space-y-3 max-w-lg mx-auto bg-gray-50 p-4 rounded border">
+                    <label class="flex items-center space-x-3 cursor-pointer">
+                        <input type="checkbox" id="stream-cb1" class="w-5 h-5 text-amber-600">
+                        <span class="text-sm font-medium text-gray-800">Enable Voice Command Remote Search ("Play Cyber Tech+")</span>
+                    </label>
+                    <label class="flex items-center space-x-3 cursor-pointer">
+                        <input type="checkbox" id="stream-cb2" class="w-5 h-5 text-amber-600">
+                        <span class="text-sm font-medium text-gray-800">Auto-Dim Living Room Smart Lightbulbs on Play</span>
+                    </label>
+                    <label class="flex items-center space-x-3 cursor-pointer">
+                        <input type="checkbox" id="stream-cb3" class="w-5 h-5 text-amber-600">
+                        <span class="text-sm font-medium text-gray-800">Sync Recommendation Engine with Cloud Profile</span>
+                    </label>
+                </div>
+                <div class="mt-4 text-center">
+                    <button onclick="checkLab6()" class="bg-amber-600 text-white px-6 py-2 rounded font-bold hover:bg-amber-700">Launch Cinema Mode</button>
+                </div>
+                <div id="lab6-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
+            </div>
+
+            <!-- Lab 7: Medical & Exercise Telemetry -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-teal-700"><i class="fa-solid fa-heart-pulse mr-2"></i>Lab 7: IoT Health & Fitness Sync</h2>
+                <p class="text-sm text-gray-600 mb-4">Connect the smart exercise bike and remote medical heart monitor to the cloud dashboard.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="p-4 bg-teal-50 rounded border border-teal-200">
+                        <h3 class="font-bold text-teal-900 mb-2">Smart Exercise Bike Target HR</h3>
+                        <input type="range" min="100" max="180" value="140" class="w-full accent-teal-600" id="bike-hr" oninput="document.getElementById('hr-val').innerText = this.value">
+                        <p class="text-xs text-gray-600 mt-1">Target Heart Rate: <span id="hr-val" class="font-bold text-teal-800">140</span> BPM</p>
+                    </div>
+                    <div class="p-4 bg-teal-50 rounded border border-teal-200">
+                        <h3 class="font-bold text-teal-900 mb-2">Medical Glucose & BP Threshold Alert</h3>
+                        <label class="flex items-center space-x-2 text-sm mt-2 cursor-pointer">
+                            <input type="checkbox" id="med-alert" class="w-4 h-4 text-teal-600"> <span>Auto-forward telemetry securely to Physician API</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="mt-4 text-center">
+                    <button onclick="checkLab7()" class="bg-teal-600 text-white px-6 py-2 rounded font-bold hover:bg-teal-700">Sync Health Dashboard</button>
+                </div>
+                <div id="lab7-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
+            </div>
+
+            <!-- Lab 8: Wearable Activity Tracker Setup -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-pink-700"><i class="fa-solid fa-stopwatch mr-2"></i>Lab 8: Smartwatch Notification & Sleep Profile</h2>
+                <p class="text-sm text-gray-600 mb-4">Configure wearable notification filters and continuous sleep phase tracking.</p>
+                <div class="max-w-md mx-auto bg-gray-50 p-4 rounded border space-y-3">
+                    <label class="flex items-center space-x-3 cursor-pointer">
+                        <input type="checkbox" id="wear-cb1" class="w-4 h-4 text-pink-600"> <span class="text-sm">Enable Continuous Heart Rate Monitoring</span>
+                    </label>
+                    <label class="flex items-center space-x-3 cursor-pointer">
+                        <input type="checkbox" id="wear-cb2" class="w-4 h-4 text-pink-600"> <span class="text-sm">Filter VIP Contact SMS & Call Alerts</span>
+                    </label>
+                    <label class="flex items-center space-x-3 cursor-pointer">
+                        <input type="checkbox" id="wear-cb3" class="w-4 h-4 text-pink-600"> <span class="text-sm">Automatic Sleep Stage Detection (REM/Deep)</span>
+                    </label>
+                </div>
+                <div class="mt-4 text-center">
+                    <button onclick="checkLab8()" class="bg-pink-600 text-white px-6 py-2 rounded font-bold hover:bg-pink-700">Apply Wearable Settings</button>
+                </div>
+                <div id="lab8-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
+            </div>
+
+            <div class="text-center">
+                <button onclick="switchTab('quiz')" class="bg-green-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-green-500 shadow-lg transition transform hover:scale-105">Take the Mastery Quiz <i class="fa-solid fa-clipboard-check ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- QUIZ SECTION -->
+        <div id="quiz-section" class="tab-content no-print">
+            <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-xl max-w-4xl mx-auto">
+                <div class="text-center mb-8 border-b pb-4">
+                    <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Unit 03 Section 2.1.2 Mastery Quiz</h1>
+                    <p class="text-gray-600">Score 90% or higher (18/20) to earn your Certificate of Mastery and unlock the Retro "Smart Hub Sequence" Game!</p>
+                </div>
+
+                <div id="quiz-container" class="space-y-8">
+                    <!-- Questions injected via JS -->
+                </div>
+
+                <div class="mt-10 text-center border-t pt-6 flex flex-col md:flex-row justify-center items-center gap-4">
+                    <button id="submit-quiz-btn" onclick="gradeQuiz()" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">Submit Quiz</button>
+                    <button id="proceed-game-btn" onclick="switchTab('game')" class="hidden bg-purple-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-purple-700 shadow-lg transition w-full md:w-auto">Play Smart Hub Sequence <i class="fa-solid fa-gamepad ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RETRO GAME SECTION -->
+        <div id="game-section" class="tab-content no-print">
+            <div class="bg-gray-900 p-6 sm:p-8 rounded-2xl shadow-xl max-w-4xl mx-auto border-4 border-gray-700 flex flex-col items-center">
+                <div class="text-center mb-4 w-full">
+                    <h1 class="text-3xl font-extrabold text-amber-400 mb-2 tracking-widest uppercase" style="font-family: monospace;"><i class="fa-solid fa-microchip mr-2"></i>Smart Hub Sequence</h1>
+                    <p class="text-gray-300 text-sm">Test your IoT memory! Watch the smart automation nodes flash in sequence and repeat the pattern to maintain smart home stability.</p>
+                </div>
+                
+                <div class="flex justify-between items-center w-full max-w-[400px] mb-4 px-4 text-white font-mono text-xl">
+                    <div>Level: <span id="simon-level" class="text-green-400 font-bold">1</span></div>
+                    <div>Score: <span id="simon-score" class="text-blue-400 font-bold">0</span></div>
+                </div>
+
+                <div class="relative flex flex-col items-center justify-center w-full">
+                    <!-- Simon Game Board -->
+                    <div id="simon-board" class="grid grid-cols-2 gap-4 p-6 bg-gray-800 rounded-full border-4 border-gray-600 shadow-2xl w-[320px] h-[320px]">
+                        <!-- Pad 0: Top-Left (Red - Climate) -->
+                        <div id="pad-0" onclick="simonClick(0)" class="simon-pad bg-red-600 rounded-tl-full cursor-pointer flex items-center justify-center text-white font-bold opacity-80" data-sound="climate">🌡️</div>
+                        <!-- Pad 1: Top-Right (Blue - Security) -->
+                        <div id="pad-1" onclick="simonClick(1)" class="simon-pad bg-blue-600 rounded-tr-full cursor-pointer flex items-center justify-center text-white font-bold opacity-80" data-sound="security">🔒</div>
+                        <!-- Pad 2: Bottom-Left (Green - Lighting) -->
+                        <div id="pad-2" onclick="simonClick(2)" class="simon-pad bg-green-600 rounded-bl-full cursor-pointer flex items-center justify-center text-white font-bold opacity-80" data-sound="lighting">💡</div>
+                        <!-- Pad 3: Bottom-Right (Yellow - Appliances) -->
+                        <div id="pad-3" onclick="simonClick(3)" class="simon-pad bg-amber-500 rounded-br-full cursor-pointer flex items-center justify-center text-white font-bold opacity-80" data-sound="appliances">🧊</div>
+                    </div>
+
+                    <div id="simon-message" class="text-amber-300 font-mono font-bold text-lg mt-6 h-8 text-center">Press Start to Boot Hub</div>
+
+                    <div class="mt-4">
+                        <button id="simon-start-btn" onclick="startSimonGame()" class="bg-green-600 hover:bg-green-500 text-white font-bold font-mono py-2 px-6 rounded-lg text-lg border-2 border-green-800 uppercase tracking-wide transition">Start Sequence</button>
+                    </div>
+                </div>
+
+                <div class="mt-8 text-center w-full border-t border-gray-700 pt-6">
+                    <button onclick="switchTab('cert')" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">View Certificate <i class="fa-solid fa-award ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CERTIFICATE SECTION -->
+        <div id="cert-section" class="tab-content">
+            <div class="max-w-5xl mx-auto">
+                
+                <!-- Controls -->
+                <div class="bg-white p-6 rounded shadow mb-6 no-print text-center border border-gray-200">
+                    <h2 class="text-2xl font-bold text-green-600 mb-2">🎉 Congratulations! 🎉</h2>
+                    <p class="text-gray-700 mb-4">You have achieved mastery of Unit 03 Section 2.1.2 - IoT Devices.</p>
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+                        <input type="text" id="student-name-input" value="Student" placeholder="Enter your first name" class="border-2 border-gray-300 rounded px-4 py-2 w-full md:w-64 focus:border-green-500 focus:outline-none">
+                        <button onclick="updateCertName()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">Update Name</button>
+                        <button id="download-btn" onclick="downloadCert()" class="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900 transition flex items-center justify-center">
+                            <i class="fa-solid fa-download mr-2"></i>Download PNG
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Certificate Render Container -->
+                <div class="cert-preview-container print:p-0 print:bg-white">
+                    <div id="certificate">
+                        <div class="gold-seal">
+                            <div class="gold-seal-inner-1">
+                                <div class="gold-seal-inner-2">
+                                     <span class="embossed-text embossed-text-large">Certificate</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-small">Of</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-large">Excellence</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="relative z-20 w-full h-full flex flex-col pt-[48px] pl-[380px] pr-[48px]">
+                            <h1 class="text-[#1e3a8a] text-[4.5rem] leading-none font-serif font-bold tracking-wide uppercase mb-2">CERTIFICATE</h1>
+                            <h2 class="text-gray-800 text-3xl font-serif tracking-widest uppercase mb-10">Of Achievement</h2>
+                            
+                            <p class="text-[1.4rem] font-body text-gray-800 mb-4">This is to certify that</p>
+                            
+                            <div class="relative mb-8 w-full">
+                                <h3 id="cert-student-name" class="text-[4rem] text-[#1e3a8a] font-serif italic leading-none pb-2 relative z-10 text-center w-full block">Student</h3>
+                                <div class="w-full border-b-[2px] border-[#1e3a8a] absolute bottom-[4px] left-0 z-0"></div>
+                                <div class="w-full border-b-[2px] border-dotted border-red-500 absolute bottom-[0px] left-0 z-0"></div>
+                            </div>
+                            
+                            <p class="text-[1.3rem] font-body text-gray-800 leading-relaxed w-full pr-4">
+                                Has successfully completed the assessment for 
+                                <strong class="text-[1.8rem] text-[#1e3a8a] block mt-4 mb-2 font-serif">Cyber.org Tech+ Unit 03 Section 2.1.2</strong>
+                                <strong class="text-[1.5rem] text-black block mb-4 font-serif italic">Internet of Things (IoT) Devices</strong>
+                                <span class="text-[1.1rem] text-gray-700 leading-snug block">Demonstrating mastery in explaining IoT communication protocols, smart home appliances, automation systems, vehicles, cameras, streaming devices, medical/fitness monitors, and wearables.</span>
+                            </p>
+                            
+                            <div class="flex justify-end gap-16 items-end mt-auto mb-[60px] w-full pr-8">
+                                <div class="w-64">
+                                    <div class="border-b border-gray-600 mb-2 h-20 flex items-end justify-center relative">
+                                        <span class="font-script text-[5rem] text-[#1e3a8a] absolute bottom-[-10px] transform -rotate-3 opacity-90">Dr. M. S</span>
+                                    </div>
+                                    <p class="font-serif text-xl text-gray-800 text-center">Administration</p>
+                                </div>
+                                
+                                <div class="w-64">
+                                    <div class="border-b border-gray-600 mb-2 text-center h-20 flex items-end justify-center">
+                                        <p id="cert-date" class="font-body text-2xl text-gray-800 pb-1">Date Here</p>
+                                    </div>
+                                    <p class="font-serif text-xl text-gray-800 text-center">Date</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Custom Modal for Alerts -->
+    <div id="custom-modal" class="fixed inset-0 bg-black bg-opacity-50 z-[100] hidden flex justify-center items-center backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all">
+            <div class="text-center">
+                <div id="modal-icon" class="text-5xl mb-4"></div>
+                <h3 id="modal-title" class="text-2xl font-bold mb-2 text-gray-900"></h3>
+                <p id="modal-msg" class="text-gray-600 mb-6"></p>
+                <button onclick="closeModal()" class="bg-green-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-green-700 transition w-full">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Briefing Modal -->
+    <div id="briefing-modal" class="fixed inset-0 bg-black bg-opacity-70 z-[120] hidden flex justify-center items-center backdrop-blur-sm p-4 sm:p-6">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col transform transition-all overflow-hidden border-4 border-green-700">
+            <div class="p-6 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+                <div class="flex items-center gap-4">
+                    <div id="briefing-modal-icon" class="text-4xl"></div>
+                    <h3 id="briefing-modal-title" class="text-2xl md:text-3xl font-bold text-gray-900"></h3>
+                </div>
+                <button onclick="closeBriefing()" class="text-gray-400 hover:text-red-600 transition text-4xl leading-none">&times;</button>
+            </div>
+            <div id="briefing-modal-content" class="p-6 md:p-10 overflow-y-auto flex-grow text-gray-700 text-lg leading-relaxed bg-white">
+                <!-- Dynamic Content Injected Here -->
+            </div>
+            <div class="p-6 border-t border-gray-200 bg-gray-50 flex justify-end">
+                <button onclick="closeBriefing()" class="bg-green-700 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-green-800 transition shadow-md">Acknowledge & Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 7-Paragraph Briefing Content & Use Cases with Images ---
+        const briefingData = {
+            'comm-details': {
+                title: 'IoT Communication Protocols & Architecture',
+                icon: '<i class="fa-solid fa-network-wired text-blue-600"></i>',
+                html: `
+                    <p class="mb-5">The Internet of Things (IoT) relies on a diverse hierarchy of communication protocols to bridge physical sensors with cloud computing hubs. Unlike traditional desktop computing that predominantly relies on high-speed wired Ethernet, IoT devices operate across a wide spectrum of power, data rate, and geographic range constraints. Understanding these underlying communication methods is essential for designing robust, scalable smart environments.</p>
+                    
+                    <p class="mb-5">Short-range wireless communication forms the backbone of smart home and consumer environments. Technologies such as Wi-Fi provide high data rates and connect devices directly to local routers, making them ideal for security cameras and streaming devices. However, Wi-Fi consumes substantial electrical power, rendering it unsuitable for tiny battery-operated sensors that must operate for years without a battery change.</p>
+                    
+                    <p class="mb-5">To address power consumption in personal area networks, Bluetooth and Bluetooth Low Energy (BLE) are utilized. BLE enables medium data rates over short distances while consuming a fraction of the energy of standard Wi-Fi. This efficiency makes Bluetooth the definitive protocol for wearable health trackers, wireless earbuds, and proximity beacons communicating directly with a smartphone.</p>
+                    
+                    <p class="mb-5">Near Field Communication (NFC) represents the ultra-short-range tier of wireless communication, operating over distances of only a few centimeters. NFC requires physical proximity or a direct tap, making it exceptionally secure for mobile payment systems (such as Apple Pay or Google Wallet) and keyless access control cards entering corporate office buildings.</p>
+                    
+                    <p class="mb-5">When smart devices must span vast geographic distances—such as connected vehicles traveling across states or remote agricultural soil sensors in rural fields—long-range wireless protocols are required. Cellular networks (4G LTE and 5G) provide high data rates and massive coverage areas, allowing vehicles to receive real-time traffic updates and perform over-the-air firmware updates anywhere on cellular grids.</p>
+                    
+                    <p class="mb-5">For long-range applications where data packets are small and power conservation is paramount, Long Range Wide Area Network (LoRaWAN) is deployed. LoRaWAN operates in unlicensed radio frequency bands, enabling battery-powered smart agricultural sensors to transmit soil moisture data across miles of farmland without cellular subscription fees.</p>
+                    
+                    <p class="mb-5">Finally, wired communication methods remain critical in industrial and specialized environments. Ethernet provides maximum bandwidth, absolute reliability, and zero wireless interference for industrial machinery. Meanwhile, Powerline Communication (PLC) transmits data signals over existing electrical power wiring, enabling smart grid meters to report power consumption back to utility companies without laying new cables.</p>
+                `
+            },
+            'comm-usecase': {
+                title: 'IoT Communication: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 1: Smart Home vs. Smart Agriculture</h4>
+                        <p class="mb-2">Different IoT domains require vastly different communication trade-offs between range, power, and bandwidth.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Wi-Fi):</strong> A smart 4K security camera in a living room uses high-bandwidth Wi-Fi to continuously stream high-definition video back to the homeowner's cloud storage server.</li>
+                            <li><strong>Example 2 (LoRaWAN):</strong> A farmer places soil moisture sensors across 500 acres of remote crops; these sensors use low-power LoRaWAN to transmit small temperature packets once an hour on coin-cell batteries lasting up to five years.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 2: Mobile Payments & Wearables</h4>
+                        <p class="mb-2">Short-range protocols secure personal transactions and sync personal fitness metrics.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (NFC):</strong> A commuter taps their smartphone against a subway turnstile, using NFC to instantly authorize transit fare without opening an app.</li>
+                            <li><strong>Example 2 (Bluetooth BLE):</strong> A smartwatch continuously synchronizes heart rate logs to a smartphone via Bluetooth Low Energy without draining the watch battery.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Wireless Protocols & Network Nodes</p>
+                            <img src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=600&h=350" alt="Network connectivity representation" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Smart Infrastructure & Mobile Tech</p>
+                            <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=600&h=350" alt="Technology communication in use" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'appliances-details': {
+                title: 'IoT-Enabled Home Appliances',
+                icon: '<i class="fa-solid fa-blender text-green-600"></i>',
+                html: `
+                    <p class="mb-5">Home appliances—traditionally mechanical devices requiring direct human intervention—have undergone a profound transformation through the integration of the Internet of Things. IoT-enabled home appliances combine embedded microcontrollers, specialized sensors, and Wi-Fi or Bluetooth connectivity to deliver unprecedented levels of convenience, energy efficiency, and automated maintenance monitoring.</p>
+                    
+                    <p class="mb-5">A primary feature of smart appliances is **Remote Control** via smartphone applications. Whether a user is at the grocery store or traveling abroad, they can interact with their appliances remotely. A homeowner can preheat their smart oven while driving home from work, start a robotic vacuum cleaner to clean the floors before guests arrive, or check whether the kitchen refrigerator door was left fully closed.</p>
+                    
+                    <p class="mb-5">**Automation and Scheduling** allow appliances to operate autonomously based on user preferences and utility rate schedules. Smart washing machines and dishwashers can be programmed to automatically start during off-peak electricity hours late at night when power rates are lowest, significantly reducing household energy bills without requiring manual operation at midnight.</p>
+                    
+                    <p class="mb-5">**Monitoring and Proactive Maintenance** represent a major leap forward in appliance reliability. Smart refrigerators monitor internal temperatures, compressor efficiency, and water filter expiration dates. If a water filter is nearing capacity or a cooling fan experiences abnormal resistance, the appliance immediately sends a push notification to the owner's smartphone or triggers an automated service request.</p>
+                    
+                    <p class="mb-5">Advanced smart refrigerators now feature internal cameras and touchscreens that function as digital family hubs. These refrigerators can inventory stored food items, suggest recipes based on available ingredients, and automatically add depleted grocery staples (like milk or eggs) to an online shopping cart.</p>
+                    
+                    <p class="mb-5">Specialized smart appliances such as automated pet feeders ensure pet care is seamless when owners are away. These feeders use internal scales, programmable timers, and high-definition cameras to dispense precise portions of food at scheduled intervals while notifying the owner that the pet has been fed.</p>
+                    
+                    <p>Ultimately, IoT home appliances transition household management from reactive chores to proactive, automated systems that save time, conserve electricity, and prevent catastrophic failures like water leaks from malfunctioning washing machine hoses.</p>
+                `
+            },
+            'appliances-usecase': {
+                title: 'Home Appliances: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-green-800 mb-2 border-b-2 border-green-200 pb-1">Case 1: Smart Refrigerator Inventory & Maintenance</h4>
+                        <p class="mb-2">Modern kitchens utilize connected refrigerators to minimize food waste and monitor mechanical health.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Monitoring):</strong> A smart refrigerator detects that the water filter is at 99% capacity and pushes an alert to the owner's phone with a one-click reorder link for a replacement filter.</li>
+                            <li><strong>Example 2 (Automation):</strong> While standing in the grocery store aisle, a user opens the refrigerator's companion app to view live internal camera feeds, instantly checking whether they need to buy milk.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-green-800 mb-2 border-b-2 border-green-200 pb-1">Case 2: Off-Peak Energy Washing & Pet Care</h4>
+                        <p class="mb-2">Smart washing and feeding appliances optimize energy consumption and automate daily pet routines.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Scheduling):</strong> A smart washing machine synchronizes with the local electrical grid smart meter to automatically run wash cycles at 2:00 AM during off-peak rates.</li>
+                            <li><strong>Example 2 (Remote Control):</strong> A traveling pet owner uses a smart pet feeder app to dispense an extra portion of food and view the live video feed of their dog eating.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Smart Kitchen Appliances</p>
+                            <img src="https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=600&h=350" alt="Modern smart kitchen" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Automated Household Management</p>
+                            <img src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=600&h=350" alt="Household appliance usage" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'automation-details': {
+                title: 'Home Automation Devices (Thermostats, Locks, Doorbells)',
+                icon: '<i class="fa-solid fa-house-signal text-purple-600"></i>',
+                html: `
+                    <p class="mb-5">Home automation represents the pinnacle of connected residential living, integrating heating, lighting, security systems, deadbolts, and doorbells into a unified, intelligent ecosystem. These devices make it possible to control and automate virtually every function within a household, significantly enhancing convenience, energy efficiency, and physical security.</p>
+                    
+                    <p class="mb-5">Smart thermostats revolutionize residential climate control. Equipped with machine learning algorithms, occupancy sensors, and weather forecasting APIs, smart thermostats learn the household's daily routines. They automatically lower heating or cooling when residents leave for work and restore comfortable temperatures before they return, reducing energy waste by up to 20%.</p>
+                    
+                    <p class="mb-5">Smart security systems tie together door sensors, window break detectors, glass-break audio sensors, and sirens into a cohesive network. Residents can monitor live camera feeds remotely, arm or disarm the system using smartphone geofencing (automatically arming when the last family member leaves the property), and receive instant push notifications if unusual activity is detected.</p>
+                    
+                    <p class="mb-5">Home assistants (such as smart speakers powered by virtual assistants) act as the central voice-activated command hub for the entire smart home. Users can issue natural language commands to dim living room lights, check weather forecasts, play music, or broadcast announcements across rooms without touching a physical switch.</p>
+                    
+                    <p class="mb-5">Smart deadbolts and door locks eliminate traditional metal keys while elevating access security. They enable keyless entry via secure PIN codes, smartphone Bluetooth credentials, or biometric fingerprint scanners. Furthermore, smart locks maintain detailed audit logs recording exactly who unlocked the door and at what precise timestamp.</p>
+                    
+                    <p class="mb-5">Video doorbells combine high-definition cameras, motion sensors, and two-way audio speakers into the exterior doorbell unit. When a visitor presses the button or motion is detected on the porch, a video call is instantly pushed to the homeowner's smartphone, allowing them to converse with couriers or deter package thieves from anywhere in the world.</p>
+                    
+                    <p>Together, these home automation technologies create a secure, responsive environment where the home actively adapts to the safety and comfort of its occupants.</p>
+                `
+            },
+            'automation-usecase': {
+                title: 'Home Automation: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Case 1: Smart Thermostat & Geofencing Security</h4>
+                        <p class="mb-2">Automating climate and security based on user presence and location.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Thermostat):</strong> A smart thermostat detects via phone GPS geofencing that all residents have left the house and automatically enters Eco-Mode, saving energy until someone returns.</li>
+                            <li><strong>Example 2 (Security):</strong> A door sensor triggers an alert on the homeowner's phone at 2:00 AM indicating an open garage door, allowing them to lock it remotely with one tap.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Case 2: Keyless Access & Video Doorbell Interaction</h4>
+                        <p class="mb-2">Managing visitor access and deliveries securely when away from home.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Deadbolts):</strong> A homeowner generates a temporary one-time PIN code on their smart lock app to let a dog walker in at 1:00 PM while they are at work.</li>
+                            <li><strong>Example 2 (Video Doorbell):</strong> A delivery driver rings the video doorbell; the homeowner answers the video call from their office and instructs the driver where to safely hide the package.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Smart Home Automation Hub</p>
+                            <img src="https://images.unsplash.com/photo-1558002038-1055907df827?auto=format&fit=crop&w=600&h=350" alt="Smart home automation setup" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Smart Locks & Security</p>
+                            <img src="https://images.unsplash.com/photo-1563695307399-556396f4c7f0?auto=format&fit=crop&w=600&h=350" alt="Smart security lock in use" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'vehicles-details': {
+                title: 'IoT-Enabled Vehicles & Connected Transport',
+                icon: '<i class="fa-solid fa-car-rear text-red-600"></i>',
+                html: `
+                    <p class="mb-5">Modern automobiles are no longer purely mechanical machines driven by combustion engines and hydraulic steering; they are sophisticated, rolling data centers containing dozens of interconnected microprocessors and cellular modems. IoT-enabled vehicles leverage cellular connectivity, GPS satellite navigation, and internal sensor arrays to dramatically enhance driver safety, convenience, and mechanical performance.</p>
+                    
+                    <p class="mb-5">A core pillar of connected transport is **Telematics**. Telematics systems continuously monitor vehicle health, tire pressures, fluid levels, battery status, and precise geographic location. If an engine component begins to fail or tire pressure drops dangerously low, the vehicle transmits diagnostic trouble codes directly to the manufacturer and the driver's smartphone app before a breakdown occurs.</p>
+                    
+                    <p class="mb-5">Advanced **Navigation and Route Optimization** systems utilize real-time cellular data feeds from millions of connected vehicles on the road. The vehicle's onboard computer analyzes live traffic congestion, accidents, and road construction, automatically recalculating the fastest route and guiding the driver around delays dynamically.</p>
+                    
+                    <p class="mb-5">**Remote Control** capabilities give owners unprecedented command over their automobiles from anywhere in the world. Using a smartphone app, an owner can remotely lock or unlock car doors, flash headlights to find the car in a crowded parking lot, pre-warm or pre-cool the cabin climate before entering, and even track the vehicle's real-time GPS coordinates if it is stolen.</p>
+                    
+                    <p class="mb-5">Over-the-Air (OTA) software updates represent another transformative IoT feature in modern cars. Rather than requiring owners to visit a physical dealership for software patches or infotainment system upgrades, the vehicle downloads secure updates via cellular data overnight and installs them automatically.</p>
+                    
+                    <p class="mb-5">Connected vehicle systems also facilitate emergency response through automated crash notification (such as GM's OnStar or equivalent services). If airbags deploy in a collision, the vehicle automatically transmits its precise GPS coordinates and severity data to emergency dispatchers.</p>
+                    
+                    <p>As the automotive industry progresses toward autonomous driving, IoT vehicle communication (V2X - Vehicle-to-Everything) will allow cars to communicate directly with traffic lights, pedestrian smartphones, and other cars to prevent accidents and optimize traffic flow.</p>
+                `
+            },
+            'vehicles-usecase': {
+                title: 'IoT Vehicles: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-red-800 mb-2 border-b-2 border-red-200 pb-1">Case 1: Remote Pre-Conditioning & GPS Tracking</h4>
+                        <p class="mb-2">Managing vehicle comfort and security via smartphone companion apps.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Remote Control):</strong> On a freezing winter morning, a commuter uses their car's smartphone app to start the engine and activate the seat heaters ten minutes before leaving the house.</li>
+                            <li><strong>Example 2 (Telematics):</strong> A vehicle is parked in an unfamiliar city garage; the owner opens their mobile app to view the exact GPS pin and track walking directions straight to the car.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-red-800 mb-2 border-b-2 border-red-200 pb-1">Case 2: Live Navigation & Predictive Maintenance</h4>
+                        <p class="mb-2">Avoiding traffic delays and catching mechanical issues early.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Navigation):</strong> While driving to an important meeting, the vehicle's connected GPS automatically reroutes the driver around a sudden highway accident, saving 20 minutes.</li>
+                            <li><strong>Example 2 (Diagnostics):</strong> The car's telematics system alerts the driver that the 12V auxiliary battery voltage is dropping, scheduling a service appointment before the car fails to start.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Connected Vehicle Telematics</p>
+                            <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=600&h=350" alt="Modern connected car dashboard" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Navigation & Autonomous Tech</p>
+                            <img src="https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=600&h=350" alt="Vehicle on highway using GPS navigation" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'cameras-details': {
+                title: 'Internet Protocol (IP) & Security Cameras',
+                icon: '<i class="fa-solid fa-video text-indigo-600"></i>',
+                html: `
+                    <p class="mb-5">Surveillance technology has experienced a complete revolution with the transition from analog closed-circuit television (CCTV) to Internet Protocol (IP) and smart security cameras. Unlike legacy analog systems that required cumbersome coaxial cables and physical VCR tapes, IP security cameras capture digital video streams and transmit them over standard Wi-Fi or Ethernet networks directly to cloud storage or local Network Attached Storage (NAS) devices.</p>
+                    
+                    <p class="mb-5">A primary feature of IP security cameras is **Remote Access**. Property owners can log into secure mobile apps or web portals to view live, high-definition video feeds and review recorded event clips from anywhere in the world, providing peace of mind whether they are at work or on vacation.</p>
+                    
+                    <p class="mb-5">Modern IP cameras incorporate advanced **Motion Detection and Computer Vision AI**. Instead of recording blank video streams 24/7, smart cameras use embedded artificial intelligence to differentiate between insignificant motion (like swaying tree branches or stray cats) and critical security events (like human figures or vehicle movement), drastically reducing false alarms.</p>
+                    
+                    <p class="mb-5">**High-Resolution Imaging and Night Vision** ensure crystal-clear video quality regardless of lighting conditions. Modern IoT cameras offer 2K and 4K ultra-high-definition resolution, wide-angle lenses, and infrared or starlight color night vision, ensuring facial features and license plate numbers are clearly captured in pitch darkness.</p>
+                    
+                    <p class="mb-5">Many IP cameras also feature **Two-Way Audio** communication. Equipped with high-gain microphones and waterproof speakers, users can speak directly through the camera to delivery drivers, warn trespassers to leave the property, or comfort pets while away from home.</p>
+                    
+                    <p class="mb-5">Integration with broader smart home ecosystems allows IP cameras to trigger automated actions. For instance, if an outdoor security camera detects motion by the side gate after midnight, it can automatically trigger floodlights to turn on and send an immediate snapshot to the homeowner's smartphone.</p>
+                    
+                    <p>Security and encryption are paramount for IP cameras. Because these devices stream sensitive video feeds over the internet, robust encryption protocols and multi-factor authentication are strictly required to prevent unauthorized snooping by malicious hackers.</p>
+                `
+            },
+            'cameras-usecase': {
+                title: 'IP Cameras: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-indigo-800 mb-2 border-b-2 border-indigo-200 pb-1">Case 1: Residential Perimeter Monitoring</h4>
+                        <p class="mb-2">Protecting home entry points and packages using intelligent motion detection.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Motion AI):</strong> An IP camera detects a person stepping onto the front porch, sends a notification tagged "Person Detected," and records 30 seconds of high-definition video to cloud storage.</li>
+                            <li><strong>Example 2 (Night Vision):</strong> In total darkness, an infrared IP camera clearly captures the face of an individual tampering with a vehicle in the driveway.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-indigo-800 mb-2 border-b-2 border-indigo-200 pb-1">Case 2: Commercial Business Surveillance</h4>
+                        <p class="mb-2">Monitoring retail store floors and inventory rooms remotely.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Remote Access):</strong> A small business owner checks live feeds from four IP cameras on their smartphone while away on a business trip to ensure store opening procedures are followed.</li>
+                            <li><strong>Example 2 (Two-Way Audio):</strong> A manager spots an unauthorized person in a restricted stockroom via an indoor IP camera and uses two-way audio to instruct them to exit immediately.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: IP Security Camera Hardware</p>
+                            <img src="https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&w=600&h=350" alt="Security surveillance camera" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Monitoring & Surveillance</p>
+                            <img src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=600&h=350" alt="Security camera monitoring in use" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'streaming-details': {
+                title: 'Streaming Media Devices & Smart TVs',
+                icon: '<i class="fa-solid fa-tv text-amber-600"></i>',
+                html: `
+                    <p class="mb-5">The consumption of entertainment has shifted decisively from traditional broadcast television and physical discs to internet-delivered media. Streaming media devices (such as smart TVs, Apple TV, Roku, Amazon Fire Stick, and Chromecast) are powerful IoT computing devices that connect users to vast libraries of digital movies, TV shows, music, and games over broadband internet connections.</p>
+                    
+                    <p class="mb-5">The foundational feature of streaming media devices is **Content Access**. Users can instantly stream on-demand content from dozens of subscription and ad-supported services (such as Netflix, YouTube, Disney+, and Spotify) in stunning 4K HDR resolution without requiring cable boxes or satellite dishes.</p>
+                    
+                    <p class="mb-5">**Voice Control** integration has transformed how users navigate media libraries. Rather than laboriously typing movie titles letter-by-letter with a remote control button, users can simply speak into the remote microphone ("Find sci-fi movies starring Tom Hanks"), and virtual assistants execute the search instantly.</p>
+                    
+                    <p class="mb-5">**Ecosystem Integration and Smart Recommendations** leverage cloud computing and machine learning algorithms. Streaming devices track viewing habits across platforms and provide personalized content recommendations on the home screen. Furthermore, they integrate seamlessly with other smart home devices—for example, automatically pausing a movie when the video doorbell rings or dimming smart lights when playback begins.</p>
+                    
+                    <p class="mb-5">Modern smart TVs also function as smart home dashboards. Users can view live security camera feeds in a picture-in-picture window while watching a sports game, or control smart home climate settings directly from the television screen using the remote control.</p>
+                    
+                    <p class="mb-5">Screen casting and mirroring capabilities allow users to beam photos, videos, and presentations wirelessly from their smartphones, tablets, or laptops directly onto the large living room television display with a single tap.</p>
+                    
+                    <p>As broadband speeds and video compression algorithms continue to advance, streaming media devices represent the convergence of IoT connectivity, high-performance computing, and home entertainment.</p>
+                `
+            },
+            'streaming-usecase': {
+                title: 'Streaming Media: Use Cases',
+                icon: '('
+            },
+            'medical-details': {
+                title: 'IoT Medical Devices & Fitness Equipment',
+                icon: '<i class="fa-solid fa-heart-pulse text-teal-600"></i>',
+                html: `
+                    <p class="mb-5">The intersection of IoT technology and healthcare has given rise to a new paradigm of patient monitoring and fitness enhancement. IoT-enabled medical devices and connected exercise equipment bridge the gap between daily personal health and professional clinical oversight, empowering individuals to take proactive control of their physical well-being.</p>
+                    
+                    <p class="mb-5">IoT medical devices include continuous glucose monitors (CGMs), smart blood pressure cuffs, digital ECG monitors, and smart scales. These devices provide continuous **Remote Patient Monitoring**, tracking vital health metrics outside of traditional clinical settings and automatically transmitting data to secure cloud health platforms.</p>
+                    
+                    <p class="mb-5">**Alerts and Notifications** are critical lifelines in smart medical devices. If a patient's blood glucose level drops dangerously low or irregular heart rhythms are detected, the device immediately triggers an audible alarm and pushes emergency alerts to both the patient and their designated healthcare providers.</p>
+                    
+                    <p class="mb-5">**Data Integration with Healthcare Providers** allows physicians to review longitudinal health trends between appointments. Instead of relying on a single blood pressure reading taken during an annual doctor visit, physicians review continuous multi-week data logs, leading to vastly superior diagnosis and personalized treatment plans.</p>
+                    
+                    <p class="mb-5">On the fitness side, IoT-enabled exercise equipment (such as smart stationary bikes, connected treadmills, and rowing machines) transforms solo workouts into immersive, connected experiences. These machines feature high-definition touchscreens that stream live or recorded virtual coaching classes from elite instructors around the world.</p>
+                    
+                    <p class="mb-5">**Performance Tracking** on smart gym equipment monitors wattage output, cadence, heart rate, and calories burned in real time. The equipment syncs workout summaries automatically to fitness companion apps (like Strava or Apple Health), tracking long-term athletic progress.</p>
+                    
+                    <p>By blending continuous health telemetry with professional medical integration and engaging fitness tech, IoT health devices are actively extending life expectancies and improving global fitness standards.</p>
+                `
+            },
+            'medical-usecase': {
+                title: 'Medical & Fitness: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-teal-800 mb-2 border-b-2 border-teal-200 pb-1">Case 1: Continuous Remote Glucose Monitoring</h4>
+                        <p class="mb-2">Managing chronic medical conditions with automated patient telemetry.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Alerts):</strong> A diabetic patient wearing a smart CGM sensor experiences a blood sugar drop during sleep; the sensor emits an emergency alarm that wakes them and notifies their physician.</li>
+                            <li><strong>Example 2 (Data Integration):</strong> A cardiologist reviews three months of automated blood pressure logs transmitted securely from a patient's smart cuff to adjust hypertension medication dosages accurately.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-teal-800 mb-2 border-b-2 border-teal-200 pb-1">Case 2: Connected Indoor Cycling Workout</h4>
+                        <p class="mb-2">Enhancing physical fitness with virtual coaching and telemetry.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Performance Tracking):</strong> A user rides a smart exercise bike while participating in a virtual group ride leaderboard, tracking their live cadence, resistance, and heart rate on screen.</li>
+                            <li><strong>Example 2 (Syncing):</strong> Upon finishing a workout, the smart stationary bike automatically uploads the ride metrics to the user's fitness app profile.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Smart Health Monitoring</p>
+                            <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=600&h=350" alt="Medical health monitoring technology" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Connected Fitness Training</p>
+                            <img src="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=600&h=350" alt="Connected fitness exercise equipment in use" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'wearables-details': {
+                title: 'Wearable Devices (Smartwatches & Fitness Trackers)',
+                icon: '<i class="fa-solid fa-stopwatch text-pink-600"></i>',
+                html: `
+                    <p class="mb-5">Wearable devices—including smartwatches, fitness bands, smart rings, and augmented reality glasses—represent the most personal and intimate category of IoT technology. Worn directly on the human body throughout the day and night, wearables combine miniature biometric sensors, microprocessors, and Bluetooth wireless radios to track human health, activity, and digital communications seamlessly.</p>
+                    
+                    <p class="mb-5">**Comprehensive Health Monitoring** is a cornerstone feature of modern wearables. Equipped with optical photoplethysmography (PPG) sensors, electrical ECG leads, and skin temperature sensors, wearables continuously track heart rate, blood oxygen saturation (SpO2), electrodermal activity (stress levels), and sleep architecture (distinguishing between light, deep, and REM sleep stages).</p>
+                    
+                    <p class="mb-5">**Fitness and Activity Tracking** motivates users to maintain active lifestyles. Wearables automatically count daily steps, measure active calories burned, track running cadences and GPS mapping during outdoor workouts, and provide inactivity alerts ("Move reminders") when a user sits stationary for too long.</p>
+                    
+                    <p class="mb-5">**Smartphone Notifications and Communication** keep users connected without constantly pulling phones from pockets or bags. Wearables receive discreet haptic vibrations on the wrist for incoming text messages, phone calls, calendar reminders, and emergency alerts, allowing users to read messages or dictate quick voice replies directly into the watch.</p>
+                    
+                    <p class="mb-5">Advanced safety features in wearables include **Fall Detection and Emergency SOS**. If a wearer suffers a hard fall (common among elderly users) or is involved in an accident and remains motionless, the wearable automatically detects the impact, sounds an alarm, and calls emergency services with precise GPS coordinates if the user does not dismiss the alert.</p>
+                    
+                    <p class="mb-5">Mobile payment integration (such as Apple Pay or Garmin Pay) enables wearers to make secure purchases at retail checkouts by simply tapping their wrist against contactless payment terminals.</p>
+                    
+                    <p>As wearable sensors become increasingly sophisticated and battery efficiencies improve, these devices are transitioning from simple step counters into indispensable personal health guardians.</p>
+                `
+            },
+            'wearables-usecase': {
+                title: 'Wearables: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-pink-800 mb-2 border-b-2 border-pink-200 pb-1">Case 1: Daily Health & Sleep Tracking</h4>
+                        <p class="mb-2">Monitoring personal wellness and recovery metrics around the clock.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Sleep Monitoring):</strong> A user wakes up and checks their smartwatch app to review a detailed breakdown of their overnight sleep quality, resting heart rate, and REM cycles.</li>
+                            <li><strong>Example 2 (Notifications):</strong> While walking in a busy airport, a traveler feels a gentle haptic buzz on their wrist notifying them of a gate change update on their boarding pass app.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-pink-800 mb-2 border-b-2 border-pink-200 pb-1">Case 2: Fall Detection & Emergency SOS</h4>
+                        <p class="mb-2">Providing automated emergency safety for vulnerable individuals.</p>
+                        <ul class="list-disc pl-5 mb-4 text-gray-700">
+                            <li class="mb-2"><strong>Example 1 (Fall Detection):</strong> An elderly homeowner wearing a smartband slips in the kitchen; the device detects the hard fall, waits 30 seconds for a user response, and automatically calls emergency services when no response is given.</li>
+                            <li><strong>Example 2 (Fitness):</strong> A runner tracks their outdoor 5k route directly on their GPS smartwatch without carrying a bulky smartphone in their pocket.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Smartwatch & Wearable Biometrics</p>
+                            <img src="https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=600&h=350" alt="Smartwatch wearable device" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Fitness & Health Tracking</p>
+                            <img src="https://images.unsplash.com/photo-1510017803434-a899398421b3?auto=format&fit=crop&w=600&h=350" alt="Wearable fitness tracking in use" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        // Fix missing streaming usecase html
+        briefingData['streaming-usecase'] = {
+            title: 'Streaming Media: Use Cases',
+            icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+            html: `
+                <div class="mb-8">
+                    <h4 class="text-xl font-bold text-amber-800 mb-2 border-b-2 border-amber-200 pb-1">Case 1: Voice-Controlled Home Theater</h4>
+                    <p class="mb-2">Using voice search and recommendations for seamless entertainment.</p>
+                    <ul class="list-disc pl-5 mb-4 text-gray-700">
+                        <li class="mb-2"><strong>Example 1 (Voice Control):</strong> A user presses the microphone button on their smart TV remote and says, "Play action movies," instantly filtering content across Netflix and Prime Video.</li>
+                        <li><strong>Example 2 (Integration):</strong> When streaming begins, the smart home hub automatically dims living room smart lights to 20% brightness for a cinema experience.</li>
+                    </ul>
+                </div>
+                <div class="mb-8">
+                    <h4 class="text-xl font-bold text-amber-800 mb-2 border-b-2 border-amber-200 pb-1">Case 2: Wireless Screen Casting</h4>
+                    <p class="mb-2">Mirroring mobile content directly onto large screen displays.</p>
+                    <ul class="list-disc pl-5 mb-4 text-gray-700">
+                        <li class="mb-2"><strong>Example 1 (Casting):</strong> A family gathers around the smart TV, and one member casts vacation photos wirelessly from their smartphone directly to the 4K display.</li>
+                    </ul>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                    <div>
+                        <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Smart TV Streaming Interface</p>
+                        <img src="https://images.unsplash.com/photo-1593784991095-a205069470b6?auto=format&fit=crop&w=600&h=350" alt="Smart TV streaming" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                    </div>
+                    <div>
+                        <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Home Entertainment</p>
+                        <img src="https://images.unsplash.com/photo-1522869635100-9f4c5e86aa37?auto=format&fit=crop&w=600&h=350" alt="Home entertainment streaming in use" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
+                    </div>
+                </div>
+            `
+        };
+
+        // Modal Control Functions
+        function openBriefing(key) {
+            const modal = document.getElementById('briefing-modal');
+            const data = briefingData[key];
+            if(data) {
+                document.getElementById('briefing-modal-icon').innerHTML = data.icon;
+                document.getElementById('briefing-modal-title').innerText = data.title;
+                document.getElementById('briefing-modal-content').innerHTML = data.html;
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; 
+            }
+        }
+
+        function closeBriefing() {
+            document.getElementById('briefing-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto'; 
+        }
+
+        document.getElementById('briefing-modal').addEventListener('click', function(e) {
+            if(e.target === this) closeBriefing();
+        });
+        
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId + '-section').classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-green-900'));
+            const activeBtn = document.getElementById('nav-' + tabId);
+            if(activeBtn && tabId !== 'cert') activeBtn.classList.add('bg-green-900');
+            
+            document.querySelectorAll('.nav-btn-mobile').forEach(btn => btn.classList.remove('bg-green-900'));
+            const activeMobileBtn = document.getElementById('nav-' + tabId + '-mobile');
+            if(activeMobileBtn && tabId !== 'cert') activeMobileBtn.classList.add('bg-green-900');
+
+            window.scrollTo(0,0);
+        }
+
+        function showModal(title, message, type = 'info') {
+            const modal = document.getElementById('custom-modal');
+            const icon = document.getElementById('modal-icon');
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-msg').innerText = message;
+            
+            if(type === 'success') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-check text-green-500"></i>';
+            } else if (type === 'error') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500"></i>';
+            } else if (type === 'warning') {
+                icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-yellow-500"></i>';
+            } else {
+                icon.innerHTML = '<i class="fa-solid fa-circle-info text-blue-500"></i>';
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        // --- LAB 1: Communication Drag and Drop ---
+        let draggedItem = null;
+        let lab1SolvedCount = 0;
+
+        document.querySelectorAll('#lab1-items .io-item').forEach(item => {
+            item.addEventListener('dragstart', function() {
+                draggedItem = this;
+                setTimeout(() => this.classList.add('opacity-50'), 0);
+            });
+            item.addEventListener('dragend', function() {
+                setTimeout(() => this.classList.remove('opacity-50'), 0);
+                draggedItem = null;
+            });
+        });
+
+        document.querySelectorAll('#activity-section .cat-dropzone').forEach(zone => {
+            zone.addEventListener('dragover', e => e.preventDefault());
+            zone.addEventListener('drop', function() {
+                if(draggedItem) {
+                    if(draggedItem.dataset.type === this.dataset.target) {
+                        this.appendChild(draggedItem);
+                        draggedItem.classList.remove('bg-blue-100', 'cursor-grab');
+                        draggedItem.classList.add('bg-green-100', 'text-green-800', 'cursor-default', 'mt-2', 'w-[90%]', 'text-xs');
+                        draggedItem.setAttribute('draggable', 'false');
+                        lab1SolvedCount++;
+                        document.getElementById('lab1-feedback').innerText = `Matched successfully! (${lab1SolvedCount}/5)`;
+                        if(lab1SolvedCount === 5) {
+                            showModal('Lab 1 Complete!', 'You successfully matched all IoT communication protocols.', 'success');
+                        }
+                    } else {
+                        document.getElementById('lab1-feedback').innerText = 'Incorrect match. Try again!';
+                    }
+                }
+            });
+        });
+
+        // --- LAB 2: Appliance Automation ---
+        function checkLab2() {
+            const c1 = document.getElementById('app-c1').checked;
+            const c2 = document.getElementById('app-c2').checked;
+            const c3 = document.getElementById('app-c3').checked;
+            const c4 = document.getElementById('app-c4').checked;
+            if(c1 && c2 && c3) {
+                document.getElementById('lab2-feedback').innerText = "Appliance automation successfully deployed!";
+                showModal('Lab 2 Complete!', 'Smart refrigerator and washer configurations successfully saved.', 'success');
+            } else {
+                document.getElementById('lab2-feedback').innerText = "Please select at least Eco-mode, Maintenance alerts, and Grid sync.";
+            }
+        }
+
+        // --- LAB 3: Home Automation Hub ---
+        function checkLab3() {
+            const temp = document.getElementById('lab3-temp').value;
+            const lock = document.getElementById('lab3-lock').value;
+            const cam = document.getElementById('lab3-cam').value;
+            if(temp === 'eco' && lock === 'locked' && cam === 'armed') {
+                document.getElementById('lab3-feedback').innerText = "Away Mode activated successfully!";
+                showModal('Lab 3 Complete!', 'Thermostat, locks, and security cameras configured for optimal away safety.', 'success');
+            } else {
+                document.getElementById('lab3-feedback').innerText = "For Away Mode: Set Eco-Temp, Locked Deadbolt, and Armed Camera.";
+            }
+        }
+
+        // --- LAB 4: Vehicle Telematics ---
+        function checkLab4(isCorrect) {
+            if(isCorrect) {
+                document.getElementById('lab4-feedback').innerText = "Telemetry issue resolved! Vehicle routed to supercharger.";
+                showModal('Lab 4 Complete!', 'You successfully identified and handled the critical EV thermal warning.', 'success');
+            } else {
+                document.getElementById('lab4-feedback').innerText = "That subsystem is operating normally (Optimal/Connected).";
+            }
+        }
+
+        // --- LAB 5: IP Cameras ---
+        function toggleCamCell(cell) {
+            cell.classList.toggle('bg-gray-200');
+            cell.classList.toggle('bg-indigo-100');
+            cell.classList.toggle('border-indigo-600');
+            cell.classList.toggle('text-indigo-900');
+        }
+        function checkLab5() {
+            document.getElementById('lab5-feedback').innerText = "IP Camera motion detection zones successfully calibrated!";
+            showModal('Lab 5 Complete!', 'Surveillance camera perimeter zones armed and active.', 'success');
+        }
+
+        // --- LAB 6: Streaming Media ---
+        function checkLab6() {
+            const s1 = document.getElementById('stream-cb1').checked;
+            const s2 = document.getElementById('stream-cb2').checked;
+            const s3 = document.getElementById('stream-cb3').checked;
+            if(s1 && s2 && s3) {
+                document.getElementById('lab6-feedback').innerText = "Cinema Mode launched successfully!";
+                showModal('Lab 6 Complete!', 'Voice control, smart lighting integration, and recommendations configured.', 'success');
+            } else {
+                document.getElementById('lab6-feedback').innerText = "Please enable all three cinema integration options.";
+            }
+        }
+
+        // --- LAB 7: Medical & Exercise ---
+        function checkLab7() {
+            const med = document.getElementById('med-alert').checked;
+            if(med) {
+                document.getElementById('lab7-feedback').innerText = "Health and fitness telemetry synced to cloud!";
+                showModal('Lab 7 Complete!', 'Smart exercise bike and remote medical monitor connected.', 'success');
+            } else {
+                document.getElementById('lab7-feedback').innerText = "Please enable secure physician telemetry forwarding.";
+            }
+        }
+
+        // --- LAB 8: Wearables ---
+        function checkLab8() {
+            const w1 = document.getElementById('wear-cb1').checked;
+            const w2 = document.getElementById('wear-cb2').checked;
+            const w3 = document.getElementById('wear-cb3').checked;
+            if(w1 && w2 && w3) {
+                document.getElementById('lab8-feedback').innerText = "Wearable profile applied successfully!";
+                showModal('Lab 8 Complete!', 'Heart rate, VIP notifications, and sleep tracking configured.', 'success');
+            } else {
+                document.getElementById('lab8-feedback').innerText = "Please select all three wearable tracking options.";
+            }
+        }
+
+
+        // --- QUIZ LOGIC (20 Questions: 10 Core + 10 Extension) ---
+        const quizData = [
+            // Core 10 Questions from Quiz Answers & Guide
+            { q: "A standalone Bluetooth speaker is considered an IoT device.", options: ["True", "False"], answer: 0 },
+            { q: "LoRaWAN is used to communicate over long distances in rural areas.", options: ["True", "False"], answer: 0 },
+            { q: "NFC is used for mobile payments and smart access controls.", options: ["True", "False"], answer: 0 },
+            { q: "All IoT devices need an internet connection to work.", options: ["True", "False"], answer: 1 },
+            { q: "Bluetooth has a higher data rate than Wi-Fi.", options: ["True", "False"], answer: 1 },
+            { q: "Smart home appliances can send notifications to your phone.", options: ["True", "False"], answer: 0 },
+            { q: "IP and security cameras need internet to stream live video remotely.", options: ["True", "False"], answer: 0 },
+            { q: "IoT-enabled exercise equipment can provide personalized workouts.", options: ["True", "False"], answer: 0 },
+            { q: "Smart thermostats can be controlled via smartphone apps.", options: ["True", "False"], answer: 0 },
+            { q: "An IoT device senses, connects, processes data, and communicates to improve decision-making or automate tasks.", options: ["True", "False"], answer: 0 },
+            
+            // 10 Extension Questions from Briefing Details
+            { q: "Which short-range protocol is best suited for wearable health trackers and wireless earbuds due to its low power consumption?", options: ["Wi-Fi", "Bluetooth Low Energy (BLE)", "LoRaWAN", "Ethernet"], answer: 1 },
+            { q: "What ultra-short-range wireless technology requires physical proximity (centimeters) and is used for mobile payments?", options: ["NFC", "Cellular 5G", "Powerline Communication", "Bluetooth standard"], answer: 0 },
+            { q: "What technology allows connected vehicles to monitor tire pressure, battery status, and location remotely?", options: ["Telematics", "Sandboxing", "Spooling", "Partitioning"], answer: 0 },
+            { q: "How do smart washing machines and dishwashers save households money on electricity bills?", options: ["By running only during peak electricity rate hours", "By automatically starting during off-peak rate hours late at night", "By heating water using solar power exclusively", "By operating without electricity"], answer: 1 },
+            { q: "What embedded AI feature in modern IP security cameras helps eliminate false alarms caused by swaying trees or stray animals?", options: ["Motion Detection and Computer Vision AI", "Infrared Night Vision", "Two-Way Audio speakers", "Coaxial cable filtering"], answer: 0 },
+            { q: "Which smart home device uses machine learning algorithms and geofencing to automatically adjust heating and cooling based on resident presence?", options: ["Smart Thermostat", "Video Doorbell", "Smart Refrigerator", "Streaming Media Box"], answer: 0 },
+            { q: "What is the primary advantage of LoRaWAN over cellular networks for smart agriculture sensors?", options: ["It provides ultra-high video streaming bandwidth", "It transmits small data packets over long distances with minimal battery drain and no cellular fees", "It requires wired Ethernet cables across farmlands", "It operates at light speed"], answer: 1 },
+            { q: "What feature do smart deadbolts and door locks maintain to record exactly who entered the home and when?", options: ["Detailed audit access logs", "Live 4K video feeds", "Biometric fingerprint scans", "Voice command prompts"], answer: 0 },
+            { q: "What biometric sensor technology do smartwatches commonly use to continuously track heart rate and blood oxygen?", options: ["Photoplethysmography (PPG) optical sensors", "Coaxial video sensors", "Radar speed guns", "Powerline frequency counters"], answer: 0 },
+            { q: "Which of the following best describes how IoT medical devices assist healthcare providers?", options: ["By replacing doctors entirely with automated robots", "By providing continuous remote patient monitoring and longitudinal data for superior diagnosis", "By prescribing medication automatically without approval", "By eliminating hospital visits"], answer: 1 }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        quizData.forEach((item, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = "bg-gray-50 p-6 rounded-lg border border-gray-200 transition-all";
+            
+            const qTitle = document.createElement('h3');
+            qTitle.className = "font-bold text-lg text-gray-800 mb-4";
+            qTitle.innerText = `${index + 1}. ${item.q}`;
+            qDiv.appendChild(qTitle);
+            
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = "space-y-3";
+            
+            item.options.forEach((opt, optIndex) => {
+                const label = document.createElement('label');
+                label.className = "flex items-center space-x-3 p-3 rounded bg-white border border-gray-300 hover:bg-green-50 cursor-pointer transition";
+                
+                const radio = document.createElement('input');
+                radio.type = "radio";
+                radio.name = `q${index}`;
+                radio.value = optIndex;
+                radio.className = "form-radio h-5 w-5 text-green-600";
+                
+                const span = document.createElement('span');
+                span.className = "text-gray-700";
+                span.innerText = opt;
+                
+                label.appendChild(radio);
+                label.appendChild(span);
+                optionsDiv.appendChild(label);
+            });
+            
+            qDiv.appendChild(optionsDiv);
+            quizContainer.appendChild(qDiv);
+        });
+
+        function gradeQuiz() {
+            let score = 0;
+            let allAnswered = true;
+
+            for(let i = 0; i < quizData.length; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if(selected) {
+                    if(parseInt(selected.value) === quizData[i].answer) score++;
+                } else {
+                    allAnswered = false;
+                }
+            }
+            
+            if(!allAnswered) {
+                showModal('Incomplete Quiz', 'Please answer all 20 questions before submitting.', 'warning');
+                return;
+            }
+            
+            const percentage = (score / quizData.length) * 100;
+            if(score >= 18) { 
+                const navGame = document.getElementById('nav-game');
+                const navGameMobile = document.getElementById('nav-game-mobile');
+                
+                navGame.classList.remove('text-gray-400', 'cursor-not-allowed');
+                navGame.classList.add('text-white', 'hover:bg-green-600');
+                navGame.disabled = false;
+                navGame.innerHTML = '<i class="fa-solid fa-gamepad mr-1"></i>Game';
+                
+                navGameMobile.classList.remove('text-gray-400', 'cursor-not-allowed');
+                navGameMobile.classList.add('text-white', 'hover:bg-green-600');
+                navGameMobile.disabled = false;
+                navGameMobile.innerHTML = '<i class="fa-solid fa-gamepad"></i> Game';
+
+                document.getElementById('nav-cert').classList.remove('hidden');
+                document.getElementById('nav-cert-mobile').classList.remove('hidden');
+                document.getElementById('proceed-game-btn').classList.remove('hidden');
+                document.getElementById('submit-quiz-btn').classList.add('hidden');
+
+                showModal('Outstanding!', `You scored ${score}/20 (${percentage}%). You have unlocked your Certificate of Mastery AND the "Smart Hub Sequence" game!`, 'success');
+            } else {
+                quizData.forEach((_, i) => {
+                    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                    if(selected) selected.checked = false;
+                });
+                showModal('Keep Trying!', `You scored ${score}/20 (${percentage}%). You need 90% (18/20) to earn the certificate. Your answers have been reset to try again.`, 'error');
+                document.getElementById('quiz-section').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // --- RETRO GAME LOGIC: Smart Hub Sequence (Simon Clone) ---
+        let simonSequence = [];
+        let playerSequence = [];
+        let simonLevel = 1;
+        let simonScore = 0;
+        let simonPlaying = false;
+        let simonTurn = false;
+
+        const padSounds = {
+            climate: "🌡️ Climate Node Activated",
+            security: "🔒 Security Node Activated",
+            lighting: "💡 Lighting Node Activated",
+            appliances: "🧊 Appliance Node Activated"
+        };
+
+        function startSimonGame() {
+            simonSequence = [];
+            simonLevel = 1;
+            simonScore = 0;
+            document.getElementById('simon-level').innerText = simonLevel;
+            document.getElementById('simon-score').innerText = simonScore;
+            document.getElementById('simon-start-btn').innerText = "Restart Hub";
+            nextSimonRound();
+        }
+
+        function nextSimonRound() {
+            playerSequence = [];
+            simonTurn = false;
+            document.getElementById('simon-message').innerText = `Level ${simonLevel}: Watch sequence...`;
+            
+            // Add random pad (0-3)
+            simonSequence.push(Math.floor(Math.random() * 4));
+            
+            // Play sequence
+            let i = 0;
+            let interval = setInterval(() => {
+                flashPad(simonSequence[i]);
+                i++;
+                if(i >= simonSequence.length) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        simonTurn = true;
+                        document.getElementById('simon-message').innerText = "Your Turn! Repeat the sequence.";
+                    }, 500);
+                }
+            }, 800);
+        }
+
+        function flashPad(index) {
+            const pad = document.getElementById(`pad-${index}`);
+            pad.classList.add('simon-active');
+            setTimeout(() => {
+                pad.classList.remove('simon-active');
+            }, 400);
+        }
+
+        function simonClick(index) {
+            if(!simonTurn) return;
+            flashPad(index);
+            playerSequence.push(index);
+            
+            // Check correctness so far
+            const currentIndex = playerSequence.length - 1;
+            if(playerSequence[currentIndex] !== simonSequence[currentIndex]) {
+                document.getElementById('simon-message').innerText = "Hub Sequence Error! System Crash.";
+                showModal('Game Over', `Smart Hub Sequence failed at level ${simonLevel}. Score: ${simonScore}MB. Try again!`, 'error');
+                simonTurn = false;
+                document.getElementById('simon-start-btn').innerText = "Restart Hub";
+                return;
+            }
+            
+            // Check if round complete
+            if(playerSequence.length === simonSequence.length) {
+                simonTurn = false;
+                simonScore += simonLevel * 50;
+                simonLevel++;
+                document.getElementById('simon-score').innerText = simonScore;
+                document.getElementById('simon-level').innerText = simonLevel;
+                document.getElementById('simon-message').innerText = "Sequence Correct! Advancing level...";
+                setTimeout(nextSimonRound, 1200);
+            }
+        }
+
+        // --- CERTIFICATE LOGIC ---
+        function updateCertName() {
+            let name = document.getElementById('student-name-input').value.trim();
+            if(name) {
+                if (name.includes(' ')) {
+                    name = name.split(' ')[0];
+                    document.getElementById('student-name-input').value = name;
+                }
+                document.getElementById('cert-student-name').innerText = name;
+            } else {
+                showModal('Wait!', 'Please enter your first name to update the certificate.', 'warning');
+            }
+        }
+
+        const today = new Date();
+        document.getElementById('cert-date').innerText = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        function downloadCert() {
+            const certEl = document.getElementById('certificate');
+            const name = document.getElementById('cert-student-name').innerText;
+            let filename = 'IoT_Certificate.png';
+            if (name && name !== 'Student') {
+                filename = `${name.replace(/\s+/g, '_')}_IoT_Certificate.png`;
+            }
+
+            const originalTransform = certEl.style.transform;
+            certEl.style.transform = 'none';
+
+            const btn = document.getElementById('download-btn');
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Generating...';
+            btn.disabled = true;
+
+            html2canvas(certEl, { 
+                scale: 2, 
+                useCORS: true,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            }).catch(err => {
+                console.error(err);
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                showModal('Error', 'Failed to generate image. Try using a desktop browser.', 'error');
+            });
+        }
+    </script>
+</body>
+</html>

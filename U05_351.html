@@ -1,0 +1,1460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 05 Section 3.5.1 Mastery - Common Uses of AI</title>
+    
+    <!-- Load Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load HTML2Canvas for Certificate Download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- Load Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Qwitcher+Grypen:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; 
+            color: #1e293b;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        /* Interactive Elements CSS */
+        .lab-box { transition: all 0.2s ease-in-out; }
+        .lab-box:hover { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); transform: translateY(-2px); }
+        
+        .token-btn.active { background-color: #3b82f6; color: white; border-color: #2563eb; }
+        
+        .routine-btn { transition: background-color 0.2s; }
+        .routine-btn.selected { background-color: #10b981; color: white; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #e2e8f0; }
+        ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #2563eb; }
+
+        /* Retro Game Canvas */
+        #game-canvas {
+            background-color: #0f172a;
+            border: 4px solid #334155;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
+            max-width: 100%;
+            height: auto;
+            touch-action: none; /* Prevent scrolling while playing */
+            cursor: ew-resize;
+        }
+
+        /* --- CERTIFICATE STYLES --- */
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .font-body { font-family: 'Lora', serif; }
+        .font-script { font-family: 'Qwitcher Grypen', cursive; }
+        
+        .cert-preview-container {
+            width: 100%;
+            overflow: auto;
+            display: flex;
+            justify-content: center;
+            background: #e2e8f0;
+            padding: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        #certificate {
+            width: 1056px !important;
+            height: 816px !important;
+            flex-shrink: 0;
+            background-color: #ffffff;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1056" height="816"><polygon points="0,0 250,0 0,650" fill="%2360a5fa"/><polygon points="0,0 350,0 0,900" fill="%233b82f6" opacity="0.8"/><polygon points="0,0 120,0 0,300" fill="%2393c5fd"/><polygon points="0,450 650,816 0,816" fill="%2360a5fa"/><polygon points="0,550 450,816 0,816" fill="%233b82f6" opacity="0.8"/><polygon points="800,0 1056,0 1056,256" fill="%23f1f5f9"/><polygon points="1056,500 1056,816 750,816" fill="%23f1f5f9"/></svg>');
+            background-size: cover;
+            border: 4px solid #cbd5e1;
+        }
+
+        .gold-seal {
+            position: absolute;
+            left: 110px;
+            top: 350px;
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c, #fcf6ba);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3), inset 0 0 15px rgba(255,255,255,0.7), inset 0 0 25px rgba(139,105,20,0.9);
+            z-index: 10;
+        }
+        .gold-seal::before {
+            content: '';
+            position: absolute;
+            top: -4px; bottom: -4px; left: -4px; right: -4px;
+            border-radius: 50%;
+            border: 6px dashed #d4af37;
+        }
+        .gold-seal-inner-1 {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 2px solid rgba(139, 105, 20, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #e8c678, #dbab46);
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.2), 0 2px 5px rgba(255,255,255,0.7);
+            z-index: 1;
+        }
+        .gold-seal-inner-2 {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: radial-gradient(circle, #fcf6ba, #d4af37);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            padding: 10px;
+        }
+        .embossed-text {
+            color: #b38728;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2);
+            font-family: 'Playfair Display', serif;
+            font-weight: 800;
+            line-height: 1.1;
+            text-transform: uppercase;
+        }
+        .embossed-text-large { font-size: 14px; letter-spacing: 1px; }
+        .embossed-text-small { font-size: 11px; letter-spacing: 2px; margin: 2px 0; }
+        .embossed-star { font-size: 12px; color: #b38728; text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2); margin: 2px 0; }
+
+        @media (max-width: 1100px) {
+            #certificate { transform: scale(0.7); transform-origin: top left; margin-bottom: -240px; margin-right: -310px; }
+        }
+        @media (max-width: 768px) {
+            #certificate { transform: scale(0.4); transform-origin: top left; margin-bottom: -490px; margin-right: -630px; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen flex flex-col">
+
+    <nav class="bg-blue-800 text-white shadow-lg sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-brain text-2xl text-blue-300"></i>
+                    <span class="font-bold text-xl tracking-wider hidden sm:inline-block">Tech+ Unit 05 Section 3.5.1</span>
+                    <span class="font-bold text-xl tracking-wider sm:hidden">3.5.1</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-2">
+                        <button onclick="switchTab('briefing')" class="nav-btn bg-blue-900 px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition" id="nav-briefing"><i class="fa-solid fa-book-open mr-1"></i>Briefing</button>
+                        <button onclick="switchTab('activity')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition" id="nav-activity"><i class="fa-solid fa-flask mr-1"></i>Lab Activity</button>
+                        <button onclick="switchTab('quiz')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition" id="nav-quiz"><i class="fa-solid fa-clipboard-check mr-1"></i>Quiz</button>
+                        <button onclick="switchTab('game')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-slate-400 cursor-not-allowed transition" id="nav-game" disabled><i class="fa-solid fa-lock mr-1"></i>Game</button>
+                        <button onclick="switchTab('cert')" class="nav-btn hidden px-3 py-2 rounded-md text-sm font-medium text-yellow-300 hover:bg-blue-700 transition" id="nav-cert"><i class="fa-solid fa-award mr-1"></i>Certificate</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Nav -->
+        <div class="md:hidden flex flex-wrap justify-center gap-2 py-2 px-2 bg-blue-900">
+            <button onclick="switchTab('briefing')" class="nav-btn-mobile px-3 py-1 text-sm rounded bg-blue-950" id="nav-briefing-mobile">Briefing</button>
+            <button onclick="switchTab('activity')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-activity-mobile">Lab</button>
+            <button onclick="switchTab('quiz')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-quiz-mobile">Quiz</button>
+            <button onclick="switchTab('game')" class="nav-btn-mobile px-3 py-1 text-sm rounded text-slate-400 cursor-not-allowed" id="nav-game-mobile" disabled><i class="fa-solid fa-lock"></i></button>
+            <button onclick="switchTab('cert')" id="nav-cert-mobile" class="hidden px-2 py-1 text-sm text-yellow-300 rounded"><i class="fa-solid fa-award"></i></button>
+        </div>
+    </nav>
+
+    <main class="flex-grow w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <!-- BRIEFING SECTION -->
+        <div id="briefing-section" class="tab-content active no-print">
+            <div class="text-center mb-10">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4">Common Uses of Artificial Intelligence</h1>
+                <p class="text-lg text-slate-600 max-w-3xl mx-auto">AI is no longer science fiction. It is deeply embedded in the tools we use every day. Explore how AI chatbots, smart assistants, and predictive algorithms process data to make decisions, and learn why understanding their limitations is critical for digital literacy.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- Tile 1 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-blue-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-blue-800"><i class="fa-solid fa-comments mr-2"></i>AI Chatbots & NLP</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>Natural Language Processing:</strong> Allows machines to parse and understand human text inputs.</li>
+                            <li><strong>Rule-Based Bots:</strong> Follow strict pre-programmed decision trees (e.g., "Press 1 for Sales").</li>
+                            <li><strong>AI-Powered Bots:</strong> Utilize machine learning to infer user intent even with typos or slang.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('chat-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('chat-usecase')" class="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 2 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-emerald-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-emerald-800"><i class="fa-solid fa-microphone-lines mr-2"></i>AI Smart Assistants</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>Voice Recognition:</strong> Converts spoken audio waves into text data using Wake Words.</li>
+                            <li><strong>Task Automation:</strong> Interacts with APIs to manage calendars, emails, and reminders.</li>
+                            <li><strong>Smart Home Hubs:</strong> Centralizes control of IoT devices like thermostats and lighting.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('assist-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('assist-usecase')" class="flex-1 bg-emerald-100 hover:bg-emerald-200 text-emerald-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 3 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-purple-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-purple-800"><i class="fa-solid fa-wand-magic-sparkles mr-2"></i>Prediction & Suggestion</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>Suggestion AI:</strong> Recommends media or products based on user habits and collaborative filtering.</li>
+                            <li><strong>Prediction AI:</strong> Forecasts future outcomes like weather, traffic, or stock trends from past data.</li>
+                            <li><strong>The Filter Bubble:</strong> The risk of algorithmic echo chambers restricting diverse information.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('predict-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('predict-usecase')" class="flex-1 bg-purple-100 hover:bg-purple-200 text-purple-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 4 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-red-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-red-800"><i class="fa-solid fa-server mr-2"></i>Machine Learning & Bias</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>Training Data:</strong> The foundational datasets humans feed to an AI to teach it how to make decisions.</li>
+                            <li><strong>Algorithmic Bias:</strong> Flawed outputs caused by prejudiced, unrepresentative, or incomplete training data.</li>
+                            <li><strong>Hallucinations:</strong> When an AI model confidently generates completely false or fabricated information.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('ml-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('ml-usecase')" class="flex-1 bg-red-100 hover:bg-red-200 text-red-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 flex justify-center">
+                <button onclick="switchTab('activity')" class="bg-blue-700 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-blue-600 shadow-lg transition transform hover:scale-105">Proceed to Lab Activities <i class="fa-solid fa-arrow-right ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- LAB ACTIVITY SECTION -->
+        <div id="activity-section" class="tab-content no-print">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-extrabold text-slate-900 mb-2">Interactive AI Labs</h1>
+                <p class="text-slate-600">Complete all 8 micro-labs below to test your understanding of how different AI systems function.</p>
+                <div id="global-lab-status" class="mt-4 font-bold text-blue-700 bg-blue-100 py-2 rounded-lg max-w-sm mx-auto">Labs Completed: 0 / 8</div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                
+                <!-- Lab 1 -->
+                <div class="lab-box bg-white p-5 rounded-xl shadow border border-slate-200" id="lab1-container">
+                    <h2 class="font-bold text-blue-700 mb-2"><i class="fa-solid fa-tags mr-2"></i>Lab 1: NLP Entity Extraction</h2>
+                    <p class="text-sm text-slate-600 mb-3">Natural Language Processing (NLP) breaks text into keywords called "Entities". Click exactly 3 words below that an AI would extract to process a refund request.</p>
+                    <div id="lab1-words" class="flex flex-wrap gap-2 justify-center mb-4 text-lg">
+                        <span class="token-btn px-3 py-1 bg-slate-100 border border-slate-300 rounded cursor-pointer font-medium" onclick="toggleToken(this)">I</span>
+                        <span class="token-btn px-3 py-1 bg-slate-100 border border-slate-300 rounded cursor-pointer font-medium" onclick="toggleToken(this)">need</span>
+                        <span class="token-btn px-3 py-1 bg-slate-100 border border-slate-300 rounded cursor-pointer font-medium" onclick="toggleToken(this)">to</span>
+                        <span class="token-btn px-3 py-1 bg-slate-100 border border-slate-300 rounded cursor-pointer font-medium" data-correct="true" onclick="toggleToken(this)">cancel</span>
+                        <span class="token-btn px-3 py-1 bg-slate-100 border border-slate-300 rounded cursor-pointer font-medium" onclick="toggleToken(this)">my</span>
+                        <span class="token-btn px-3 py-1 bg-slate-100 border border-slate-300 rounded cursor-pointer font-medium" data-correct="true" onclick="toggleToken(this)">order</span>
+                        <span class="token-btn px-3 py-1 bg-slate-100 border border-slate-300 rounded cursor-pointer font-medium" data-correct="true" onclick="toggleToken(this)">#9981</span>
+                    </div>
+                    <button onclick="checkLab1()" class="w-full bg-blue-600 text-white py-2 rounded font-bold hover:bg-blue-700 text-sm">Analyze NLP Entities</button>
+                    <div id="lab1-feedback" class="text-center font-bold mt-2 h-5 text-sm"></div>
+                </div>
+
+                <!-- Lab 2 -->
+                <div class="lab-box bg-white p-5 rounded-xl shadow border border-slate-200" id="lab2-container">
+                    <h2 class="font-bold text-blue-700 mb-2"><i class="fa-solid fa-code-branch mr-2"></i>Lab 2: Rule-Based vs AI Chatbots</h2>
+                    <p class="text-sm text-slate-600 mb-3">Categorize the functionality of the chatbot systems below using the dropdown menus.</p>
+                    <div class="space-y-3 mb-4">
+                        <div class="flex justify-between items-center text-sm border-b pb-1">
+                            <span class="text-slate-700 w-2/3">"Press 1 for Sales, 2 for Support"</span>
+                            <select id="l2-s1" class="border p-1 rounded bg-slate-50 w-1/3"><option value="">Select...</option><option value="rule">Rule-Based</option><option value="ai">AI-Powered</option></select>
+                        </div>
+                        <div class="flex justify-between items-center text-sm border-b pb-1">
+                            <span class="text-slate-700 w-2/3">Understands customer slang and typos</span>
+                            <select id="l2-s2" class="border p-1 rounded bg-slate-50 w-1/3"><option value="">Select...</option><option value="rule">Rule-Based</option><option value="ai">AI-Powered</option></select>
+                        </div>
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-slate-700 w-2/3">Fails if user types outside a strict script</span>
+                            <select id="l2-s3" class="border p-1 rounded bg-slate-50 w-1/3"><option value="">Select...</option><option value="rule">Rule-Based</option><option value="ai">AI-Powered</option></select>
+                        </div>
+                    </div>
+                    <button onclick="checkLab2()" class="w-full bg-blue-600 text-white py-2 rounded font-bold hover:bg-blue-700 text-sm">Verify Systems</button>
+                    <div id="lab2-feedback" class="text-center font-bold mt-2 h-5 text-sm"></div>
+                </div>
+
+                <!-- Lab 3 -->
+                <div class="lab-box bg-white p-5 rounded-xl shadow border border-slate-200" id="lab3-container">
+                    <h2 class="font-bold text-emerald-700 mb-2"><i class="fa-solid fa-route mr-2"></i>Lab 3: Smart Assistant Routing</h2>
+                    <p class="text-sm text-slate-600 mb-3">Assistants connect to various hardware and APIs. Route the voice commands to their correct destination.</p>
+                    <div class="space-y-3 mb-4">
+                        <div class="flex justify-between items-center text-sm border-b pb-1">
+                            <span class="text-slate-700 font-medium">"Set Temp to 72"</span>
+                            <select id="l3-s1" class="border p-1 rounded bg-slate-50 text-emerald-800 font-bold"><option value="">Select API...</option><option value="iot">Smart Thermostat</option><option value="media">Music Service</option><option value="cloud">Cloud Calendar</option></select>
+                        </div>
+                        <div class="flex justify-between items-center text-sm border-b pb-1">
+                            <span class="text-slate-700 font-medium">"Play some Jazz"</span>
+                            <select id="l3-s2" class="border p-1 rounded bg-slate-50 text-emerald-800 font-bold"><option value="">Select API...</option><option value="iot">Smart Thermostat</option><option value="media">Music Service</option><option value="cloud">Cloud Calendar</option></select>
+                        </div>
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-slate-700 font-medium">"Schedule meeting"</span>
+                            <select id="l3-s3" class="border p-1 rounded bg-slate-50 text-emerald-800 font-bold"><option value="">Select API...</option><option value="iot">Smart Thermostat</option><option value="media">Music Service</option><option value="cloud">Cloud Calendar</option></select>
+                        </div>
+                    </div>
+                    <button onclick="checkLab3()" class="w-full bg-emerald-600 text-white py-2 rounded font-bold hover:bg-emerald-700 text-sm">Execute Routing</button>
+                    <div id="lab3-feedback" class="text-center font-bold mt-2 h-5 text-sm"></div>
+                </div>
+
+                <!-- Lab 4 -->
+                <div class="lab-box bg-white p-5 rounded-xl shadow border border-slate-200" id="lab4-container">
+                    <h2 class="font-bold text-emerald-700 mb-2"><i class="fa-solid fa-list-ol mr-2"></i>Lab 4: Automation Routine</h2>
+                    <p class="text-sm text-slate-600 mb-3">Build a logical sequence for a "Good Morning" routine. Click the 3 steps below in the exact order they should occur.</p>
+                    <div class="flex flex-col gap-2 mb-4" id="routine-container">
+                        <button class="routine-btn bg-slate-100 border border-slate-300 p-2 rounded text-left text-sm font-medium flex justify-between" onclick="addRoutine('coffee', this)"><span>Start Coffee Maker</span> <span class="badge font-bold"></span></button>
+                        <button class="routine-btn bg-slate-100 border border-slate-300 p-2 rounded text-left text-sm font-medium flex justify-between" onclick="addRoutine('alarm', this)"><span>Dismiss Phone Alarm</span> <span class="badge font-bold"></span></button>
+                        <button class="routine-btn bg-slate-100 border border-slate-300 p-2 rounded text-left text-sm font-medium flex justify-between" onclick="addRoutine('news', this)"><span>Read Daily News Audio</span> <span class="badge font-bold"></span></button>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="resetRoutine()" class="w-1/3 bg-slate-500 text-white py-2 rounded font-bold hover:bg-slate-600 text-sm">Reset</button>
+                        <button onclick="checkLab4()" class="w-2/3 bg-emerald-600 text-white py-2 rounded font-bold hover:bg-emerald-700 text-sm">Test Routine</button>
+                    </div>
+                    <div id="lab4-feedback" class="text-center font-bold mt-2 h-5 text-sm"></div>
+                </div>
+
+                <!-- Lab 5 -->
+                <div class="lab-box bg-white p-5 rounded-xl shadow border border-slate-200" id="lab5-container">
+                    <h2 class="font-bold text-purple-700 mb-2"><i class="fa-solid fa-film mr-2"></i>Lab 5: Suggestion Engine</h2>
+                    <p class="text-sm text-slate-600 mb-3">A user recently watched "Star Wars", "Star Trek", and "Dune". Based on collaborative filtering patterns, click the most logical movie suggestion.</p>
+                    <div class="grid grid-cols-3 gap-2 mb-4 text-center">
+                        <div class="cursor-pointer border-2 border-slate-200 rounded p-2 hover:bg-purple-50 transition" onclick="selectMovie(this, false)">
+                            <i class="fa-solid fa-heart text-2xl text-pink-500 mb-1"></i><br><span class="text-xs font-bold">Romantic Comedy</span>
+                        </div>
+                        <div class="cursor-pointer border-2 border-slate-200 rounded p-2 hover:bg-purple-50 transition" onclick="selectMovie(this, true)">
+                            <i class="fa-solid fa-rocket text-2xl text-purple-500 mb-1"></i><br><span class="text-xs font-bold">Interstellar</span>
+                        </div>
+                        <div class="cursor-pointer border-2 border-slate-200 rounded p-2 hover:bg-purple-50 transition" onclick="selectMovie(this, false)">
+                            <i class="fa-solid fa-landmark text-2xl text-yellow-600 mb-1"></i><br><span class="text-xs font-bold">History Doc</span>
+                        </div>
+                    </div>
+                    <button onclick="checkLab5()" class="w-full bg-purple-600 text-white py-2 rounded font-bold hover:bg-purple-700 text-sm">Push Suggestion</button>
+                    <div id="lab5-feedback" class="text-center font-bold mt-2 h-5 text-sm"></div>
+                </div>
+
+                <!-- Lab 6 -->
+                <div class="lab-box bg-white p-5 rounded-xl shadow border border-slate-200" id="lab6-container">
+                    <h2 class="font-bold text-purple-700 mb-2"><i class="fa-solid fa-envelope-open-text mr-2"></i>Lab 6: Prediction Filtering</h2>
+                    <p class="text-sm text-slate-600 mb-3">The Predictive AI has scanned incoming emails and assigned a "Spam Probability Score". Route them correctly.</p>
+                    <div class="space-y-3 mb-4">
+                        <div class="flex flex-col text-sm border border-slate-200 p-2 rounded bg-slate-50">
+                            <span class="font-bold text-slate-700">"Meeting at 2pm" <span class="text-emerald-600 font-normal">(Score: 12%)</span></span>
+                            <div class="flex gap-2 mt-2">
+                                <button class="flex-1 bg-slate-200 py-1 rounded" onclick="toggleMail(this, 'l6-1', 'inbox')">Inbox</button>
+                                <button class="flex-1 bg-slate-200 py-1 rounded" onclick="toggleMail(this, 'l6-1', 'spam')">Spam</button>
+                            </div>
+                        </div>
+                        <div class="flex flex-col text-sm border border-slate-200 p-2 rounded bg-slate-50">
+                            <span class="font-bold text-slate-700">"YOU WON CLICK HERE" <span class="text-red-600 font-normal">(Score: 98%)</span></span>
+                            <div class="flex gap-2 mt-2">
+                                <button class="flex-1 bg-slate-200 py-1 rounded" onclick="toggleMail(this, 'l6-2', 'inbox')">Inbox</button>
+                                <button class="flex-1 bg-slate-200 py-1 rounded" onclick="toggleMail(this, 'l6-2', 'spam')">Spam</button>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="checkLab6()" class="w-full bg-purple-600 text-white py-2 rounded font-bold hover:bg-purple-700 text-sm">Process Inbox</button>
+                    <div id="lab6-feedback" class="text-center font-bold mt-2 h-5 text-sm"></div>
+                </div>
+
+                <!-- Lab 7 -->
+                <div class="lab-box bg-white p-5 rounded-xl shadow border border-slate-200" id="lab7-container">
+                    <h2 class="font-bold text-red-700 mb-2"><i class="fa-solid fa-scale-unbalanced mr-2"></i>Lab 7: Mitigating AI Bias</h2>
+                    <p class="text-sm text-slate-600 mb-3">You are feeding Training Data to an AI to teach it to recognize "Cars". Which dataset will prevent algorithmic bias?</p>
+                    <div class="flex gap-2 mb-4">
+                        <div class="flex-1 border-2 border-slate-200 rounded p-3 cursor-pointer hover:bg-red-50 text-center" onclick="selectDataset(this, false)">
+                            <i class="fa-solid fa-car text-3xl text-red-500 mb-2"></i>
+                            <p class="text-xs font-bold text-slate-700">Dataset A</p>
+                            <p class="text-[10px] text-slate-500 leading-tight mt-1">10,000 photos of exclusively Red Sedans.</p>
+                        </div>
+                        <div class="flex-1 border-2 border-slate-200 rounded p-3 cursor-pointer hover:bg-red-50 text-center" onclick="selectDataset(this, true)">
+                            <i class="fa-solid fa-truck-pickup text-3xl text-blue-500 mb-2"></i>
+                            <p class="text-xs font-bold text-slate-700">Dataset B</p>
+                            <p class="text-[10px] text-slate-500 leading-tight mt-1">10,000 photos of diverse trucks, SUVs, and sedans in all colors.</p>
+                        </div>
+                    </div>
+                    <button onclick="checkLab7()" class="w-full bg-red-600 text-white py-2 rounded font-bold hover:bg-red-700 text-sm">Train AI Model</button>
+                    <div id="lab7-feedback" class="text-center font-bold mt-2 h-5 text-sm"></div>
+                </div>
+
+                <!-- Lab 8 -->
+                <div class="lab-box bg-white p-5 rounded-xl shadow border border-slate-200" id="lab8-container">
+                    <h2 class="font-bold text-red-700 mb-2"><i class="fa-solid fa-robot mr-2"></i>Lab 8: Bot or Not?</h2>
+                    <p class="text-sm text-slate-600 mb-3">Identify what type of AI system (if any) is being utilized in the scenarios below.</p>
+                    <div class="space-y-2 mb-4">
+                        <div class="flex justify-between items-center text-sm border-b pb-1">
+                            <span class="text-slate-700 w-2/3 truncate pr-2">A calculator adding numbers</span>
+                            <select id="l8-s1" class="border p-1 rounded bg-slate-50 w-1/3 text-xs"><option value="">Select...</option><option value="not">Not AI</option><option value="chat">Chatbot</option><option value="assist">Assistant</option><option value="predict">Predictive</option></select>
+                        </div>
+                        <div class="flex justify-between items-center text-sm border-b pb-1">
+                            <span class="text-slate-700 w-2/3 truncate pr-2">Siri setting a kitchen timer</span>
+                            <select id="l8-s2" class="border p-1 rounded bg-slate-50 w-1/3 text-xs"><option value="">Select...</option><option value="not">Not AI</option><option value="chat">Chatbot</option><option value="assist">Assistant</option><option value="predict">Predictive</option></select>
+                        </div>
+                        <div class="flex justify-between items-center text-sm border-b pb-1">
+                            <span class="text-slate-700 w-2/3 truncate pr-2">Website popup: "Need help?"</span>
+                            <select id="l8-s3" class="border p-1 rounded bg-slate-50 w-1/3 text-xs"><option value="">Select...</option><option value="not">Not AI</option><option value="chat">Chatbot</option><option value="assist">Assistant</option><option value="predict">Predictive</option></select>
+                        </div>
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-slate-700 w-2/3 truncate pr-2">Spotify building a playlist</span>
+                            <select id="l8-s4" class="border p-1 rounded bg-slate-50 w-1/3 text-xs"><option value="">Select...</option><option value="not">Not AI</option><option value="chat">Chatbot</option><option value="assist">Assistant</option><option value="predict">Predictive</option></select>
+                        </div>
+                    </div>
+                    <button onclick="checkLab8()" class="w-full bg-red-600 text-white py-2 rounded font-bold hover:bg-red-700 text-sm">Verify Scenarios</button>
+                    <div id="lab8-feedback" class="text-center font-bold mt-2 h-5 text-sm"></div>
+                </div>
+
+            </div>
+
+            <div class="mt-8 text-center" id="proceed-quiz-btn-container">
+                <button onclick="showModal('Labs Incomplete', 'You must complete all 8 labs successfully before proceeding to the quiz.', 'warning')" class="bg-slate-400 text-white px-8 py-3 rounded-full font-bold text-lg shadow-lg cursor-not-allowed" id="locked-quiz-btn"><i class="fa-solid fa-lock mr-2"></i>Take the Mastery Quiz</button>
+            </div>
+        </div>
+
+        <!-- QUIZ SECTION -->
+        <div id="quiz-section" class="tab-content no-print">
+            <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-xl max-w-4xl mx-auto border border-slate-200">
+                <div class="text-center mb-8 border-b border-slate-200 pb-4">
+                    <h1 class="text-3xl font-extrabold text-slate-900 mb-2">Unit 05 Section 3.5.1 Mastery Quiz</h1>
+                    <p class="text-slate-600">Score 90% or higher (18/20) to earn your Certificate of Mastery and unlock the Retro Arcade Game!</p>
+                </div>
+
+                <div id="quiz-container" class="space-y-8">
+                    <!-- Questions injected via JS -->
+                </div>
+
+                <div class="mt-10 text-center border-t border-slate-200 pt-6 flex flex-col md:flex-row justify-center items-center gap-4">
+                    <button id="submit-quiz-btn" onclick="gradeQuiz()" class="bg-blue-700 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-800 shadow-lg transition w-full md:w-auto">Submit Quiz</button>
+                    <button id="proceed-game-btn" onclick="switchTab('game')" class="hidden bg-purple-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-purple-700 shadow-lg transition w-full md:w-auto">Play Retro Game <i class="fa-solid fa-gamepad ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RETRO GAME SECTION -->
+        <div id="game-section" class="tab-content no-print">
+            <div class="bg-slate-900 p-6 sm:p-8 rounded-2xl shadow-xl max-w-4xl mx-auto border-4 border-slate-700 flex flex-col items-center">
+                <div class="text-center mb-4 w-full">
+                    <h1 class="text-3xl font-extrabold text-sky-400 mb-2 tracking-widest uppercase" style="font-family: monospace;">Machine Learning: Data Harvester</h1>
+                    <p class="text-slate-300 text-sm">Train your AI Model! Drag the blue bucket (mouse or touch) to catch the high-quality <strong class="text-emerald-400">Green Data Packets</strong>. Avoid catching the <strong class="text-red-400">Red Biased Data</strong> or your AI will become corrupted!</p>
+                </div>
+                
+                <div class="flex justify-between items-center w-full max-w-[400px] sm:max-w-[600px] mb-2 px-4 text-white font-mono text-xl">
+                    <div>Data Score: <span id="game-score" class="text-emerald-400 font-bold">0</span></div>
+                    <div>Model Health: <span id="game-lives" class="text-red-400 font-bold">3</span></div>
+                </div>
+
+                <div class="relative flex justify-center w-full">
+                    <!-- Game Canvas -->
+                    <canvas id="game-canvas" width="600" height="450" class="w-full max-w-[400px] sm:max-w-[600px] bg-slate-800 border-2 border-slate-600 rounded shadow-lg"></canvas>
+                    
+                    <!-- Overlay Start Button -->
+                    <div id="game-overlay" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-70 rounded-lg max-w-[400px] sm:max-w-[600px] mx-auto z-10">
+                        <button id="start-game-btn" class="bg-blue-600 hover:bg-blue-500 text-white font-bold font-mono py-3 px-6 rounded-lg text-xl border-4 border-blue-800 uppercase transform transition hover:scale-105">Initiate Training (Start)</button>
+                    </div>
+                </div>
+
+                <div class="mt-8 text-center w-full border-t border-slate-700 pt-6">
+                    <button onclick="switchTab('cert')" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">View Certificate <i class="fa-solid fa-award ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CERTIFICATE SECTION -->
+        <div id="cert-section" class="tab-content">
+            <div class="max-w-5xl mx-auto">
+                
+                <!-- Controls -->
+                <div class="bg-white p-6 rounded shadow mb-6 no-print text-center border border-slate-200">
+                    <h2 class="text-2xl font-bold text-blue-700 mb-2">🎉 Congratulations! 🎉</h2>
+                    <p class="text-slate-700 mb-4">You have achieved mastery of the Common Uses of Artificial Intelligence.</p>
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+                        <input type="text" id="student-name-input" value="Student" placeholder="Enter your first name" class="border-2 border-slate-300 rounded px-4 py-2 w-full md:w-64 focus:border-blue-500 focus:outline-none">
+                        <button onclick="updateCertName()" class="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-800 transition">Update Name</button>
+                        <button id="download-btn" onclick="downloadCert()" class="bg-slate-800 text-white px-4 py-2 rounded hover:bg-slate-900 transition flex items-center justify-center">
+                            <i class="fa-solid fa-download mr-2"></i>Download PNG
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Certificate Render Container -->
+                <div class="cert-preview-container print:p-0 print:bg-white">
+                    <div id="certificate">
+                        <div class="gold-seal">
+                            <div class="gold-seal-inner-1">
+                                <div class="gold-seal-inner-2">
+                                     <span class="embossed-text embossed-text-large">Certificate</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-small">Of</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-large">Excellence</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="relative z-20 w-full h-full flex flex-col pt-[48px] pl-[380px] pr-[48px]">
+                            <h1 class="text-[#1e3a8a] text-[4.5rem] leading-none font-serif font-bold tracking-wide uppercase mb-2">CERTIFICATE</h1>
+                            <h2 class="text-slate-800 text-3xl font-serif tracking-widest uppercase mb-10">Of Achievement</h2>
+                            
+                            <p class="text-[1.4rem] font-body text-slate-800 mb-4">This is to certify that</p>
+                            
+                            <div class="relative mb-8 w-full">
+                                <h3 id="cert-student-name" class="text-[4rem] text-[#1e3a8a] font-serif italic leading-none pb-2 relative z-10 text-center w-full block">Student</h3>
+                                <div class="w-full border-b-[2px] border-[#1e3a8a] absolute bottom-[4px] left-0 z-0"></div>
+                                <div class="w-full border-b-[2px] border-dotted border-red-500 absolute bottom-[0px] left-0 z-0"></div>
+                            </div>
+                            
+                            <p class="text-[1.3rem] font-body text-slate-800 leading-relaxed w-full pr-4">
+                                Has successfully completed the assessment for 
+                                <strong class="text-[1.8rem] text-[#1e3a8a] block mt-4 mb-2 font-serif">Cyber.org Tech+ Unit 05 Section 3.5.1</strong>
+                                <strong class="text-[1.5rem] text-black block mb-4 font-serif italic">Common Uses of AI</strong>
+                                <span class="text-[1.1rem] text-slate-700 leading-snug block">Demonstrating proficiency in explaining the foundational role of AI chatbots, smart assistants, predictive machine learning algorithms, training data bias, and the critical importance of digital literacy.</span>
+                            </p>
+                            
+                            <div class="flex justify-end gap-16 items-end mt-auto mb-[60px] w-full pr-8">
+                                <div class="w-64">
+                                    <div class="border-b border-slate-600 mb-2 h-20 flex items-end justify-center relative">
+                                        <span class="font-script text-[5rem] text-[#1e3a8a] absolute bottom-[-10px] transform -rotate-3 opacity-90">Dr. M. S</span>
+                                    </div>
+                                    <p class="font-serif text-xl text-slate-800 text-center">Administration</p>
+                                </div>
+                                
+                                <div class="w-64">
+                                    <div class="border-b border-slate-600 mb-2 text-center h-20 flex items-end justify-center">
+                                        <p id="cert-date" class="font-body text-2xl text-slate-800 pb-1">Date Here</p>
+                                    </div>
+                                    <p class="font-serif text-xl text-slate-800 text-center">Date</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Custom Modal for Alerts -->
+    <div id="custom-modal" class="fixed inset-0 bg-black bg-opacity-50 z-[100] hidden flex justify-center items-center backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all border border-slate-200">
+            <div class="text-center">
+                <div id="modal-icon" class="text-5xl mb-4"></div>
+                <h3 id="modal-title" class="text-2xl font-bold mb-2 text-slate-900"></h3>
+                <p id="modal-msg" class="text-slate-600 mb-6"></p>
+                <button onclick="closeModal()" class="bg-blue-700 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-800 transition w-full">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Briefing Modal -->
+    <div id="briefing-modal" class="fixed inset-0 bg-black bg-opacity-70 z-[120] hidden flex justify-center items-center backdrop-blur-sm p-4 sm:p-6">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col transform transition-all overflow-hidden border-4 border-blue-800">
+            <div class="p-6 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+                <div class="flex items-center gap-4">
+                    <div id="briefing-modal-icon" class="text-4xl"></div>
+                    <h3 id="briefing-modal-title" class="text-2xl md:text-3xl font-bold text-slate-900"></h3>
+                </div>
+                <button onclick="closeBriefing()" class="text-slate-400 hover:text-red-600 transition text-4xl leading-none">&times;</button>
+            </div>
+            <div id="briefing-modal-content" class="p-6 md:p-10 overflow-y-auto flex-grow text-slate-700 text-lg leading-relaxed bg-white">
+                <!-- Dynamic Content Injected Here -->
+            </div>
+            <div class="p-6 border-t border-slate-200 bg-slate-50 flex justify-end">
+                <button onclick="closeBriefing()" class="bg-blue-800 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-900 transition shadow-md">Acknowledge & Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Extensive Briefing Content Data (Min 7 Paragraphs per detail, 2 Use cases, 2 Examples, Images) ---
+        const briefingData = {
+            'chat-details': {
+                title: 'AI Chatbots & NLP',
+                icon: '<i class="fa-solid fa-comments text-blue-600"></i>',
+                html: `
+                    <p class="mb-5">In the modern digital landscape, <strong>AI Chatbots</strong> are often the first line of interaction between a user and a business. When you open a website to track an order or return an item, the helpful dialogue box that pops up is rarely a human. These conversational interfaces are designed to simulate human dialogue, providing instant, 24/7 support without the need for massive human call centers.</p>
+                    
+                    <p class="mb-5">At the heart of a chatbot's ability to understand humans is <strong>Natural Language Processing (NLP)</strong>. Human language is incredibly messy. We use slang, we make typos, and we structure our sentences in unpredictable ways. NLP is the specialized branch of AI that acts as a translator. It breaks down a user's text into digestible "tokens," identifies the primary "intent" (what the user wants to do), and extracts "entities" (the specific details, like an order number or a city name).</p>
+                    
+                    <p class="mb-5">Not all chatbots are created equal. The simplest form is the <strong>Rule-Based Chatbot</strong>. These operate on strict, pre-programmed decision trees. They are essentially massive "if/then" flowcharts. If the user clicks "Billing," the bot displays the billing menu. While highly predictable and safe for businesses, they are rigid. If a user types a question slightly outside the programmed script, a rule-based bot will immediately fail and apologize.</p>
+                    
+                    <p class="mb-5">In contrast, <strong>AI-Powered Chatbots</strong> utilize true machine learning. Instead of relying on hardcoded scripts, they are trained on vast datasets of human conversation. When you type "I'm furious, where are my shoes?!", an AI-powered bot uses its NLP engine to infer the intent (Order Tracking) and the sentiment (Anger) even though the user didn't use the exact programmed keyword "Status." They learn and adapt over time based on successful and failed interactions.</p>
+                    
+                    <p class="mb-5">To balance reliability with intelligence, most modern enterprise systems utilize <strong>Hybrid Chatbots</strong>. A hybrid bot will attempt to use AI to handle the conversation naturally, but it maintains strict guardrails. If the NLP engine calculates that its "confidence score" in understanding the user's intent drops below a certain threshold, the bot is programmed to instantly escalate the ticket and hand the chat history off to a live human agent to prevent user frustration.</p>
+                    
+                    <p class="mb-5">The business benefits of deploying these systems are staggering. A single chatbot can handle tens of thousands of simultaneous conversations globally, translating languages on the fly, and resolving simple Tier 1 support tickets (like password resets) in seconds. This frees up human IT professionals to focus on complex, high-value problem-solving rather than answering the same basic questions repeatedly.</p>
+                    
+                    <p>However, chatbots have severe limitations. They lack genuine empathy and true understanding. They struggle with complex, multi-part questions, heavy sarcasm, or nuanced emotional distress. A user expecting a sympathetic ear during a complex healthcare issue will find an AI chatbot cold and repetitive. Understanding when a task is appropriate for a bot versus a human is a critical IT management skill.</p>
+                `
+            },
+            'chat-usecase': {
+                title: 'AI Chatbots: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 1: E-Commerce Customer Service</h4>
+                        <p class="mb-2">Retail companies deploy chatbots to handle the massive volume of repetitive inquiries they receive daily, ensuring customers get immediate answers.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Rule-Based):</strong> A user clicks the "Help" icon on a clothing website. The bot provides three buttons: "Track Order", "Returns", or "Speak to Agent". The user clicks "Track Order" and types their order number, following a strict script.</li>
+                            <li><strong>Example 2 (AI-Powered):</strong> A user types, "My package never showed up and I need it for a wedding tomorrow!" The AI NLP engine detects the urgency (sentiment) and the missing package intent, automatically escalating the chat to a high-priority human queue.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 2: Internal Corporate IT Support</h4>
+                        <p class="mb-2">Large corporations use internal chatbots (often integrated into Slack or Microsoft Teams) to help employees resolve technical issues without bogging down the IT Helpdesk.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Password Reset):</strong> An employee types, "I'm locked out of my email." The chatbot verifies their identity via a 2FA prompt and automatically executes a script to unlock the active directory account in 30 seconds.</li>
+                            <li><strong>Example 2 (Software Provisioning):</strong> An employee requests access to Adobe Photoshop. The bot checks their departmental budget, routes an automated approval request to their manager, and then deploys the software to the user's laptop automatically.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Chat Interfaces</p>
+                            <img src="https://images.unsplash.com/photo-1596524430615-b46475ddff6e?auto=format&fit=crop&w=600&h=350" alt="Person typing on smartphone" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Customer Support</p>
+                            <img src="https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=600&h=350" alt="Customer service representative with headset" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'assist-details': {
+                title: 'AI Smart Assistants',
+                icon: '<i class="fa-solid fa-microphone-lines text-emerald-600"></i>',
+                html: `
+                    <p class="mb-5">While chatbots primarily live in text boxes on websites to answer questions, <strong>AI Assistants</strong> (like Apple's Siri, Amazon's Alexa, or Google Assistant) are significantly more robust. They are designed to be digital concierges deeply integrated into an operating system or hardware ecosystem. Their primary purpose extends beyond just providing information; they are built to execute complex, multi-step actions on behalf of the user.</p>
+                    
+                    <p class="mb-5">The defining feature of a modern AI assistant is its reliance on <strong>Voice Recognition Technology</strong>. Instead of typing, users interact through spoken word. Devices employ a "Wake Word" engine—a small, low-power chip that constantly listens for a specific phrase (like "Hey Siri"). Crucially, for privacy and battery life, this wake word detection happens locally on the device. Only after the wake word is detected does the device record the audio and send it to the massive cloud servers for heavy NLP processing.</p>
+                    
+                    <p class="mb-5">Once the cloud AI translates the audio into text and determines the user's intent, it engages in <strong>Task Automation</strong>. Assistants are connected to a vast web of APIs (Application Programming Interfaces). If you say, "Add milk to my grocery list," the assistant isn't just chatting; it is authenticating into your specific user account, accessing your connected Notes database, and actively writing a new entry into a specific file.</p>
+                    
+                    <p class="mb-5">A massive area of growth for AI Assistants is acting as the central hub for the <strong>Smart Home (IoT)</strong>. Our homes are increasingly filled with internet-connected devices: lightbulbs, thermostats, door locks, and cameras. Because these devices often use different technical standards, the AI assistant acts as the universal remote. By saying "Goodnight," the assistant can execute a routine that turns off the Wi-Fi lights, locks the Zigbee front door, and lowers the smart thermostat simultaneously.</p>
+                    
+                    <p class="mb-5">Advanced AI assistants are developing <strong>Contextual Awareness</strong>. Early voice bots required you to state exactly what you wanted every single time. Modern assistants remember the "context" of a conversation. If you ask, "What is the capital of France?" and the assistant replies "Paris", you can follow up with, "What is the weather like <em>there</em>?" The assistant uses context to know that "there" refers to Paris, making the interaction feel remarkably human.</p>
+                    
+                    <p class="mb-5">To further enhance the experience, assistants utilize <strong>Voice Profiling and Personalization</strong>. By analyzing the unique pitch, tone, and cadence of a voice, a smart speaker in a living room can distinguish between a mother and her son. If the son asks, "What's on my calendar today?", the assistant accesses the son's school schedule, whereas the same exact question from the mother will yield her work meetings.</p>
+                    
+                    <p>Despite their convenience, AI Assistants introduce significant <strong>Privacy and Security Risks</strong>. Placing internet-connected microphones in private spaces raises concerns about constant surveillance. Furthermore, if an assistant does not accurately verify voice profiles, a malicious actor (or a mischievous child) could easily use voice commands to purchase expensive items, unlock physical house doors, or access sensitive calendar data without needing a password.</p>
+                `
+            },
+            'assist-usecase': {
+                title: 'AI Assistants: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-emerald-800 mb-2 border-b-2 border-emerald-200 pb-1">Case 1: Smart Home Automation</h4>
+                        <p class="mb-2">Users rely on AI assistants to unify their disparate Internet of Things (IoT) devices, allowing for seamless voice control of their physical environment.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Routines):</strong> A user says, "Alexa, Movie Time." The assistant executes an API routine that dims the living room smart bulbs to 10%, turns on the smart TV, and lowers the motorized window blinds.</li>
+                            <li><strong>Example 2 (Security Integration):</strong> When a user lies in bed and asks, "Is the house secure?", the Google Assistant checks the status of the Wi-Fi door locks, verifies the garage door is down, and arms the perimeter security system.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-emerald-800 mb-2 border-b-2 border-emerald-200 pb-1">Case 2: Hands-Free Productivity</h4>
+                        <p class="mb-2">AI Assistants allow users to manage their digital lives while physically occupied, bridging the gap between digital data and the physical world.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Driving Context):</strong> While driving, a user says, "Siri, text Mom that I'll be 15 minutes late." The assistant uses speech-to-text to draft the message, reads it back for confirmation, and sends it—all while the user's hands never leave the steering wheel.</li>
+                            <li><strong>Example 2 (Kitchen Multitasking):</strong> A user with messy hands in the kitchen tells their smart speaker to "Set a pasta timer for 10 minutes" and "Convert 3 cups to ounces," using the assistant as a real-time, hands-free reference tool.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Smart Speaker</p>
+                            <img src="https://images.unsplash.com/photo-1558089687-f282ffcbc126?auto=format&fit=crop&w=600&h=350" alt="Smart speaker on a table" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Smart Home IoT</p>
+                            <img src="https://images.unsplash.com/photo-1557438159-51eec7a6c9e8?auto=format&fit=crop&w=600&h=350" alt="Smart lights being controlled" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'predict-details': {
+                title: 'Prediction & Suggestion AI',
+                icon: '<i class="fa-solid fa-wand-magic-sparkles text-purple-600"></i>',
+                html: `
+                    <p class="mb-5">While chatbots and assistants require you to actively speak or type to them, <strong>Prediction and Suggestion AI</strong> operates silently in the background of almost every modern platform. These systems do not wait for a command; their entire purpose is to proactively analyze massive amounts of historical data to find hidden patterns and mathematical correlations that human analysts could never spot on their own.</p>
+                    
+                    <p class="mb-5">A massive subset of this is <strong>Suggestion AI (Recommendation Engines)</strong>. When you open Netflix or Spotify, the content you see is not random. The AI uses a technique called <em>Collaborative Filtering</em>. If User A likes Sci-Fi movies and Action movies, and you also like Sci-Fi movies, the AI mathematically calculates that you have similar "tastes" to User A, and will automatically suggest the Action movies User A watched to your home screen.</p>
+                    
+                    <p class="mb-5">Beyond just media, <strong>Prediction AI</strong> is used to forecast physical world events. A navigation app like Google Maps doesn't just look at the speed limit of a road; it looks at the historical GPS data of millions of phones over the last five years. It predicts that on a Tuesday at 5:00 PM, a specific intersection will be jammed, and proactively reroutes you before the traffic jam even occurs.</p>
+                    
+                    <p class="mb-5">To make these accurate guesses, the AI relies on relentless <strong>Data Collection and Telemetry</strong>. Platforms harvest incredible amounts of metadata about you: what you click, how many seconds you hover over a video before scrolling, your location, and your purchase history. All this raw data is aggregated into a complex "User Profile" that the machine learning algorithm uses to calculate the exact probability that you will click on a specific suggestion.</p>
+                    
+                    <p class="mb-5">The ultimate goal for most corporate Suggestion AIs is maximizing <strong>User Engagement</strong>. Social media algorithms are not programmed to show you the "best" or most "truthful" content; they are programmed to show you the content that has the highest statistical probability of keeping your eyes on the screen for another ten seconds, as this directly translates to increased advertising revenue.</p>
+                    
+                    <p class="mb-5">This relentless pursuit of engagement leads to a dangerous psychological phenomenon known as the <strong>Filter Bubble (or Echo Chamber)</strong>. Because the AI learns that you click on political articles that align with your existing views, it stops showing you differing opinions entirely. Over time, the AI artificially restricts the diversity of information you see, leading users to believe the whole world agrees with them, simply because that is all the algorithm suggests.</p>
+                    
+                    <p>Understanding predictive AI is vital for digital literacy. When an email app predicts a spam message, or autocorrect predicts your next word, it is a helpful convenience. However, when users blindly trust AI suggestions regarding news, medical symptoms, or financial investments without realizing the AI is just making a mathematical guess based on patterns, it can lead to severe real-world consequences.</p>
+                `
+            },
+            'predict-usecase': {
+                title: 'Prediction AI: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Case 1: E-Commerce and Media Platforms</h4>
+                        <p class="mb-2">Companies use suggestion engines to drive sales and keep users subscribed by constantly putting highly relevant content directly in front of them.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Retail Upselling):</strong> A user adds a flashlight to their digital shopping cart. The Amazon suggestion AI instantly analyzes millions of past purchases and populates a "Frequently Bought Together" section suggesting D-Cell batteries, dramatically increasing the company's sale value.</li>
+                            <li><strong>Example 2 (Content Retention):</strong> A user finishes watching a true-crime documentary on YouTube. Before the credits even finish, the Predictive AI auto-plays another highly-rated true crime video, utilizing the user's watch history to keep them on the platform.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Case 2: Practical Forecasting</h4>
+                        <p class="mb-2">Predictive AI is used to analyze vast historical datasets to optimize modern logistics and security.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Email Security):</strong> A corporate email server uses a Predictive AI spam filter. The AI notices that millions of previous emails containing the phrases "Wire Transfer" and "Urgent Action" originating from a specific IP block were marked as spam by humans. It predicts a new incoming email is malicious and automatically routes it to the Junk folder.</li>
+                            <li><strong>Example 2 (Supply Chain):</strong> A grocery store chain's AI analyzes 10 years of weather data and purchase history. It predicts a severe snowstorm is hitting the Northeast in 4 days and automatically orders extra shipments of bread and milk to those specific stores before humans even ask for it.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Predictive Data</p>
+                            <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=600&h=350" alt="Corporate data graphs on glass" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Media Suggestions</p>
+                            <img src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=600&h=350" alt="Person scrolling through streaming media on phone" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'ml-details': {
+                title: 'Machine Learning & Bias',
+                icon: '<i class="fa-solid fa-server text-red-600"></i>',
+                html: `
+                    <p class="mb-5">To truly understand the capabilities and dangers of Artificial Intelligence, one must understand the core technology powering it: <strong>Machine Learning (ML)</strong>. In traditional software engineering, a human writes explicit rules (if X happens, do Y). Machine Learning flips this entirely. The human provides the AI with a goal and a massive amount of data, and the software is tasked with finding the rules and patterns on its own, adjusting its internal math through trial and error.</p>
+                    
+                    <p class="mb-5">The absolute foundation of any machine learning system is its <strong>Training Data</strong>. An AI knows absolutely nothing about the world; it only knows what it is fed. If you want to train an AI to recognize images of cats, you don't write code describing a cat. Instead, you feed the algorithm one million pictures labeled "Cat" and one million pictures labeled "Not Cat". The AI analyzes the pixels to mathematically learn what a "cat" looks like.</p>
+                    
+                    <p class="mb-5">This reliance on data leads to the most critical flaw in modern AI: <strong>Algorithmic Bias</strong>. The golden rule of computer science is "Garbage In, Garbage Out". If the Training Data provided by humans is incomplete, unrepresentative, or reflects historical prejudices, the AI will absorb, mimic, and automate those prejudices at a massive scale.</p>
+                    
+                    <p class="mb-5">For example, if a tech company builds an AI to automatically screen resumes for engineering jobs, and they train that AI on 10 years of their own historical hiring data. If the company historically hired 90% men, the AI will mathematically deduce that being male is a key predictor of success, and it will begin silently rejecting highly qualified female candidates. The AI isn't intentionally sexist; it is simply repeating the bias present in its training data.</p>
+                    
+                    <p class="mb-5">Similarly, early facial recognition algorithms were trained primarily on photos of lighter-skinned individuals. When deployed in the real world, these systems had unacceptably high error rates when attempting to identify darker-skinned individuals. When these biased AI models are integrated into critical systems like police surveillance or bank loan approvals, it results in severe, systemic real-world harm.</p>
+                    
+                    <p class="mb-5">Another massive issue, particularly with modern generative language models, is <strong>Hallucinations (or Overconfidence)</strong>. AI models do not "know" facts; they calculate the statistical probability of which word should come next in a sentence. If an AI doesn't have the data to answer a question, it will often fabricate names, dates, and historical events entirely, presenting this false information with perfect grammar and absolute confidence.</p>
+                    
+                    <p>Because of bias and hallucinations, users must approach AI with critical skepticism. AI is an incredibly powerful tool for summarizing data, generating ideas, and predicting patterns, but it is not a source of absolute truth. Human oversight, fact-checking, and diverse engineering teams are mandatory requirements to ensure AI tools are used safely and ethically.</p>
+                `
+            },
+            'ml-usecase': {
+                title: 'Machine Learning & Bias: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-red-800 mb-2 border-b-2 border-red-200 pb-1">Case 1: Medical Diagnostic AI</h4>
+                        <p class="mb-2">Hospitals are training Machine Learning models to analyze X-rays and MRI scans to detect cancers earlier than human doctors can.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Training Data):</strong> The hospital feeds 50,000 historical lung X-rays into the ML algorithm. The doctors have manually tagged which ones contained tumors (Supervised Learning). The AI learns the subtle pixel patterns of early-stage cancer.</li>
+                            <li><strong>Example 2 (The Danger of Bias):</strong> If the hospital only used X-rays from adult males to train the AI, the algorithm might fail to recognize the different physiological presentation of the disease in adult females or children, leading to dangerous misdiagnoses.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-red-800 mb-2 border-b-2 border-red-200 pb-1">Case 2: Generative AI and Misinformation</h4>
+                        <p class="mb-2">Students and professionals use large language models (like ChatGPT) to help write essays or research topics, exposing them to the risks of AI hallucinations.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Hallucination):</strong> A student asks an AI to write a biography of a local town mayor. The AI doesn't have enough data, so it confidently invents a fake college degree and a fake scandal that never happened, presenting it as absolute fact.</li>
+                            <li><strong>Example 2 (Human Fact-Checking):</strong> A lawyer uses an AI to research past court cases. The AI hallucinates three fake legal precedents. Because the lawyer failed to independently verify the AI's output, they submit fake cases to the judge and are heavily penalized.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Training Data</p>
+                            <img src="https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?auto=format&fit=crop&w=600&h=350" alt="Code and data structures" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Diverse Representation</p>
+                            <img src="https://images.unsplash.com/photo-1507146426996-ef05306b995a?auto=format&fit=crop&w=600&h=350" alt="Diverse group of people representing unbiased datasets" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        // Modal Control Functions
+        function openBriefing(key) {
+            const modal = document.getElementById('briefing-modal');
+            const data = briefingData[key];
+            if(data) {
+                document.getElementById('briefing-modal-icon').innerHTML = data.icon;
+                document.getElementById('briefing-modal-title').innerText = data.title;
+                document.getElementById('briefing-modal-content').innerHTML = data.html;
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; 
+            }
+        }
+
+        function closeBriefing() {
+            document.getElementById('briefing-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto'; 
+        }
+
+        document.getElementById('briefing-modal').addEventListener('click', function(e) {
+            if(e.target === this) closeBriefing();
+        });
+        
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId + '-section').classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-blue-900'));
+            const activeBtn = document.getElementById('nav-' + tabId);
+            if(activeBtn && tabId !== 'cert') activeBtn.classList.add('bg-blue-900');
+            
+            document.querySelectorAll('.nav-btn-mobile').forEach(btn => btn.classList.remove('bg-blue-950'));
+            const activeMobileBtn = document.getElementById('nav-' + tabId + '-mobile');
+            if(activeMobileBtn && tabId !== 'cert') activeMobileBtn.classList.add('bg-blue-950');
+
+            window.scrollTo(0,0);
+
+            if (tabId === 'game' && !gameRunning) {
+                resetGame();
+                drawGame();
+            }
+        }
+
+        function showModal(title, message, type = 'info') {
+            const modal = document.getElementById('custom-modal');
+            const icon = document.getElementById('modal-icon');
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-msg').innerText = message;
+            
+            if(type === 'success') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-500"></i>';
+            } else if (type === 'error') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500"></i>';
+            } else if (type === 'warning') {
+                icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-yellow-500"></i>';
+            } else {
+                icon.innerHTML = '<i class="fa-solid fa-circle-info text-blue-500"></i>';
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        // --- GLOBAL LAB TRACKING ---
+        let labsCompleted = { l1:false, l2:false, l3:false, l4:false, l5:false, l6:false, l7:false, l8:false };
+        
+        function updateLabProgress(labId, feedbackId) {
+            if(!labsCompleted[labId]) {
+                labsCompleted[labId] = true;
+                let count = Object.values(labsCompleted).filter(Boolean).length;
+                document.getElementById('global-lab-status').innerText = `Labs Completed: ${count} / 8`;
+                
+                document.getElementById(feedbackId).innerText = "Lab Complete!";
+                document.getElementById(feedbackId).className = "text-center font-bold mt-2 h-5 text-sm text-emerald-600";
+                document.getElementById(labId+'-container').classList.add('ring-4', 'ring-emerald-400', 'bg-emerald-50');
+
+                if(count === 8) {
+                    setTimeout(() => {
+                        showModal('All Labs Complete!', 'Outstanding work. You have unlocked the Mastery Quiz.', 'success');
+                        const qBtn = document.getElementById('locked-quiz-btn');
+                        qBtn.classList.replace('bg-slate-400', 'bg-blue-700');
+                        qBtn.classList.remove('cursor-not-allowed');
+                        qBtn.classList.add('hover:bg-blue-800');
+                        qBtn.innerHTML = 'Take the Mastery Quiz <i class="fa-solid fa-arrow-right ml-2"></i>';
+                        qBtn.onclick = () => switchTab('quiz');
+                    }, 500);
+                }
+            }
+        }
+
+        function failFeedback(feedbackId, msg) {
+            document.getElementById(feedbackId).innerText = msg;
+            document.getElementById(feedbackId).className = "text-center font-bold mt-2 h-5 text-sm text-red-600";
+        }
+
+        // --- LAB 1: NLP ---
+        let l1Selections = 0;
+        function toggleToken(btn) {
+            if(labsCompleted['l1']) return;
+            if(btn.classList.contains('active')) {
+                btn.classList.remove('active');
+                l1Selections--;
+            } else {
+                if(l1Selections < 3) {
+                    btn.classList.add('active');
+                    l1Selections++;
+                }
+            }
+        }
+        function checkLab1() {
+            if(labsCompleted['l1']) return;
+            const actives = document.querySelectorAll('#lab1-words .active');
+            if(actives.length !== 3) {
+                failFeedback('lab1-feedback', 'Please select exactly 3 entities.');
+                return;
+            }
+            let correct = 0;
+            actives.forEach(btn => { if(btn.dataset.correct === 'true') correct++; });
+            if(correct === 3) {
+                updateLabProgress('l1', 'lab1-feedback');
+            } else {
+                failFeedback('lab1-feedback', 'Incorrect. Look for the action and the specific details.');
+            }
+        }
+
+        // --- LAB 2: Rule vs AI ---
+        function checkLab2() {
+            if(labsCompleted['l2']) return;
+            const s1 = document.getElementById('l2-s1').value;
+            const s2 = document.getElementById('l2-s2').value;
+            const s3 = document.getElementById('l2-s3').value;
+            
+            if(!s1 || !s2 || !s3) { failFeedback('lab2-feedback', 'Complete all dropdowns.'); return; }
+            
+            if(s1 === 'rule' && s2 === 'ai' && s3 === 'rule') {
+                updateLabProgress('l2', 'lab2-feedback');
+            } else {
+                failFeedback('lab2-feedback', 'Incorrect. Remember: Rules are rigid scripts. AI learns.');
+            }
+        }
+
+        // --- LAB 3: Routing ---
+        function checkLab3() {
+            if(labsCompleted['l3']) return;
+            const s1 = document.getElementById('l3-s1').value;
+            const s2 = document.getElementById('l3-s2').value;
+            const s3 = document.getElementById('l3-s3').value;
+            
+            if(!s1 || !s2 || !s3) { failFeedback('lab3-feedback', 'Route all commands.'); return; }
+            
+            if(s1 === 'iot' && s2 === 'media' && s3 === 'cloud') {
+                updateLabProgress('l3', 'lab3-feedback');
+            } else {
+                failFeedback('lab3-feedback', 'Routing Error. Check the destination API for each command.');
+            }
+        }
+
+        // --- LAB 4: Automation Routine ---
+        let routineOrder = [];
+        function addRoutine(val, btn) {
+            if(labsCompleted['l4']) return;
+            if(btn.classList.contains('selected')) return;
+            routineOrder.push(val);
+            btn.classList.add('selected');
+            btn.querySelector('.badge').innerText = routineOrder.length;
+        }
+        function resetRoutine() {
+            if(labsCompleted['l4']) return;
+            routineOrder = [];
+            document.querySelectorAll('.routine-btn').forEach(b => {
+                b.classList.remove('selected');
+                b.querySelector('.badge').innerText = "";
+            });
+            document.getElementById('lab4-feedback').innerText = "";
+        }
+        function checkLab4() {
+            if(labsCompleted['l4']) return;
+            if(routineOrder.length !== 3) { failFeedback('lab4-feedback', 'Select all 3 steps in order.'); return; }
+            // Logical order: Alarm -> Coffee -> News
+            if(routineOrder[0] === 'alarm' && routineOrder[1] === 'coffee' && routineOrder[2] === 'news') {
+                updateLabProgress('l4', 'lab4-feedback');
+            } else {
+                failFeedback('lab4-feedback', 'Routine failed. Wake up, start the brew, then listen.');
+                setTimeout(resetRoutine, 1500);
+            }
+        }
+
+        // --- LAB 5: Suggestion ---
+        function selectMovie(btn, isCorrect) {
+            if(labsCompleted['l5']) return;
+            document.querySelectorAll('#lab5-container .border-purple-500').forEach(b => {
+                b.classList.remove('border-purple-500', 'bg-purple-100');
+                b.classList.add('border-slate-200');
+            });
+            btn.classList.remove('border-slate-200');
+            btn.classList.add('border-purple-500', 'bg-purple-100');
+            btn.dataset.selected = isCorrect;
+        }
+        function checkLab5() {
+            if(labsCompleted['l5']) return;
+            const selected = document.querySelector('#lab5-container .border-purple-500');
+            if(!selected) { failFeedback('lab5-feedback', 'Make a selection.'); return; }
+            
+            if(selected.dataset.selected === 'true') {
+                updateLabProgress('l5', 'lab5-feedback');
+            } else {
+                failFeedback('lab5-feedback', 'Incorrect. Collaborative filtering looks for similar genres (Sci-Fi).');
+            }
+        }
+
+        // --- LAB 6: Predict Spam ---
+        let mailChoices = { 'l6-1': null, 'l6-2': null };
+        function toggleMail(btn, mailId, choice) {
+            if(labsCompleted['l6']) return;
+            const parent = btn.parentElement;
+            parent.querySelectorAll('button').forEach(b => {
+                b.classList.remove('bg-purple-600', 'text-white');
+                b.classList.add('bg-slate-200');
+            });
+            btn.classList.remove('bg-slate-200');
+            btn.classList.add('bg-purple-600', 'text-white');
+            mailChoices[mailId] = choice;
+        }
+        function checkLab6() {
+            if(labsCompleted['l6']) return;
+            if(!mailChoices['l6-1'] || !mailChoices['l6-2']) { failFeedback('lab6-feedback', 'Route both emails.'); return; }
+            if(mailChoices['l6-1'] === 'inbox' && mailChoices['l6-2'] === 'spam') {
+                updateLabProgress('l6', 'lab6-feedback');
+            } else {
+                failFeedback('lab6-feedback', 'Incorrect routing based on probability scores.');
+            }
+        }
+
+        // --- LAB 7: ML Bias ---
+        function selectDataset(btn, isCorrect) {
+            if(labsCompleted['l7']) return;
+            document.querySelectorAll('#lab7-container .border-red-500').forEach(b => {
+                b.classList.remove('border-red-500', 'bg-red-100');
+                b.classList.add('border-slate-200');
+            });
+            btn.classList.remove('border-slate-200');
+            btn.classList.add('border-red-500', 'bg-red-100');
+            btn.dataset.selected = isCorrect;
+        }
+        function checkLab7() {
+            if(labsCompleted['l7']) return;
+            const selected = document.querySelector('#lab7-container .border-red-500');
+            if(!selected) { failFeedback('lab7-feedback', 'Select a dataset.'); return; }
+            
+            if(selected.dataset.selected === 'true') {
+                updateLabProgress('l7', 'lab7-feedback');
+            } else {
+                failFeedback('lab7-feedback', 'Biased! Training on only Red Sedans means the AI will fail to recognize Blue Trucks as cars.');
+            }
+        }
+
+        // --- LAB 8: Bot or Not ---
+        function checkLab8() {
+            if(labsCompleted['l8']) return;
+            const s1 = document.getElementById('l8-s1').value;
+            const s2 = document.getElementById('l8-s2').value;
+            const s3 = document.getElementById('l8-s3').value;
+            const s4 = document.getElementById('l8-s4').value;
+            
+            if(!s1 || !s2 || !s3 || !s4) { failFeedback('lab8-feedback', 'Complete all dropdowns.'); return; }
+            
+            if(s1 === 'not' && s2 === 'assist' && s3 === 'chat' && s4 === 'predict') {
+                updateLabProgress('l8', 'lab8-feedback');
+            } else {
+                failFeedback('lab8-feedback', 'Incorrect. Review the definitions of Chatbot, Assistant, and Prediction.');
+            }
+        }
+
+
+        // --- QUIZ LOGIC (20 Questions) ---
+        const quizData = [
+            // 10 adapted from provided quiz document
+            { q: "Which of the following best describes how AI is different from regular software?", options: ["AI can follow more complicated rules.", "AI can adjust its rules based on experience.", "AI never makes mistakes.", "AI only works with internet access."], answer: 1 },
+            { q: "What is the role of NLP (Natural Language Processing) in AI?", options: ["It teaches AI how to translate languages only.", "It helps AI organize data.", "It allows AI to understand and respond to human language.", "It lets AI create videos."], answer: 2 },
+            { q: "Which of these tasks is most likely handled by an AI assistant?", options: ["Solving a complex math equation offline.", "Controlling your smart lights and calendar.", "Recommending a new movie to watch.", "Sorting your email spam folder."], answer: 1 },
+            { q: "Which of the following is a specific challenge of using AI chatbots?", options: ["They are available 24/7.", "They improve over time.", "They may not understand complex or emotional questions.", "They offer personalized support."], answer: 2 },
+            { q: "Which statement best explains how AI makes suggestions or predictions?", options: ["AI understands your needs the way a human friend would.", "AI follows a static list of rules given by the programmer.", "AI uses patterns in massive amounts of historical data to make its best guess.", "AI chooses at random to keep results fair."], answer: 2 },
+            { q: "Which of these is a clear example of AI making predictions or suggestions?", options: ["Netflix recommending shows.", "A light turning on when you flip a switch.", "A teacher writing your name on the board.", "A microwave running for 60 seconds."], answer: 0 },
+            { q: "Which term describes the examples humans give AI so it can learn how to do something?", options: ["Reinforcement", "Training Data", "Machine Abstraction", "Neural Input"], answer: 1 },
+            { q: "Why is it important to double-check information provided by Generative AI?", options: ["AI is always biased on purpose.", "AI doesn’t work without Wi-Fi.", "AI can sound incredibly confident even when it is completely wrong.", "AI is trying to trick you."], answer: 2 },
+            { q: "All of the following are benefits of AI EXCEPT:", options: ["Personalization of content.", "24/7 access and availability.", "Being completely free from bias.", "Task automation and speed."], answer: 2 },
+            { q: "What is the primary reason people use AI smart assistants?", options: ["To make complex financial decisions.", "To completely replace human interaction.", "To play advanced video games.", "To save time, effort, and enable hands-free productivity."], answer: 3 },
+            
+            // 10 new questions based on briefing text
+            { q: "What type of chatbot typically relies on strict 'if/then' decision trees rather than machine learning?", options: ["Hybrid Chatbot", "Rule-Based Chatbot", "NLP Chatbot", "Predictive Chatbot"], answer: 1 },
+            { q: "What specific technology allows an AI assistant to convert a user's spoken commands into text data?", options: ["Natural Language Processing", "Collaborative Filtering", "Voice Recognition / Wake Words", "Data Sandboxing"], answer: 2 },
+            { q: "When a streaming service suggests a movie because users with similar viewing histories liked it, what is this called?", options: ["Collaborative Filtering", "Decision Tree Logic", "Hardware Abstraction", "Rule-based Prediction"], answer: 0 },
+            { q: "What is the 'Filter Bubble' phenomenon in suggestion AI?", options: ["When an AI filters out all biased training data.", "When an AI isolates a user by only showing content that reinforces their existing views.", "When a chatbot refuses to answer complex questions.", "When a smart home assistant disconnects from the Wi-Fi."], answer: 1 },
+            { q: "What is a primary difference between a standard AI chatbot and an AI assistant?", options: ["Chatbots use voice, assistants use text.", "Assistants can integrate with APIs to perform physical actions and control devices, while chatbots primarily answer questions.", "Chatbots are always rule-based.", "Assistants do not use machine learning."], answer: 1 },
+            { q: "If an AI used for hiring begins to unfairly reject resumes from a specific demographic because of historical prejudices in its data, what is this called?", options: ["Algorithmic Bias", "Suggestion Filtering", "Contextual Awareness", "The Prediction Loop"], answer: 0 },
+            { q: "What allows an AI assistant to understand that 'Turn it off' refers to the television you asked about in the previous sentence?", options: ["Wake Word Technology", "Contextual Awareness", "Suggestion AI", "Hybrid Routing"], answer: 1 },
+            { q: "What is it called when a Generative AI confidently outputs a completely fabricated or factually incorrect statement as if it were true?", options: ["An Echo Chamber", "A Contextual Error", "An AI Hallucination", "An Algorithmic Bias"], answer: 2 },
+            { q: "How does machine learning fundamentally differ from traditional software programming?", options: ["It runs faster on older computers.", "It requires zero human oversight.", "It adjusts its own rules and mathematical models based on exposure to data over time.", "It only uses text-based command lines."], answer: 2 },
+            { q: "In the context of training AI models, what does the phrase 'Garbage In, Garbage Out' mean?", options: ["AI will automatically delete corrupted files.", "If the training data is flawed, unrepresentative, or biased, the AI's decisions will also be flawed.", "AI consumes a massive amount of electricity.", "Chatbots cannot understand complex punctuation."], answer: 1 }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        
+        quizData.forEach((item, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = "bg-slate-50 p-6 rounded-lg border border-slate-200 transition-all";
+            qDiv.id = `q-block-${index}`;
+            
+            const qTitle = document.createElement('h3');
+            qTitle.className = "font-bold text-lg text-slate-800 mb-4";
+            qTitle.innerText = `${index + 1}. ${item.q}`;
+            qDiv.appendChild(qTitle);
+            
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = "space-y-3";
+            
+            item.options.forEach((opt, optIndex) => {
+                const label = document.createElement('label');
+                label.className = "flex items-center space-x-3 p-3 rounded bg-white border border-slate-300 hover:bg-blue-50 cursor-pointer transition";
+                
+                const radio = document.createElement('input');
+                radio.type = "radio";
+                radio.name = `q${index}`;
+                radio.value = optIndex;
+                radio.className = "form-radio h-5 w-5 text-blue-600";
+                
+                const span = document.createElement('span');
+                span.className = "text-slate-700";
+                span.innerText = opt;
+                
+                label.appendChild(radio);
+                label.appendChild(span);
+                optionsDiv.appendChild(label);
+            });
+            
+            qDiv.appendChild(optionsDiv);
+            quizContainer.appendChild(qDiv);
+        });
+
+        function gradeQuiz() {
+            let score = 0;
+            let allAnswered = true;
+
+            for(let i = 0; i < quizData.length; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if(selected) {
+                    if(parseInt(selected.value) === quizData[i].answer) {
+                        score++;
+                    }
+                } else {
+                    allAnswered = false;
+                }
+            }
+            
+            if(!allAnswered) {
+                showModal('Incomplete Quiz', 'Please answer all 20 questions before submitting.', 'warning');
+                return;
+            }
+            
+            const percentage = (score / quizData.length) * 100;
+            
+            if(score >= 18) { 
+                const navGame = document.getElementById('nav-game');
+                const navGameMobile = document.getElementById('nav-game-mobile');
+                
+                navGame.classList.remove('text-slate-400', 'cursor-not-allowed');
+                navGame.classList.add('text-white', 'hover:bg-blue-700');
+                navGame.disabled = false;
+                navGame.innerHTML = '<i class="fa-solid fa-gamepad mr-1"></i>Game';
+                
+                navGameMobile.classList.remove('text-slate-400', 'cursor-not-allowed');
+                navGameMobile.classList.add('text-white', 'hover:bg-blue-700');
+                navGameMobile.disabled = false;
+                navGameMobile.innerHTML = '<i class="fa-solid fa-gamepad"></i> Game';
+
+                document.getElementById('nav-cert').classList.remove('hidden');
+                document.getElementById('nav-cert-mobile').classList.remove('hidden');
+                
+                document.getElementById('proceed-game-btn').classList.remove('hidden');
+                document.getElementById('submit-quiz-btn').classList.add('hidden');
+
+                showModal('Outstanding!', `You scored ${score}/20 (${percentage}%). You have unlocked your Certificate of Mastery AND the Retro AI Training Game!`, 'success');
+            } else {
+                quizData.forEach((_, i) => {
+                    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                    if(selected) selected.checked = false;
+                });
+                showModal('Keep Trying!', `You scored ${score}/20 (${percentage}%). You need 90% (18/20) to earn the certificate. Your answers have been reset so you can try again.`, 'error');
+                document.getElementById('quiz-section').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // --- RETRO GAME LOGIC: Data Harvester ---
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Game state
+        let catcher = { x: 300, y: 410, width: 90, height: 25, speed: 8 };
+        let items = [];
+        let score = 0;
+        let lives = 3;
+        let gameRunning = false;
+        let animationId;
+        let spawnRate = 0.02; 
+        
+        const overlay = document.getElementById('game-overlay');
+        const startBtn = document.getElementById('start-game-btn');
+        startBtn.addEventListener('click', startGame);
+
+        // Input handling (Mouse & Touch for catcher X position)
+        function handleMove(e) {
+            if(!gameRunning) return;
+            let clientX = e.clientX;
+            if(e.touches && e.touches.length > 0) {
+                clientX = e.touches[0].clientX;
+            }
+            if(clientX) {
+                const rect = canvas.getBoundingClientRect();
+                const scaleX = canvas.width / rect.width;
+                catcher.x = (clientX - rect.left) * scaleX;
+                
+                // Clamp to screen
+                if(catcher.x < catcher.width/2) catcher.x = catcher.width/2;
+                if(catcher.x > canvas.width - catcher.width/2) catcher.x = canvas.width - catcher.width/2;
+            }
+        }
+
+        canvas.addEventListener('mousemove', handleMove);
+        canvas.addEventListener('touchmove', (e) => { e.preventDefault(); handleMove(e); }, {passive: false});
+
+        function loseLife() {
+            lives--;
+            document.getElementById('game-lives').innerText = lives;
+            
+            // Visual red flash
+            ctx.fillStyle = "rgba(239, 68, 68, 0.4)";
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            
+            if(lives <= 0) {
+                gameOver();
+            }
+        }
+
+        function resetGame() {
+            items = [];
+            score = 0;
+            lives = 3;
+            spawnRate = 0.025;
+            catcher.x = canvas.width / 2;
+            document.getElementById('game-score').innerText = score;
+            document.getElementById('game-lives').innerText = lives;
+        }
+
+        function startGame() {
+            overlay.classList.add('hidden');
+            if(!gameRunning) {
+                resetGame();
+                gameRunning = true;
+                drawGame();
+            }
+        }
+
+        function drawGame() {
+            if(!gameRunning) return;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw retro grid background
+            ctx.strokeStyle = '#1e293b';
+            ctx.lineWidth = 2;
+            for(let i=0; i<canvas.width; i+=50) {
+                ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke();
+            }
+            for(let i=0; i<canvas.height; i+=50) {
+                ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(canvas.width, i); ctx.stroke();
+            }
+            
+            // Increase difficulty over time
+            spawnRate = Math.min(0.08, spawnRate + 0.00001);
+
+            // Spawn items
+            if(Math.random() < spawnRate) {
+                // 70% chance good data, 30% chance biased data
+                let type = Math.random() < 0.7 ? 'good' : 'bad';
+                items.push({
+                    x: Math.random() * (canvas.width - 40) + 20,
+                    y: -20,
+                    radius: 12,
+                    type: type,
+                    speed: Math.random() * 2 + 2.5 + (score/200) // speeds up slightly with score
+                });
+            }
+            
+            // Update and draw items
+            for(let i = items.length - 1; i >= 0; i--) {
+                let item = items[i];
+                item.y += item.speed;
+                
+                // Draw item
+                if(item.type === 'good') {
+                    // Green Data Packet (Square)
+                    ctx.fillStyle = '#10b981';
+                    ctx.shadowColor = '#34d399';
+                    ctx.shadowBlur = 10;
+                    ctx.fillRect(item.x - item.radius, item.y - item.radius, item.radius*2, item.radius*2);
+                } else {
+                    // Red Biased Data (Triangle)
+                    ctx.fillStyle = '#ef4444';
+                    ctx.shadowColor = '#f87171';
+                    ctx.shadowBlur = 10;
+                    ctx.beginPath();
+                    ctx.moveTo(item.x, item.y - item.radius);
+                    ctx.lineTo(item.x - item.radius, item.y + item.radius);
+                    ctx.lineTo(item.x + item.radius, item.y + item.radius);
+                    ctx.fill();
+                }
+                ctx.shadowBlur = 0; // reset
+                
+                // Collision check (simple AABB)
+                let itemBottom = item.y + item.radius;
+                let itemTop = item.y - item.radius;
+                let itemLeft = item.x - item.radius;
+                let itemRight = item.x + item.radius;
+                
+                let catcherLeft = catcher.x - catcher.width/2;
+                let catcherRight = catcher.x + catcher.width/2;
+                let catcherTop = catcher.y;
+                let catcherBottom = catcher.y + catcher.height;
+
+                if (itemBottom > catcherTop && itemTop < catcherBottom && itemRight > catcherLeft && itemLeft < catcherRight) {
+                    if(item.type === 'good') {
+                        score += 10;
+                        document.getElementById('game-score').innerText = score;
+                    } else {
+                        loseLife();
+                    }
+                    items.splice(i, 1);
+                    continue;
+                }
+                
+                // Remove if out of bounds
+                if(item.y > canvas.height + 20) {
+                    items.splice(i, 1);
+                }
+            }
+            
+            // Draw Catcher (AI Model Bucket)
+            ctx.fillStyle = '#3b82f6';
+            ctx.shadowColor = '#60a5fa';
+            ctx.shadowBlur = 15;
+            // Draw bucket shape
+            ctx.beginPath();
+            ctx.moveTo(catcher.x - catcher.width/2, catcher.y);
+            ctx.lineTo(catcher.x + catcher.width/2, catcher.y);
+            ctx.lineTo(catcher.x + catcher.width/2 - 10, catcher.y + catcher.height);
+            ctx.lineTo(catcher.x - catcher.width/2 + 10, catcher.y + catcher.height);
+            ctx.fill();
+            
+            // Draw label
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '12px monospace';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('AI MODEL', catcher.x, catcher.y + 12);
+
+            animationId = requestAnimationFrame(drawGame);
+        }
+
+        function gameOver() {
+            gameRunning = false;
+            cancelAnimationFrame(animationId);
+            overlay.classList.remove('hidden');
+            startBtn.innerText = "Model Corrupted! Retrain";
+            startBtn.classList.replace('bg-blue-600', 'bg-slate-700');
+            startBtn.classList.replace('border-blue-800', 'border-slate-900');
+        }
+
+        // --- CERTIFICATE LOGIC ---
+        function updateCertName() {
+            let name = document.getElementById('student-name-input').value.trim();
+            if(name) {
+                if (name.includes(' ')) {
+                    name = name.split(' ')[0];
+                    document.getElementById('student-name-input').value = name;
+                    showModal('Notice', 'Only your first name has been applied to the certificate.', 'info');
+                }
+                document.getElementById('cert-student-name').innerText = name;
+            } else {
+                showModal('Wait!', 'Please enter your first name to update the certificate.', 'warning');
+            }
+        }
+
+        const today = new Date();
+        document.getElementById('cert-date').innerText = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        function downloadCert() {
+            const certEl = document.getElementById('certificate');
+            const name = document.getElementById('cert-student-name').innerText;
+            let filename = 'Certificate.png';
+            if (name && name !== 'Student') {
+                filename = `${name.replace(/\s+/g, '_')}_Certificate.png`;
+            }
+
+            const originalTransform = certEl.style.transform;
+            certEl.style.transform = 'none';
+
+            const btn = document.getElementById('download-btn');
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Generating...';
+            btn.disabled = true;
+
+            html2canvas(certEl, { 
+                scale: 2, 
+                useCORS: true,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+            }).catch(err => {
+                console.error(err);
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                showModal('Error', 'Failed to generate image. Try using a desktop browser.', 'error');
+            });
+        }
+
+        window.onload = () => {
+            // Draw static background for game preview
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle = '#475569';
+            ctx.font = '20px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('DATA HARVESTER READY', canvas.width/2, canvas.height/2);
+        }
+    </script>
+</body>
+</html>

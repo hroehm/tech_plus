@@ -1,0 +1,1564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 07 Section 6.1.3 Mastery - Availability Concerns</title>
+    
+    <!-- Load Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load HTML2Canvas for Certificate Download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- Load Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Qwitcher+Grypen:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; 
+            color: #0f172a;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        /* Interactive Elements CSS */
+        .io-dropzone { min-height: 70px; min-width: 130px; border: 2px dashed #94a3b8; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: #f1f5f9; transition: all 0.2s;}
+        .io-dropzone.drag-over { background: #e2e8f0; border-color: #3b82f6; box-shadow: inset 0 0 10px rgba(59, 130, 246, 0.2);}
+        
+        .io-item { cursor: grab; transition: transform 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .io-item:active { cursor: grabbing; transform: scale(0.95); }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #e2e8f0; }
+        ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #2563eb; }
+
+        /* Retro Game Canvas */
+        #game-canvas {
+            background-color: #020617;
+            border: 4px solid #334155;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+            max-width: 100%;
+            height: auto;
+            touch-action: none;
+        }
+
+        /* --- CERTIFICATE STYLES --- */
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .font-body { font-family: 'Lora', serif; }
+        .font-script { font-family: 'Qwitcher Grypen', cursive; }
+        
+        .cert-preview-container {
+            width: 100%;
+            overflow: auto;
+            display: flex;
+            justify-content: center;
+            background: #e2e8f0;
+            padding: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        #certificate {
+            width: 1056px !important;
+            height: 816px !important;
+            flex-shrink: 0;
+            background-color: #ffffff;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1056" height="816"><polygon points="0,0 250,0 0,650" fill="%2360a5fa"/><polygon points="0,0 350,0 0,900" fill="%233b82f6" opacity="0.8"/><polygon points="0,0 120,0 0,300" fill="%231e3a8a"/><polygon points="0,450 650,816 0,816" fill="%2360a5fa"/><polygon points="0,550 450,816 0,816" fill="%233b82f6" opacity="0.8"/><polygon points="800,0 1056,0 1056,256" fill="%23f8fafc"/><polygon points="1056,500 1056,816 750,816" fill="%23f8fafc"/></svg>');
+            background-size: cover;
+            border: 4px solid #cbd5e1;
+        }
+
+        .gold-seal {
+            position: absolute;
+            left: 110px;
+            top: 350px;
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c, #fcf6ba);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3), inset 0 0 15px rgba(255,255,255,0.7), inset 0 0 25px rgba(139,105,20,0.9);
+            z-index: 10;
+        }
+        .gold-seal::before {
+            content: '';
+            position: absolute;
+            top: -4px; bottom: -4px; left: -4px; right: -4px;
+            border-radius: 50%;
+            border: 6px dashed #d4af37;
+        }
+        .gold-seal-inner-1 {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 2px solid rgba(139, 105, 20, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #e8c678, #dbab46);
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.2), 0 2px 5px rgba(255,255,255,0.7);
+            z-index: 1;
+        }
+        .gold-seal-inner-2 {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: radial-gradient(circle, #fcf6ba, #d4af37);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            padding: 10px;
+        }
+        .embossed-text {
+            color: #b38728;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2);
+            font-family: 'Playfair Display', serif;
+            font-weight: 800;
+            line-height: 1.1;
+            text-transform: uppercase;
+        }
+        .embossed-text-large { font-size: 14px; letter-spacing: 1px; }
+        .embossed-text-small { font-size: 11px; letter-spacing: 2px; margin: 2px 0; }
+        .embossed-star { font-size: 12px; color: #b38728; text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2); margin: 2px 0; }
+
+        @media (max-width: 1100px) {
+            #certificate { transform: scale(0.7); transform-origin: top left; margin-bottom: -240px; margin-right: -310px; }
+        }
+        @media (max-width: 768px) {
+            #certificate { transform: scale(0.4); transform-origin: top left; margin-bottom: -490px; margin-right: -630px; }
+        }
+        
+        /* Lab Specific Styles */
+        .hardware-node { transition: all 0.3s; cursor: pointer; }
+        .hardware-node:hover { transform: scale(1.05); }
+        .net-line { stroke: #94a3b8; stroke-width: 4; transition: all 0.3s; }
+        .net-line.active { stroke: #10b981; }
+        .net-line.offline { stroke: #ef4444; stroke-dasharray: 5,5; }
+        .ransom-node { transition: background-color 0.5s; cursor:pointer;}
+        .server-rack { transition: height 0.3s; }
+        .sortable-item { cursor: pointer; transition: background-color 0.2s;}
+        .sortable-item.selected { background-color: #dbeafe; border-color: #3b82f6;}
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen flex flex-col">
+
+    <nav class="bg-blue-800 text-white shadow-lg sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-clock-rotate-left text-2xl text-blue-300"></i>
+                    <span class="font-bold text-xl tracking-wider hidden sm:inline-block">Tech+ Unit 07 Section 6.1.3</span>
+                    <span class="font-bold text-xl tracking-wider sm:hidden">6.1.3</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-2">
+                        <button onclick="switchTab('briefing')" class="nav-btn bg-blue-950 px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition" id="nav-briefing"><i class="fa-solid fa-book-open mr-1"></i>Briefing</button>
+                        <button onclick="switchTab('activity')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition" id="nav-activity"><i class="fa-solid fa-flask mr-1"></i>Lab Activity</button>
+                        <button onclick="switchTab('quiz')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition" id="nav-quiz"><i class="fa-solid fa-clipboard-check mr-1"></i>Quiz</button>
+                        <button onclick="switchTab('game')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-slate-400 cursor-not-allowed transition" id="nav-game" disabled><i class="fa-solid fa-lock mr-1"></i>Game</button>
+                        <button onclick="switchTab('cert')" class="nav-btn hidden px-3 py-2 rounded-md text-sm font-medium text-yellow-300 hover:bg-blue-700 transition" id="nav-cert"><i class="fa-solid fa-award mr-1"></i>Certificate</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Nav -->
+        <div class="md:hidden flex flex-wrap justify-center gap-2 py-2 px-2 bg-blue-900">
+            <button onclick="switchTab('briefing')" class="nav-btn-mobile px-3 py-1 text-sm rounded bg-blue-950" id="nav-briefing-mobile">Briefing</button>
+            <button onclick="switchTab('activity')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-activity-mobile">Lab</button>
+            <button onclick="switchTab('quiz')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-quiz-mobile">Quiz</button>
+            <button onclick="switchTab('game')" class="nav-btn-mobile px-3 py-1 text-sm rounded text-slate-400 cursor-not-allowed" id="nav-game-mobile" disabled><i class="fa-solid fa-lock"></i></button>
+            <button onclick="switchTab('cert')" id="nav-cert-mobile" class="hidden px-2 py-1 text-sm text-yellow-300 rounded"><i class="fa-solid fa-award"></i></button>
+        </div>
+    </nav>
+
+    <main class="flex-grow w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <!-- BRIEFING SECTION -->
+        <div id="briefing-section" class="tab-content active no-print">
+            <div class="text-center mb-10">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4">Availability Concerns</h1>
+                <p class="text-lg text-slate-600 max-w-3xl mx-auto">Availability ensures that systems and data are reliably accessible when authorized users need them. From hardware failures to DDoS attacks, explore the threats that cause downtime and the systems designed to prevent it.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- Tile 1 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-blue-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-blue-700"><i class="fa-solid fa-clock-rotate-left mr-2"></i>Availability & The CIA Triad</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>Authorized Access:</strong> Ensuring only legitimate users can reach data when they need it.</li>
+                            <li><strong>Financial & Operational Loss:</strong> Downtime stops business, limits logistics, and costs massive revenue.</li>
+                            <li><strong>Reputation & Legal Risk:</strong> Outages erode user trust and can trigger compliance penalties (e.g., HIPAA).</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('cia-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('cia-usecase')" class="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 2 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-orange-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-orange-700"><i class="fa-solid fa-bolt-lightning mr-2"></i>Unexpected Issues</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>Hardware Failure:</strong> Components like hard drives and network switches fail due to age or heat.</li>
+                            <li><strong>Natural Disasters:</strong> Fires, floods, and hurricanes physically destroy data centers.</li>
+                            <li><strong>Power & Software:</strong> Grid blackouts and bad configuration code can instantly knock systems offline.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('unexpected-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('unexpected-usecase')" class="flex-1 bg-orange-100 hover:bg-orange-200 text-orange-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 3 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-red-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-red-700"><i class="fa-solid fa-skull-crossbones mr-2"></i>Controlled & Malicious Threats</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>Maintenance:</strong> Planned upgrades can cause extended, accidental outages if poorly tested.</li>
+                            <li><strong>DoS & DDoS:</strong> Overwhelming servers with fake traffic (e.g., Slowloris, Botnets).</li>
+                            <li><strong>Ransomware:</strong> Malware that encrypts systems entirely, holding availability hostage.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('malicious-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('malicious-usecase')" class="flex-1 bg-red-100 hover:bg-red-200 text-red-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 4 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-green-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-green-700"><i class="fa-solid fa-shield-cat mr-2"></i>Fallback & Active Mitigation</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>Backups & Redundancy:</strong> Storing copies offsite and having duplicate N+1 hardware ready.</li>
+                            <li><strong>Failover & UPS:</strong> Automatic transition to battery power and backup generators during outages.</li>
+                            <li><strong>Load Balancing:</strong> Distributing network traffic across multiple servers to prevent overload.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('fallback-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('fallback-usecase')" class="flex-1 bg-green-100 hover:bg-green-200 text-green-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 flex justify-center">
+                <button onclick="switchTab('activity')" class="bg-blue-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-blue-500 shadow-lg transition transform hover:scale-105">Proceed to Lab Activity <i class="fa-solid fa-arrow-right ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- LAB ACTIVITY SECTION -->
+        <div id="activity-section" class="tab-content no-print">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-extrabold text-slate-900 mb-2">Interactive Lab Activity</h1>
+                <p class="text-slate-600">Apply your knowledge across these 8 distinct simulations (2 per concept) to achieve mastery.</p>
+            </div>
+
+            <!-- LABS FOR CONCEPT 1 -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <!-- Lab 1: Downtime Impact -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                    <h2 class="text-xl font-bold mb-2 text-blue-700"><i class="fa-solid fa-scale-unbalanced mr-2"></i>Lab 1: Downtime Impact</h2>
+                    <p class="text-sm text-slate-600 mb-4">Drag the consequence of a system outage to its correct CIA impact category.</p>
+                    
+                    <div class="flex flex-wrap gap-2 mb-4" id="cat-items">
+                        <div class="io-item px-3 py-1 bg-blue-50 border border-blue-300 rounded text-xs font-bold" draggable="true" data-type="finance">Lost $10k in sales</div>
+                        <div class="io-item px-3 py-1 bg-blue-50 border border-blue-300 rounded text-xs font-bold" draggable="true" data-type="rep">Customers tweet anger</div>
+                        <div class="io-item px-3 py-1 bg-blue-50 border border-blue-300 rounded text-xs font-bold" draggable="true" data-type="op">Nurses can't view charts</div>
+                        <div class="io-item px-3 py-1 bg-blue-50 border border-blue-300 rounded text-xs font-bold" draggable="true" data-type="legal">Fined by HIPAA auditors</div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="cat-dropzone border-2 border-dashed border-slate-300 rounded p-1 min-h-[60px] flex flex-col items-center" data-target="finance"><span class="text-xs font-bold text-slate-400">Financial</span></div>
+                        <div class="cat-dropzone border-2 border-dashed border-slate-300 rounded p-1 min-h-[60px] flex flex-col items-center" data-target="rep"><span class="text-xs font-bold text-slate-400">Reputation</span></div>
+                        <div class="cat-dropzone border-2 border-dashed border-slate-300 rounded p-1 min-h-[60px] flex flex-col items-center" data-target="op"><span class="text-xs font-bold text-slate-400">Operational</span></div>
+                        <div class="cat-dropzone border-2 border-dashed border-slate-300 rounded p-1 min-h-[60px] flex flex-col items-center" data-target="legal"><span class="text-xs font-bold text-slate-400">Legal/Compliance</span></div>
+                    </div>
+                    <div id="lab1-feedback" class="text-center text-sm font-bold mt-2 h-5 text-green-600"></div>
+                </div>
+
+                <!-- Lab 2: Triage -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                    <h2 class="text-xl font-bold mb-2 text-blue-700"><i class="fa-solid fa-magnifying-glass mr-2"></i>Lab 2: Threat Identification</h2>
+                    <p class="text-sm text-slate-600 mb-4">Click ONLY the nodes that represent a direct threat to the <strong>Availability</strong> principle.</p>
+                    
+                    <div class="grid grid-cols-2 gap-3">
+                        <button class="threat-btn px-4 py-2 border-2 border-slate-200 rounded text-sm hover:bg-slate-100" data-threat="false" onclick="checkLab2(this)">Data Interception</button>
+                        <button class="threat-btn px-4 py-2 border-2 border-slate-200 rounded text-sm hover:bg-slate-100" data-threat="true" onclick="checkLab2(this)">Power Grid Outage</button>
+                        <button class="threat-btn px-4 py-2 border-2 border-slate-200 rounded text-sm hover:bg-slate-100" data-threat="false" onclick="checkLab2(this)">SQL Injection (Data Alteration)</button>
+                        <button class="threat-btn px-4 py-2 border-2 border-slate-200 rounded text-sm hover:bg-slate-100" data-threat="true" onclick="checkLab2(this)">DDoS Botnet Attack</button>
+                    </div>
+                    <div id="lab2-feedback" class="text-center text-sm font-bold mt-4 h-5 text-green-600"></div>
+                </div>
+            </div>
+
+            <!-- LABS FOR CONCEPT 2 -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <!-- Lab 3: Hardware Diagnostics -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                    <h2 class="text-xl font-bold mb-2 text-orange-700"><i class="fa-solid fa-server mr-2"></i>Lab 3: Hardware Hot-Swap</h2>
+                    <p class="text-sm text-slate-600 mb-4">A server rack is experiencing unexpected hardware faults. Click the two Red blinking drives to hot-swap them and restore availability.</p>
+                    
+                    <div class="bg-slate-800 p-4 rounded-lg flex flex-col gap-2 relative">
+                        <div class="h-10 bg-slate-700 border border-slate-600 rounded flex items-center px-4 gap-4">
+                            <div class="w-4 h-4 rounded-full bg-green-500 shadow-[0_0_8px_#10b981]"></div><div class="text-slate-400 text-xs">Drive Bay 01</div>
+                        </div>
+                        <div class="h-10 bg-slate-700 border border-slate-600 rounded flex items-center px-4 gap-4 hardware-node cursor-pointer" onclick="fixHardware(this)">
+                            <div class="w-4 h-4 rounded-full bg-red-500 shadow-[0_0_8px_#ef4444] animate-pulse"></div><div class="text-slate-400 text-xs">Drive Bay 02 - FAULT</div>
+                        </div>
+                        <div class="h-10 bg-slate-700 border border-slate-600 rounded flex items-center px-4 gap-4">
+                            <div class="w-4 h-4 rounded-full bg-green-500 shadow-[0_0_8px_#10b981]"></div><div class="text-slate-400 text-xs">Drive Bay 03</div>
+                        </div>
+                        <div class="h-10 bg-slate-700 border border-slate-600 rounded flex items-center px-4 gap-4 hardware-node cursor-pointer" onclick="fixHardware(this)">
+                            <div class="w-4 h-4 rounded-full bg-red-500 shadow-[0_0_8px_#ef4444] animate-pulse"></div><div class="text-slate-400 text-xs">Drive Bay 04 - FAULT</div>
+                        </div>
+                    </div>
+                    <div id="lab3-feedback" class="text-center text-sm font-bold mt-4 h-5 text-green-600"></div>
+                </div>
+
+                <!-- Lab 4: Disaster Rerouting -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200 relative">
+                    <h2 class="text-xl font-bold mb-2 text-orange-700"><i class="fa-solid fa-hurricane mr-2"></i>Lab 4: Disaster Routing</h2>
+                    <p class="text-sm text-slate-600 mb-4">A hurricane has destroyed Data Center B (Red). Click the broken lines to sever them, and click the backup lines to activate routing to Center C.</p>
+                    
+                    <svg class="w-full h-40 bg-slate-50 rounded" viewBox="0 0 400 160">
+                        <!-- Lines -->
+                        <line x1="50" y1="80" x2="150" y2="40" class="net-line active" />
+                        <line x1="50" y1="80" x2="150" y2="80" class="net-line offline cursor-pointer" id="line-b" onclick="toggleLine(this)" />
+                        <line x1="50" y1="80" x2="150" y2="120" class="net-line cursor-pointer" id="line-c" onclick="toggleLine(this)" />
+                        
+                        <!-- Nodes -->
+                        <circle cx="50" cy="80" r="20" fill="#3b82f6" /> <text x="35" y="85" fill="white" font-size="12 font-bold">User</text>
+                        <rect x="150" y="20" width="40" height="40" rx="4" fill="#10b981"/> <text x="165" y="45" fill="white" font-size="14 font-bold">A</text>
+                        <rect x="150" y="60" width="40" height="40" rx="4" fill="#ef4444"/> <text x="165" y="85" fill="white" font-size="14 font-bold">B</text>
+                        <rect x="150" y="100" width="40" height="40" rx="4" fill="#10b981"/> <text x="165" y="125" fill="white" font-size="14 font-bold">C</text>
+                    </svg>
+                    <div id="lab4-feedback" class="text-center text-sm font-bold mt-2 h-5 text-green-600"></div>
+                </div>
+            </div>
+
+            <!-- LABS FOR CONCEPT 3 -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <!-- Lab 5: Apache Slowloris -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                    <h2 class="text-xl font-bold mb-2 text-red-700"><i class="fa-solid fa-bug mr-2"></i>Lab 5: Slowloris DoS Defense</h2>
+                    <p class="text-sm text-slate-600 mb-2">Malicious "broken" packets are exhausting server connections. Adjust the Apache <code>RequestReadTimeout</code> slider down to 10s-20s to drop bad connections faster.</p>
+                    
+                    <div class="flex items-center gap-4 mb-4">
+                        <span class="text-xs font-bold text-slate-500">Timeout:</span>
+                        <input type="range" id="apache-slider" min="5" max="40" value="40" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer" oninput="updateSlowloris()">
+                        <span class="text-sm font-bold text-blue-600 w-8" id="apache-val">40s</span>
+                    </div>
+                    
+                    <div class="bg-slate-800 p-2 rounded flex gap-1 h-12" id="conn-pool">
+                        <!-- Filled via JS -->
+                    </div>
+                    <div id="lab5-feedback" class="text-center text-sm font-bold mt-2 h-5 text-red-500">Server Connections Exhausted!</div>
+                </div>
+
+                <!-- Lab 6: Ransomware -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                    <h2 class="text-xl font-bold mb-2 text-red-700"><i class="fa-solid fa-lock mr-2"></i>Lab 6: Ransomware Isolation</h2>
+                    <p class="text-sm text-slate-600 mb-4">A device has been infected with Ransomware! Click the infected (Red) node to isolate it from the network before it encrypts the other devices.</p>
+                    
+                    <div class="flex justify-center items-center h-32 bg-slate-50 rounded border border-slate-200 relative">
+                        <!-- Switch -->
+                        <div class="absolute w-12 h-12 bg-slate-700 rounded-full flex justify-center items-center z-10"><i class="fa-solid fa-network-wired text-white"></i></div>
+                        
+                        <!-- Nodes -->
+                        <div class="absolute left-[10%] ransom-node w-10 h-10 bg-green-500 rounded flex justify-center items-center shadow" id="r-node-1" onclick="isolateRansom(1)"><i class="fa-solid fa-desktop text-white"></i></div>
+                        <div class="absolute right-[10%] ransom-node w-10 h-10 bg-red-500 rounded flex justify-center items-center shadow animate-bounce" id="r-node-2" onclick="isolateRansom(2)"><i class="fa-solid fa-desktop text-white"></i></div>
+                        <div class="absolute top-[10%] ransom-node w-10 h-10 bg-green-500 rounded flex justify-center items-center shadow" id="r-node-3" onclick="isolateRansom(3)"><i class="fa-solid fa-desktop text-white"></i></div>
+                    </div>
+                    <div id="lab6-feedback" class="text-center text-sm font-bold mt-2 h-5 text-green-600"></div>
+                </div>
+            </div>
+
+            <!-- LABS FOR CONCEPT 4 -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <!-- Lab 7: Load Balancing -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                    <h2 class="text-xl font-bold mb-2 text-green-700"><i class="fa-solid fa-scale-balanced mr-2"></i>Lab 7: Traffic Load Balancing</h2>
+                    <p class="text-sm text-slate-600 mb-2">Incoming traffic is 1500 Mbps. Distribute the traffic among the 3 servers so that <strong>no server exceeds its 600 Mbps limit</strong>.</p>
+                    
+                    <div class="flex justify-between items-end gap-2 h-32 border-b-2 border-slate-300 pb-2 px-2" id="lb-container">
+                        <div class="flex flex-col items-center w-1/3">
+                            <div class="server-rack bg-blue-500 w-full rounded-t flex justify-center items-end text-white text-xs pb-1 transition-all" id="srv1-bar" style="height: 10%;">0</div>
+                            <input type="number" id="srv1-in" value="0" step="100" min="0" max="1000" class="w-full text-center border mt-1" onchange="updateLB()">
+                        </div>
+                        <div class="flex flex-col items-center w-1/3">
+                            <div class="server-rack bg-blue-500 w-full rounded-t flex justify-center items-end text-white text-xs pb-1 transition-all" id="srv2-bar" style="height: 10%;">0</div>
+                            <input type="number" id="srv2-in" value="0" step="100" min="0" max="1000" class="w-full text-center border mt-1" onchange="updateLB()">
+                        </div>
+                        <div class="flex flex-col items-center w-1/3">
+                            <div class="server-rack bg-blue-500 w-full rounded-t flex justify-center items-end text-white text-xs pb-1 transition-all" id="srv3-bar" style="height: 10%;">0</div>
+                            <input type="number" id="srv3-in" value="0" step="100" min="0" max="1000" class="w-full text-center border mt-1" onchange="updateLB()">
+                        </div>
+                    </div>
+                    <div class="text-xs text-center text-slate-500 mt-1">Total Traffic: <span id="lb-total">0</span> / 1500 Mbps</div>
+                    <div id="lab7-feedback" class="text-center text-sm font-bold mt-2 h-5 text-red-500">Traffic unassigned.</div>
+                </div>
+
+                <!-- Lab 8: UPS Sequence -->
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                    <h2 class="text-xl font-bold mb-2 text-green-700"><i class="fa-solid fa-battery-full mr-2"></i>Lab 8: Failover Sequence</h2>
+                    <p class="text-sm text-slate-600 mb-4">Click an item, then click another to swap their order. Arrange the steps of a power failure correctly from top to bottom.</p>
+                    
+                    <div class="flex flex-col gap-2" id="sort-list">
+                        <div class="sortable-item border border-slate-300 rounded p-2 text-sm bg-slate-50" onclick="selectSort(this)" data-order="3">Backup Generator Starts</div>
+                        <div class="sortable-item border border-slate-300 rounded p-2 text-sm bg-slate-50" onclick="selectSort(this)" data-order="1">Power Grid Fails</div>
+                        <div class="sortable-item border border-slate-300 rounded p-2 text-sm bg-slate-50" onclick="selectSort(this)" data-order="4">Generator Takes Over Load</div>
+                        <div class="sortable-item border border-slate-300 rounded p-2 text-sm bg-slate-50" onclick="selectSort(this)" data-order="2">UPS Supplies Immediate Battery Power</div>
+                    </div>
+                    <div id="lab8-feedback" class="text-center text-sm font-bold mt-4 h-5 text-red-500">Incorrect Sequence.</div>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <button onclick="switchTab('quiz')" class="bg-blue-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-blue-500 shadow-lg transition transform hover:scale-105">Take the Mastery Quiz <i class="fa-solid fa-clipboard-check ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- QUIZ SECTION -->
+        <div id="quiz-section" class="tab-content no-print">
+            <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-xl max-w-4xl mx-auto border border-slate-200">
+                <div class="text-center mb-8 border-b pb-4">
+                    <h1 class="text-3xl font-extrabold text-slate-900 mb-2">Unit 07 Section 6.1.3 Mastery Quiz</h1>
+                    <p class="text-slate-600">Score 90% or higher (18/20) to earn your Certificate of Mastery and unlock the Retro Game!</p>
+                </div>
+
+                <div id="quiz-container" class="space-y-8">
+                    <!-- Questions injected via JS -->
+                </div>
+
+                <div class="mt-10 text-center border-t pt-6 flex flex-col md:flex-row justify-center items-center gap-4">
+                    <button id="submit-quiz-btn" onclick="gradeQuiz()" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">Submit Quiz</button>
+                    <button id="proceed-game-btn" onclick="switchTab('game')" class="hidden bg-purple-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-purple-700 shadow-lg transition w-full md:w-auto">Play Retro Game <i class="fa-solid fa-gamepad ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RETRO GAME SECTION -->
+        <div id="game-section" class="tab-content no-print">
+            <div class="bg-slate-900 p-6 sm:p-8 rounded-2xl shadow-xl max-w-4xl mx-auto border-4 border-slate-700 flex flex-col items-center">
+                <div class="text-center mb-4 w-full">
+                    <h1 class="text-3xl font-extrabold text-blue-400 mb-2 tracking-widest uppercase" style="font-family: monospace;">Server Tapper</h1>
+                    <p class="text-slate-300 text-sm">Act as the Load Balancer! Use <strong class="text-yellow-400">UP/DOWN ARROWS</strong> to move between network lanes. Press <strong class="text-yellow-400">SPACEBAR</strong> to send data packets (blue) to incoming client requests (red). Don't let requests crash the server (left side) and don't waste packets (right side)!</p>
+                </div>
+                
+                <div class="flex justify-between items-center w-full max-w-[400px] sm:max-w-[600px] mb-2 px-4 text-white font-mono text-xl">
+                    <div>Requests Served: <span id="game-score" class="text-green-400 font-bold">0</span></div>
+                    <div>System Stability: <span id="game-lives" class="text-red-400 font-bold">3</span></div>
+                </div>
+
+                <div class="relative flex justify-center w-full">
+                    <!-- Game Canvas -->
+                    <canvas id="game-canvas" width="600" height="400" class="w-full max-w-[400px] sm:max-w-[600px] bg-slate-800 border-2 border-slate-600 rounded shadow-lg"></canvas>
+                    
+                    <!-- Overlay Start Button -->
+                    <div id="game-overlay" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-70 rounded-lg max-w-[400px] sm:max-w-[600px] mx-auto z-10">
+                        <button id="start-game-btn" class="bg-blue-600 hover:bg-blue-500 text-white font-bold font-mono py-3 px-6 rounded-lg text-xl border-4 border-blue-800 uppercase transform transition hover:scale-105">Initialize Balancer</button>
+                    </div>
+                </div>
+                
+                <!-- Mobile Controls for Game -->
+                <div class="mt-4 flex sm:hidden gap-4 w-full max-w-[400px] justify-center">
+                    <div class="flex flex-col gap-2">
+                        <button class="bg-slate-700 text-white p-4 rounded-lg active:bg-slate-600" onmousedown="mobileMove(-1)" onmouseup="mobileMove(0)" ontouchstart="mobileMove(-1)" ontouchend="mobileMove(0)"><i class="fa-solid fa-arrow-up"></i></button>
+                        <button class="bg-slate-700 text-white p-4 rounded-lg active:bg-slate-600" onmousedown="mobileMove(1)" onmouseup="mobileMove(0)" ontouchstart="mobileMove(1)" ontouchend="mobileMove(0)"><i class="fa-solid fa-arrow-down"></i></button>
+                    </div>
+                    <button class="bg-blue-600 text-white p-4 px-8 rounded-lg active:bg-blue-500 font-bold" onmousedown="mobileShoot()" ontouchstart="mobileShoot()">SEND DATA</button>
+                </div>
+
+                <div class="mt-8 text-center w-full border-t border-slate-700 pt-6">
+                    <button onclick="switchTab('cert')" class="bg-yellow-500 text-slate-900 px-8 py-3 rounded-lg font-bold text-lg hover:bg-yellow-400 shadow-lg transition w-full md:w-auto">Claim Certificate <i class="fa-solid fa-award ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CERTIFICATE SECTION -->
+        <div id="cert-section" class="tab-content">
+            <div class="max-w-5xl mx-auto">
+                
+                <!-- Controls -->
+                <div class="bg-white p-6 rounded shadow mb-6 no-print text-center border border-slate-200">
+                    <h2 class="text-2xl font-bold text-blue-600 mb-2">🎉 Congratulations! 🎉</h2>
+                    <p class="text-slate-700 mb-4">You have achieved mastery of Availability Concerns and System Mitigation.</p>
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+                        <input type="text" id="student-name-input" value="Student" placeholder="Enter your first name" class="border-2 border-slate-300 rounded px-4 py-2 w-full md:w-64 focus:border-blue-500 focus:outline-none">
+                        <button onclick="updateCertName()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">Update Name</button>
+                        <button id="download-btn" onclick="downloadCert()" class="bg-slate-800 text-white px-4 py-2 rounded hover:bg-slate-900 transition flex items-center justify-center">
+                            <i class="fa-solid fa-download mr-2"></i>Download PNG
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Certificate Render Container -->
+                <div class="cert-preview-container print:p-0 print:bg-white">
+                    <div id="certificate">
+                        <div class="gold-seal">
+                            <div class="gold-seal-inner-1">
+                                <div class="gold-seal-inner-2">
+                                     <span class="embossed-text embossed-text-large">Certificate</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-small">Of</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-large">Excellence</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="relative z-20 w-full h-full flex flex-col pt-[48px] pl-[380px] pr-[48px]">
+                            <h1 class="text-[#1e3a8a] text-[4.5rem] leading-none font-serif font-bold tracking-wide uppercase mb-2">CERTIFICATE</h1>
+                            <h2 class="text-slate-800 text-3xl font-serif tracking-widest uppercase mb-10">Of Achievement</h2>
+                            
+                            <p class="text-[1.4rem] font-body text-slate-800 mb-4">This is to certify that</p>
+                            
+                            <div class="relative mb-8 w-full">
+                                <h3 id="cert-student-name" class="text-[4rem] text-[#1e3a8a] font-serif italic leading-none pb-2 relative z-10 text-center w-full block">Student</h3>
+                                <div class="w-full border-b-[2px] border-[#1e3a8a] absolute bottom-[4px] left-0 z-0"></div>
+                                <div class="w-full border-b-[2px] border-dotted border-red-500 absolute bottom-[0px] left-0 z-0"></div>
+                            </div>
+                            
+                            <p class="text-[1.3rem] font-body text-slate-800 leading-relaxed w-full pr-4">
+                                Has successfully completed the assessment for 
+                                <strong class="text-[1.8rem] text-[#1e3a8a] block mt-4 mb-2 font-serif">Cyber.org Tech+ Unit 07 Section 6.1.3</strong>
+                                <strong class="text-[1.5rem] text-black block mb-4 font-serif italic">Availability Concerns</strong>
+                                <span class="text-[1.1rem] text-slate-700 leading-snug block">Demonstrating comprehensive proficiency in identifying threats to system availability—including hardware failure, natural disasters, DoS/DDoS attacks, and ransomware—as well as implementing vital fallback mitigations like redundancy, load balancing, and failover systems.</span>
+                            </p>
+                            
+                            <div class="flex justify-end gap-16 items-end mt-auto mb-[60px] w-full pr-8">
+                                <div class="w-64">
+                                    <div class="border-b border-slate-600 mb-2 h-20 flex items-end justify-center relative">
+                                        <span class="font-script text-[5rem] text-[#1e3a8a] absolute bottom-[-10px] transform -rotate-3 opacity-90">Dr. M. S</span>
+                                    </div>
+                                    <p class="font-serif text-xl text-slate-800 text-center">Administration</p>
+                                </div>
+                                
+                                <div class="w-64">
+                                    <div class="border-b border-slate-600 mb-2 text-center h-20 flex items-end justify-center">
+                                        <p id="cert-date" class="font-body text-2xl text-slate-800 pb-1">Date Here</p>
+                                    </div>
+                                    <p class="font-serif text-xl text-slate-800 text-center">Date</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Custom Modal for Alerts -->
+    <div id="custom-modal" class="fixed inset-0 bg-black bg-opacity-50 z-[100] hidden flex justify-center items-center backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all">
+            <div class="text-center">
+                <div id="modal-icon" class="text-5xl mb-4"></div>
+                <h3 id="modal-title" class="text-2xl font-bold mb-2 text-slate-900"></h3>
+                <p id="modal-msg" class="text-slate-600 mb-6"></p>
+                <button onclick="closeModal()" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-700 transition w-full">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Briefing Modal -->
+    <div id="briefing-modal" class="fixed inset-0 bg-black bg-opacity-70 z-[120] hidden flex justify-center items-center backdrop-blur-sm p-4 sm:p-6">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col transform transition-all overflow-hidden border-4 border-blue-800">
+            <div class="p-6 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+                <div class="flex items-center gap-4">
+                    <div id="briefing-modal-icon" class="text-4xl"></div>
+                    <h3 id="briefing-modal-title" class="text-2xl md:text-3xl font-bold text-slate-900"></h3>
+                </div>
+                <button onclick="closeBriefing()" class="text-slate-400 hover:text-red-600 transition text-4xl leading-none">&times;</button>
+            </div>
+            <div id="briefing-modal-content" class="p-6 md:p-10 overflow-y-auto flex-grow text-slate-700 text-lg leading-relaxed bg-white">
+                <!-- Dynamic Content Injected Here -->
+            </div>
+            <div class="p-6 border-t border-slate-200 bg-slate-50 flex justify-end">
+                <button onclick="closeBriefing()" class="bg-blue-800 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-900 transition shadow-md">Acknowledge & Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Extensive Briefing Content Data (Min 7 Paragraphs per detail, 2 Use cases with 2 examples & 2 images) ---
+        const briefingData = {
+            'cia-details': {
+                title: 'Availability & The CIA Triad',
+                icon: '<i class="fa-solid fa-clock-rotate-left text-blue-600"></i>',
+                html: `
+                    <p class="mb-5">In the realm of cybersecurity, the CIA Triad stands as the foundational model guiding all information security policies. This triad consists of Confidentiality, Integrity, and Availability. While Confidentiality focuses on keeping secrets secret and Integrity ensures data remains accurate and unaltered, <strong>Availability</strong> is the principle dedicated to ensuring that systems, networks, and data are consistently accessible to authorized users whenever they need them.</p>
+                    
+                    <p class="mb-5">Historically, computing was a localized task; if a machine went down, a single worker was inconvenienced. Today, we live in a globally interconnected, "always-on" digital ecosystem. Users expect 24/7 access to everything from their banking apps to streaming services to critical healthcare records. Consequently, the standard for Availability has skyrocketed. IT professionals don't just aim for systems to work most of the time; they aim for "Five Nines" (99.999% uptime), which equates to roughly 5 minutes of allowed downtime per year.</p>
+                    
+                    <p class="mb-5">When Availability fails, organizations suffer immediate and compounding consequences. The first and most obvious is <strong>Operational Disruption</strong>. Consider a modern logistics company: if their routing servers go offline, trucks cannot be dispatched, warehouses cannot process inventory, and the entire physical supply chain grinds to a halt purely due to a digital availability failure. The inability to perform day-to-day tasks can paralyze a workforce within seconds.</p>
+                    
+                    <p class="mb-5">Directly tied to operational disruption is severe <strong>Financial Loss</strong>. For large e-commerce platforms, financial institutions, or cloud service providers, every single second a system is unavailable translates to direct lost revenue. Transactions are missed, ad revenue plummets, and employees are being paid while unable to work. In severe cases, companies spend millions of dollars in emergency recovery efforts just to restore baseline availability.</p>
+                    
+                    <p class="mb-5">Beyond the immediate financial hit, there is catastrophic <strong>Reputation Damage</strong>. In the digital age, consumer trust is fragile. If a user attempts to access an online service and is met with repeated "503 Service Temporarily Unavailable" errors, they will quickly migrate to a competitor. Social media amplifies this damage, as frustrated users publicly complain about the outage, branding the organization as unreliable and incompetent.</p>
+                    
+                    <p class="mb-5">Furthermore, many industries face intense <strong>Legal and Compliance Risks</strong> regarding availability. Healthcare organizations operating under HIPAA are legally mandated to ensure Electronic Health Records (EHR) are available during medical emergencies; an outage during a critical surgery could be fatal and result in massive lawsuits. Similarly, service providers often sign Service Level Agreements (SLAs) with clients, legally binding them to pay hefty financial penalties if availability drops below a certain threshold.</p>
+                    
+                    <p>Understanding Availability means recognizing that it is not merely an IT convenience—it is a critical business imperative. Defending it requires a proactive approach, anticipating failure before it happens, and designing systems so robust that a single point of failure can never bring down the entire organization. It is the invisible shield that keeps the modern digital economy moving.</p>
+                `
+            },
+            'cia-usecase': {
+                title: 'Availability & The CIA Triad: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 1: Healthcare Operations</h4>
+                        <p class="mb-2">Hospitals rely entirely on the continuous availability of digital records to make life-or-death medical decisions.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Operational Impact):</strong> An unexpected server crash causes the Electronic Health Record (EHR) system to go offline. Doctors in the ER cannot check a critical patient's allergies before administering medication, halting medical care.</li>
+                            <li><strong>Example 2 (Compliance Impact):</strong> Because the hospital failed to maintain the legally required availability of patient data under HIPAA regulations, they are subjected to a federal audit and face massive financial penalties.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 2: Global E-Commerce</h4>
+                        <p class="mb-2">Online retailers require 100% uptime, especially during high-traffic events, to ensure revenue streams remain open.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Financial Loss):</strong> During a major "Cyber Monday" sale, a retailer's payment gateway goes offline for 45 minutes. During this window, 10,000 customers abandon their shopping carts, resulting in $1.5 million in lost instantaneous revenue.</li>
+                            <li><strong>Example 2 (Reputational Damage):</strong> Frustrated shoppers take to social media with screenshots of the "Website Down" error. The hashtag trending on Twitter causes long-term brand damage, and users flock to a competitor's functioning website.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Availability Failure</p>
+                            <img src="https://images.unsplash.com/photo-1614064641913-a520faff8c86?auto=format&fit=crop&w=600&h=350" alt="Website down error screen" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Critical Hospital Care</p>
+                            <img src="https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=600&h=350" alt="Doctors looking at digital tablets" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'unexpected-details': {
+                title: 'Unexpected Issues',
+                icon: '<i class="fa-solid fa-bolt-lightning text-orange-600"></i>',
+                html: `
+                    <p class="mb-5">When analyzing threats to availability, not all downtime is the result of malicious hackers in dark hoodies. In fact, a massive percentage of system outages are caused by <strong>Unexpected Issues</strong>—ordinary, non-malicious events that abruptly disrupt operations. No matter how advanced the software is, the physical reality of the hardware and the environment it resides in can introduce catastrophic vulnerabilities if not properly managed.</p>
+                    
+                    <p class="mb-5">The most common unexpected issue is simple <strong>Hardware Failure</strong>. Servers, hard drives, network switches, and power supplies are physical, mechanical, and electrical devices. They have a lifespan. Hard drives have spinning disks that eventually warp, and solid-state drives have finite read/write cycles. IT professionals track a metric called MTBF (Mean Time Between Failures) to estimate when a component will inevitably crash, causing localized downtime.</p>
+                    
+                    <p class="mb-5">Closely related to mechanical failure is the issue of <strong>Environmental and Heat Stress</strong>. Massive data centers generate an incredible amount of heat. If an HVAC (cooling) system fails, the ambient temperature in a server room can spike by 30 degrees in minutes. To prevent literal fires, modern servers are designed to automatically initiate an emergency shutdown when they overheat, immediately dropping availability to zero.</p>
+                    
+                    <p class="mb-5">Moving beyond the data center walls, <strong>Natural Disasters</strong> pose massive geographic threats. Depending on the location of the infrastructure, an organization might face risks from earthquakes, wildfires, tornadoes, or hurricanes. A Category 5 hurricane doesn't care about your software firewall; it will physically tear the roof off a building and flood the server racks, permanently destroying the hardware and making the data utterly inaccessible.</p>
+                    
+                    <p class="mb-5">Even if the physical hardware is perfectly safe, <strong>Software Issues and Misconfigurations</strong> are a leading cause of accidental downtime. This often boils down to human error. A system administrator might accidentally mistype an IP address while updating a routing table, inadvertently severing the network connection for thousands of users. Poorly optimized code or mismatched technical specifications can lead to memory leaks, causing a server to eventually freeze under normal loads.</p>
+                    
+                    <p class="mb-5">A prime example of an unexpected software issue is a faulty, automated update. If an operating system or antivirus vendor pushes out a mandatory software patch globally, and that patch contains a critical bug, it can send millions of machines into an endless "Blue Screen of Death" boot loop. This acts exactly like a massive cyberattack, but it was purely accidental.</p>
+                    
+                    <p>Finally, <strong>Power Outages</strong> represent a fundamental threat. Computers run on electricity. Whether it's a drunk driver hitting a local utility pole, a massive regional grid failure during a winter storm, or a blown transformer, the loss of raw electrical power stops the flow of data instantly. Managing these unexpected, physical-world issues requires robust planning and secondary systems to ensure the digital world remains online.</p>
+                `
+            },
+            'unexpected-usecase': {
+                title: 'Unexpected Issues: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-orange-800 mb-2 border-b-2 border-orange-200 pb-1">Case 1: Environmental & Physical Disasters</h4>
+                        <p class="mb-2">Physical world events entirely outside the control of an IT department can devastate digital availability.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Natural Disaster):</strong> A localized flash flood breaches the ground floor of an office building where the company's primary on-site server room is located. The water shorts out the equipment, causing a total loss of access to the corporate network for three days.</li>
+                            <li><strong>Example 2 (Cooling Failure):</strong> During a record-breaking summer heatwave, a data center's industrial air conditioning unit fails. Within 15 minutes, the internal temperature of the server racks exceeds 110°F, triggering automatic thermal shutdowns across 500 servers, dropping all hosted websites offline.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-orange-800 mb-2 border-b-2 border-orange-200 pb-1">Case 2: Accidental Human & Software Errors</h4>
+                        <p class="mb-2">Even without malicious intent, simple mistakes can cascade into massive availability failures.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Misconfiguration):</strong> A junior network engineer accidentally applies a "Deny All" rule to the company's core firewall while trying to block a single bad IP. This simple typo instantly cuts off the entire office from the internet.</li>
+                            <li><strong>Example 2 (Faulty Patch):</strong> A major cybersecurity firm pushes a routine automated software update to all its clients worldwide. The update contains a minor coding error that clashes with the Windows OS, causing millions of computers globally to crash and fail to boot, grounding airlines and halting banks.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Hardware Failure</p>
+                            <img src="https://images.unsplash.com/photo-1597852074816-d933c7d2b988?auto=format&fit=crop&w=600&h=350" alt="Broken physical hard drive" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Power Infrastructure</p>
+                            <img src="https://images.unsplash.com/photo-1473646549557-01124e41ea87?auto=format&fit=crop&w=600&h=350" alt="Storm clouds over power lines" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'malicious-details': {
+                title: 'Controlled & Malicious Threats',
+                icon: '<i class="fa-solid fa-skull-crossbones text-red-600"></i>',
+                html: `
+                    <p class="mb-5">While unexpected hardware failures are inevitable, organizations must also prepare for deliberate actions that cause downtime. These fall into two categories: <strong>Controlled Issues</strong> (like planned maintenance that goes wrong) and <strong>Malicious Activity</strong> (where attackers intentionally sabotage availability to extort money or cause chaos). Both require careful planning and rapid response to mitigate.</p>
+                    
+                    <p class="mb-5"><strong>Maintenance</strong> is a necessary, controlled event. Systems must be taken offline occasionally to install hardware upgrades, apply critical security patches, or migrate databases. However, maintenance frequently threatens availability when it exceeds its planned window. If a team anticipates two hours of downtime at 2:00 AM, but encounters an unforeseen database corruption error upon restart, that controlled downtime can unexpectedly bleed into the morning business hours, crippling operations.</p>
+                    
+                    <p class="mb-5">Transitioning to malicious threats, the most direct attack on availability is a <strong>Denial of Service (DoS)</strong>. A DoS attack occurs when an attacker intentionally floods a server with so much junk traffic or so many fake requests that the server's CPU, memory, or network bandwidth is completely exhausted. When a legitimate user tries to access the site, the overwhelmed server simply drops the request, rendering the service "unavailable."</p>
+                    
+                    <p class="mb-5">A more devastating evolution of this is the <strong>Distributed Denial of Service (DDoS)</strong> attack. Instead of attacking from a single computer, the attacker utilizes a "Botnet"—an army of thousands of malware-infected computers and IoT devices (like smart cameras or refrigerators) globally. At the attacker's command, these thousands of devices simultaneously bombard the target server. Because the traffic comes from thousands of distinct sources, simple IP blocking is ineffective, making DDoS incredibly difficult to mitigate.</p>
+                    
+                    <p class="mb-5">Not all DoS attacks rely on massive brute-force flooding. Some, like the famous <strong>Slowloris</strong> attack, are highly targeted and low-bandwidth. Slowloris works by initiating a connection to a webserver (like Apache) and sending partial, incomplete HTTP headers very slowly. The webserver keeps the connection open, waiting patiently for the rest of the data. By opening hundreds of these slow connections, Slowloris quietly ties up all available connection slots on the server, locking out real users without needing a massive botnet.</p>
+                    
+                    <p class="mb-5">Another massive malicious threat to availability is <strong>Ransomware</strong>. This is a type of crypto-malware that sneaks onto a network and rapidly encrypts all files, databases, and operating systems it can reach. The data is still physically on the hard drive, but it is locked behind complex cryptography. The attackers then demand payment (usually in cryptocurrency) in exchange for the decryption key.</p>
+                    
+                    <p>Ransomware destroys availability because employees arrive at work to find they cannot open any documents, log into any portals, or process any transactions. Entire city governments and hospital systems have been forced back to using pen and paper for weeks after a ransomware attack, highlighting how malicious actors weaponize the loss of availability for extortion.</p>
+                `
+            },
+            'malicious-usecase': {
+                title: 'Controlled & Malicious Threats: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-red-800 mb-2 border-b-2 border-red-200 pb-1">Case 1: Intentional Resource Exhaustion</h4>
+                        <p class="mb-2">Attackers target web servers directly, attempting to crash them by consuming all available bandwidth or connection pools.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (DDoS Botnet):</strong> A malicious group takes control of 100,000 infected smart-home cameras worldwide (the Mirai botnet). They command the cameras to simultaneously send thousands of requests per second to a major gaming network, overwhelming the network pipes and preventing gamers from logging in all weekend.</li>
+                            <li><strong>Example 2 (Slowloris Attack):</strong> An attacker uses a single laptop running a Slowloris script against a vulnerable Apache web server. By sending partial, lingering HTTP requests, they slowly tie up all 500 of the server's available connection threads. Legitimate users attempting to view the website are met with infinite loading screens.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-red-800 mb-2 border-b-2 border-red-200 pb-1">Case 2: Extortion and Cryptography</h4>
+                        <p class="mb-2">Hackers destroy the availability of internal organizational data specifically to extort large sums of money.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Ransomware):</strong> A school district employee accidentally opens a malicious email attachment. The ransomware executes, silently spreading across the network and encrypting all student grading databases, lesson plans, and HR payroll files. The hackers demand $500,000 in Bitcoin to restore access.</li>
+                            <li><strong>Example 2 (Double Extortion):</strong> Not only do the attackers encrypt the data (destroying Availability), but they also steal a copy of the sensitive data beforehand (destroying Confidentiality). If the victim refuses to pay to unlock their files, the attackers threaten to publish the confidential data online.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Cyber Extortion</p>
+                            <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=600&h=350" alt="Cyber security lock screen" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: System Maintenance</p>
+                            <img src="https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?auto=format&fit=crop&w=600&h=350" alt="Technician working on server racks" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'fallback-details': {
+                title: 'Fallback Systems & Active Mitigation',
+                icon: '<i class="fa-solid fa-shield-cat text-green-600"></i>',
+                html: `
+                    <p class="mb-5">Because availability is so critical, IT professionals cannot simply react to outages; they must proactively design systems that resist downtime. This requires implementing robust <strong>Fallback Systems and Active Mitigation</strong> strategies. The overarching philosophy is eliminating any "Single Point of Failure." If a single hard drive, a single server, or a single power line can take down your entire company, the architecture is fundamentally flawed.</p>
+                    
+                    <p class="mb-5">The most fundamental fallback system is the implementation of rigorous <strong>Backups</strong>. A backup is a point-in-time copy of data. If a primary system is destroyed by a flood or encrypted by ransomware, the organization can wipe the hardware and restore the data from the backup. Security experts follow the 3-2-1 rule: Keep at least 3 copies of your data, on 2 different media types, with at least 1 copy securely offsite (away from the primary building).</p>
+                    
+                    <p class="mb-5">While backups recover lost data, <strong>Redundancy</strong> prevents the system from going down in the first place. Redundancy means having duplicate hardware components standing by. Instead of one power supply in a server, there are two. Instead of one main database server, there is a cluster of three. If the primary hardware component physically fails, the secondary component is already there, ready to handle the load without dropping a single packet of data.</p>
+                    
+                    <p class="mb-5">To make redundancy seamless, organizations use <strong>Failover Systems</strong>. Failover is the automated mechanism that detects a failure and instantly switches traffic to the redundant system. For example, if a company's primary fiber-optic internet connection is cut by a construction crew, a failover router detects the loss of signal and instantly reroutes all corporate traffic through a secondary 5G cellular backup connection. The users barely notice a blip.</p>
+                    
+                    <p class="mb-5">To handle power outages, specific failover hardware is required. An <strong>Uninterruptible Power Supply (UPS)</strong> is a massive battery bank sitting between the wall outlet and the server. If the local power grid fails, the UPS instantly (in milliseconds) provides battery power to the servers so they don't crash. Because batteries only last a few minutes, the UPS buys enough time for the facility's massive Backup Diesel Generators to spin up and take over the electrical load indefinitely.</p>
+                    
+                    <p class="mb-5">To defend against massive traffic spikes or DDoS attacks, organizations rely on <strong>Load Balancing</strong>. A load balancer acts like a traffic cop sitting in front of a farm of servers. As thousands of web requests come in, the load balancer intelligently distributes the traffic equally across Server A, Server B, and Server C. If Server B gets overwhelmed or goes offline for maintenance, the load balancer instantly redirects all new traffic to A and C, ensuring the website remains highly available.</p>
+                    
+                    <p>Finally, modern organizations leverage <strong>Cloud Services</strong> (like AWS or Azure) to achieve ultimate availability. Cloud providers operate massive data centers worldwide. By hosting applications in the cloud, a company can geographically distribute their data. If a hurricane wipes out a data center in Florida, the cloud platform automatically fails over to identical, synchronized servers in Oregon, utilizing massive scale and redundancy to guarantee near 100% availability.</p>
+                `
+            },
+            'fallback-usecase': {
+                title: 'Fallback Systems & Mitigation: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-green-800 mb-2 border-b-2 border-green-200 pb-1">Case 1: Power and Hardware Failure</h4>
+                        <p class="mb-2">A data center must maintain operations even when the physical world around it fails catastrophically.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (UPS & Generator Failover):</strong> A winter storm knocks out the city power grid. The data center's Uninterruptible Power Supply (UPS) instantly provides battery power to the servers, preventing them from shutting down. Twenty seconds later, the rooftop diesel generators kick in, providing stable power for the next 72 hours until the grid is repaired.</li>
+                            <li><strong>Example 2 (Redundant Backups):</strong> An office building burns down, destroying all local servers. However, because the company adhered to a strict offsite backup policy, they download their data from a secure cloud backup and are back to work on new laptops within 24 hours.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-green-800 mb-2 border-b-2 border-green-200 pb-1">Case 2: Traffic Spikes and DDoS Mitigation</h4>
+                        <p class="mb-2">High volumes of network traffic, whether legitimate or malicious, must be managed to maintain availability.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Load Balancing):</strong> A major retailer experiences a 500% spike in traffic during a Black Friday sale. Their network Load Balancer dynamically routes incoming shoppers evenly across 20 different web servers, ensuring no single server exceeds its capacity and crashes.</li>
+                            <li><strong>Example 2 (Cloud DDoS Protection):</strong> A bank is targeted by a massive DDoS botnet. Because they use a global cloud security provider (like Cloudflare), the provider's systems automatically detect the malicious flood, absorb the junk traffic across their massive global network, and only pass legitimate customer traffic through to the bank's actual servers.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Load Balancing Traffic</p>
+                            <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=600&h=350" alt="Abstract glowing lines showing data distribution" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Backup Generators</p>
+                            <img src="https://images.unsplash.com/photo-1544725121-be3bf52e2dc8?auto=format&fit=crop&w=600&h=350" alt="Large industrial power generator" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        // Modal Control Functions
+        function openBriefing(key) {
+            const modal = document.getElementById('briefing-modal');
+            const data = briefingData[key];
+            if(data) {
+                document.getElementById('briefing-modal-icon').innerHTML = data.icon;
+                document.getElementById('briefing-modal-title').innerText = data.title;
+                document.getElementById('briefing-modal-content').innerHTML = data.html;
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; 
+            }
+        }
+
+        function closeBriefing() {
+            document.getElementById('briefing-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto'; 
+        }
+
+        document.getElementById('briefing-modal').addEventListener('click', function(e) {
+            if(e.target === this) closeBriefing();
+        });
+        
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId + '-section').classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-blue-950'));
+            const activeBtn = document.getElementById('nav-' + tabId);
+            if(activeBtn && tabId !== 'cert') activeBtn.classList.add('bg-blue-950');
+            
+            document.querySelectorAll('.nav-btn-mobile').forEach(btn => btn.classList.remove('bg-blue-950'));
+            const activeMobileBtn = document.getElementById('nav-' + tabId + '-mobile');
+            if(activeMobileBtn && tabId !== 'cert') activeMobileBtn.classList.add('bg-blue-950');
+
+            window.scrollTo(0,0);
+
+            if (tabId === 'game' && !gameRunning) {
+                resetGame();
+                drawGame();
+            }
+        }
+
+        function showModal(title, message, type = 'info') {
+            const modal = document.getElementById('custom-modal');
+            const icon = document.getElementById('modal-icon');
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-msg').innerText = message;
+            
+            if(type === 'success') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-check text-green-500"></i>';
+            } else if (type === 'error') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500"></i>';
+            } else if (type === 'warning') {
+                icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-yellow-500"></i>';
+            } else {
+                icon.innerHTML = '<i class="fa-solid fa-circle-info text-blue-500"></i>';
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        // --- LAB 1: Categorization Logic ---
+        let draggedCatItem = null;
+        let lab1Count = 0;
+
+        document.querySelectorAll('#cat-items .io-item').forEach(item => {
+            item.addEventListener('dragstart', function() {
+                draggedCatItem = this;
+                setTimeout(() => this.classList.add('opacity-50'), 0);
+            });
+            item.addEventListener('dragend', function() {
+                setTimeout(() => this.classList.remove('opacity-50'), 0);
+                draggedCatItem = null;
+            });
+        });
+
+        document.querySelectorAll('.cat-dropzone').forEach(zone => {
+            zone.addEventListener('dragover', e => e.preventDefault());
+            zone.addEventListener('dragenter', function(e) { e.preventDefault(); this.classList.add('brightness-95'); });
+            zone.addEventListener('dragleave', function() { this.classList.remove('brightness-95'); });
+            zone.addEventListener('drop', function() {
+                this.classList.remove('brightness-95');
+                if(draggedCatItem) {
+                    if(draggedCatItem.dataset.type === this.dataset.target) {
+                        this.appendChild(draggedCatItem);
+                        draggedCatItem.classList.remove('bg-blue-50', 'cursor-grab', 'border-blue-300');
+                        draggedCatItem.classList.add('bg-green-100', 'text-green-800', 'border-green-400', 'cursor-default', 'mt-1', 'w-[90%]');
+                        draggedCatItem.setAttribute('draggable', 'false');
+                        lab1Count++;
+                        
+                        document.getElementById('lab1-feedback').innerText = "Correct Impact Category!";
+                        document.getElementById('lab1-feedback').className = "text-center text-sm font-bold mt-2 h-5 text-green-600";
+                        
+                        if(lab1Count === 4) {
+                            setTimeout(() => showModal('Lab 1 Complete!', 'You successfully categorized the impacts of an Availability failure.', 'success'), 500);
+                        }
+                    } else {
+                        document.getElementById('lab1-feedback').innerText = "Incorrect. Think about the specific nature of that consequence.";
+                        document.getElementById('lab1-feedback').className = "text-center text-sm font-bold mt-2 h-5 text-red-600";
+                    }
+                }
+            });
+        });
+
+        // --- LAB 2: Threat Identification ---
+        let lab2Score = 0;
+        let lab2Miss = 0;
+        let lab2Solved = false;
+
+        function checkLab2(btn) {
+            if(lab2Solved) return;
+            if(btn.dataset.threat === 'true') {
+                btn.classList.replace('border-slate-200', 'border-green-500');
+                btn.classList.add('bg-green-100', 'text-green-800', 'pointer-events-none');
+                btn.innerHTML += ' <i class="fa-solid fa-check ml-1"></i>';
+                lab2Score++;
+                document.getElementById('lab2-feedback').innerText = "Correct! This causes downtime.";
+                document.getElementById('lab2-feedback').className = "text-center text-sm font-bold mt-4 h-5 text-green-600";
+                
+                if(lab2Score === 2) {
+                    lab2Solved = true;
+                    setTimeout(() => showModal('Lab 2 Complete!', 'You successfully identified the direct threats to Availability (DDoS and Power outages).', 'success'), 500);
+                }
+            } else {
+                btn.classList.replace('border-slate-200', 'border-red-500');
+                btn.classList.add('bg-red-100', 'text-red-800', 'pointer-events-none');
+                btn.innerHTML += ' <i class="fa-solid fa-xmark ml-1"></i>';
+                document.getElementById('lab2-feedback').innerText = "Incorrect. That targets Integrity or Confidentiality.";
+                document.getElementById('lab2-feedback').className = "text-center text-sm font-bold mt-4 h-5 text-red-600";
+            }
+        }
+
+        // --- LAB 3: Hardware Hot-Swap ---
+        let hwFixed = 0;
+        function fixHardware(node) {
+            if(node.classList.contains('pointer-events-none')) return;
+            node.innerHTML = '<div class="w-4 h-4 rounded-full bg-green-500 shadow-[0_0_8px_#10b981]"></div><div class="text-slate-400 text-xs">Drive Bay - REPLACED</div>';
+            node.classList.add('pointer-events-none');
+            hwFixed++;
+            document.getElementById('lab3-feedback').innerText = "Faulty hardware swapped out.";
+            document.getElementById('lab3-feedback').className = "text-center text-sm font-bold mt-4 h-5 text-green-600";
+            if(hwFixed === 2) {
+                setTimeout(() => showModal('Lab 3 Complete!', 'Redundancy maintained! You successfully hot-swapped the failing drives to prevent an outage.', 'success'), 500);
+            }
+        }
+
+        // --- LAB 4: Disaster Routing ---
+        let lineB = document.getElementById('line-b');
+        let lineC = document.getElementById('line-c');
+        
+        function toggleLine(line) {
+            if(line.id === 'line-b') {
+                line.classList.remove('offline', 'cursor-pointer');
+                line.classList.add('pointer-events-none'); // Severed
+                line.style.opacity = '0.2';
+            } else if (line.id === 'line-c') {
+                line.classList.add('active');
+                line.classList.remove('cursor-pointer');
+                line.classList.add('pointer-events-none');
+            }
+            
+            checkLab4();
+        }
+
+        function checkLab4() {
+            if(lineB.style.opacity === '0.2' && lineC.classList.contains('active')) {
+                document.getElementById('lab4-feedback').innerText = "Traffic successfully re-routed!";
+                document.getElementById('lab4-feedback').className = "text-center text-sm font-bold mt-2 h-5 text-green-600";
+                setTimeout(() => showModal('Lab 4 Complete!', 'You successfully used redundant infrastructure to re-route around the disaster zone!', 'success'), 500);
+            } else {
+                document.getElementById('lab4-feedback').innerText = "Route pending... sever bad connection, activate backup.";
+                document.getElementById('lab4-feedback').className = "text-center text-sm font-bold mt-2 h-5 text-blue-600";
+            }
+        }
+
+        // --- LAB 5: Apache Slowloris ---
+        const connPool = document.getElementById('conn-pool');
+        let slowlorisTimer;
+        let connections = 0;
+        let lab5Solved = false;
+
+        // Init bars
+        for(let i=0; i<30; i++) {
+            let bar = document.createElement('div');
+            bar.className = 'flex-1 bg-slate-600 rounded transition-colors duration-300';
+            connPool.appendChild(bar);
+        }
+
+        function runSlowloris() {
+            slowlorisTimer = setInterval(() => {
+                if(lab5Solved) return clearInterval(slowlorisTimer);
+                
+                const val = parseInt(document.getElementById('apache-slider').value);
+                
+                if (val > 20) {
+                    // Attack succeeding
+                    if(connections < 30) {
+                        connPool.children[connections].classList.replace('bg-slate-600', 'bg-red-500');
+                        connections++;
+                    }
+                    if(connections >= 30) {
+                        document.getElementById('lab5-feedback').innerText = "Server Connections Exhausted! Legitimate users dropped.";
+                        document.getElementById('lab5-feedback').className = "text-center text-sm font-bold mt-2 h-5 text-red-500 animate-pulse";
+                    }
+                } else {
+                    // Attack failing (dropping fast)
+                    if(connections > 0) {
+                        connections--;
+                        connPool.children[connections].classList.replace('bg-red-500', 'bg-green-500');
+                    }
+                    
+                    document.getElementById('lab5-feedback').innerText = "Broken connections dropping. Server resources freeing up.";
+                    document.getElementById('lab5-feedback').className = "text-center text-sm font-bold mt-2 h-5 text-green-600";
+                    
+                    if(connections === 0) {
+                        lab5Solved = true;
+                        setTimeout(() => showModal('Lab 5 Complete!', 'By tightening the timeout configuration, you stopped the Slowloris attack from holding connections hostage.', 'success'), 500);
+                    }
+                }
+            }, 200);
+        }
+        
+        function updateSlowloris() {
+            let val = document.getElementById('apache-slider').value;
+            document.getElementById('apache-val').innerText = val + 's';
+        }
+
+        // Start slowloris when tab becomes active
+        document.getElementById('nav-activity').addEventListener('click', () => {
+            if(!slowlorisTimer && !lab5Solved) runSlowloris();
+        });
+
+        // --- LAB 6: Ransomware Isolation ---
+        let lab6Solved = false;
+        function isolateRansom(nodeId) {
+            if(lab6Solved) return;
+            if(nodeId === 2) {
+                // Correct node
+                lab6Solved = true;
+                const node = document.getElementById('r-node-2');
+                node.classList.remove('animate-bounce');
+                node.classList.add('opacity-30'); // Isolated
+                document.getElementById('lab6-feedback').innerText = "Ransomware Isolated successfully!";
+                document.getElementById('lab6-feedback').className = "text-center text-sm font-bold mt-2 h-5 text-green-600";
+                setTimeout(() => showModal('Lab 6 Complete!', 'You quickly identified and isolated the infected machine before the ransomware could spread through the network switch.', 'success'), 500);
+            } else {
+                document.getElementById('lab6-feedback').innerText = "Wrong node! The red one is infected!";
+                document.getElementById('lab6-feedback').className = "text-center text-sm font-bold mt-2 h-5 text-red-600";
+            }
+        }
+
+        // --- LAB 7: Load Balancing ---
+        let lab7Solved = false;
+        function updateLB() {
+            if(lab7Solved) return;
+            let v1 = parseInt(document.getElementById('srv1-in').value) || 0;
+            let v2 = parseInt(document.getElementById('srv2-in').value) || 0;
+            let v3 = parseInt(document.getElementById('srv3-in').value) || 0;
+            
+            let total = v1 + v2 + v3;
+            document.getElementById('lb-total').innerText = total;
+            
+            let h1 = Math.min(100, (v1/600)*100);
+            let h2 = Math.min(100, (v2/600)*100);
+            let h3 = Math.min(100, (v3/600)*100);
+            
+            document.getElementById('srv1-bar').style.height = h1 + '%';
+            document.getElementById('srv1-bar').innerText = v1;
+            document.getElementById('srv2-bar').style.height = h2 + '%';
+            document.getElementById('srv2-bar').innerText = v2;
+            document.getElementById('srv3-bar').style.height = h3 + '%';
+            document.getElementById('srv3-bar').innerText = v3;
+            
+            // Color logic (overload > 600)
+            [1,2,3].forEach(i => {
+                let v = eval('v'+i);
+                let el = document.getElementById('srv'+i+'-bar');
+                if(v > 600) el.classList.replace('bg-blue-500', 'bg-red-500');
+                else el.classList.replace('bg-red-500', 'bg-blue-500');
+            });
+
+            if (total === 1500 && v1 <= 600 && v2 <= 600 && v3 <= 600) {
+                lab7Solved = true;
+                document.getElementById('lab7-feedback').innerText = "Traffic perfectly balanced!";
+                document.getElementById('lab7-feedback').className = "text-center text-sm font-bold mt-2 h-5 text-green-600";
+                setTimeout(() => showModal('Lab 7 Complete!', 'You successfully configured the load balancer, distributing 1500 Mbps without exceeding the 600 Mbps hardware limit on any single server.', 'success'), 500);
+                
+                ['srv1-in', 'srv2-in', 'srv3-in'].forEach(id => document.getElementById(id).disabled = true);
+            } else if (v1 > 600 || v2 > 600 || v3 > 600) {
+                document.getElementById('lab7-feedback').innerText = "Server Overload! Capacity is 600 Mbps.";
+                document.getElementById('lab7-feedback').className = "text-center text-sm font-bold mt-2 h-5 text-red-500";
+            } else if (total < 1500) {
+                document.getElementById('lab7-feedback').innerText = "Unassigned traffic dropping. Total must be 1500.";
+                document.getElementById('lab7-feedback').className = "text-center text-sm font-bold mt-2 h-5 text-orange-500";
+            } else {
+                 document.getElementById('lab7-feedback').innerText = "Too much traffic assigned.";
+                 document.getElementById('lab7-feedback').className = "text-center text-sm font-bold mt-2 h-5 text-red-500";
+            }
+        }
+
+        // --- LAB 8: UPS Sequence ---
+        let selectedSort = null;
+        function selectSort(el) {
+            if(el.parentElement.id !== 'sort-list') return; // if finished
+            
+            if(!selectedSort) {
+                selectedSort = el;
+                el.classList.add('selected');
+            } else {
+                if(selectedSort === el) {
+                    el.classList.remove('selected');
+                    selectedSort = null;
+                    return;
+                }
+                
+                // Swap
+                let list = document.getElementById('sort-list');
+                let items = Array.from(list.children);
+                let idx1 = items.indexOf(selectedSort);
+                let idx2 = items.indexOf(el);
+                
+                if(idx1 < idx2) {
+                    el.after(selectedSort);
+                } else {
+                    el.before(selectedSort);
+                }
+                
+                selectedSort.classList.remove('selected');
+                selectedSort = null;
+                
+                checkLab8();
+            }
+        }
+
+        function checkLab8() {
+            let items = document.querySelectorAll('#sort-list .sortable-item');
+            let currentOrder = Array.from(items).map(item => item.dataset.order).join('');
+            
+            if(currentOrder === '1234') {
+                document.getElementById('lab8-feedback').innerText = "Failover Sequence Correct!";
+                document.getElementById('lab8-feedback').className = "text-center text-sm font-bold mt-4 h-5 text-green-600";
+                items.forEach(i => {
+                    i.classList.add('bg-green-100', 'border-green-400');
+                    i.classList.remove('bg-slate-50', 'cursor-pointer');
+                    i.onclick = null;
+                });
+                document.getElementById('sort-list').id = 'done-list';
+                setTimeout(() => showModal('Lab 8 Complete!', 'You correctly ordered the failover mechanism: Grid fails -> UPS bridges the gap -> Generator starts -> Generator takes the long-term load.', 'success'), 500);
+            }
+        }
+
+
+        // --- QUIZ LOGIC (20 Questions) ---
+        const quizData = [
+            // 10 provided from Document
+            { q: "What is the primary goal of the availability principle in the CIA Triad?", options: ["To prevent unauthorized access", "To detect malware", "To ensure authorized users have access", "Encrypting sensitive data"], answer: 2 },
+            { q: "Which of the following is an example of a malicious threat to availability?", options: ["Software update", "Network maintenance", "Accidental power outage", "DDoS attack"], answer: 3 },
+            { q: "What is the key difference between a DoS and a DDoS attack?", options: ["DoS is for integrity, DDoS is for confidentiality", "DDoS comes from multiple sources", "DoS is only used for testing", "DDoS uses encryption, DoS does not"], answer: 1 },
+            { q: "Why can a power outage threaten availability?", options: ["It makes systems temporarily inaccessible", "It deletes software code", "It corrupts passwords", "It reveals confidential data"], answer: 0 },
+            { q: "What is the purpose of a backup in relation to availability?", options: ["To detect attacks on data", "To allow data recovery after a loss", "To prevent unauthorized access", "To block malware attacks"], answer: 1 },
+            { q: "Which of the following would best help prevent a website from going offline during high traffic?", options: ["Antivirus software", "Load balancing", "File encryption", "Maintenance downtime"], answer: 1 },
+            { q: "What is a failover system designed to do?", options: ["Identify the source of attacks", "Redirect malicious traffic", "Take over when the primary system fails", "Store large amounts of data"], answer: 2 },
+            { q: "Which of the following is most likely a result of repeated downtime?", options: ["Faster data transfer", "Higher customer trust", "Improved system performance", "Reputation damage"], answer: 3 },
+            { q: "Ransomware directly affects availability by:", options: ["Encrypting data to block access", "Physically damaging servers", "Using excessive bandwidth", "Deleting old system files"], answer: 0 },
+            { q: "What availability concern would a small business face by relying on a single server for all operations?", options: ["Faster performance", "Limited access to backup systems", "Improved data confidentiality", "Enhanced encryption strength"], answer: 1 },
+            
+            // 10 new questions based on briefing
+            { q: "In modern IT environments, achieving 'Five Nines' (99.999% uptime) allows for roughly how much downtime per year?", options: ["5 hours", "5 days", "5 minutes", "5 seconds"], answer: 2 },
+            { q: "If an e-commerce payment gateway goes down during Black Friday resulting in lost sales, this represents which specific downtime consequence?", options: ["Legal and Compliance Risk", "Financial Loss", "Hardware Degradation", "Maintenance Padding"], answer: 1 },
+            { q: "What metric do IT professionals use to track the physical lifespan of hardware components like hard drives before they inevitably fail?", options: ["SLA (Service Level Agreement)", "DDoS (Distributed Denial)", "MTBF (Mean Time Between Failures)", "EHR (Electronic Health Record)"], answer: 2 },
+            { q: "How do modern servers typically react if an HVAC (cooling) system fails and ambient temperatures rapidly spike?", options: ["They initiate an emergency thermal shutdown.", "They increase their processing speed.", "They automatically deploy a cloud backup.", "They activate an Uninterruptible Power Supply (UPS)."], answer: 0 },
+            { q: "What type of availability issue occurs when an administrator accidentally types the wrong IP address into a firewall routing table?", options: ["Ransomware Extortion", "Software Misconfiguration (Human Error)", "Botnet Flooding", "Environmental Disaster"], answer: 1 },
+            { q: "Why is a DDoS attack fundamentally harder to stop than a standard DoS attack?", options: ["DDoS attacks encrypt the hard drive.", "DDoS uses partial HTTP headers instead of full packets.", "DDoS traffic originates from thousands of different sources (Botnet).", "DDoS specifically targets Uninterruptible Power Supplies."], answer: 2 },
+            { q: "Which specific DoS attack method attempts to quietly tie up all server connections by sending partial HTTP headers very slowly?", options: ["Mirai Botnet", "Ransomware", "SQL Injection", "Slowloris"], answer: 3 },
+            { q: "Which core principle states you should keep at least 3 copies of data, on 2 different media types, with 1 copy securely offsite?", options: ["The 3-2-1 Backup Rule", "The Triad Compliance Act", "The N+1 Redundancy Protocol", "The Failover Mandate"], answer: 0 },
+            { q: "What hardware component buys a data center a few minutes of immediate battery power so the backup diesel generators have time to spin up?", options: ["Load Balancer", "UPS (Uninterruptible Power Supply)", "HVAC System", "Hardware Router"], answer: 1 },
+            { q: "If one server in a cluster goes down for maintenance, what active mitigation tool intelligently redirects incoming web traffic to the remaining healthy servers?", options: ["A Load Balancer", "A Ransomware Decryptor", "A Slowloris Script", "A Battery Backup Unit"], answer: 0 }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        
+        quizData.forEach((item, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = "bg-slate-50 p-6 rounded-lg border border-slate-200 transition-all";
+            qDiv.id = `q-block-${index}`;
+            
+            const qTitle = document.createElement('h3');
+            qTitle.className = "font-bold text-lg text-slate-800 mb-4";
+            qTitle.innerText = `${index + 1}. ${item.q}`;
+            qDiv.appendChild(qTitle);
+            
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = "space-y-3";
+            
+            item.options.forEach((opt, optIndex) => {
+                const label = document.createElement('label');
+                label.className = "flex items-center space-x-3 p-3 rounded bg-white border border-slate-300 hover:bg-blue-50 cursor-pointer transition";
+                
+                const radio = document.createElement('input');
+                radio.type = "radio";
+                radio.name = `q${index}`;
+                radio.value = optIndex;
+                radio.className = "form-radio h-5 w-5 text-blue-600";
+                
+                const span = document.createElement('span');
+                span.className = "text-slate-700";
+                span.innerText = opt;
+                
+                label.appendChild(radio);
+                label.appendChild(span);
+                optionsDiv.appendChild(label);
+            });
+            
+            qDiv.appendChild(optionsDiv);
+            quizContainer.appendChild(qDiv);
+        });
+
+        function gradeQuiz() {
+            let score = 0;
+            let allAnswered = true;
+
+            for(let i = 0; i < quizData.length; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if(selected) {
+                    if(parseInt(selected.value) === quizData[i].answer) {
+                        score++;
+                    }
+                } else {
+                    allAnswered = false;
+                }
+            }
+            
+            if(!allAnswered) {
+                showModal('Incomplete Quiz', 'Please answer all 20 questions before submitting.', 'warning');
+                return;
+            }
+            
+            const percentage = (score / quizData.length) * 100;
+            
+            if(score >= 18) { 
+                const navGame = document.getElementById('nav-game');
+                const navGameMobile = document.getElementById('nav-game-mobile');
+                
+                navGame.classList.remove('text-slate-400', 'cursor-not-allowed');
+                navGame.classList.add('text-white', 'hover:bg-blue-700');
+                navGame.disabled = false;
+                navGame.innerHTML = '<i class="fa-solid fa-gamepad mr-1"></i>Game';
+                
+                navGameMobile.classList.remove('text-slate-400', 'cursor-not-allowed');
+                navGameMobile.classList.add('text-white', 'hover:bg-blue-700');
+                navGameMobile.disabled = false;
+                navGameMobile.innerHTML = '<i class="fa-solid fa-gamepad"></i> Game';
+
+                document.getElementById('nav-cert').classList.remove('hidden');
+                document.getElementById('nav-cert-mobile').classList.remove('hidden');
+                
+                document.getElementById('proceed-game-btn').classList.remove('hidden');
+                document.getElementById('submit-quiz-btn').classList.add('hidden');
+
+                showModal('Outstanding!', `You scored ${score}/20 (${percentage}%). You have unlocked your Certificate of Mastery AND the Retro Game!`, 'success');
+            } else {
+                quizData.forEach((_, i) => {
+                    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                    if(selected) selected.checked = false;
+                });
+                showModal('Keep Trying!', `You scored ${score}/20 (${percentage}%). You need 90% (18/20) to earn the certificate. Your answers have been reset so you can try again.`, 'error');
+                document.getElementById('quiz-section').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // --- RETRO GAME LOGIC: Server Tapper (Tapper Clone) ---
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let score = 0;
+        let lives = 3;
+        let gameRunning = false;
+        let animationId;
+        
+        // Game Constants & state
+        const lanes = [80, 180, 280, 380]; // Y positions of the 4 server lanes
+        let playerLane = 1; // index 0-3
+        let packets = []; // projectiles
+        let requests = []; // enemies
+        
+        let spawnRate = 2000;
+        let lastSpawn = 0;
+        let difficultyMultiplier = 1;
+        
+        const overlay = document.getElementById('game-overlay');
+        const startBtn = document.getElementById('start-game-btn');
+        startBtn.addEventListener('click', startGame);
+
+        // Input handling
+        window.addEventListener('keydown', function(e) {
+            if(!gameRunning) return;
+            
+            if(e.key === 'ArrowUp' || e.key === 'w') {
+                e.preventDefault();
+                playerLane = Math.max(0, playerLane - 1);
+            }
+            if(e.key === 'ArrowDown' || e.key === 's') {
+                e.preventDefault();
+                playerLane = Math.min(3, playerLane + 1);
+            }
+            if(e.key === ' ' || e.key === 'Spacebar') {
+                e.preventDefault();
+                shootPacket();
+            }
+        });
+        
+        // Mobile controls
+        function mobileMove(dir) {
+            if(!gameRunning || dir === 0) return;
+            if(dir === -1) playerLane = Math.max(0, playerLane - 1);
+            if(dir === 1) playerLane = Math.min(3, playerLane + 1);
+        }
+        function mobileShoot() {
+            if(gameRunning) shootPacket();
+        }
+
+        function shootPacket() {
+            // Prevent spamming too fast
+            let lanePackets = packets.filter(p => p.lane === playerLane);
+            if(lanePackets.length < 3) {
+                packets.push({ x: 80, y: lanes[playerLane] - 15, lane: playerLane, speed: 6 });
+            }
+        }
+
+        function loseLife(reason) {
+            lives--;
+            document.getElementById('game-lives').innerText = lives;
+            
+            // Visual red flash
+            ctx.fillStyle = "rgba(239,68,68,0.4)";
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            
+            if(lives <= 0) {
+                gameOver();
+            }
+        }
+
+        function resetGame() {
+            playerLane = 1;
+            packets = [];
+            requests = [];
+            score = 0;
+            lives = 3;
+            spawnRate = 2000;
+            difficultyMultiplier = 1;
+            document.getElementById('game-score').innerText = score;
+            document.getElementById('game-lives').innerText = lives;
+            lastSpawn = Date.now();
+        }
+
+        function startGame() {
+            overlay.classList.add('hidden');
+            if(!gameRunning) {
+                resetGame();
+                gameRunning = true;
+                drawGame();
+            }
+        }
+
+        function drawGame() {
+            if(!gameRunning) return;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw background lanes
+            ctx.lineWidth = 4;
+            for(let i=0; i<4; i++) {
+                // Server visual left
+                ctx.fillStyle = '#334155';
+                ctx.fillRect(10, lanes[i]-30, 40, 40);
+                
+                // Track line
+                ctx.strokeStyle = '#475569';
+                ctx.beginPath();
+                ctx.moveTo(50, lanes[i]);
+                ctx.lineTo(canvas.width, lanes[i]);
+                ctx.stroke();
+            }
+            
+            // Spawn Requests
+            let now = Date.now();
+            if(now - lastSpawn > spawnRate) {
+                let rLane = Math.floor(Math.random() * 4);
+                requests.push({
+                    x: canvas.width,
+                    y: lanes[rLane] - 25,
+                    lane: rLane,
+                    speed: 1.5 * difficultyMultiplier
+                });
+                lastSpawn = now;
+                
+                // Increase difficulty slightly
+                if(spawnRate > 600) spawnRate -= 20;
+                difficultyMultiplier += 0.02;
+            }
+            
+            // Draw Player (Load Balancer Node)
+            ctx.fillStyle = '#10b981'; // Green
+            ctx.beginPath();
+            ctx.arc(60, lanes[playerLane] - 10, 15, 0, Math.PI*2);
+            ctx.fill();
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            // Update & Draw Packets (Blue)
+            for(let i = packets.length - 1; i >= 0; i--) {
+                let p = packets[i];
+                p.x += p.speed;
+                
+                ctx.fillStyle = '#3b82f6';
+                ctx.fillRect(p.x, p.y, 20, 10);
+                
+                // Collision with requests
+                let hit = false;
+                for(let j = requests.length - 1; j >= 0; j--) {
+                    let r = requests[j];
+                    if(p.lane === r.lane && p.x + 20 > r.x && p.x < r.x + 30) {
+                        // HIT! Serve the request
+                        requests.splice(j, 1);
+                        hit = true;
+                        score++;
+                        document.getElementById('game-score').innerText = score;
+                        break; // Packet consumed
+                    }
+                }
+                
+                if(hit) {
+                    packets.splice(i, 1);
+                    continue;
+                }
+                
+                // Waste packet (goes off screen)
+                if(p.x > canvas.width) {
+                    packets.splice(i, 1);
+                    loseLife(); // Penalty for wasting resources
+                }
+            }
+            
+            // Update & Draw Requests (Red)
+            for(let i = requests.length - 1; i >= 0; i--) {
+                let r = requests[i];
+                r.x -= r.speed;
+                
+                ctx.fillStyle = '#ef4444';
+                ctx.beginPath();
+                ctx.arc(r.x + 15, r.y + 15, 15, 0, Math.PI*2);
+                ctx.fill();
+                
+                // Request reached server without packet (Availability Crash!)
+                if(r.x < 50) {
+                    requests.splice(i, 1);
+                    loseLife();
+                }
+            }
+            
+            animationId = requestAnimationFrame(drawGame);
+        }
+
+        function gameOver() {
+            gameRunning = false;
+            cancelAnimationFrame(animationId);
+            overlay.classList.remove('hidden');
+            startBtn.innerText = "Servers Crashed! Reboot";
+            startBtn.classList.replace('bg-blue-600', 'bg-slate-700');
+            startBtn.classList.replace('border-blue-800', 'border-slate-900');
+        }
+
+        // --- CERTIFICATE LOGIC ---
+        function updateCertName() {
+            let name = document.getElementById('student-name-input').value.trim();
+            if(name) {
+                if (name.includes(' ')) {
+                    name = name.split(' ')[0];
+                    document.getElementById('student-name-input').value = name;
+                    showModal('Notice', 'Only your first name has been applied to the certificate.', 'info');
+                }
+                document.getElementById('cert-student-name').innerText = name;
+            } else {
+                showModal('Wait!', 'Please enter your first name to update the certificate.', 'warning');
+            }
+        }
+
+        const today = new Date();
+        document.getElementById('cert-date').innerText = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        function downloadCert() {
+            const certEl = document.getElementById('certificate');
+            const name = document.getElementById('cert-student-name').innerText;
+            let filename = 'Availability_Certificate.png';
+            if (name && name !== 'Student') {
+                filename = `${name.replace(/\s+/g, '_')}_Availability_Certificate.png`;
+            }
+
+            const originalTransform = certEl.style.transform;
+            certEl.style.transform = 'none';
+
+            const btn = document.getElementById('download-btn');
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Generating...';
+            btn.disabled = true;
+
+            html2canvas(certEl, { 
+                scale: 2, 
+                useCORS: true,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+            }).catch(err => {
+                console.error(err);
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                showModal('Error', 'Failed to generate image. Try using a desktop browser.', 'error');
+            });
+        }
+
+        window.onload = () => {
+            // Draw static background for game preview
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle = '#64748b';
+            ctx.font = '20px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('LOAD BALANCER STANDBY', canvas.width/2, canvas.height/2);
+        }
+    </script>
+</body>
+</html>
+```eof

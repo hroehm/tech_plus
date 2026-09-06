@@ -1,0 +1,1497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 07 Section 6.1.1 Mastery - Confidentiality Concerns</title>
+    
+    <!-- Load Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load HTML2Canvas for Certificate Download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- Load Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Qwitcher+Grypen:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; 
+            color: #0f172a;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        /* Interactive Elements CSS */
+        .io-dropzone { min-height: 70px; min-width: 130px; border: 2px dashed #94a3b8; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: #f1f5f9; transition: all 0.2s;}
+        .io-dropzone.drag-over { background: #e2e8f0; border-color: #0284c7; box-shadow: inset 0 0 10px rgba(2, 132, 199, 0.2);}
+        
+        .io-item { cursor: grab; transition: transform 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .io-item:active { cursor: grabbing; transform: scale(0.95); }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #e2e8f0; }
+        ::-webkit-scrollbar-thumb { background: #0284c7; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #0369a1; }
+
+        /* Retro Game Canvas */
+        #game-canvas {
+            background-color: #0f172a;
+            border: 4px solid #334155;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(14, 165, 233, 0.3);
+            max-width: 100%;
+            height: auto;
+            touch-action: none;
+            cursor: none; /* Hide cursor inside game */
+        }
+
+        /* --- CERTIFICATE STYLES --- */
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .font-body { font-family: 'Lora', serif; }
+        .font-script { font-family: 'Qwitcher Grypen', cursive; }
+        
+        .cert-preview-container {
+            width: 100%;
+            overflow: auto;
+            display: flex;
+            justify-content: center;
+            background: #cbd5e1;
+            padding: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        #certificate {
+            width: 1056px !important;
+            height: 816px !important;
+            flex-shrink: 0;
+            background-color: #ffffff;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1056" height="816"><polygon points="0,0 250,0 0,650" fill="%2338bdf8"/><polygon points="0,0 350,0 0,900" fill="%230284c7" opacity="0.8"/><polygon points="0,0 120,0 0,300" fill="%2338bdf8"/><polygon points="0,450 650,816 0,816" fill="%2338bdf8"/><polygon points="0,550 450,816 0,816" fill="%230284c7" opacity="0.8"/><polygon points="800,0 1056,0 1056,256" fill="%23f8fafc"/><polygon points="1056,500 1056,816 750,816" fill="%23f8fafc"/></svg>');
+            background-size: cover;
+            border: 4px solid #cbd5e1;
+        }
+
+        .gold-seal {
+            position: absolute;
+            left: 110px;
+            top: 350px;
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c, #fcf6ba);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3), inset 0 0 15px rgba(255,255,255,0.7), inset 0 0 25px rgba(139,105,20,0.9);
+            z-index: 10;
+        }
+        .gold-seal::before {
+            content: '';
+            position: absolute;
+            top: -4px; bottom: -4px; left: -4px; right: -4px;
+            border-radius: 50%;
+            border: 6px dashed #d4af37;
+        }
+        .gold-seal-inner-1 {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 2px solid rgba(139, 105, 20, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #e8c678, #dbab46);
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.2), 0 2px 5px rgba(255,255,255,0.7);
+            z-index: 1;
+        }
+        .gold-seal-inner-2 {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: radial-gradient(circle, #fcf6ba, #d4af37);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            padding: 10px;
+        }
+        .embossed-text {
+            color: #b38728;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2);
+            font-family: 'Playfair Display', serif;
+            font-weight: 800;
+            line-height: 1.1;
+            text-transform: uppercase;
+        }
+        .embossed-text-large { font-size: 14px; letter-spacing: 1px; }
+        .embossed-text-small { font-size: 11px; letter-spacing: 2px; margin: 2px 0; }
+        .embossed-star { font-size: 12px; color: #b38728; text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2); margin: 2px 0; }
+
+        @media (max-width: 1100px) {
+            #certificate { transform: scale(0.7); transform-origin: top left; margin-bottom: -240px; margin-right: -310px; }
+        }
+        @media (max-width: 768px) {
+            #certificate { transform: scale(0.4); transform-origin: top left; margin-bottom: -490px; margin-right: -630px; }
+        }
+        
+        /* Specific Lab Styles */
+        .toggle-switch {
+            position: relative; width: 40px; height: 20px; background-color: #cbd5e1; border-radius: 20px; cursor: pointer; transition: background-color 0.3s;
+        }
+        .toggle-switch::after {
+            content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; background-color: white; border-radius: 50%; transition: left 0.3s;
+        }
+        .toggle-switch.active { background-color: #10b981; }
+        .toggle-switch.active::after { left: 22px; }
+
+        .phish-spot:hover { border: 2px dashed red; cursor: pointer; background: rgba(255,0,0,0.1); }
+        .phish-spot.found { border: 2px solid red; background: rgba(255,0,0,0.2); }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen flex flex-col">
+
+    <nav class="bg-sky-800 text-white shadow-lg sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-user-secret text-2xl"></i>
+                    <span class="font-bold text-xl tracking-wider hidden sm:inline-block">Tech+ Unit 07 Section 6.1.1</span>
+                    <span class="font-bold text-xl tracking-wider sm:hidden">6.1.1</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-2">
+                        <button onclick="switchTab('briefing')" class="nav-btn bg-sky-950 px-3 py-2 rounded-md text-sm font-medium hover:bg-sky-700 transition" id="nav-briefing"><i class="fa-solid fa-book-open mr-1"></i>Briefing</button>
+                        <button onclick="switchTab('activity')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-sky-700 transition" id="nav-activity"><i class="fa-solid fa-flask mr-1"></i>Lab Activity</button>
+                        <button onclick="switchTab('quiz')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-sky-700 transition" id="nav-quiz"><i class="fa-solid fa-clipboard-check mr-1"></i>Quiz</button>
+                        <button onclick="switchTab('game')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-slate-400 cursor-not-allowed transition" id="nav-game" disabled><i class="fa-solid fa-lock mr-1"></i>Game</button>
+                        <button onclick="switchTab('cert')" class="nav-btn hidden px-3 py-2 rounded-md text-sm font-medium text-yellow-300 hover:bg-sky-700 transition" id="nav-cert"><i class="fa-solid fa-award mr-1"></i>Certificate</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Nav -->
+        <div class="md:hidden flex flex-wrap justify-center gap-2 py-2 px-2 bg-sky-900">
+            <button onclick="switchTab('briefing')" class="nav-btn-mobile px-3 py-1 text-sm rounded bg-sky-950" id="nav-briefing-mobile">Briefing</button>
+            <button onclick="switchTab('activity')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-activity-mobile">Lab</button>
+            <button onclick="switchTab('quiz')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-quiz-mobile">Quiz</button>
+            <button onclick="switchTab('game')" class="nav-btn-mobile px-3 py-1 text-sm rounded text-slate-400 cursor-not-allowed" id="nav-game-mobile" disabled><i class="fa-solid fa-lock"></i></button>
+            <button onclick="switchTab('cert')" id="nav-cert-mobile" class="hidden px-2 py-1 text-sm text-yellow-300 rounded"><i class="fa-solid fa-award"></i></button>
+        </div>
+    </nav>
+
+    <main class="flex-grow w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <!-- BRIEFING SECTION -->
+        <div id="briefing-section" class="tab-content active no-print">
+            <div class="text-center mb-10">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4">Confidentiality Concerns & Threats</h1>
+                <p class="text-lg text-slate-600 max-w-3xl mx-auto">Data security requires continuous vigilance. Explore the CIA Triad and the critical threats aimed at compromising the confidentiality of digital and physical information.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- Tile 1 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-indigo-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-indigo-700"><i class="fa-solid fa-shield-halved mr-2"></i>The CIA Triad & Confidentiality</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>CIA Triad:</strong> The foundational model of cybersecurity: Confidentiality, Integrity, and Availability.</li>
+                            <li><strong>Confidentiality:</strong> Ensuring data is only viewable and accessible by authorized individuals.</li>
+                            <li><strong>Sensitive Data:</strong> Passwords, PII (Names, SSNs), and financial/health records are prime targets.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('cia-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('cia-usecase')" class="flex-1 bg-indigo-100 hover:bg-indigo-200 text-indigo-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 2 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-emerald-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-emerald-700"><i class="fa-solid fa-network-wired mr-2"></i>Network Sniffing</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>Sniffing/Snooping:</strong> Monitoring and capturing network packets as they move through a system.</li>
+                            <li><strong>Vulnerabilities:</strong> Unencrypted traffic over public Wi-Fi can expose login credentials instantly.</li>
+                            <li><strong>Defense:</strong> Secure protocols like HTTPS, WPA3 for wireless, and VPNs encrypt the traffic.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('sniff-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('sniff-usecase')" class="flex-1 bg-emerald-100 hover:bg-emerald-200 text-emerald-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 3 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-rose-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-rose-700"><i class="fa-solid fa-masks-theater mr-2"></i>Social Engineering</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>Psychological Tactics:</strong> Manipulating human behavior, fear, or urgency to gain information.</li>
+                            <li><strong>Phishing:</strong> Using fake emails (Phishing), texts (Smishing), or voice calls (Vishing) to steal data.</li>
+                            <li><strong>Mitigation:</strong> User training, ignoring suspicious requests, and reporting through official channels.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('social-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('social-usecase')" class="flex-1 bg-rose-100 hover:bg-rose-200 text-rose-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 4 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-amber-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-amber-700"><i class="fa-solid fa-user-ninja mr-2"></i>Physical & Communication Threats</h2>
+                        <ul class="space-y-3 text-slate-700 mb-4">
+                            <li><strong>In-Person Observation:</strong> Shoulder surfing (watching screens) and Tailgating (following through doors).</li>
+                            <li><strong>Monitoring:</strong> Eavesdropping (listening) and Wiretapping (intercepting physical/wireless calls).</li>
+                            <li><strong>Dumpster Diving:</strong> Stealing discarded physical documents; mitigated by shredding.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 border-t border-slate-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('physical-details')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('physical-usecase')" class="flex-1 bg-amber-100 hover:bg-amber-200 text-amber-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 flex justify-center">
+                <button onclick="switchTab('activity')" class="bg-sky-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-sky-500 shadow-lg transition transform hover:scale-105">Proceed to Lab Activity <i class="fa-solid fa-arrow-right ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- LAB ACTIVITY SECTION -->
+        <div id="activity-section" class="tab-content no-print">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-extrabold text-slate-900 mb-2">Interactive Security Labs</h1>
+                <p class="text-slate-600">Complete these 8 distinct cybersecurity labs to master the concepts of Confidentiality and Threat Mitigation.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- LAB 1: CIA Triad Match -->
+                <div class="bg-white p-5 rounded-xl shadow border-t-4 border-indigo-500">
+                    <h2 class="text-lg font-bold mb-2 text-indigo-700">Lab 1: The CIA Triad</h2>
+                    <p class="text-xs text-slate-500 mb-3">Drag the core principles to their correct definitions.</p>
+                    <div class="flex gap-2 mb-4 justify-center" id="lab1-items">
+                        <div class="io-item px-3 py-1 bg-indigo-100 text-indigo-800 rounded font-bold text-sm border border-indigo-300" draggable="true" data-id="c">Confidentiality</div>
+                        <div class="io-item px-3 py-1 bg-indigo-100 text-indigo-800 rounded font-bold text-sm border border-indigo-300" draggable="true" data-id="i">Integrity</div>
+                        <div class="io-item px-3 py-1 bg-indigo-100 text-indigo-800 rounded font-bold text-sm border border-indigo-300" draggable="true" data-id="a">Availability</div>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex items-center gap-2">
+                            <div class="io-dropzone w-24 min-h-[40px] text-xs p-1" data-target="i"></div>
+                            <span class="text-sm font-medium text-slate-700">Data is accurate and protected from alteration.</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="io-dropzone w-24 min-h-[40px] text-xs p-1" data-target="a"></div>
+                            <span class="text-sm font-medium text-slate-700">Reliable, timely access for authorized users.</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="io-dropzone w-24 min-h-[40px] text-xs p-1" data-target="c"></div>
+                            <span class="text-sm font-medium text-slate-700">Only viewable by those authorized to view it.</span>
+                        </div>
+                    </div>
+                    <div id="lab1-feedback" class="text-center text-xs font-bold mt-2 h-4"></div>
+                </div>
+
+                <!-- LAB 2: Data Classification -->
+                <div class="bg-white p-5 rounded-xl shadow border-t-4 border-indigo-500">
+                    <h2 class="text-lg font-bold mb-2 text-indigo-700">Lab 2: Data Classification</h2>
+                    <p class="text-xs text-slate-500 mb-3">Click to toggle the data type to strictly "Confidential" or "Public".</p>
+                    <div class="grid grid-cols-2 gap-3" id="lab2-grid">
+                        <button class="lab2-btn bg-slate-200 p-2 text-sm rounded font-medium" onclick="toggleData(this)" data-correct="conf">User Passwords</button>
+                        <button class="lab2-btn bg-slate-200 p-2 text-sm rounded font-medium" onclick="toggleData(this)" data-correct="pub">Company Blog</button>
+                        <button class="lab2-btn bg-slate-200 p-2 text-sm rounded font-medium" onclick="toggleData(this)" data-correct="pub">Marketing Flyers</button>
+                        <button class="lab2-btn bg-slate-200 p-2 text-sm rounded font-medium" onclick="toggleData(this)" data-correct="conf">Patient SSNs</button>
+                    </div>
+                    <button class="mt-4 w-full bg-indigo-600 text-white py-1 rounded font-bold text-sm hover:bg-indigo-700" onclick="checkLab2()">Verify Classification</button>
+                    <div id="lab2-feedback" class="text-center text-xs font-bold mt-2 h-4"></div>
+                </div>
+
+                <!-- LAB 3: Packet Sniffer -->
+                <div class="bg-white p-5 rounded-xl shadow border-t-4 border-emerald-500">
+                    <h2 class="text-lg font-bold mb-2 text-emerald-700">Lab 3: Sniffing Defense</h2>
+                    <p class="text-xs text-slate-500 mb-3">Click the unencrypted packets to block them before they cross the network.</p>
+                    <div class="relative bg-slate-800 h-24 rounded overflow-hidden flex items-center justify-between px-2" id="network-line">
+                        <div class="text-white text-xs z-10"><i class="fa-solid fa-server fa-2x"></i></div>
+                        <div class="text-white text-xs z-10"><i class="fa-solid fa-globe fa-2x"></i></div>
+                        
+                        <!-- Packets -->
+                        <div class="absolute left-[20%] bg-red-500 text-white text-xs px-2 py-1 rounded cursor-pointer font-bold border border-red-700 hover:scale-110" onclick="blockPacket(this)">HTTP</div>
+                        <div class="absolute left-[40%] bg-emerald-500 text-white text-xs px-2 py-1 rounded font-bold border border-emerald-700">HTTPS</div>
+                        <div class="absolute left-[60%] bg-red-500 text-white text-xs px-2 py-1 rounded cursor-pointer font-bold border border-red-700 hover:scale-110" onclick="blockPacket(this)">Open Wi-Fi</div>
+                        <div class="absolute left-[80%] bg-emerald-500 text-white text-xs px-2 py-1 rounded font-bold border border-emerald-700">WPA3</div>
+                    </div>
+                    <div id="lab3-feedback" class="text-center text-xs font-bold mt-3 h-4"></div>
+                </div>
+
+                <!-- LAB 4: Protocol Toggle -->
+                <div class="bg-white p-5 rounded-xl shadow border-t-4 border-emerald-500">
+                    <h2 class="text-lg font-bold mb-2 text-emerald-700">Lab 4: Router Encryption</h2>
+                    <p class="text-xs text-slate-500 mb-3">Configure the router to secure data against network interception.</p>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center bg-slate-50 p-2 rounded border border-slate-200">
+                            <span class="text-sm font-medium">Require HTTPS</span>
+                            <div class="toggle-switch" id="t-https" onclick="toggleSwitch(this)"></div>
+                        </div>
+                        <div class="flex justify-between items-center bg-slate-50 p-2 rounded border border-slate-200">
+                            <span class="text-sm font-medium">Enable WPA3</span>
+                            <div class="toggle-switch" id="t-wpa" onclick="toggleSwitch(this)"></div>
+                        </div>
+                        <div class="flex justify-between items-center bg-slate-50 p-2 rounded border border-slate-200">
+                            <span class="text-sm font-medium">Broadcast Open Wi-Fi</span>
+                            <div class="toggle-switch active" id="t-open" onclick="toggleSwitch(this)"></div>
+                        </div>
+                    </div>
+                    <button class="mt-3 w-full bg-emerald-600 text-white py-1 rounded font-bold text-sm hover:bg-emerald-700" onclick="checkLab4()">Apply Settings</button>
+                    <div id="lab4-feedback" class="text-center text-xs font-bold mt-2 h-4"></div>
+                </div>
+
+                <!-- LAB 5: Phishing Email -->
+                <div class="bg-white p-5 rounded-xl shadow border-t-4 border-rose-500">
+                    <h2 class="text-lg font-bold mb-2 text-rose-700">Lab 5: Phishing Spotter</h2>
+                    <p class="text-xs text-slate-500 mb-3">Click the 3 specific "red flags" inside this simulated email.</p>
+                    <div class="bg-white border border-slate-300 rounded p-3 text-sm font-sans shadow-inner">
+                        <div class="border-b border-slate-200 pb-2 mb-2">
+                            <strong>From:</strong> <span class="phish-spot inline-block p-1 rounded" onclick="spotPhish(this)">Bank_Security &lt;admin@bannnk-login.com&gt;</span><br>
+                            <strong>Subject:</strong> Account Suspended!
+                        </div>
+                        <p class="mb-2">Dear Customer,</p>
+                        <p class="mb-2">We detected suspicious activity. <span class="phish-spot inline-block p-1 rounded font-bold" onclick="spotPhish(this)">If you do not verify within 24 hours, your account is permanently locked.</span></p>
+                        <p class="mb-2">Please log in immediately:</p>
+                        <p><span class="phish-spot inline-block p-1 rounded text-blue-600 underline" onclick="spotPhish(this)">http://verify-identity-secure-login.net/auth</span></p>
+                    </div>
+                    <div id="lab5-feedback" class="text-center text-xs font-bold mt-3 h-4 text-blue-600">Flags Found: 0/3</div>
+                </div>
+
+                <!-- LAB 6: Smishing Simulator -->
+                <div class="bg-white p-5 rounded-xl shadow border-t-4 border-rose-500">
+                    <h2 class="text-lg font-bold mb-2 text-rose-700">Lab 6: Smishing Response</h2>
+                    <p class="text-xs text-slate-500 mb-3">You received a text. Select the most secure way to respond.</p>
+                    <div class="bg-gray-200 p-3 rounded-lg mb-3 max-w-[250px] mx-auto shadow-inner">
+                        <div class="bg-white p-2 rounded-lg text-sm mb-2 shadow-sm relative">
+                            <span class="text-xs text-slate-400 absolute top-1 right-2">9:41 AM</span>
+                            <br>
+                            "USPS: Your package cannot be delivered due to address error. Update here: <u>http://usps-tracking-info.biz</u>"
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 gap-2">
+                        <button class="bg-slate-100 hover:bg-slate-200 border border-slate-300 p-2 text-sm rounded text-left" onclick="checkLab6(false)">A. Click the link to fix the address quickly.</button>
+                        <button class="bg-slate-100 hover:bg-slate-200 border border-slate-300 p-2 text-sm rounded text-left" onclick="checkLab6(false)">B. Text back asking "Who is this?"</button>
+                        <button class="bg-slate-100 hover:bg-slate-200 border border-slate-300 p-2 text-sm rounded text-left font-medium" onclick="checkLab6(true)">C. Ignore, do not click, and check the official USPS site.</button>
+                    </div>
+                    <div id="lab6-feedback" class="text-center text-xs font-bold mt-2 h-4"></div>
+                </div>
+
+                <!-- LAB 7: Tailgating -->
+                <div class="bg-white p-5 rounded-xl shadow border-t-4 border-amber-500 relative overflow-hidden">
+                    <h2 class="text-lg font-bold mb-2 text-amber-700">Lab 7: Tailgating Defense</h2>
+                    <p class="text-xs text-slate-500 mb-3">Stop the unauthorized red employee from walking through the open secure vestibule.</p>
+                    <div class="h-20 bg-slate-100 rounded border border-slate-300 relative flex items-center justify-end px-4 overflow-hidden">
+                        <!-- Door -->
+                        <div class="w-2 h-full bg-amber-600 absolute right-16 transition-all duration-300 z-20" id="lab7-door"></div>
+                        
+                        <!-- Employees -->
+                        <div class="w-8 h-8 bg-green-500 rounded-full absolute left-4 flex items-center justify-center text-white text-xs font-bold z-10 animate-[walk_4s_linear_forwards]">ID</div>
+                        <div class="w-8 h-8 bg-red-500 rounded-full absolute -left-10 flex items-center justify-center text-white text-xs font-bold z-10 animate-[tailgate_4s_linear_forwards]">NO</div>
+                    </div>
+                    <div class="mt-3 flex justify-center gap-4 relative z-30">
+                        <button class="bg-green-600 hover:bg-green-500 text-white px-4 py-1 rounded font-bold text-sm" onclick="alert('The green employee is authorized.')">Open Door</button>
+                        <button class="bg-red-600 hover:bg-red-500 text-white px-4 py-1 rounded font-bold text-sm" onclick="closeDoorLab7()">CLOSE DOOR</button>
+                    </div>
+                    <div id="lab7-feedback" class="text-center text-xs font-bold mt-2 h-4"></div>
+                </div>
+
+                <!-- LAB 8: Dumpster Diving -->
+                <div class="bg-white p-5 rounded-xl shadow border-t-4 border-amber-500">
+                    <h2 class="text-lg font-bold mb-2 text-amber-700">Lab 8: Document Disposal</h2>
+                    <p class="text-xs text-slate-500 mb-3">Drag the documents to the correct disposal bin to prevent Dumpster Diving.</p>
+                    <div class="flex justify-center gap-2 mb-4" id="lab8-items">
+                        <div class="io-item bg-amber-100 text-amber-900 border border-amber-300 p-2 rounded text-xs font-bold" draggable="true" data-type="shred">Bank Statement</div>
+                        <div class="io-item bg-slate-100 text-slate-700 border border-slate-300 p-2 rounded text-xs font-bold" draggable="true" data-type="trash">Lunch Receipt</div>
+                        <div class="io-item bg-amber-100 text-amber-900 border border-amber-300 p-2 rounded text-xs font-bold" draggable="true" data-type="shred">Password Sticky</div>
+                    </div>
+                    <div class="flex justify-around mt-4">
+                        <div class="io-dropzone w-24 h-20 bg-slate-800 border-slate-900 rounded-b-xl rounded-t flex flex-col items-center justify-center text-white shadow-lg" data-target="shred">
+                            <i class="fa-solid fa-bars text-xl"></i><span class="text-[10px] mt-1 uppercase">Shredder</span>
+                        </div>
+                        <div class="io-dropzone w-24 h-20 bg-blue-600 border-blue-800 rounded flex flex-col items-center justify-center text-white shadow-lg" data-target="trash">
+                            <i class="fa-solid fa-trash text-xl"></i><span class="text-[10px] mt-1 uppercase">Trash Bin</span>
+                        </div>
+                    </div>
+                    <div id="lab8-feedback" class="text-center text-xs font-bold mt-3 h-4"></div>
+                </div>
+
+            </div>
+
+            <div class="text-center mt-10">
+                <button onclick="switchTab('quiz')" class="bg-sky-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-sky-500 shadow-lg transition transform hover:scale-105">Take the Mastery Quiz <i class="fa-solid fa-clipboard-check ml-2"></i></button>
+            </div>
+        </div>
+
+        <!-- QUIZ SECTION -->
+        <div id="quiz-section" class="tab-content no-print">
+            <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-xl max-w-4xl mx-auto">
+                <div class="text-center mb-8 border-b pb-4">
+                    <h1 class="text-3xl font-extrabold text-slate-900 mb-2">Unit 07 Section 6.1.1 Mastery Quiz</h1>
+                    <p class="text-slate-600">Score 90% or higher (18/20) to earn your Certificate of Mastery and unlock the Retro Game!</p>
+                </div>
+
+                <div id="quiz-container" class="space-y-8">
+                    <!-- Questions injected via JS -->
+                </div>
+
+                <div class="mt-10 text-center border-t pt-6 flex flex-col md:flex-row justify-center items-center gap-4">
+                    <button id="submit-quiz-btn" onclick="gradeQuiz()" class="bg-sky-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-sky-700 shadow-lg transition w-full md:w-auto">Submit Quiz</button>
+                    <button id="proceed-game-btn" onclick="switchTab('game')" class="hidden bg-indigo-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-indigo-700 shadow-lg transition w-full md:w-auto">Play Retro Game <i class="fa-solid fa-gamepad ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RETRO GAME SECTION -->
+        <div id="game-section" class="tab-content no-print">
+            <div class="bg-slate-900 p-6 sm:p-8 rounded-2xl shadow-xl max-w-4xl mx-auto border-4 border-slate-700 flex flex-col items-center">
+                <div class="text-center mb-4 w-full">
+                    <h1 class="text-3xl font-extrabold text-emerald-400 mb-2 tracking-widest uppercase" style="font-family: monospace;">Packet Survivor</h1>
+                    <p class="text-slate-300 text-sm">Confidentiality is key! Use your mouse (or finger) to guide the <span class="text-emerald-400 font-bold">Secure Data Packet (Green Square)</span>. Avoid the <span class="text-red-500 font-bold">Sniffers & Malware (Red Balls)</span> bouncing around the network. Collect <span class="text-blue-400 font-bold">Encryption Keys (Blue Squares)</span> for points!</p>
+                </div>
+                
+                <div class="flex justify-between items-center w-full max-w-[600px] mb-2 px-4 text-white font-mono text-xl">
+                    <div>Score: <span id="game-score" class="text-blue-400 font-bold">0</span></div>
+                    <div>Data Integrity: <span id="game-lives" class="text-red-400 font-bold">3</span></div>
+                </div>
+
+                <div class="relative flex justify-center w-full">
+                    <!-- Game Canvas -->
+                    <canvas id="game-canvas" width="600" height="400" class="w-full max-w-[600px] bg-slate-800 border-2 border-slate-600 rounded shadow-lg"></canvas>
+                    
+                    <!-- Overlay Start Button -->
+                    <div id="game-overlay" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-70 rounded-lg max-w-[600px] mx-auto z-10">
+                        <button id="start-game-btn" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold font-mono py-3 px-6 rounded-lg text-xl border-4 border-emerald-800 uppercase transform transition hover:scale-105">Initiate Connection</button>
+                    </div>
+                </div>
+
+                <div class="mt-8 text-center w-full border-t border-slate-700 pt-6">
+                    <button onclick="switchTab('cert')" class="bg-sky-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-sky-700 shadow-lg transition w-full md:w-auto">View Certificate <i class="fa-solid fa-award ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CERTIFICATE SECTION -->
+        <div id="cert-section" class="tab-content">
+            <div class="max-w-5xl mx-auto">
+                <!-- Controls -->
+                <div class="bg-white p-6 rounded shadow mb-6 no-print text-center border border-slate-200">
+                    <h2 class="text-2xl font-bold text-sky-600 mb-2">🎉 Congratulations! 🎉</h2>
+                    <p class="text-slate-700 mb-4">You have achieved mastery of Confidentiality Concerns.</p>
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+                        <input type="text" id="student-name-input" value="Student" placeholder="Enter your first name" class="border-2 border-slate-300 rounded px-4 py-2 w-full md:w-64 focus:border-sky-500 focus:outline-none">
+                        <button onclick="updateCertName()" class="bg-sky-600 text-white px-4 py-2 rounded hover:bg-sky-700 transition">Update Name</button>
+                        <button id="download-btn" onclick="downloadCert()" class="bg-slate-800 text-white px-4 py-2 rounded hover:bg-slate-900 transition flex items-center justify-center">
+                            <i class="fa-solid fa-download mr-2"></i>Download PNG
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Certificate Render Container -->
+                <div class="cert-preview-container print:p-0 print:bg-white">
+                    <div id="certificate">
+                        <div class="gold-seal">
+                            <div class="gold-seal-inner-1">
+                                <div class="gold-seal-inner-2">
+                                     <span class="embossed-text embossed-text-large">Certificate</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-small">Of</span>
+                                     <i class="fa-solid fa-star embossed-star"></i>
+                                     <span class="embossed-text embossed-text-large">Excellence</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="relative z-20 w-full h-full flex flex-col pt-[48px] pl-[380px] pr-[48px]">
+                            <h1 class="text-[#0284c7] text-[4.5rem] leading-none font-serif font-bold tracking-wide uppercase mb-2">CERTIFICATE</h1>
+                            <h2 class="text-slate-800 text-3xl font-serif tracking-widest uppercase mb-10">Of Achievement</h2>
+                            
+                            <p class="text-[1.4rem] font-body text-slate-800 mb-4">This is to certify that</p>
+                            
+                            <div class="relative mb-8 w-full">
+                                <h3 id="cert-student-name" class="text-[4rem] text-[#0284c7] font-serif italic leading-none pb-2 relative z-10 text-center w-full block">Student</h3>
+                                <div class="w-full border-b-[2px] border-[#0284c7] absolute bottom-[4px] left-0 z-0"></div>
+                                <div class="w-full border-b-[2px] border-dotted border-red-500 absolute bottom-[0px] left-0 z-0"></div>
+                            </div>
+                            
+                            <p class="text-[1.3rem] font-body text-slate-800 leading-relaxed w-full pr-4">
+                                Has successfully completed the assessment for 
+                                <strong class="text-[1.8rem] text-[#0284c7] block mt-4 mb-2 font-serif">Cyber.org Tech+ Unit 07 Section 6.1.1</strong>
+                                <strong class="text-[1.5rem] text-black block mb-4 font-serif italic">Confidentiality Concerns</strong>
+                                <span class="text-[1.1rem] text-slate-700 leading-snug block">Demonstrating proficiency in explaining the CIA Triad, analyzing network sniffing risks, identifying social engineering threats like phishing, and mitigating physical security breaches such as tailgating and dumpster diving.</span>
+                            </p>
+                            
+                            <div class="flex justify-end gap-16 items-end mt-auto mb-[60px] w-full pr-8">
+                                <div class="w-64">
+                                    <div class="border-b border-slate-600 mb-2 h-20 flex items-end justify-center relative">
+                                        <span class="font-script text-[5rem] text-[#0284c7] absolute bottom-[-10px] transform -rotate-3 opacity-90">Dr. M. S</span>
+                                    </div>
+                                    <p class="font-serif text-xl text-slate-800 text-center">Administration</p>
+                                </div>
+                                
+                                <div class="w-64">
+                                    <div class="border-b border-slate-600 mb-2 text-center h-20 flex items-end justify-center">
+                                        <p id="cert-date" class="font-body text-2xl text-slate-800 pb-1">Date Here</p>
+                                    </div>
+                                    <p class="font-serif text-xl text-slate-800 text-center">Date</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Custom Modal for Alerts -->
+    <div id="custom-modal" class="fixed inset-0 bg-black bg-opacity-50 z-[100] hidden flex justify-center items-center backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all">
+            <div class="text-center">
+                <div id="modal-icon" class="text-5xl mb-4"></div>
+                <h3 id="modal-title" class="text-2xl font-bold mb-2 text-slate-900"></h3>
+                <p id="modal-msg" class="text-slate-600 mb-6"></p>
+                <button onclick="closeModal()" class="bg-sky-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-sky-700 transition w-full">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Briefing Modal -->
+    <div id="briefing-modal" class="fixed inset-0 bg-black bg-opacity-70 z-[120] hidden flex justify-center items-center backdrop-blur-sm p-4 sm:p-6">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col transform transition-all overflow-hidden border-4 border-sky-700">
+            <div class="p-6 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+                <div class="flex items-center gap-4">
+                    <div id="briefing-modal-icon" class="text-4xl"></div>
+                    <h3 id="briefing-modal-title" class="text-2xl md:text-3xl font-bold text-slate-900"></h3>
+                </div>
+                <button onclick="closeBriefing()" class="text-slate-400 hover:text-red-600 transition text-4xl leading-none">&times;</button>
+            </div>
+            <div id="briefing-modal-content" class="p-6 md:p-10 overflow-y-auto flex-grow text-slate-700 text-lg leading-relaxed bg-white">
+                <!-- Dynamic Content Injected Here -->
+            </div>
+            <div class="p-6 border-t border-slate-200 bg-slate-50 flex justify-end">
+                <button onclick="closeBriefing()" class="bg-sky-700 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-sky-800 transition shadow-md">Acknowledge & Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Extensive Briefing Content Data (Min 7 Paragraphs per detail, specific structure for Use Cases) ---
+        const briefingData = {
+            'cia-details': {
+                title: 'The CIA Triad & Confidentiality',
+                icon: '<i class="fa-solid fa-shield-halved text-indigo-600"></i>',
+                html: `
+                    <p class="mb-5">In the realm of cybersecurity, protecting digital assets requires a structured approach. The CIA Triad is the foundational model and universally accepted standard used by organizations worldwide to guide their information security policies. The acronym stands for Confidentiality, Integrity, and Availability. Together, these three principles form a comprehensive shield against a vast array of digital and physical threats.</p>
+                    
+                    <p class="mb-5"><strong>Confidentiality</strong>, the first pillar of the triad, is the principle that information should only be viewable and accessible by authorized individuals, entities, or processes. It is the concept of keeping secrets secret. When an organization collects data, it makes a fundamental promise to the user that their information will be protected from unauthorized prying eyes. Achieving confidentiality involves implementing robust access controls, encryption, and strict authentication mechanisms.</p>
+                    
+                    <p class="mb-5">The types of data that require strict confidentiality are numerous, but they generally fall under sensitive categories. Personally Identifiable Information (PII) is a massive target for cybercriminals. PII includes data that can be used to uniquely identify an individual, such as full names, home addresses, Social Security numbers, and driver's license numbers. Other highly confidential data includes proprietary corporate secrets, financial banking records, health and medical histories, and user login credentials.</p>
+                    
+                    <p class="mb-5">When the principle of confidentiality is violated, it is commonly referred to as a <strong>Data Breach</strong>. A data breach can occur maliciously—such as when a hacker infiltrates a database and steals customer records—or accidentally, such as when an employee inadvertently emails a sensitive spreadsheet to the wrong recipient. Regardless of intent, the consequences of a breach are severe, leading to identity theft for individuals and massive financial and reputational damage for organizations.</p>
+                    
+                    <p class="mb-5">While confidentiality protects data from being seen, <strong>Integrity</strong> ensures the data remains trustworthy and accurate. Integrity is the assurance that information is free from unauthorized alteration, whether intentional or accidental, during its entire lifecycle. If a cybercriminal intercepts a bank transfer and changes the deposit amount from $100 to $10,000, they have compromised the integrity of the data, rendering it entirely untrustworthy.</p>
+                    
+                    <p class="mb-5">The final pillar is <strong>Availability</strong>. Data is entirely useless if the people who need it cannot access it when required. Availability involves ensuring that systems, networks, and databases are running reliably and that authorized users have timely, uninterrupted access to the information they need to perform their jobs. Ransomware attacks and Distributed Denial of Service (DDoS) attacks are primary examples of threats aimed directly at crippling system availability.</p>
+                    
+                    <p>Maintaining the balance of the CIA Triad is a complex, ongoing challenge for IT professionals. Often, increasing one aspect can negatively impact another. For example, implementing incredibly strict, multi-layered encryption to maximize Confidentiality might drastically slow down the system, thereby negatively impacting Availability. A successful cybersecurity posture constantly evaluates the specific needs of the data to find the perfect equilibrium between these three vital principles.</p>
+                `
+            },
+            'cia-usecase': {
+                title: 'The CIA Triad: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-indigo-800 mb-2 border-b-2 border-indigo-200 pb-1">Case 1: Healthcare Record Management</h4>
+                        <p class="mb-2">Hospitals deal with incredibly sensitive medical data and must strictly adhere to the CIA Triad, governed by laws like HIPAA, to protect patient well-being and privacy.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Confidentiality & Integrity):</strong> A doctor views a patient's chart on a secure tablet. The data is encrypted (Confidentiality) so intercepted Wi-Fi signals cannot read it, and the database uses checksums to ensure no one has maliciously altered the patient's allergy list (Integrity).</li>
+                            <li><strong>Example 2 (Availability):</strong> During a critical surgery, the hospital's network must not go down. They employ backup servers and redundant power generators to ensure the patient's electronic health records are immediately accessible to the surgical team (Availability).</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-indigo-800 mb-2 border-b-2 border-indigo-200 pb-1">Case 2: Financial and Banking Systems</h4>
+                        <p class="mb-2">Banks handle vast sums of money and personal financial data, making them prime targets for cyberattacks aimed at breaking confidentiality or integrity.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Confidentiality Failure):</strong> A bank employee accidentally leaves an unencrypted USB drive containing the names and account numbers of 5,000 customers on a train. This is a massive failure of Confidentiality resulting in a data breach, even though the data wasn't actively "hacked."</li>
+                            <li><strong>Example 2 (Integrity Preservation):</strong> When a user transfers $50 to a friend via a banking app, the system uses cryptographic hashing. If a hacker tries to intercept the data packet and change the destination routing number, the hash breaks, the bank detects the tampering, and rejects the transaction, preserving Integrity.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: The CIA Triad</p>
+                            <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=600&h=350" alt="Cybersecurity padlock concept" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Medical Data Security</p>
+                            <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=600&h=350" alt="Doctor looking at secure medical records on a tablet" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'sniff-details': {
+                title: 'Network Sniffing & Interception',
+                icon: '<i class="fa-solid fa-network-wired text-emerald-600"></i>',
+                html: `
+                    <p class="mb-5">To understand network threats, one must first understand how data travels. When you send an email or log into a website, your data does not travel as one massive block. Instead, it is chopped up into tiny, manageable pieces called <strong>Packets</strong>. These packets traverse complex webs of routers and switches across the internet before being reassembled at their destination. Because this traffic flows through shared infrastructure, it is inherently vulnerable to interception.</p>
+                    
+                    <p class="mb-5"><strong>Sniffing</strong>, also frequently referred to as snooping, is the process of monitoring, intercepting, and capturing these network traffic packets as they move through a network. Imagine a postal worker steaming open your envelopes, reading your letters, and sending them on their way; sniffing is the digital equivalent. If the data inside those packets is not properly secured, the sniffer can read everything.</p>
+                    
+                    <p class="mb-5">It is important to note that packet sniffing is not inherently malicious. IT professionals and network administrators routinely use protocol analyzers (like the popular software Wireshark) for legitimate reasons. They use these tools to diagnose network bottlenecks, troubleshoot connectivity issues, and monitor traffic for signs of unauthorized intrusion. However, in the hands of a cybercriminal, a protocol analyzer becomes a dangerous weapon for stealing confidential data.</p>
+                    
+                    <p class="mb-5">The most significant vulnerability to sniffing occurs on unencrypted public networks. When a user connects to a free, open Wi-Fi network at a coffee shop or airport, their device broadcasts data openly through the air. A malicious actor sitting nearby with a laptop and a simple sniffing tool can silently capture all the radio frequencies carrying the network's data, collecting thousands of packets per minute without anyone noticing.</p>
+                    
+                    <p class="mb-5">If the user on that open Wi-Fi network visits a website using basic HTTP (Hypertext Transfer Protocol), their data is transmitted in plain text. If they type their username and password into an HTTP login page, the attacker sniffing the network can simply read the exact credentials right off their screen. This represents a catastrophic failure of data confidentiality.</p>
+                    
+                    <p class="mb-5">The primary defense against sniffing is <strong>Encryption</strong>. Encryption scrambles the data into unreadable ciphertext before it leaves the device. Web traffic is secured by upgrading from HTTP to <strong>HTTPS</strong> (using TLS/SSL encryption). If an attacker sniffs an HTTPS packet, they will only see a chaotic, mathematically impossible-to-decipher string of random characters, keeping the underlying passwords and PII completely safe.</p>
+                    
+                    <p>Beyond web protocols, securing the actual wireless connection is paramount. Modern routers must utilize strong security standards like <strong>WPA2 or WPA3</strong> (Wi-Fi Protected Access). These protocols ensure that traffic between the device and the router is encrypted. Furthermore, organizations heavily utilize <strong>VPNs (Virtual Private Networks)</strong>, which create a secure, encrypted "tunnel" for data to travel through, completely neutralizing the threat of local network sniffing.</p>
+                `
+            },
+            'sniff-usecase': {
+                title: 'Network Sniffing: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-emerald-800 mb-2 border-b-2 border-emerald-200 pb-1">Case 1: Public Wi-Fi Dangers</h4>
+                        <p class="mb-2">Open, public Wi-Fi networks in hotels, airports, and cafes are prime hunting grounds for attackers looking to sniff unencrypted data from unsuspecting users.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Vulnerability):</strong> A user connects to an airport's free Wi-Fi and logs into an older forum website that still uses HTTP. An attacker running Wireshark on the same network captures the POST request packet and extracts the user's password in plain text.</li>
+                            <li><strong>Example 2 (Mitigation):</strong> Another user at the same airport realizes the network is "Open" (unencrypted). Before accessing any sensitive sites, they launch a trusted VPN (Virtual Private Network) application. The VPN encrypts all their outgoing data, rendering the attacker's sniffing attempts completely useless.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-emerald-800 mb-2 border-b-2 border-emerald-200 pb-1">Case 2: Corporate Network Administration</h4>
+                        <p class="mb-2">Not all sniffing is malicious. Corporate IT departments rely heavily on packet sniffing techniques to maintain network health and secure proprietary data.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Legitimate Use):</strong> A company's internal server is experiencing massive slowdowns. The network admin uses a packet sniffer to monitor the traffic and discovers that a specific printer is constantly broadcasting errors across the network, causing a bottleneck.</li>
+                            <li><strong>Example 2 (Security Enforcement):</strong> To prevent data leaks, the IT department enforces WPA3 Enterprise security on all office routers. This ensures that even if a rogue employee attempts to sniff the Wi-Fi traffic of their coworkers, the strong encryption protocols will prevent them from reading any intercepted documents.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Network Packet Data</p>
+                            <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=600&h=350" alt="Digital binary and network server cables" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Public Wi-Fi Risks</p>
+                            <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=600&h=350" alt="Person using laptop in a coffee shop" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'social-details': {
+                title: 'Social Engineering & Phishing',
+                icon: '<i class="fa-solid fa-masks-theater text-rose-600"></i>',
+                html: `
+                    <p class="mb-5">As technological defenses—like firewalls, encryption, and anti-virus software—become increasingly sophisticated and difficult to break, cybercriminals often realize that the easiest way into a secure system is not through the computer, but through the human sitting in front of it. <strong>Social Engineering</strong> is the psychological manipulation of people into performing actions or divulging confidential information.</p>
+                    
+                    <p class="mb-5">Social engineering attacks exploit fundamental human traits: trust, fear, curiosity, and the desire to be helpful. Instead of spending weeks trying to crack a complex password cryptographically, an attacker will simply send an email pretending to be the IT department, urgently asking the user to "verify their login details." This tactic targets the authorized user directly, turning them into an unwitting accomplice in the data breach.</p>
+                    
+                    <p class="mb-5">The most prevalent form of digital social engineering is <strong>Phishing</strong>. Phishing involves sending fraudulent communications, primarily via email, that appear to come from a reputable, legitimate source. The goal is to trick the recipient into clicking a malicious link (which downloads malware) or navigating to a fake login page where they surrender their credentials. Phishing emails often contain subtle typos, unofficial sender addresses, and generic greetings.</p>
+                    
+                    <p class="mb-5">As communication methods evolve, so do phishing tactics. <strong>Vishing</strong> (Voice Phishing) occurs when an attacker uses phone calls to extract information, often spoofing caller ID to make it look like the call is coming from a trusted bank or utility company. <strong>Smishing</strong> (SMS Phishing) utilizes text messages, exploiting the fact that users are often more prone to quickly clicking links on their mobile devices without verifying the source.</p>
+                    
+                    <p class="mb-5">A hallmark of almost all social engineering attacks is the manufacture of a false sense of <strong>Urgency or Authority</strong>. The messages are designed to induce panic. Phrases like "Your account will be permanently deleted in 24 hours," or "Immediate action required regarding your tax return," are used to bypass the victim's critical thinking skills, forcing them to act hastily before they have time to verify the request.</p>
+                    
+                    <p class="mb-5">To make these scams look legitimate, attackers use sophisticated tools like the <strong>Social Engineering Toolkit (SEToolkit)</strong>. As demonstrated in cybersecurity labs, tools like this can instantly clone the exact visual appearance of legitimate websites (like Google or a bank's login page). When a victim clicks the phishing link, they see a page they recognize and trust, drastically increasing the likelihood they will type in their confidential data.</p>
+                    
+                    <p>Defending against social engineering requires a multi-layered approach. While technical solutions like spam filtering, multi-factor authentication (MFA), and software patching are vital, the ultimate defense is <strong>User Awareness Training</strong>. Educating users to pause, verify sender addresses, hover over links without clicking, and report suspicious messages through official channels is the only way to effectively neutralize the human vulnerability.</p>
+                `
+            },
+            'social-usecase': {
+                title: 'Social Engineering: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-rose-800 mb-2 border-b-2 border-rose-200 pb-1">Case 1: Corporate Phishing Campaigns</h4>
+                        <p class="mb-2">Attackers frequently target corporate employees, knowing that compromising just one standard user account can provide a foothold into the entire company network.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (The Attack):</strong> An employee receives an email appearing to be from the CEO, urgently requesting that they purchase $500 in digital gift cards for a client and reply with the codes. Because it exploits authority and urgency, the untrained employee complies, resulting in financial loss.</li>
+                            <li><strong>Example 2 (The Mitigation):</strong> The company implements mandatory cybersecurity training. When an employee receives an email asking them to "Click here to reset your expired password," they notice the sender address is @microsoft-support-update.net instead of @microsoft.com. They ignore the link and report it to IT.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-rose-800 mb-2 border-b-2 border-rose-200 pb-1">Case 2: Mobile Smishing & Vishing</h4>
+                        <p class="mb-2">As smartphone usage dominates daily life, attackers rely heavily on text messages and spoofed phone calls to catch victims off guard while they are distracted.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Smishing):</strong> A user receives a text saying "USPS: We cannot deliver your package. Click here to update your address." The user, expecting a package, clicks the fake link and inputs their credit card number to pay a fraudulent $2 "redelivery fee."</li>
+                            <li><strong>Example 2 (Vishing Defense):</strong> A person receives a phone call from someone claiming to be from the IRS, demanding immediate payment for back taxes over the phone or face arrest. The person recognizes the scare tactics, hangs up immediately, and looks up the official IRS phone number to verify their account status.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Phishing Deception</p>
+                            <img src="https://images.unsplash.com/photo-1593642532744-d377ab507dc8?auto=format&fit=crop&w=600&h=350" alt="Hacker in hoodie at laptop conceptually representing phishing" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Smishing on Mobile</p>
+                            <img src="https://images.unsplash.com/photo-1512428559087-560fa5ceab42?auto=format&fit=crop&w=600&h=350" alt="Person looking confused at their smartphone" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            },
+            'physical-details': {
+                title: 'Physical & Communication Threats',
+                icon: '<i class="fa-solid fa-user-ninja text-amber-600"></i>',
+                html: `
+                    <p class="mb-5">While much of cybersecurity focuses on complex digital firewalls and encryption algorithms, the physical security of data and environments is equally critical. If a malicious actor can physically access a secure building or observe a user typing a password, millions of dollars of digital defenses are rendered useless. Threats to confidentiality often manifest in the physical world through observation, interception, and scavenging.</p>
+                    
+                    <p class="mb-5">One of the most common physical observation threats is <strong>Shoulder Surfing</strong>. This occurs when an unauthorized person positions themselves to secretly observe someone entering sensitive information. This could be as simple as watching a person type their PIN at an ATM, or looking over a coworker's shoulder as they type their network password on their keyboard. Privacy screen filters and basic situational awareness are the primary defenses against this.</p>
+                    
+                    <p class="mb-5">Gaining unauthorized physical access to secure locations is often achieved through <strong>Tailgating</strong> (sometimes called piggybacking). Tailgating occurs when an unauthorized individual closely follows an authorized user through a secure entryway, such as a badge-access door or security gate. The attacker exploits basic human politeness—the tendency for the authorized user to hold the door open for the person behind them.</p>
+                    
+                    <p class="mb-5">Communication interception is another major physical and digital threat. <strong>Eavesdropping</strong> is the basic act of secretly listening in on private conversations. This can occur simply by sitting near someone in a coffee shop while they discuss confidential corporate strategy, or it can involve using hidden electronic microphones. Being mindful of what is discussed in public spaces is a necessary security practice.</p>
+                    
+                    <p class="mb-5">A more technical form of interception is <strong>Wiretapping</strong>. Traditionally, wiretapping involved physically attaching a monitoring device to landline telephone cables. Today, wiretapping encompasses the interception and monitoring of any communication network, including cell networks, Voice over IP (VoIP) calls, and wireless data streams. Protecting against wiretapping requires end-to-end encryption of all communication channels.</p>
+                    
+                    <p class="mb-5">Perhaps the most overlooked physical threat is <strong>Dumpster Diving</strong>. Attackers will literally dig through an organization's trash cans, dumpsters, or recycling bins looking for discarded sensitive information. This can include old bank statements, printed employee records, discarded hard drives, or even sticky notes with passwords scribbled on them. It is a highly effective, low-tech method for gathering data for identity theft or corporate espionage.</p>
+                    
+                    <p>Mitigating physical threats requires strict operational policies. To stop tailgating, high-security facilities use "mantraps" or security vestibules that only allow one person through at a time. To completely neutralize the threat of dumpster diving, organizations must implement strict data destruction policies. All sensitive physical documents must be securely cross-cut shredded, and digital storage devices must be magnetically wiped or physically pulverized before disposal.</p>
+                `
+            },
+            'physical-usecase': {
+                title: 'Physical & Comm Threats: Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-amber-800 mb-2 border-b-2 border-amber-200 pb-1">Case 1: Securing the Office Environment</h4>
+                        <p class="mb-2">Organizations must enforce physical security protocols to ensure that only authorized personnel can access sensitive areas and data within the building.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Tailgating Mitigation):</strong> An employee uses their RFID badge to open the server room door. A person dressed as a delivery driver tries to walk in behind them, saying "Hold the door!" The employee follows training, refuses, and asks the person to sign in at the front desk, preventing unauthorized physical access.</li>
+                            <li><strong>Example 2 (Shoulder Surfing):</strong> A traveling executive uses their laptop on a crowded flight. To prevent shoulder surfing from the passengers sitting next to them, they apply a polarized privacy filter over the screen, making the data visible only when viewed straight on.</li>
+                        </ul>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-amber-800 mb-2 border-b-2 border-amber-200 pb-1">Case 2: Information Disposal and Communication</h4>
+                        <p class="mb-2">Data security does not end when a document is thrown away or when a conversation moves outside the office walls.</p>
+                        <ul class="list-disc pl-5 mb-4 text-slate-700">
+                            <li class="mb-2"><strong>Example 1 (Dumpster Diving):</strong> An accounting firm upgrades their computers and throws the old hard drives directly into the alley dumpster. An attacker recovers the drives and extracts thousands of client tax returns. To prevent this, they should have physically drilled through the platters to destroy the data before disposal.</li>
+                            <li><strong>Example 2 (Eavesdropping):</strong> Two HR managers go to a public restaurant for lunch and begin loudly discussing the impending layoffs of specific employees. A reporter sitting at the next table eavesdrops on the conversation, resulting in confidential corporate information being leaked to the press.</li>
+                        </ul>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">Concept: Physical Access</p>
+                            <img src="https://images.unsplash.com/photo-1558002038-1055907df827?auto=format&fit=crop&w=600&h=350" alt="Secure electronic door access keypad" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-center text-slate-500 uppercase tracking-wider mb-1">In Use: Secure Document Disposal</p>
+                            <img src="https://images.unsplash.com/photo-1605335525997-750d40c61989?auto=format&fit=crop&w=600&h=350" alt="Paper shredder destroying documents" class="w-full h-auto rounded shadow border border-slate-200 object-cover">
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        // Modal Control Functions
+        function openBriefing(key) {
+            const modal = document.getElementById('briefing-modal');
+            const data = briefingData[key];
+            if(data) {
+                document.getElementById('briefing-modal-icon').innerHTML = data.icon;
+                document.getElementById('briefing-modal-title').innerText = data.title;
+                document.getElementById('briefing-modal-content').innerHTML = data.html;
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; 
+            }
+        }
+
+        function closeBriefing() {
+            document.getElementById('briefing-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto'; 
+        }
+
+        document.getElementById('briefing-modal').addEventListener('click', function(e) {
+            if(e.target === this) closeBriefing();
+        });
+        
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId + '-section').classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-sky-950'));
+            const activeBtn = document.getElementById('nav-' + tabId);
+            if(activeBtn && tabId !== 'cert') activeBtn.classList.add('bg-sky-950');
+            
+            document.querySelectorAll('.nav-btn-mobile').forEach(btn => btn.classList.remove('bg-sky-950'));
+            const activeMobileBtn = document.getElementById('nav-' + tabId + '-mobile');
+            if(activeMobileBtn && tabId !== 'cert') activeMobileBtn.classList.add('bg-sky-950');
+
+            window.scrollTo(0,0);
+
+            if (tabId === 'game' && !gameRunning) {
+                resetGame();
+                drawGame();
+            }
+        }
+
+        function showModal(title, message, type = 'info') {
+            const modal = document.getElementById('custom-modal');
+            const icon = document.getElementById('modal-icon');
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-msg').innerText = message;
+            
+            if(type === 'success') {
+                icon.innerHTML = '<i class="fa-solid fa-shield-check text-emerald-500"></i>';
+            } else if (type === 'error') {
+                icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-rose-500"></i>';
+            } else if (type === 'warning') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-exclamation text-amber-500"></i>';
+            } else {
+                icon.innerHTML = '<i class="fa-solid fa-circle-info text-sky-500"></i>';
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        // --- LAB 1: CIA Triad Match ---
+        let draggedLab1 = null;
+        let lab1Count = 0;
+
+        document.querySelectorAll('#lab1-items .io-item').forEach(item => {
+            item.addEventListener('dragstart', function() {
+                draggedLab1 = this;
+                setTimeout(() => this.classList.add('opacity-50'), 0);
+            });
+            item.addEventListener('dragend', function() {
+                setTimeout(() => this.classList.remove('opacity-50'), 0);
+                draggedLab1 = null;
+            });
+        });
+
+        document.querySelectorAll('#activity-section .io-dropzone').forEach(zone => {
+            zone.addEventListener('dragover', e => e.preventDefault());
+            zone.addEventListener('dragenter', function(e) { e.preventDefault(); this.classList.add('drag-over'); });
+            zone.addEventListener('dragleave', function() { this.classList.remove('drag-over'); });
+            zone.addEventListener('drop', function() {
+                this.classList.remove('drag-over');
+                
+                // For Lab 1
+                if(draggedLab1 && this.dataset.target && !this.hasChildNodes()) {
+                    if(draggedLab1.dataset.id === this.dataset.target) {
+                        this.appendChild(draggedLab1);
+                        draggedLab1.classList.remove('cursor-grab', 'bg-indigo-100');
+                        draggedLab1.classList.add('bg-green-100', 'text-green-800', 'border-green-300', 'cursor-default');
+                        draggedLab1.setAttribute('draggable', 'false');
+                        lab1Count++;
+                        
+                        document.getElementById('lab1-feedback').innerText = "Correct assignment.";
+                        document.getElementById('lab1-feedback').className = "text-center text-xs font-bold mt-2 h-4 text-green-600";
+                        
+                        if(lab1Count === 3) {
+                            setTimeout(() => showModal('Lab 1 Complete!', 'You successfully matched the principles of the CIA Triad.', 'success'), 300);
+                        }
+                    } else {
+                        document.getElementById('lab1-feedback').innerText = "Incorrect match. Review the definitions.";
+                        document.getElementById('lab1-feedback').className = "text-center text-xs font-bold mt-2 h-4 text-red-600";
+                    }
+                }
+            });
+        });
+
+        // --- LAB 2: Data Classification ---
+        function toggleData(btn) {
+            if(btn.classList.contains('bg-slate-200')) {
+                btn.classList.replace('bg-slate-200', 'bg-rose-100');
+                btn.classList.add('text-rose-800', 'border', 'border-rose-300');
+                btn.dataset.current = 'conf';
+            } else if(btn.dataset.current === 'conf') {
+                btn.classList.replace('bg-rose-100', 'bg-sky-100');
+                btn.classList.replace('text-rose-800', 'text-sky-800');
+                btn.classList.replace('border-rose-300', 'border-sky-300');
+                btn.dataset.current = 'pub';
+            } else {
+                btn.classList.replace('bg-sky-100', 'bg-slate-200');
+                btn.classList.remove('text-sky-800', 'border', 'border-sky-300');
+                btn.dataset.current = '';
+            }
+        }
+
+        function checkLab2() {
+            let allCorrect = true;
+            document.querySelectorAll('.lab2-btn').forEach(btn => {
+                if(btn.dataset.current !== btn.dataset.correct) allCorrect = false;
+            });
+            if(allCorrect) {
+                document.getElementById('lab2-feedback').innerText = "Data accurately classified.";
+                document.getElementById('lab2-feedback').className = "text-center text-xs font-bold mt-2 h-4 text-green-600";
+                setTimeout(() => showModal('Lab 2 Complete!', 'You successfully differentiated between Confidential and Public data.', 'success'), 300);
+            } else {
+                document.getElementById('lab2-feedback').innerText = "Incorrect. Ensure PII is confidential, and general info is public.";
+                document.getElementById('lab2-feedback').className = "text-center text-xs font-bold mt-2 h-4 text-red-600";
+            }
+        }
+
+        // --- LAB 3: Packet Sniffer ---
+        let lab3Blocked = 0;
+        let lab3Done = false;
+        function blockPacket(el) {
+            if(lab3Done) return;
+            el.classList.add('hidden');
+            lab3Blocked++;
+            if(lab3Blocked === 2) {
+                lab3Done = true;
+                document.getElementById('lab3-feedback').innerText = "Unencrypted traffic blocked.";
+                document.getElementById('lab3-feedback').className = "text-center text-xs font-bold mt-3 h-4 text-green-600";
+                setTimeout(() => showModal('Lab 3 Complete!', 'You successfully stopped the HTTP and Open Wi-Fi packets, preventing sniffing.', 'success'), 300);
+            }
+        }
+
+        // --- LAB 4: Protocol Toggle ---
+        function toggleSwitch(el) {
+            el.classList.toggle('active');
+        }
+        function checkLab4() {
+            const https = document.getElementById('t-https').classList.contains('active');
+            const wpa = document.getElementById('t-wpa').classList.contains('active');
+            const open = document.getElementById('t-open').classList.contains('active');
+
+            if(https && wpa && !open) {
+                document.getElementById('lab4-feedback').innerText = "Router secured with encryption.";
+                document.getElementById('lab4-feedback').className = "text-center text-xs font-bold mt-2 h-4 text-green-600";
+                setTimeout(() => showModal('Lab 4 Complete!', 'You configured the router to encrypt traffic, neutralizing local sniffing threats.', 'success'), 300);
+            } else {
+                document.getElementById('lab4-feedback').innerText = "Vulnerabilities remain. Review settings.";
+                document.getElementById('lab4-feedback').className = "text-center text-xs font-bold mt-2 h-4 text-red-600";
+            }
+        }
+
+        // --- LAB 5: Phishing Spotter ---
+        let lab5Count = 0;
+        function spotPhish(el) {
+            if(el.classList.contains('found')) return;
+            el.classList.add('found');
+            lab5Count++;
+            document.getElementById('lab5-feedback').innerText = `Flags Found: ${lab5Count}/3`;
+            if(lab5Count === 3) {
+                document.getElementById('lab5-feedback').className = "text-center text-xs font-bold mt-3 h-4 text-green-600";
+                setTimeout(() => showModal('Lab 5 Complete!', 'You successfully identified the unofficial sender, manufactured urgency, and suspicious link of this phishing attempt.', 'success'), 300);
+            }
+        }
+
+        // --- LAB 6: Smishing Simulator ---
+        let lab6Done = false;
+        function checkLab6(isCorrect) {
+            if(lab6Done) return;
+            if(isCorrect) {
+                lab6Done = true;
+                document.getElementById('lab6-feedback').innerText = "Safe response selected.";
+                document.getElementById('lab6-feedback').className = "text-center text-xs font-bold mt-2 h-4 text-green-600";
+                setTimeout(() => showModal('Lab 6 Complete!', 'Ignoring the malicious link and checking official channels is the only safe response to Smishing.', 'success'), 300);
+            } else {
+                document.getElementById('lab6-feedback').innerText = "Unsafe! Clicking or replying confirms your number is active and risks malware.";
+                document.getElementById('lab6-feedback').className = "text-center text-xs font-bold mt-2 h-4 text-red-600";
+            }
+        }
+
+        // --- LAB 7: Tailgating ---
+        let doorClosed = false;
+        let lab7Done = false;
+        function closeDoorLab7() {
+            if(lab7Done) return;
+            document.getElementById('lab7-door').style.height = '100%';
+            doorClosed = true;
+            
+            // Check timing based on animation (rough logic)
+            // If they clicked it, assume they stopped the red guy for this simple lab.
+            document.getElementById('lab7-feedback').innerText = "Vestibule Secured.";
+            document.getElementById('lab7-feedback').className = "text-center text-xs font-bold mt-2 h-4 text-green-600";
+            lab7Done = true;
+            setTimeout(() => showModal('Lab 7 Complete!', 'You successfully closed the door to prevent the unauthorized individual from tailgating.', 'success'), 300);
+        }
+
+        // --- LAB 8: Dumpster Diving ---
+        let draggedLab8 = null;
+        let lab8Count = 0;
+
+        document.querySelectorAll('#lab8-items .io-item').forEach(item => {
+            item.addEventListener('dragstart', function() {
+                draggedLab8 = this;
+                setTimeout(() => this.classList.add('opacity-50'), 0);
+            });
+            item.addEventListener('dragend', function() {
+                setTimeout(() => this.classList.remove('opacity-50'), 0);
+                draggedLab8 = null;
+            });
+        });
+
+        document.querySelectorAll('#activity-section .io-dropzone[data-target="shred"], #activity-section .io-dropzone[data-target="trash"]').forEach(zone => {
+            zone.addEventListener('dragover', e => e.preventDefault());
+            zone.addEventListener('dragenter', function(e) { e.preventDefault(); this.classList.add('brightness-125'); });
+            zone.addEventListener('dragleave', function() { this.classList.remove('brightness-125'); });
+            zone.addEventListener('drop', function() {
+                this.classList.remove('brightness-125');
+                
+                if(draggedLab8) {
+                    if(draggedLab8.dataset.type === this.dataset.target) {
+                        draggedLab8.style.display = 'none'; // "Destroy" it
+                        lab8Count++;
+                        
+                        document.getElementById('lab8-feedback').innerText = "Item disposed correctly.";
+                        document.getElementById('lab8-feedback').className = "text-center text-xs font-bold mt-3 h-4 text-green-600";
+                        
+                        if(lab8Count === 3) {
+                            setTimeout(() => showModal('Lab 8 Complete!', 'You successfully shredded sensitive data to prevent dumpster diving.', 'success'), 300);
+                        }
+                    } else {
+                        document.getElementById('lab8-feedback').innerText = "Incorrect disposal method!";
+                        document.getElementById('lab8-feedback').className = "text-center text-xs font-bold mt-3 h-4 text-red-600";
+                    }
+                }
+            });
+        });
+
+
+        // --- QUIZ LOGIC (20 Questions) ---
+        const quizData = [
+            // 10 provided from Document
+            { q: "What does the 'C' stand for in the CIA triad?", options: ["Connectivity", "Confidentiality", "Communication", "Credential"], answer: 1 },
+            { q: "What type of information should be considered confidential?", options: ["Public websites", "Advertising materials", "Usernames and passwords", "General company news"], answer: 2 },
+            { q: "Sniffing primarily involves:", options: ["Physical surveillance", "Capturing network data", "Guessing passwords", "Destroying data"], answer: 1 },
+            { q: "Which method is NOT a form of phishing?", options: ["Smishing", "Vishing", "Shoulder surfing", "Email phishing"], answer: 2 },
+            { q: "What is the safest initial response to a suspected phishing attempt?", options: ["Click the link to investigate.", "Respond asking for confirmation.", "Ignore and verify through official channels.", "Immediately share with colleagues and friends."], answer: 2 },
+            { q: "Tailgating in cybersecurity refers to:", options: ["Following someone online.", "Entering a secure area without authorization.", "Physically destroying devices.", "Listening to conversations."], answer: 1 },
+            { q: "How can you protect against dumpster diving?", options: ["Securely disposing of confidential information.", "Leaving trash bins unlocked.", "Storing all data forever.", "Recycling electronics without wiping data."], answer: 0 },
+            { q: "Wiretapping involves:", options: ["Intercepting network packets only.", "Physically destroying cables.", "Listening to phone conversations using devices.", "Observing user activities directly."], answer: 2 },
+            { q: "What should you do if an email contains grammatical errors and urgent requests?", options: ["Respond immediately.", "Forward it to a colleague or friend.", "Treat it as suspicious and avoid interaction.", "Open all attachments to verify."], answer: 2 },
+            { q: "Which of the following is essential in defending against social engineering?", options: ["Ignoring all emails", "Regular training and updates", "Using the same password for everything", "Sharing credentials freely with friends"], answer: 1 },
+            
+            // 10 new questions based on briefing details
+            { q: "What does the 'I' in the CIA Triad stand for, ensuring data is trustworthy and free from unauthorized alteration?", options: ["Interception", "Integration", "Integrity", "Isolation"], answer: 2 },
+            { q: "What component of the CIA Triad ensures that systems and databases are accessible for authorized users when they are needed?", options: ["Authentication", "Availability", "Authorization", "Access"], answer: 1 },
+            { q: "Names, home addresses, and Social Security numbers are prime targets for breaches. What does this type of data stand for?", options: ["Personally Identifiable Information (PII)", "Protected Internal Identification (PII)", "Publicly Intercepted Intelligence (PII)", "Primary Internet Identity (PII)"], answer: 0 },
+            { q: "If a user is on an open public Wi-Fi network, which protocol ensures their web traffic is encrypted and safe from sniffing?", options: ["HTTP", "FTP", "HTTPS", "DNS"], answer: 2 },
+            { q: "Which of the following is a strong, modern security standard used to encrypt local wireless network traffic?", options: ["WEP", "HTTP", "WPA3", "VoIP"], answer: 2 },
+            { q: "An attacker calls a user, spoofing their caller ID to look like the IRS, to extract confidential data. What is this specific tactic called?", options: ["Smishing", "Vishing", "Tailgating", "Dumpster Diving"], answer: 1 },
+            { q: "Which vector do attackers use when executing a 'Smishing' social engineering attack?", options: ["Text messages (SMS)", "Voice calls", "Physical mail", "Ransomware"], answer: 0 },
+            { q: "What physical threat occurs when an unauthorized person positions themselves to watch you type your password on a keyboard?", options: ["Wiretapping", "Sniffing", "Eavesdropping", "Shoulder Surfing"], answer: 3 },
+            { q: "Which statement best describes the difference between eavesdropping and wiretapping?", options: ["Eavesdropping requires internet; wiretapping does not.", "Eavesdropping is listening in person; wiretapping involves intercepting communications networks.", "Wiretapping is a form of social engineering; eavesdropping is not.", "They are exactly the same thing."], answer: 1 },
+            { q: "As seen in cybersecurity labs, what tool do attackers frequently use to quickly clone legitimate websites to execute phishing attacks?", options: ["Social Engineering Toolkit (SEToolkit)", "Wireshark", "Virtual Private Network (VPN)", "Protocol Analyzer"], answer: 0 }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        
+        quizData.forEach((item, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = "bg-slate-50 p-6 rounded-lg border border-slate-200 transition-all";
+            qDiv.id = `q-block-${index}`;
+            
+            const qTitle = document.createElement('h3');
+            qTitle.className = "font-bold text-lg text-slate-800 mb-4";
+            qTitle.innerText = `${index + 1}. ${item.q}`;
+            qDiv.appendChild(qTitle);
+            
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = "space-y-3";
+            
+            item.options.forEach((opt, optIndex) => {
+                const label = document.createElement('label');
+                label.className = "flex items-center space-x-3 p-3 rounded bg-white border border-slate-300 hover:bg-sky-50 cursor-pointer transition";
+                
+                const radio = document.createElement('input');
+                radio.type = "radio";
+                radio.name = `q${index}`;
+                radio.value = optIndex;
+                radio.className = "form-radio h-5 w-5 text-sky-600";
+                
+                const span = document.createElement('span');
+                span.className = "text-slate-700";
+                span.innerText = opt;
+                
+                label.appendChild(radio);
+                label.appendChild(span);
+                optionsDiv.appendChild(label);
+            });
+            
+            qDiv.appendChild(optionsDiv);
+            quizContainer.appendChild(qDiv);
+        });
+
+        function gradeQuiz() {
+            let score = 0;
+            let allAnswered = true;
+
+            for(let i = 0; i < quizData.length; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if(selected) {
+                    if(parseInt(selected.value) === quizData[i].answer) {
+                        score++;
+                    }
+                } else {
+                    allAnswered = false;
+                }
+            }
+            
+            if(!allAnswered) {
+                showModal('Incomplete Quiz', 'Please answer all 20 questions before submitting.', 'warning');
+                return;
+            }
+            
+            const percentage = (score / quizData.length) * 100;
+            
+            if(score >= 18) { 
+                const navGame = document.getElementById('nav-game');
+                const navGameMobile = document.getElementById('nav-game-mobile');
+                
+                navGame.classList.remove('text-slate-400', 'cursor-not-allowed');
+                navGame.classList.add('text-white', 'hover:bg-sky-700');
+                navGame.disabled = false;
+                navGame.innerHTML = '<i class="fa-solid fa-gamepad mr-1"></i>Game';
+                
+                navGameMobile.classList.remove('text-slate-400', 'cursor-not-allowed');
+                navGameMobile.classList.add('text-white', 'hover:bg-sky-700');
+                navGameMobile.disabled = false;
+                navGameMobile.innerHTML = '<i class="fa-solid fa-gamepad"></i> Game';
+
+                document.getElementById('nav-cert').classList.remove('hidden');
+                document.getElementById('nav-cert-mobile').classList.remove('hidden');
+                
+                document.getElementById('proceed-game-btn').classList.remove('hidden');
+                document.getElementById('submit-quiz-btn').classList.add('hidden');
+
+                showModal('Outstanding!', `You scored ${score}/20 (${percentage}%). You have unlocked your Certificate of Mastery AND the Retro Game!`, 'success');
+            } else {
+                quizData.forEach((_, i) => {
+                    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                    if(selected) selected.checked = false;
+                });
+                showModal('Keep Trying!', `You scored ${score}/20 (${percentage}%). You need 90% (18/20) to earn the certificate. Your answers have been reset so you can try again.`, 'error');
+                document.getElementById('quiz-section').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // --- RETRO GAME LOGIC: Packet Survivor (Mouse Avoidance) ---
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let gameScore = 0;
+        let gameLives = 3;
+        let gameRunning = false;
+        let animationId;
+        
+        let player = { x: 300, y: 200, size: 20, color: '#10b981' };
+        let enemies = [];
+        let keys = [];
+        let lastTime = 0;
+        let spawnTimer = 0;
+        let difficultyMultiplier = 1;
+        
+        const overlay = document.getElementById('game-overlay');
+        const startBtn = document.getElementById('start-game-btn');
+        startBtn.addEventListener('click', startGame);
+
+        // Input handling (Mouse and Touch)
+        function updatePlayerPos(e) {
+            if(!gameRunning) return;
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            
+            let clientX = e.clientX;
+            let clientY = e.clientY;
+            
+            if(e.touches && e.touches.length > 0) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+                e.preventDefault(); // Prevent scrolling while playing
+            }
+            
+            player.x = (clientX - rect.left) * scaleX;
+            player.y = (clientY - rect.top) * scaleY;
+            
+            // Keep in bounds
+            if(player.x < player.size/2) player.x = player.size/2;
+            if(player.x > canvas.width - player.size/2) player.x = canvas.width - player.size/2;
+            if(player.y < player.size/2) player.y = player.size/2;
+            if(player.y > canvas.height - player.size/2) player.y = canvas.height - player.size/2;
+        }
+
+        canvas.addEventListener('mousemove', updatePlayerPos);
+        canvas.addEventListener('touchmove', updatePlayerPos, {passive: false});
+
+        class Enemy {
+            constructor() {
+                this.radius = 12;
+                // Spawn on edges
+                if(Math.random() > 0.5) {
+                    this.x = Math.random() > 0.5 ? 0 : canvas.width;
+                    this.y = Math.random() * canvas.height;
+                } else {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() > 0.5 ? 0 : canvas.height;
+                }
+                
+                let speed = (Math.random() * 2 + 1.5) * difficultyMultiplier;
+                let angle = Math.random() * Math.PI * 2;
+                this.vx = Math.cos(angle) * speed;
+                this.vy = Math.sin(angle) * speed;
+            }
+            
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                
+                // Bounce off walls
+                if(this.x < this.radius || this.x > canvas.width - this.radius) this.vx *= -1;
+                if(this.y < this.radius || this.y > canvas.height - this.radius) this.vy *= -1;
+            }
+            
+            draw(ctx) {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2);
+                ctx.fillStyle = '#ef4444'; // Red for malware/sniffer
+                ctx.fill();
+                ctx.shadowColor = '#ef4444';
+                ctx.shadowBlur = 10;
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+        }
+
+        class Key {
+            constructor() {
+                this.size = 14;
+                this.x = Math.random() * (canvas.width - 40) + 20;
+                this.y = Math.random() * (canvas.height - 40) + 20;
+                this.life = 400; // frames before it disappears
+            }
+            
+            draw(ctx) {
+                ctx.fillStyle = '#38bdf8'; // Blue encryption key
+                ctx.fillRect(this.x - this.size/2, this.y - this.size/2, this.size, this.size);
+                
+                // Simple icon
+                ctx.fillStyle = '#fff';
+                ctx.fillRect(this.x - 2, this.y - 4, 4, 8);
+                this.life--;
+            }
+        }
+
+        function checkGameCollisions() {
+            // Player vs Enemies (Circle vs Rect approx)
+            for(let i=0; i<enemies.length; i++) {
+                let e = enemies[i];
+                let dx = player.x - e.x;
+                let dy = player.y - e.y;
+                let dist = Math.sqrt(dx*dx + dy*dy);
+                if(dist < e.radius + player.size/2) {
+                    loseGameLife();
+                    enemies.splice(i, 1);
+                    return; // one hit per frame max
+                }
+            }
+            
+            // Player vs Keys
+            for(let i=keys.length-1; i>=0; i--) {
+                let k = keys[i];
+                let dx = player.x - k.x;
+                let dy = player.y - k.y;
+                if(Math.abs(dx) < (player.size/2 + k.size/2) && Math.abs(dy) < (player.size/2 + k.size/2)) {
+                    gameScore += 50;
+                    document.getElementById('game-score').innerText = gameScore;
+                    keys.splice(i, 1);
+                } else if (k.life <= 0) {
+                    keys.splice(i, 1);
+                }
+            }
+        }
+
+        function loseGameLife() {
+            gameLives--;
+            document.getElementById('game-lives').innerText = gameLives;
+            
+            // Visual flash
+            ctx.fillStyle = "rgba(255,0,0,0.5)";
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            
+            if(gameLives <= 0) {
+                gameOver();
+            }
+        }
+
+        function resetGame() {
+            enemies = [];
+            keys = [];
+            gameScore = 0;
+            gameLives = 3;
+            difficultyMultiplier = 1;
+            player.x = canvas.width/2;
+            player.y = canvas.height/2;
+            document.getElementById('game-score').innerText = gameScore;
+            document.getElementById('game-lives').innerText = gameLives;
+            lastTime = Date.now();
+        }
+
+        function startGame() {
+            overlay.classList.add('hidden');
+            if(!gameRunning) {
+                resetGame();
+                // Initial enemies
+                for(let i=0; i<3; i++) enemies.push(new Enemy());
+                gameRunning = true;
+                drawGame();
+            }
+        }
+
+        function drawGame() {
+            if(!gameRunning) return;
+            
+            let now = Date.now();
+            let dt = now - lastTime;
+            lastTime = now;
+            
+            // Clear and draw grid
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = '#334155';
+            ctx.lineWidth = 1;
+            for(let i=0; i<canvas.width; i+=40) { ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke(); }
+            for(let i=0; i<canvas.height; i+=40) { ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(canvas.width, i); ctx.stroke(); }
+            
+            // Spawning logic
+            spawnTimer += dt;
+            if(spawnTimer > 2000) {
+                if(enemies.length < 15) enemies.push(new Enemy());
+                if(Math.random() > 0.3) keys.push(new Key());
+                spawnTimer = 0;
+                difficultyMultiplier += 0.02;
+                gameScore += 10; // survival points
+                document.getElementById('game-score').innerText = gameScore;
+            }
+            
+            // Draw Keys
+            keys.forEach(k => k.draw(ctx));
+            
+            // Update and draw Enemies
+            enemies.forEach(e => {
+                e.update();
+                e.draw(ctx);
+            });
+            
+            // Draw Player (Secure Data)
+            ctx.fillStyle = player.color;
+            ctx.shadowColor = '#10b981';
+            ctx.shadowBlur = 15;
+            ctx.fillRect(player.x - player.size/2, player.y - player.size/2, player.size, player.size);
+            ctx.shadowBlur = 0;
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(player.x - player.size/2, player.y - player.size/2, player.size, player.size);
+            
+            checkGameCollisions();
+
+            animationId = requestAnimationFrame(drawGame);
+        }
+
+        function gameOver() {
+            gameRunning = false;
+            cancelAnimationFrame(animationId);
+            overlay.classList.remove('hidden');
+            startBtn.innerText = "Connection Dropped - Reconnect";
+            startBtn.classList.replace('bg-emerald-600', 'bg-slate-700');
+            startBtn.classList.replace('border-emerald-800', 'border-slate-900');
+        }
+
+        // --- CERTIFICATE LOGIC ---
+        function updateCertName() {
+            let name = document.getElementById('student-name-input').value.trim();
+            if(name) {
+                if (name.includes(' ')) {
+                    name = name.split(' ')[0];
+                    document.getElementById('student-name-input').value = name;
+                    showModal('Notice', 'Only your first name has been applied to the certificate.', 'info');
+                }
+                document.getElementById('cert-student-name').innerText = name;
+            } else {
+                showModal('Wait!', 'Please enter your first name to update the certificate.', 'warning');
+            }
+        }
+
+        const today = new Date();
+        document.getElementById('cert-date').innerText = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        function downloadCert() {
+            const certEl = document.getElementById('certificate');
+            const name = document.getElementById('cert-student-name').innerText;
+            let filename = 'Certificate.png';
+            if (name && name !== 'Student') {
+                filename = `${name.replace(/\s+/g, '_')}_Certificate.png`;
+            }
+
+            const originalTransform = certEl.style.transform;
+            certEl.style.transform = 'none';
+
+            const btn = document.getElementById('download-btn');
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Generating...';
+            btn.disabled = true;
+
+            html2canvas(certEl, { 
+                scale: 2, 
+                useCORS: true,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+            }).catch(err => {
+                console.error(err);
+                certEl.style.transform = originalTransform;
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                showModal('Error', 'Failed to generate image. Try using a desktop browser.', 'error');
+            });
+        }
+
+        window.onload = () => {
+            // Draw static background for game preview
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = '20px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('NETWORK STANDBY', canvas.width/2, canvas.height/2);
+            
+            // Add custom tailwind animation configuration injected into head
+            const style = document.createElement('style');
+            style.innerHTML = `
+                @keyframes walk { to { left: 90%; opacity: 0; } }
+                @keyframes tailgate { 10% { left: -10px; } 50% { left: 20%; } to { left: 85%; opacity: 0; } }
+            `;
+            document.head.appendChild(style);
+        }
+    </script>
+</body>
+</html>
