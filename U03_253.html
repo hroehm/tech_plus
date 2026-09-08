@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unit 03 Section 2.5.3 Mastery - Device Interfaces: Display</title>
+    <title>Unit 03 Section 2.5.3 Mastery</title>
     
     <!-- Load Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -47,8 +47,6 @@
             box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
             max-width: 100%;
             height: auto;
-            touch-action: none;
-            cursor: crosshair;
         }
         .game-btn { touch-action: manipulation; user-select: none; }
 
@@ -145,9 +143,6 @@
         @media (max-width: 768px) {
             #certificate { transform: scale(0.4); transform-origin: top left; margin-bottom: -490px; margin-right: -630px; }
         }
-        
-        .matrix-cell { transition: all 0.2s; }
-        .matrix-cell.active { background-color: #10b981; color: white; border-color: #047857; }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col">
@@ -171,7 +166,6 @@
                 </div>
             </div>
         </div>
-        <!-- Mobile Nav -->
         <div class="md:hidden flex flex-wrap justify-center gap-2 py-2 px-2 bg-green-800">
             <button onclick="switchTab('briefing')" class="nav-btn-mobile px-3 py-1 text-sm rounded bg-green-900" id="nav-briefing-mobile">Briefing</button>
             <button onclick="switchTab('activity')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-activity-mobile">Lab</button>
@@ -186,80 +180,77 @@
         <!-- BRIEFING SECTION -->
         <div id="briefing-section" class="tab-content active no-print">
             <div class="text-center mb-10">
-                <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">Device Interfaces: Display Standards & Technologies</h1>
-                <p class="text-lg text-gray-600 max-w-3xl mx-auto">Explore how display connections and display technologies transmit high-resolution video and audio signals across modern computing and multimedia environments.</p>
+                <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">Device Interfaces: Display</h1>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">Master the wired and wireless connections that carry video and audio signals to screens. Review this briefing before moving to the Lab Activity.</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 
-                <!-- Tile 1: Analog & Legacy (VGA & DVI) -->
-                <div class="bg-white rounded-xl shadow-md border-t-4 border-amber-500 overflow-hidden flex flex-col">
+                <!-- Tile 1 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-gray-500 overflow-hidden flex flex-col">
                     <div class="p-6 flex-grow">
-                        <h2 class="text-2xl font-bold mb-3 text-amber-700"><i class="fa-solid fa-plug mr-2"></i>Analog & Legacy (VGA & DVI)</h2>
+                        <h2 class="text-2xl font-bold mb-3 text-gray-700"><i class="fa-solid fa-plug-circle-xmark mr-2"></i>Legacy Video (VGA & DVI)</h2>
                         <ul class="space-y-3 text-gray-700 mb-4">
-                            <li><strong>VGA (Video Graphics Array):</strong> Classic analog video standard widely used for older monitors and projectors.</li>
-                            <li><strong>DVI (Digital Visual Interface):</strong> Hybrid interface supporting both digital and analog signals with superior image clarity.</li>
-                            <li><strong>Compatibility & Signals:</strong> DVI bridges the gap between older VGA displays and modern graphics cards.</li>
+                            <li><strong>VGA:</strong> Older analog standard. Blue connector. Susceptible to interference. Does not carry audio.</li>
+                            <li><strong>DVI:</strong> Bridge technology. Carries both analog and digital signals. Better image quality than VGA. Does not carry audio.</li>
                         </ul>
                     </div>
                     <div class="bg-gray-50 border-t border-gray-100 p-4">
                         <div class="flex gap-4">
                             <button onclick="openBriefing('legacy-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
-                            <button onclick="openBriefing('legacy-usecase')" class="flex-1 bg-amber-100 hover:bg-amber-200 text-amber-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                            <button onclick="openBriefing('legacy-usecase')" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Tile 2: High-Performance Digital (HDMI & DisplayPort) -->
+                <!-- Tile 2 -->
                 <div class="bg-white rounded-xl shadow-md border-t-4 border-blue-500 overflow-hidden flex flex-col">
                     <div class="p-6 flex-grow">
-                        <h2 class="text-2xl font-bold mb-3 text-blue-700"><i class="fa-solid fa-tv mr-2"></i>High-Performance Digital (HDMI & DisplayPort)</h2>
+                        <h2 class="text-2xl font-bold mb-3 text-blue-700"><i class="fa-solid fa-tv mr-2"></i>Modern Digital (HDMI & DP)</h2>
                         <ul class="space-y-3 text-gray-700 mb-4">
-                            <li><strong>HDMI:</strong> Transmits uncompressed digital video and multi-channel audio simultaneously with CEC support.</li>
-                            <li><strong>DisplayPort:</strong> Engineered for high-performance gaming monitors supporting high refresh rates and ultra-high resolutions.</li>
-                            <li><strong>Bandwidth & Quality:</strong> Modern standards powering 4K, 8K, and high frame-rate rendering.</li>
+                            <li><strong>HDMI:</strong> Standard for consumer electronics (TVs). Carries digital video and audio. Supports CEC.</li>
+                            <li><strong>DisplayPort (DP):</strong> Standard for high-performance PCs. Supports extreme refresh rates and resolutions. Carries audio and video.</li>
                         </ul>
                     </div>
                      <div class="bg-gray-50 border-t border-gray-100 p-4">
                         <div class="flex gap-4">
-                            <button onclick="openBriefing('digital-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
-                            <button onclick="openBriefing('digital-usecase')" class="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                            <button onclick="openBriefing('modern-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('modern-usecase')" class="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Tile 3: Versatile Power & Data (USB-C & Thunderbolt) -->
-                <div class="bg-white rounded-xl shadow-md border-t-4 border-purple-500 overflow-hidden flex flex-col">
+                <!-- Tile 3 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-green-500 overflow-hidden flex flex-col">
                     <div class="p-6 flex-grow">
-                        <h2 class="text-2xl font-bold mb-3 text-purple-700"><i class="fa-solid fa-bolt mr-2"></i>Versatile Power & Data (USB-C)</h2>
+                        <h2 class="text-2xl font-bold mb-3 text-green-700"><i class="fa-brands fa-usb mr-2"></i>The Universal Standard (USB-C)</h2>
                         <ul class="space-y-3 text-gray-700 mb-4">
-                            <li><strong>Reversible Connector:</strong> Symmetric physical plug design eliminating orientation frustration.</li>
-                            <li><strong>All-in-One Cable:</strong> Capable of transferring data, display signals via Alt Mode, and power delivery simultaneously.</li>
-                            <li><strong>Modern Ecosystems:</strong> Standardizing ultrabooks, docking stations, and external 4K displays.</li>
+                            <li><strong>Versatility:</strong> Reversible connector that handles video, audio, data, and power simultaneously.</li>
+                            <li><strong>Alt Mode:</strong> Uses "DisplayPort Alternate Mode" to transmit native video signals directly to modern monitors.</li>
+                            <li><strong>Adoption:</strong> Rapidly replacing legacy display ports on thin-and-light laptops.</li>
                         </ul>
                     </div>
                      <div class="bg-gray-50 border-t border-gray-100 p-4">
                         <div class="flex gap-4">
                             <button onclick="openBriefing('usbc-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
-                            <button onclick="openBriefing('usbc-usecase')" class="flex-1 bg-purple-100 hover:bg-purple-200 text-purple-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                            <button onclick="openBriefing('usbc-usecase')" class="flex-1 bg-green-100 hover:bg-green-200 text-green-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Tile 4: Wireless Display Technology (Mirroring & Casting) -->
-                <div class="bg-white rounded-xl shadow-md border-t-4 border-emerald-500 overflow-hidden flex flex-col">
+                <!-- Tile 4 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-purple-500 overflow-hidden flex flex-col">
                     <div class="p-6 flex-grow">
-                        <h2 class="text-2xl font-bold mb-3 text-emerald-700"><i class="fa-solid fa-wifi mr-2"></i>Wireless Display (Mirroring & Casting)</h2>
+                        <h2 class="text-2xl font-bold mb-3 text-purple-700"><i class="fa-solid fa-wifi mr-2"></i>Wireless Displays</h2>
                         <ul class="space-y-3 text-gray-700 mb-4">
-                            <li><strong>Mirroring:</strong> Exact real-time duplication of a source screen onto a target display device.</li>
-                            <li><strong>Casting:</strong> Streaming specific media content directly from apps while freeing the source device for other tasks.</li>
-                            <li><strong>Protocols:</strong> AirPlay, Miracast, and Google Chromecast standards enabling seamless wireless presentation.</li>
+                            <li><strong>Mirroring:</strong> Duplicates the exact screen of the source device onto the target display. (e.g., Miracast, AirPlay).</li>
+                            <li><strong>Casting:</strong> Sends specific content to the target display, freeing up the source device to do other tasks. (e.g., Chromecast, DLNA).</li>
                         </ul>
                     </div>
                     <div class="bg-gray-50 border-t border-gray-100 p-4">
                         <div class="flex gap-4">
                             <button onclick="openBriefing('wireless-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
-                            <button onclick="openBriefing('wireless-usecase')" class="flex-1 bg-emerald-100 hover:bg-emerald-200 text-emerald-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                            <button onclick="openBriefing('wireless-usecase')" class="flex-1 bg-purple-100 hover:bg-purple-200 text-purple-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
                         </div>
                     </div>
                 </div>
@@ -273,148 +264,66 @@
         <!-- LAB ACTIVITY SECTION -->
         <div id="activity-section" class="tab-content no-print">
             <div class="text-center mb-8">
-                <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Interactive Lab Activity (8 Mini-Labs)</h1>
-                <p class="text-gray-600">Test your expertise across 8 distinct simulation challenges covering display interfaces and wireless technologies.</p>
+                <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Interactive Lab Activity</h1>
+                <p class="text-gray-600">Apply your understanding of display interfaces to solve these technical scenarios.</p>
             </div>
 
-            <!-- Lab 1: Analog vs Digital Signal Matcher -->
+            <!-- Lab 1: Interface Categorization -->
             <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
-                <h2 class="text-xl font-bold mb-4 text-amber-700"><i class="fa-solid fa-plug mr-2"></i>Lab 1: Signal Type Categorizer</h2>
-                <p class="text-sm text-gray-600 mb-4">Drag each display interface connector to its corresponding signal transmission category.</p>
+                <h2 class="text-xl font-bold mb-4 text-blue-700"><i class="fa-solid fa-layer-group mr-2"></i>Lab 1: Protocol Categorization</h2>
+                <p class="text-sm text-gray-600 mb-4">Drag and drop the display technologies into their correct primary category.</p>
                 
-                <div class="flex flex-wrap gap-3 mb-6" id="lab1-items">
-                    <div class="io-item px-4 py-2 bg-amber-100 border border-amber-300 rounded font-bold text-sm" draggable="true" data-type="analog">VGA (15-pin)</div>
-                    <div class="io-item px-4 py-2 bg-blue-100 border border-blue-300 rounded font-bold text-sm" draggable="true" data-type="digital">DisplayPort</div>
-                    <div class="io-item px-4 py-2 bg-blue-100 border border-blue-300 rounded font-bold text-sm" draggable="true" data-type="digital">HDMI</div>
-                    <div class="io-item px-4 py-2 bg-purple-100 border border-purple-300 rounded font-bold text-sm" draggable="true" data-type="hybrid">DVI (Analog/Digital)</div>
+                <div class="flex flex-wrap gap-3 mb-6" id="cat-items">
+                    <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold" draggable="true" data-type="legacy">VGA</div>
+                    <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold" draggable="true" data-type="wireless">Mirroring</div>
+                    <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold" draggable="true" data-type="modern">DisplayPort</div>
+                    <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold" draggable="true" data-type="legacy">DVI</div>
+                    <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold" draggable="true" data-type="modern">HDMI</div>
+                    <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold" draggable="true" data-type="wireless">Casting</div>
+                    <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold" draggable="true" data-type="modern">USB-C</div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="cat-dropzone border-2 border-dashed border-amber-400 bg-amber-50 rounded-lg p-3 min-h-[120px] flex flex-col items-center" data-target="analog">
-                        <h3 class="font-bold text-amber-800 mb-2 border-b border-amber-200 w-full text-center pb-1 text-sm">Pure Analog Signals</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="cat-dropzone border-2 border-dashed border-gray-400 bg-gray-50 rounded-lg p-4 min-h-[150px] flex flex-col items-center" data-target="legacy">
+                        <h3 class="font-bold text-gray-800 mb-2 border-b border-gray-200 w-full text-center pb-1"><i class="fa-solid fa-clock-rotate-left mr-1"></i>Legacy / Analog-Capable</h3>
                     </div>
-                    <div class="cat-dropzone border-2 border-dashed border-blue-400 bg-blue-50 rounded-lg p-3 min-h-[120px] flex flex-col items-center" data-target="digital">
-                        <h3 class="font-bold text-blue-800 mb-2 border-b border-blue-200 w-full text-center pb-1 text-sm">Pure Digital Signals</h3>
+                    <div class="cat-dropzone border-2 border-dashed border-blue-400 bg-blue-50 rounded-lg p-4 min-h-[150px] flex flex-col items-center" data-target="modern">
+                        <h3 class="font-bold text-blue-800 mb-2 border-b border-blue-200 w-full text-center pb-1"><i class="fa-solid fa-bolt mr-1"></i>Modern High-Bandwidth</h3>
                     </div>
-                    <div class="cat-dropzone border-2 border-dashed border-purple-400 bg-purple-50 rounded-lg p-3 min-h-[120px] flex flex-col items-center" data-target="hybrid">
-                        <h3 class="font-bold text-purple-800 mb-2 border-b border-purple-200 w-full text-center pb-1 text-sm">Hybrid Signals</h3>
+                    <div class="cat-dropzone border-2 border-dashed border-purple-400 bg-purple-50 rounded-lg p-4 min-h-[150px] flex flex-col items-center" data-target="wireless">
+                        <h3 class="font-bold text-purple-800 mb-2 border-b border-purple-200 w-full text-center pb-1"><i class="fa-solid fa-wifi mr-1"></i>Wireless Protocols</h3>
                     </div>
                 </div>
                 <div id="lab1-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
             </div>
 
-            <!-- Lab 2: Audio/Video Capability Matrix -->
+            <!-- Lab 2: Scenario Matcher -->
             <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
-                <h2 class="text-xl font-bold mb-4 text-blue-700"><i class="fa-solid fa-volume-high mr-2"></i>Lab 2: Audio & Video Transmission Matrix</h2>
-                <p class="text-sm text-gray-600 mb-4">Click all interface buttons below that natively support <strong>both</strong> video and audio signal transmission simultaneously.</p>
+                <h2 class="text-xl font-bold mb-4 text-red-700"><i class="fa-solid fa-wrench mr-2"></i>Lab 2: Scenario Interface Matcher</h2>
+                <p class="text-sm text-gray-600 mb-4">Click the scenario on the left, then click the correct display interface or technology required to solve it based on user needs.</p>
                 
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                    <button class="matrix-cell p-4 border-2 border-gray-300 rounded-lg font-bold text-gray-700 text-center hover:bg-gray-100" id="mat-vga" onclick="toggleMatrix(this, false)">VGA</button>
-                    <button class="matrix-cell p-4 border-2 border-gray-300 rounded-lg font-bold text-gray-700 text-center hover:bg-gray-100" id="mat-dvi" onclick="toggleMatrix(this, false)">DVI</button>
-                    <button class="matrix-cell p-4 border-2 border-gray-300 rounded-lg font-bold text-gray-700 text-center hover:bg-gray-100" id="mat-hdmi" onclick="toggleMatrix(this, true)">HDMI</button>
-                    <button class="matrix-cell p-4 border-2 border-gray-300 rounded-lg font-bold text-gray-700 text-center hover:bg-gray-100" id="mat-dp" onclick="toggleMatrix(this, true)">DisplayPort</button>
-                </div>
-                <div class="text-center">
-                    <button class="bg-blue-600 text-white px-6 py-2 rounded font-bold hover:bg-blue-700" onclick="checkLab2()">Verify Audio/Video Support</button>
+                <div class="flex flex-col md:flex-row justify-around items-stretch gap-6">
+                    <div class="flex flex-col gap-3 flex-1">
+                        <button class="scenario-btn px-4 py-3 bg-gray-100 border-2 border-gray-300 rounded text-left hover:bg-red-50 text-sm font-semibold transition" data-match="vga">"Jess is setting up a presentation on an older projector that only supports analog video."</button>
+                        <button class="scenario-btn px-4 py-3 bg-gray-100 border-2 border-gray-300 rounded text-left hover:bg-red-50 text-sm font-semibold transition" data-match="dp">"Sallie wants to connect two monitors to a gaming PC for high refresh rate gaming."</button>
+                        <button class="scenario-btn px-4 py-3 bg-gray-100 border-2 border-gray-300 rounded text-left hover:bg-red-50 text-sm font-semibold transition" data-match="hdmi">"Cindy wants to play a Blu-Ray movie with full HD and audio on her Smart TV."</button>
+                        <button class="scenario-btn px-4 py-3 bg-gray-100 border-2 border-gray-300 rounded text-left hover:bg-red-50 text-sm font-semibold transition" data-match="usbc">"Linda has a thin, modern laptop. She needs to connect an external 4K monitor, send audio, and charge her laptop with one cable."</button>
+                        <button class="scenario-btn px-4 py-3 bg-gray-100 border-2 border-gray-300 rounded text-left hover:bg-red-50 text-sm font-semibold transition" data-match="dvi">"Jeff's office PC has mixed ports. He wants the highest image quality possible on a monitor that doesn't support HDMI/DP, but accepts digital."</button>
+                        <button class="scenario-btn px-4 py-3 bg-gray-100 border-2 border-gray-300 rounded text-left hover:bg-red-50 text-sm font-semibold transition" data-match="mirroring">"Karlie needs to show her exact laptop screen on a big TV during a meeting, while still having control from her laptop."</button>
+                        <button class="scenario-btn px-4 py-3 bg-gray-100 border-2 border-gray-300 rounded text-left hover:bg-red-50 text-sm font-semibold transition" data-match="casting">"Austin wants to play a video from his phone on his TV, while using his phone to text his friends simultaneously."</button>
+                    </div>
+                    
+                    <div class="flex flex-col gap-3 flex-1 justify-center">
+                        <button class="tool-btn px-4 py-3 bg-white border-2 border-gray-300 rounded text-center hover:bg-gray-100 font-bold text-gray-700 shadow-sm transition" data-match="dp"><i class="fa-solid fa-desktop text-blue-500 mr-2"></i>DisplayPort</button>
+                        <button class="tool-btn px-4 py-3 bg-white border-2 border-gray-300 rounded text-center hover:bg-gray-100 font-bold text-gray-700 shadow-sm transition" data-match="vga"><i class="fa-solid fa-plug text-gray-500 mr-2"></i>VGA</button>
+                        <button class="tool-btn px-4 py-3 bg-white border-2 border-gray-300 rounded text-center hover:bg-gray-100 font-bold text-gray-700 shadow-sm transition" data-match="mirroring"><i class="fa-solid fa-clone text-purple-500 mr-2"></i>Mirroring</button>
+                        <button class="tool-btn px-4 py-3 bg-white border-2 border-gray-300 rounded text-center hover:bg-gray-100 font-bold text-gray-700 shadow-sm transition" data-match="hdmi"><i class="fa-solid fa-tv text-red-500 mr-2"></i>HDMI</button>
+                        <button class="tool-btn px-4 py-3 bg-white border-2 border-gray-300 rounded text-center hover:bg-gray-100 font-bold text-gray-700 shadow-sm transition" data-match="casting"><i class="fa-solid fa-cast text-purple-700 mr-2"></i>Casting</button>
+                        <button class="tool-btn px-4 py-3 bg-white border-2 border-gray-300 rounded text-center hover:bg-gray-100 font-bold text-gray-700 shadow-sm transition" data-match="usbc"><i class="fa-brands fa-usb text-green-600 mr-2"></i>USB-C</button>
+                        <button class="tool-btn px-4 py-3 bg-white border-2 border-gray-300 rounded text-center hover:bg-gray-100 font-bold text-gray-700 shadow-sm transition" data-match="dvi"><i class="fa-solid fa-border-all text-gray-700 mr-2"></i>DVI</button>
+                    </div>
                 </div>
                 <div id="lab2-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
-            </div>
-
-            <!-- Lab 3: High-Refresh Rate & Gaming Setup -->
-            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
-                <h2 class="text-xl font-bold mb-4 text-indigo-700"><i class="fa-solid fa-gamepad mr-2"></i>Lab 3: Gaming Monitor Bandwidth Selector</h2>
-                <p class="text-sm text-gray-600 mb-4">Sallie needs a high-refresh rate 4K gaming monitor connection. Select the correct high-performance display interface below.</p>
-                
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
-                    <button class="p-3 border rounded font-semibold text-center hover:bg-indigo-50" onclick="checkLab3('VGA')">VGA</button>
-                    <button class="p-3 border rounded font-semibold text-center hover:bg-indigo-50" onclick="checkLab3('DVI')">DVI</button>
-                    <button class="p-3 border rounded font-semibold text-center hover:bg-indigo-50 bg-indigo-50 border-indigo-500 font-bold text-indigo-700" onclick="checkLab3('DisplayPort')">DisplayPort / HDMI 2.1</button>
-                    <button class="p-3 border rounded font-semibold text-center hover:bg-indigo-50" onclick="checkLab3('Composite')">Composite</button>
-                </div>
-                <div id="lab3-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
-            </div>
-
-            <!-- Lab 4: USB-C Multitasking Power Delivery -->
-            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
-                <h2 class="text-xl font-bold mb-4 text-purple-700"><i class="fa-solid fa-bolt mr-2"></i>Lab 4: USB-C Docking Station Configuration</h2>
-                <p class="text-sm text-gray-600 mb-4">Linda needs her modern ultrabook to simultaneously send 4K video, transfer files from an external SSD, and charge her battery through a single cable. Click the features required:</p>
-                
-                <div class="flex flex-wrap justify-center gap-3 mb-6">
-                    <button class="matrix-cell px-4 py-2 border-2 border-gray-300 rounded font-bold" onclick="toggleUSBC(this)">Video (DisplayPort Alt Mode)</button>
-                    <button class="matrix-cell px-4 py-2 border-2 border-gray-300 rounded font-bold" onclick="toggleUSBC(this)">High-Speed Data (USB 3.1+)</button>
-                    <button class="matrix-cell px-4 py-2 border-2 border-gray-300 rounded font-bold" onclick="toggleUSBC(this)">Power Delivery (PD Charging)</button>
-                    <button class="matrix-cell px-4 py-2 border-2 border-gray-300 rounded font-bold" onclick="toggleUSBC(this)">Analog Audio Jack</button>
-                </div>
-                <div class="text-center">
-                    <button class="bg-purple-600 text-white px-6 py-2 rounded font-bold hover:bg-purple-700" onclick="checkLab4()">Confirm USB-C Configuration</button>
-                </div>
-                <div id="lab4-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
-            </div>
-
-            <!-- Lab 5: Legacy Projector Setup -->
-            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
-                <h2 class="text-xl font-bold mb-4 text-amber-700"><i class="fa-solid fa-projector mr-2"></i>Lab 5: Legacy Projector Connection</h2>
-                <p class="text-sm text-gray-600 mb-4">Jess is presenting in a historic lecture hall where the projector only accepts analog video signals. Select the appropriate legacy interface:</p>
-                
-                <div class="flex justify-center gap-4 mb-4">
-                    <button class="px-6 py-3 bg-amber-600 text-white font-bold rounded shadow hover:bg-amber-700" onclick="checkLab5('VGA')">VGA Connector</button>
-                    <button class="px-6 py-3 bg-gray-200 text-gray-800 font-bold rounded shadow hover:bg-gray-300" onclick="checkLab5('HDMI')">HDMI Cable</button>
-                </div>
-                <div id="lab5-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
-            </div>
-
-            <!-- Lab 6: Mirroring vs Casting Scenario Sorter -->
-            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
-                <h2 class="text-xl font-bold mb-4 text-emerald-700"><i class="fa-solid fa-wifi mr-2"></i>Lab 6: Wireless Mode Identifier</h2>
-                <p class="text-sm text-gray-600 mb-4">Determine whether Karlie needs <strong>Mirroring</strong> or <strong>Casting</strong> for each scenario:</p>
-                
-                <div class="space-y-4 max-w-2xl mx-auto">
-                    <div class="bg-gray-50 p-4 rounded border flex flex-col sm:flex-row justify-between items-center gap-3">
-                        <span class="text-sm font-medium">1. Karlie wants to duplicate her exact laptop desktop and notification pop-ups onto a big TV screen during a meeting.</span>
-                        <select id="lab6-q1" class="border p-2 rounded font-bold text-emerald-800">
-                            <option value="">--Select--</option>
-                            <option value="mirror">Mirroring</option>
-                            <option value="cast">Casting</option>
-                        </select>
-                    </div>
-                    <div class="bg-gray-50 p-4 rounded border flex flex-col sm:flex-row justify-between items-center gap-3">
-                        <span class="text-sm font-medium">2. Austin wants to play a YouTube video on his Smart TV while continuing to text and browse emails on his phone.</span>
-                        <select id="lab6-q2" class="border p-2 rounded font-bold text-emerald-800">
-                            <option value="">--Select--</option>
-                            <option value="mirror">Mirroring</option>
-                            <option value="cast">Casting</option>
-                        </select>
-                    </div>
-                    <div class="text-center">
-                        <button class="bg-emerald-600 text-white px-6 py-2 rounded font-bold hover:bg-emerald-700 mt-2" onclick="checkLab6()">Check Wireless Modes</button>
-                    </div>
-                </div>
-                <div id="lab6-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
-            </div>
-
-            <!-- Lab 7: Cable Length & Signal Degradation Simulator -->
-            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
-                <h2 class="text-xl font-bold mb-4 text-rose-700"><i class="fa-solid fa-wave-square mr-2"></i>Lab 7: Signal Degradation & Length Analyzer</h2>
-                <p class="text-sm text-gray-600 mb-4">Adjust the HDMI cable length slider. Observe how signal attenuation increases over distance for uncompressed digital signals:</p>
-                
-                <div class="max-w-md mx-auto text-center space-y-4">
-                    <input type="range" id="cable-slider" min="2" max="30" value="5" class="w-full accent-rose-600" oninput="updateCableSim(this.value)">
-                    <div class="text-lg font-bold">Cable Length: <span id="cable-val" class="text-rose-600">5</span> Meters</div>
-                    <div id="cable-status" class="p-3 rounded bg-green-50 text-green-800 font-bold border border-green-200">Signal Integrity: Excellent (Full 4K @ 60Hz)</div>
-                </div>
-            </div>
-
-            <!-- Lab 8: Adapter Compatibility Builder -->
-            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
-                <h2 class="text-xl font-bold mb-4 text-indigo-700"><i class="fa-solid fa-puzzle-piece mr-2"></i>Lab 8: Interface Adapter Selector</h2>
-                <p class="text-sm text-gray-600 mb-4">A user has a modern graphics card with only DisplayPort outputs, but their conference room projector only accepts HDMI. Which adapter do they need?</p>
-                
-                <div class="flex justify-center gap-4">
-                    <button class="px-5 py-3 border-2 border-indigo-300 rounded font-bold hover:bg-indigo-50" onclick="checkLab8(false)">HDMI to VGA Adapter</button>
-                    <button class="px-5 py-3 border-2 border-indigo-300 rounded font-bold hover:bg-indigo-50 bg-indigo-50 text-indigo-800" onclick="checkLab8(true)">DisplayPort to HDMI Adapter</button>
-                    <button class="px-5 py-3 border-2 border-indigo-300 rounded font-bold hover:bg-indigo-50" onclick="checkLab8(false)">USB-A to DVI Cable</button>
-                </div>
-                <div id="lab8-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
             </div>
 
             <div class="text-center">
@@ -426,8 +335,8 @@
         <div id="quiz-section" class="tab-content no-print">
             <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-xl max-w-4xl mx-auto">
                 <div class="text-center mb-8 border-b pb-4">
-                    <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Unit 03 Section 2.5.3 Mastery Quiz (20 Questions)</h1>
-                    <p class="text-gray-600">Score 90% or higher (18/20) to earn your Certificate of Mastery and unlock the Space Invaders-style arcade game "Display Defender"!</p>
+                    <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Unit 03 Section 2.5.3 Mastery Quiz</h1>
+                    <p class="text-gray-600">Score 90% or higher (18/20) to earn your Certificate of Mastery and unlock the Retro Game!</p>
                 </div>
 
                 <div id="quiz-container" class="space-y-8">
@@ -436,42 +345,42 @@
 
                 <div class="mt-10 text-center border-t pt-6 flex flex-col md:flex-row justify-center items-center gap-4">
                     <button id="submit-quiz-btn" onclick="gradeQuiz()" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">Submit Quiz</button>
-                    <button id="proceed-game-btn" onclick="switchTab('game')" class="hidden bg-purple-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-purple-700 shadow-lg transition w-full md:w-auto">Play Display Defender <i class="fa-solid fa-gamepad ml-2"></i></button>
+                    <button id="proceed-game-btn" onclick="switchTab('game')" class="hidden bg-purple-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-purple-700 shadow-lg transition w-full md:w-auto">Play Retro Game <i class="fa-solid fa-gamepad ml-2"></i></button>
                 </div>
             </div>
         </div>
 
-        <!-- RETRO GAME SECTION: DISPLAY DEFENDER (Space Invaders) -->
+        <!-- RETRO GAME SECTION -->
         <div id="game-section" class="tab-content no-print">
-            <div class="bg-gray-900 p-6 sm:p-8 rounded-2xl shadow-xl max-w-4xl mx-auto border-4 border-gray-700 flex flex-col items-center">
-                <div class="text-center mb-4 w-full">
-                    <h1 class="text-3xl font-extrabold text-green-400 mb-2 tracking-widest uppercase" style="font-family: monospace;">Display Defender</h1>
-                    <p class="text-gray-300 text-sm">Defend the core display bus against rogue analog corruption waves! Use <strong class="text-blue-400">Left/Right Arrow keys</strong> (or on-screen buttons) to move and <strong class="text-yellow-400">Spacebar</strong> (or Fire button) to shoot digital packets!</p>
+            <div class="bg-gray-900 p-6 sm:p-8 rounded-2xl shadow-xl max-w-4xl mx-auto border-4 border-gray-700">
+                <div class="text-center mb-4">
+                    <h1 class="text-3xl font-extrabold text-blue-400 mb-2 tracking-widest uppercase" style="font-family: monospace;">Display Defender</h1>
+                    <p class="text-gray-300 text-sm">You are the Digital Monitor! Defend your screen against the falling analog static bugs. Use <kbd class="bg-gray-700 px-1 rounded text-white">&larr;</kbd> / <kbd class="bg-gray-700 px-1 rounded text-white">&rarr;</kbd> to move and <kbd class="bg-gray-700 px-1 rounded text-white">SPACE</kbd> to shoot.</p>
                 </div>
                 
-                <div class="flex justify-between items-center w-full max-w-[600px] mb-2 px-4 text-white font-mono text-xl">
+                <div class="flex justify-between items-center mb-2 px-4 text-white font-mono text-xl">
                     <div>Score: <span id="game-score" class="text-green-400 font-bold">0</span></div>
-                    <div>Shields: <span id="game-lives" class="text-blue-400 font-bold">3</span></div>
+                    <div>High Score: <span id="game-highscore" class="text-yellow-400 font-bold">0</span></div>
                 </div>
 
-                <div class="relative flex flex-col items-center w-full">
-                    <canvas id="game-canvas" width="600" height="450" class="w-full max-w-[600px] bg-gray-950 border-2 border-green-600 rounded shadow-lg"></canvas>
+                <div class="relative flex justify-center w-full">
+                    <!-- Game Canvas -->
+                    <canvas id="game-canvas" width="400" height="400" class="w-full max-w-[400px] sm:max-w-[500px]"></canvas>
                     
-                    <!-- Mobile / Touch Controls -->
-                    <div class="flex justify-between w-full max-w-[600px] mt-3 gap-2">
-                        <button class="game-btn bg-gray-800 hover:bg-gray-700 text-white px-6 py-3 rounded font-bold flex-1 text-lg border border-gray-600" ontouchstart="movePlayer(-1)" onmousedown="movePlayer(-1)"><i class="fa-solid fa-arrow-left"></i> MOVE LEFT</button>
-                        <button class="game-btn bg-green-700 hover:bg-green-600 text-white px-6 py-3 rounded font-bold flex-1 text-lg border border-green-500" ontouchstart="playerShoot()" onmousedown="playerShoot()"><i class="fa-solid fa-crosshairs"></i> FIRE PACKET</button>
-                        <button class="game-btn bg-gray-800 hover:bg-gray-700 text-white px-6 py-3 rounded font-bold flex-1 text-lg border border-gray-600" ontouchstart="movePlayer(1)" onmousedown="movePlayer(1)">MOVE RIGHT <i class="fa-solid fa-arrow-right"></i></button>
-                    </div>
-
                     <!-- Overlay Start Button -->
-                    <div id="game-overlay" class="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-80 rounded-lg max-w-[600px] mx-auto z-10">
-                        <h2 id="game-overlay-title" class="text-3xl font-bold text-green-400 mb-4 font-mono">READY TO DEFEND</h2>
-                        <button id="start-game-btn" class="bg-green-600 hover:bg-green-500 text-white font-bold font-mono py-3 px-8 rounded-lg text-xl border-4 border-green-800 uppercase transform transition hover:scale-105">Launch Game</button>
+                    <div id="game-overlay" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-70 rounded-lg max-w-[400px] sm:max-w-[500px] mx-auto">
+                        <button id="start-game-btn" class="bg-blue-500 hover:bg-blue-400 text-white font-bold font-mono py-3 px-6 rounded-lg text-xl border-4 border-blue-700 uppercase transform transition hover:scale-105">Insert Coin (Start)</button>
                     </div>
                 </div>
 
-                <div class="mt-8 text-center w-full border-t border-gray-700 pt-6">
+                <!-- Mobile Controls -->
+                <div class="flex justify-center gap-2 w-full mx-auto mt-6 sm:hidden">
+                    <button id="btn-left" class="game-btn bg-gray-700 text-white rounded p-4 active:bg-gray-500 flex-1 max-w-[80px]"><i class="fa-solid fa-arrow-left text-xl"></i></button>
+                    <button id="btn-fire" class="game-btn bg-red-700 text-white rounded font-bold p-4 active:bg-red-500 flex-[2] max-w-[150px]">FIRE</button>
+                    <button id="btn-right" class="game-btn bg-gray-700 text-white rounded p-4 active:bg-gray-500 flex-1 max-w-[80px]"><i class="fa-solid fa-arrow-right text-xl"></i></button>
+                </div>
+
+                <div class="mt-8 text-center border-t border-gray-700 pt-6">
                     <button onclick="switchTab('cert')" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">View Certificate <i class="fa-solid fa-award ml-2"></i></button>
                 </div>
             </div>
@@ -483,8 +392,8 @@
                 
                 <!-- Controls -->
                 <div class="bg-white p-6 rounded shadow mb-6 no-print text-center border border-gray-200">
-                    <h2 class="text-2xl font-bold text-green-600 mb-2">🎉 Congratulations! 🎉</h2>
-                    <p class="text-gray-700 mb-4">You have achieved mastery of Device Interfaces: Display Standards & Technologies.</p>
+                    <h2 class="text-2xl font-bold text-green-600 mb-2">🏆 Congratulations! 🏆</h2>
+                    <p class="text-gray-700 mb-4">You have achieved mastery of Display Interfaces.</p>
                     <div class="flex flex-col md:flex-row justify-center items-center gap-4">
                         <input type="text" id="student-name-input" value="Student" placeholder="Enter your first name" class="border-2 border-gray-300 rounded px-4 py-2 w-full md:w-64 focus:border-green-500 focus:outline-none">
                         <button onclick="updateCertName()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">Update Name</button>
@@ -523,9 +432,9 @@
                             
                             <p class="text-[1.3rem] font-body text-gray-800 leading-relaxed w-full pr-4">
                                 Has successfully completed the assessment for 
-                                <strong class="text-[1.8rem] text-[#1e3a8a] block mt-4 mb-2 font-serif">CYBER.ORG Tech+ Unit 03 Section 2.5.3</strong>
-                                <strong class="text-[1.5rem] text-black block mb-4 font-serif italic">Device Interfaces: Display Standards & Technologies</strong>
-                                <span class="text-[1.1rem] text-gray-700 leading-snug block">Demonstrating comprehensive proficiency in comparing VGA, DVI, HDMI, DisplayPort, USB-C, and wireless mirroring versus casting technologies.</span>
+                                <strong class="text-[1.8rem] text-[#1e3a8a] block mt-4 mb-2 font-serif">Cyber.org Tech+ Unit 03 Section 2.5.3</strong>
+                                <strong class="text-[1.5rem] text-black block mb-4 font-serif italic">Device Interfaces: Display</strong>
+                                <span class="text-[1.1rem] text-gray-700 leading-snug block">Demonstrating proficiency in understanding wired and wireless display technologies, evaluating analog vs digital signal requirements, and selecting appropriate display interfaces based on hardware capabilities and user scenarios.</span>
                             </p>
                             
                             <div class="flex justify-end gap-16 items-end mt-auto mb-[60px] w-full pr-8">
@@ -550,7 +459,7 @@
         </div>
     </main>
 
-    <!-- Custom Modal for Alerts -->
+    <!-- Custom Modal -->
     <div id="custom-modal" class="fixed inset-0 bg-black bg-opacity-50 z-[100] hidden flex justify-center items-center backdrop-blur-sm">
         <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all">
             <div class="text-center">
@@ -582,215 +491,129 @@
     </div>
 
     <script>
-        // --- BRIEFING DATA (Min 7 Paragraphs per detail, 2+ cases, 2+ examples, and images) ---
+        // --- Briefing Content Data ---
         const briefingData = {
             'legacy-details': {
-                title: 'Analog & Legacy Standards (VGA & DVI)',
-                icon: '<i class="fa-solid fa-plug text-amber-600"></i>',
+                title: 'Legacy Video Interfaces (VGA & DVI)',
+                icon: '<i class="fa-solid fa-plug-circle-xmark text-gray-600"></i>',
                 html: `
-                    <p class="mb-5">Display interfaces form the critical physical and electrical bridge between a computing device's graphics processing unit (GPU) and a visual output monitor or projector. Understanding these connections requires examining how video transmission evolved from purely analog electrical waveforms into lightning-fast digital packets. At the foundation of legacy display technology sits the Video Graphics Array (VGA) standard, introduced by IBM in 1987. VGA utilizes a 15-pin D-subminiature connector and transmits analog signals where red, green, and blue color intensity are represented by continuous voltage variations.</p>
+                    <p class="mb-5">Understanding legacy display interfaces is essential for IT professionals because older hardware is still heavily utilized in enterprise, educational, and industrial environments. The <strong>Video Graphics Array (VGA)</strong> is the most iconic of these legacy standards. Identifiable by its blue, 15-pin D-sub connector, VGA was introduced by IBM in 1987. It operates entirely on an <strong>analog signal</strong>, meaning the visual data is transmitted as continuous electrical waves rather than discrete digital 1s and 0s.</p>
                     
-                    <p class="mb-5">Because VGA transmits analog signals over copper wires, it is inherently susceptible to electromagnetic interference (EMI), radio frequency interference (RFI), and signal degradation over long cable runs. As cables get longer or pass near power cords, the analog waveform distorts, resulting in blurry text, ghosting, and color bleeding on the screen. Despite these limitations, VGA remained ubiquitous for decades because of its universal backward compatibility, low manufacturing cost, and presence on millions of legacy classroom projectors and enterprise office monitors.</p>
+                    <p class="mb-5">Because VGA relies on an analog signal, it is highly susceptible to signal degradation and electromagnetic interference. As resolutions and screen sizes increased over the years, the limitations of analog video became painfully apparent, often resulting in blurry, ghosted, or misaligned images on modern LCD panels. Furthermore, it is critical to note that a VGA cable <strong>only carries video</strong>. If a user needs sound, they must run a completely separate audio cable from the computer to the speakers.</p>
                     
-                    <p class="mb-5">To overcome the clarity limitations of analog signals while maintaining compatibility with existing hardware, the Digital Visual Interface (DVI) standard was developed in 1999 by the Digital Display Working Group. DVI was engineered as a hybrid or pure digital interface capable of replacing analog VGA. DVI-I (Integrated) pins can carry both digital and analog signals, allowing an inexpensive adapter to connect a DVI graphics card to an older VGA monitor without active digital-to-analog conversion hardware inside the cable.</p>
+                    <p class="mb-5">To bridge the technological gap between fading analog cathode-ray tube (CRT) monitors and emerging flat-panel LCDs, the industry created the <strong>Digital Visual Interface (DVI)</strong>. DVI connectors are typically white, larger than VGA, and feature a complex array of pins. The true innovation of DVI was its ability to support both analog and digital signals depending on the specific pin configuration (DVI-A for analog, DVI-D for digital, and DVI-I for integrated).</p>
                     
-                    <p class="mb-5">DVI significantly improved visual sharpness over VGA by transmitting pixel data digitally using Transition Minimized Differential Signaling (TMDS). Instead of varying continuous voltages, DVI transmits discrete binary 1s and 0s representing pixel grids. This eliminates signal distortion and ensures pixel-perfect sharpness at native resolutions. However, DVI has two major limitations: it transmits video data only and does not natively carry audio signals, requiring a separate audio cable, and its bulky physical connector size makes it impractical for slim modern laptops.</p>
+                    <p class="mb-5">When utilized in its digital mode (DVI-D), DVI offered a massive leap in image clarity over VGA because the digital signal perfectly matched the pixel grid of flat-panel monitors without requiring any blurry signal conversion. This made it the absolute standard for early high-end PC graphics cards and monitors.</p>
                     
-                    <p class="mb-5">Over the last decade, both VGA and DVI have been actively phased out by hardware manufacturers in favor of modern high-definition digital standards like HDMI and DisplayPort. However, system administrators, IT support technicians, and AV engineers frequently encounter legacy VGA and DVI ports when servicing older enterprise infrastructure, point-of-sale terminals, and legacy conference room hardware. Knowing how to adapt these analog and digital signals is an essential foundational competency for IT professionals.</p>
-                    
-                    <p class="mb-5">When troubleshooting legacy displays, technicians must verify pin integrity on VGA cables. Bent or broken pins on the 15-pin D-sub connector frequently cause missing color channels—for instance, if pin 1 (Red Video) is bent, the entire display will render with a harsh cyan tint due to the total loss of the red color signal. Similarly, ensuring thumbscrews are properly tightened prevents intermittent signal loss caused by loose ground connections.</p>
-                    
-                    <p>In summary, while legacy analog and hybrid interfaces like VGA and DVI are technologically obsolete for high-refresh-rate gaming or 4K cinematic production, their historical importance and continued presence in legacy environments mandate thorough technical understanding. They represent the stepping stone between early computing graphics and today's pristine digital multimedia ecosystems.</p>
+                    <p>However, despite its massive improvement in visual fidelity, DVI shared a major limitation with its predecessor, VGA: <strong>it does not natively carry an audio signal</strong>. As consumer demands shifted toward minimalist setups and home theaters where both video and sound needed to be routed easily to televisions, the lack of audio support ultimately forced DVI into obsolescence, paving the way for modern, unified digital standards.</p>
                 `
             },
             'legacy-usecase': {
-                title: 'Analog & Legacy Standards: Use Cases',
+                title: 'Legacy Video: Practical Use Cases',
                 icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
                 html: `
                     <div class="mb-8">
-                        <h4 class="text-xl font-bold text-amber-800 mb-2 border-b-2 border-amber-200 pb-1">Case 1: University Lecture Hall Projector Retrofit</h4>
-                        <p class="mb-2">A university has an installed base of expensive ceiling-mounted projectors that only feature VGA analog inputs. Professors connecting modern laptops require reliable interface solutions.</p>
-                        <ul class="list-disc pl-5 mb-4 text-gray-700">
-                            <li class="mb-2"><strong>Example 1 (Active Conversion):</strong> An instructor uses an HDMI-to-VGA active adapter dongle to convert the digital output from their modern faculty laptop into an analog VGA signal accepted by the legacy ceiling projector.</li>
-                            <li><strong>Example 2 (IT Maintenance):</strong> A technician diagnoses a projector displaying a green-tinted image, quickly identifying a bent pin on the VGA connector and straightening it to restore full RGB color spectrum.</li>
-                        </ul>
+                        <h4 class="text-xl font-bold text-gray-800 mb-2 border-b-2 border-gray-200 pb-1">Scenario 1: Educational Infrastructure (VGA)</h4>
+                        <img src="https://placehold.co/800x300/f3f4f6/4b5563?text=Ceiling+Mounted+VGA+Projector" alt="VGA Projector Diagram" class="w-full h-auto rounded-lg mb-4 shadow-sm border border-gray-200">
+                        <p>Jess, a teacher, is setting up a presentation in a lecture hall that hasn't been renovated in a decade. The ceiling-mounted projector only has a thick blue <strong>VGA</strong> cable hanging down to the podium. Because VGA is an analog standard, Jess must use an active adapter (HDMI-to-VGA) to convert her modern laptop's digital signal into analog waves. She must also remember to plug in a separate 3.5mm audio cable if her presentation has sound.</p>
                     </div>
                     <div class="mb-8">
-                        <h4 class="text-xl font-bold text-amber-800 mb-2 border-b-2 border-amber-200 pb-1">Case 2: Industrial Control and Legacy Workstations</h4>
-                        <p class="mb-2">Manufacturing facilities often rely on specialized, highly stable enterprise workstations running legacy operating systems connected to ruggedized industrial monitors.</p>
-                        <ul class="list-disc pl-5 mb-4 text-gray-700">
-                            <li class="mb-2"><strong>Example 1 (DVI Hybrid Deployment):</strong> An engineer connects an office PC with a DVI-I port to an older monitor using a DVI-to-VGA passive adapter cable, achieving crisp text clarity without replacing working hardware.</li>
-                            <li><strong>Example 2 (Point-of-Sale Terminals):</strong> Retail checkout registers utilize rugged DVI connections to ensure secure, flicker-free receipt and inventory display performance in high-vibration retail environments.</li>
-                        </ul>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                        <div>
-                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: VGA 15-Pin Analog Standard</p>
-                            <img src="https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=600&h=350" alt="Legacy computer hardware and analog connectors" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
-                        </div>
-                        <div>
-                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Presentation Projectors</p>
-                            <img src="https://images.unsplash.com/photo-1517502884422-41eaead166d4?auto=format&fit=crop&w=600&h=350" alt="Projector and presentation setup" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
-                        </div>
+                        <h4 class="text-xl font-bold text-gray-800 mb-2 border-b-2 border-gray-200 pb-1">Scenario 2: Transitional Office Hardware (DVI)</h4>
+                        <img src="https://placehold.co/800x300/f3f4f6/4b5563?text=Mixed+Port+Graphics+Card" alt="DVI Workstation Setup" class="w-full h-auto rounded-lg mb-4 shadow-sm border border-gray-200">
+                        <p>Jeff works in a medical billing office where the computers have older graphics cards with both VGA and DVI ports. The office recently purchased new digital monitors that do not have HDMI ports, but do accept DVI. To achieve the sharpest, highest image quality possible to read tiny text on spreadsheets, Jeff completely ignores the blue VGA port and uses the white <strong>DVI</strong> port to send a pure, uncompressed digital signal to the screen.</p>
                     </div>
                 `
             },
-            'digital-details': {
-                title: 'High-Performance Digital (HDMI & DisplayPort)',
+            'modern-details': {
+                title: 'Modern Digital (HDMI & DisplayPort)',
                 icon: '<i class="fa-solid fa-tv text-blue-600"></i>',
                 html: `
-                    <p class="mb-5">The modern digital multimedia revolution is anchored by two primary high-performance interface standards: High-Definition Multimedia Interface (HDMI) and DisplayPort. Both standards transmit uncompressed digital video and multi-channel audio over high-speed differential pairs, eliminating the signal degradation inherent in older analog systems. However, they were engineered with distinct target markets in mind: HDMI dominant in consumer electronics, home theater, and television displays, while DisplayPort reigns supreme in high-performance computing, multi-monitor workstation setups, and elite gaming PCs.</p>
+                    <p class="mb-5">The shift from analog to digital display standards revolutionized both home entertainment and professional computing. The most ubiquitous of these modern standards is the <strong>High-Definition Multimedia Interface (HDMI)</strong>. HDMI was developed by a consortium of consumer electronics giants with a specific goal: create a single, unified cable that could flawlessly transmit high-definition digital video and multi-channel digital audio simultaneously.</p>
                     
-                    <p class="mb-5">HDMI (High-Definition Multimedia Interface) was introduced in 2003 by a consortium of consumer electronics giants including Sony, Panasonic, and Philips. From its inception, HDMI was designed to combine high-definition video and pristine multi-channel audio into a single cable, replacing the messy tangle of red-white-yellow RCA audio/video cables and component video wires. Furthermore, HDMI supports advanced features like Consumer Electronics Control (CEC), which allows a single remote control to power on, adjust volume, and navigate multiple connected devices (such as turning on a soundbar when you turn on your Blu-ray player).</p>
+                    <p class="mb-5">Because HDMI carries both audio and video, it eliminated the messy web of cables required behind early home theater systems. It quickly became the absolute standard for televisions, gaming consoles, set-top boxes, and laptops. HDMI also incorporates advanced features like <strong>Consumer Electronics Control (CEC)</strong>, which allows a user to control multiple HDMI-connected devices (like turning on a TV, a soundbar, and a Blu-Ray player) using only a single remote control.</p>
                     
-                    <p class="mb-5">HDMI specifications have evolved rapidly across versions. HDMI 1.0 supported basic high-definition video and audio, whereas modern standards like HDMI 2.1 provide massive bandwidth capable of transmitting 8K video at 60Hz or 4K video at an ultra-smooth 120Hz, making it fully compatible with next-generation consoles like the PlayStation 5 and Xbox Series X. However, technicians must be mindful of cable length: because HDMI signals are high-frequency digital packets, standard passive HDMI cables longer than 15 meters often suffer from signal attenuation and packet loss unless active fiber-optic repeater cables are utilized.</p>
+                    <p class="mb-5">It is vital to understand that HDMI has evolved significantly through different versions (e.g., HDMI 1.4, 2.0, and 2.1). While the physical port shape has remained identical, the internal bandwidth capabilities have skyrocketed. While older versions struggled to push 4K resolution, HDMI 2.1 has the immense bandwidth required to transmit 4K at 120Hz or even 8K resolution, provided the user utilizes a certified ultra-high-speed cable to prevent signal degradation over long distances.</p>
                     
-                    <p class="mb-5">DisplayPort, introduced in 2006 by the Video Electronics Standards Association (VESA), was created specifically as a high-bandwidth computer display interface. Unlike HDMI, which requires licensing royalties for consumer electronics manufacturers, DisplayPort is an open standard designed to maximize PC graphics card and monitor communication. DisplayPort supports staggering resolutions (up to 8K and beyond) and exceptionally high refresh rates (exceeding 240Hz), making it the definitive choice for competitive esports gamers and professional video editors who demand zero motion blur and ultra-low latency.</p>
+                    <p class="mb-5">While HDMI dominated the living room, the computing industry developed <strong>DisplayPort (DP)</strong> as an open standard specifically engineered for high-performance PCs and monitors. DisplayPort utilizes a packet-based data transmission system similar to how Ethernet networks operate. This allows it to push incredible amounts of data, making it the preferred interface for ultra-high resolutions and extreme refresh rates (like 144Hz or 240Hz) demanded by competitive PC gamers.</p>
                     
-                    <p class="mb-5">A standout architectural feature of DisplayPort is Multi-Stream Transport (MST). MST allows a user to daisy-chain multiple independent monitors together using a single DisplayPort output from their computer graphics card. Instead of running separate cables from the PC to every single monitor, the computer sends a combined data stream to the first monitor, which siphons its video feed and passes the remaining stream along to the second monitor. This drastically simplifies cable management in corporate trading desks and software development workstations.</p>
-                    
-                    <p class="mb-5">Both HDMI and DisplayPort support HDCP (High-bandwidth Digital Content Protection), a form of digital rights management (DRM) encrypted handshake between the source device and the display. If HDCP fails—often due to an incompatible splitter, faulty cable, or handshake timeout—protected streaming content from Netflix, Blu-ray discs, or cable boxes will display a black screen or an HDCP error code.</p>
-                    
-                    <p>In enterprise IT support, knowing when to deploy HDMI versus DisplayPort is vital. Meeting rooms standardizing on wall-mounted TVs will invariably use HDMI, whereas engineering workstations requiring ultra-wide curved monitors or multi-display arrays will rely on DisplayPort or USB-C DisplayPort Alternate Mode.</p>
+                    <p>Furthermore, DisplayPort supports a unique professional feature known as "daisy-chaining." This allows a user to connect a single DisplayPort cable from their computer to a monitor, and then run a second cable directly from that first monitor to a second monitor, powering multiple screens from a single output port on the computer. Like HDMI, DisplayPort fully supports the simultaneous transmission of high-quality digital audio.</p>
                 `
             },
-            'digital-usecase': {
-                title: 'High-Performance Digital: Use Cases',
+            'modern-usecase': {
+                title: 'Modern Digital: Practical Use Cases',
                 icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
                 html: `
                     <div class="mb-8">
-                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 1: Competitive Esports Gaming Rig Setup</h4>
-                        <p class="mb-2">A professional gamer is building a high-end desktop rig with a 240Hz 1440p gaming monitor to eliminate motion blur and input lag during fast-paced competitive matches.</p>
-                        <ul class="list-disc pl-5 mb-4 text-gray-700">
-                            <li class="mb-2"><strong>Example 1 (DisplayPort Bandwidth):</strong> Sallie connects her graphics card to her monitor using a certified DisplayPort 1.4 cable, enabling full uncompressed 1440p resolution at 240Hz with G-Sync variable refresh rate enabled.</li>
-                            <li><strong>Example 2 (Multi-Monitor Daisy-Chaining):</strong> She connects a second side monitor using DisplayPort Multi-Stream Transport (MST), keeping her desk clutter-free while monitoring chat streams and game telemetry.</li>
-                        </ul>
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Scenario 1: The Home Theater (HDMI)</h4>
+                        <img src="https://placehold.co/800x300/eff6ff/1d4ed8?text=Smart+TV+Home+Theater+Setup" alt="HDMI TV Setup Diagram" class="w-full h-auto rounded-lg mb-4 shadow-sm border border-gray-200">
+                        <p>Cindy wants to play a high-definition Blu-Ray movie on her new Smart TV. She connects the Blu-Ray player to the television using a single <strong>HDMI</strong> cable. Because HDMI carries both pristine digital video and surround-sound audio, she gets a perfect picture and sound without any extra wiring. Furthermore, thanks to HDMI CEC, her television remote automatically powers on the Blu-Ray player when she selects that input.</p>
                     </div>
                     <div class="mb-8">
-                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 2: Home Theater & Blu-Ray Multimedia Center</h4>
-                        <p class="mb-2">A user is setting up an entertainment center integrating a 4K Smart TV, a surround sound Dolby Atmos soundbar, and a Ultra HD Blu-ray player.</p>
-                        <ul class="list-disc pl-5 mb-4 text-gray-700">
-                            <li class="mb-2"><strong>Example 1 (HDMI Audio & Video):</strong> Cindy connects her Blu-ray player to the TV via HDMI 2.0, simultaneously transmitting pristine uncompressed 4K video and lossless multi-channel audio through a single cable.</li>
-                            <li><strong>Example 2 (Consumer Electronics Control - CEC):</strong> Using HDMI-CEC, she presses the power button on her TV remote, which automatically signals both the soundbar and Blu-ray player to power on simultaneously.</li>
-                        </ul>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                        <div>
-                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: HDMI Home Theater Setup</p>
-                            <img src="https://images.unsplash.com/photo-1593784991095-a205069470b6?auto=format&fit=crop&w=600&h=350" alt="Modern TV and home entertainment system" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
-                        </div>
-                        <div>
-                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: High-Refresh Gaming Monitors</p>
-                            <img src="https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?auto=format&fit=crop&w=600&h=350" alt="Gaming monitor setup with vibrant RGB lighting" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
-                        </div>
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Scenario 2: The E-Sports Battlestation (DisplayPort)</h4>
+                        <img src="https://placehold.co/800x300/eff6ff/1d4ed8?text=Dual+Monitor+Gaming+Setup" alt="DisplayPort Gaming Setup" class="w-full h-auto rounded-lg mb-4 shadow-sm border border-gray-200">
+                        <p>Sallie is building a high-end gaming PC and purchases two 144Hz, 1440p gaming monitors. To ensure her graphics card can push the maximum number of frames per second to both screens without stuttering or screen tearing, she completely bypasses the HDMI ports. Instead, she uses <strong>DisplayPort</strong> cables, taking advantage of their massive bandwidth and optimization for extreme PC refresh rates.</p>
                     </div>
                 `
             },
             'usbc-details': {
-                title: 'Versatile Power & Data (USB-C & Thunderbolt)',
-                icon: '<i class="fa-solid fa-bolt text-purple-600"></i>',
+                title: 'The Universal Standard (USB-C)',
+                icon: '<i class="fa-brands fa-usb text-green-600"></i>',
                 html: `
-                    <p class="mb-5">The Universal Serial Bus Type-C (USB-C) connector represents one of the most significant hardware connector revolutions in computing history. Released in 2014, USB-C was engineered to solve a pervasive user frustration: the asymmetry of traditional USB Type-A and Micro-USB plugs, which required multiple insertion attempts before fitting correctly. USB-C features a sleek, oblong, completely reversible physical connector design with 24 symmetrical pins. No matter which way you flip the cable, it inserts smoothly and establishes connection on the first try.</p>
+                    <p class="mb-5">For decades, the back of a computer was a chaotic mess of completely different, highly specialized ports: round ports for mice, bulky blue ports for video, and rectangular ports for data. The modern <strong>USB-C</strong> standard was designed to unify this entire ecosystem into a single, compact, and incredibly powerful connector that can handle almost any digital task.</p>
                     
-                    <p class="mb-5">Beyond its physical convenience, USB-C is a triumph of engineering versatility because it acts as an all-in-one conduit. Unlike older cables dedicated exclusively to power or data, a fully specified USB-C cable can simultaneously transfer high-speed data files (at USB 3.1, USB 3.2, or USB4 speeds up to 40 Gbps), transmit high-definition video and audio, and deliver massive electrical wattage via USB Power Delivery (USB-PD) protocol.</p>
+                    <p class="mb-5">The most immediate physical advantage of USB-C is that it is a <strong>reversible connector</strong>. Unlike older USB-A, HDMI, or DisplayPort cables which can only be inserted in one specific orientation, a USB-C plug is completely symmetrical. It can be plugged in upside down or right-side up, drastically improving user experience, especially on mobile devices and laptops in dark environments.</p>
                     
-                    <p class="mb-5">Video transmission over USB-C is achieved through a brilliant standards adaptation called DisplayPort Alternate Mode (Alt Mode). When a USB-C host device (like a modern laptop) and a USB-C monitor or docking station negotiate a connection, some of the high-speed data lanes inside the cable are dynamically repurposed to carry native DisplayPort video signals directly. This means a single USB-C cable running from your laptop to an external monitor can drive a pristine 4K video feed while simultaneously charging your laptop battery at up to 100 watts or more.</p>
+                    <p class="mb-5">From a technical standpoint, USB-C is revolutionary because of its immense versatility. Through a feature called "Alt Mode" (Alternate Mode), a USB-C port can essentially disguise its internal pins to transmit native video protocols. For example, a laptop utilizing DisplayPort Alt Mode can send a pure DisplayPort video signal directly out of its USB-C port without any processing lag or active signal conversion.</p>
                     
-                    <p class="mb-5">USB-C has become the cornerstone of modern corporate hot-desking and remote work environments through the proliferation of USB-C and Thunderbolt docking stations. An employee arriving at an office desk plugs a single USB-C cable into their thin ultrabook. Instantly, that one cable charges the laptop, drives two external 4K monitors, connects to a wired Gigabit Ethernet network, and links up external peripherals like a USB keyboard, mouse, and desktop microphone array.</p>
+                    <p class="mb-5">Simultaneous to sending high-resolution video and audio to an external monitor, the exact same USB-C cable can receive massive amounts of electrical power via the <strong>USB Power Delivery (USB-PD)</strong> specification. This allows modern monitors to act as docking stations. You plug one cable into a laptop, and the monitor displays the screen, plays the audio, and charges the laptop battery at 100 watts simultaneously.</p>
                     
-                    <p class="mb-5">It is crucial for IT technicians to understand that not all USB-C cables are created equal. While two USB-C cables may look identical on the outside, their internal wiring varies wildly. A cheap charging cable included with a smartphone may only contain USB 2.0 data lines and low-current power wiring; plugging that cable into a 4K monitor will result in no video signal whatsoever. Users and technicians must verify cable specifications and look for logos indicating DisplayPort Alt Mode and USB-PD certification.</p>
-                    
-                    <p class="mb-5">Furthermore, advanced protocols like Intel's Thunderbolt 3 and Thunderbolt 4 leverage the physical USB-C connector form factor to deliver even greater performance—supporting dual 4K 60Hz displays, external PCIe graphics enclosures, and blistering 40 Gbps data transfer rates by tunneling PCIe and DisplayPort data packets over the same physical wire.</p>
-                    
-                    <p>As the European Union and global regulatory bodies mandate USB-C as the universal standard for consumer electronics, laptops, and mobile devices, mastering USB-C troubleshooting, Alt Mode handshakes, and Power Delivery wattage negotiation is an indispensable skill for modern IT support professionals.</p>
+                    <p>Due to this incredible "one-cable" versatility, manufacturers have aggressively stripped older, thicker ports (like HDMI and Ethernet) from modern thin-and-light laptops, replacing them entirely with USB-C ports. While this requires users to adapt and sometimes carry dongles for older hardware, it represents the ultimate convergence of data, video, audio, and power into a single, universal standard.</p>
                 `
             },
             'usbc-usecase': {
-                title: 'Versatile Power & Data: Use Cases',
+                title: 'USB-C: Practical Use Cases',
                 icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
                 html: `
                     <div class="mb-8">
-                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Case 1: Modern Corporate Hot-Desking & Docking</h4>
-                        <p class="mb-2">A corporate office utilizes shared hot-desking stations where employees with thin modern laptops can plug into desk setups instantly without connecting multiple individual cables.</p>
-                        <ul class="list-disc pl-5 mb-4 text-gray-700">
-                            <li class="mb-2"><strong>Example 1 (Single-Cable Docking):</strong> Linda plugs a single USB-C cable from her laptop into a desktop dock; the cable instantly charges her battery, drives dual external 4K monitors, and connects her to the office Ethernet network.</li>
-                            <li><strong>Example 2 (Peripherals):</strong> She connects her external high-speed NVMe SSD and wireless mouse receiver into the USB-C dock's downstream ports, utilizing the high-speed data lanes seamlessly.</li>
-                        </ul>
-                    </div>
-                    <div class="mb-8">
-                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Case 2: 4K Video Editing & Power Delivery</h4>
-                        <p class="mb-2">A freelance videographer edits heavy 4K video footage on location using an external portable monitor and high-speed external storage arrays.</p>
-                        <ul class="list-disc pl-5 mb-4 text-gray-700">
-                            <li class="mb-2"><strong>Example 1 (DisplayPort Alt Mode):</strong> Jordan connects his MacBook Pro to a portable USB-C monitor, transmitting high-resolution color-accurate video while the monitor simultaneously reverse-powers the laptop.</li>
-                            <li><strong>Example 2 (Thunderbolt Transfer):</strong> He transfers 500GB of raw 4K video rushes from a CFexpress card reader through a Thunderbolt 3 USB-C cable to his scratch disk in under two minutes.</li>
-                        </ul>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                        <div>
-                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: USB-C Reversible Plug</p>
-                            <img src="https://images.unsplash.com/photo-1583863788434-e58a36330cf0?auto=format&fit=crop&w=600&h=350" alt="USB-C cable and modern tech workspace" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
-                        </div>
-                        <div>
-                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Ultrabook Docking Stations</p>
-                            <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&h=350" alt="Professionals working with modern laptops and monitors" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
-                        </div>
+                        <h4 class="text-xl font-bold text-green-800 mb-2 border-b-2 border-green-200 pb-1">Scenario 1: The One-Cable Desk Setup</h4>
+                        <img src="https://placehold.co/800x300/f0fdf4/15803d?text=USB-C+Monitor+Docking" alt="USB-C Monitor Docking" class="w-full h-auto rounded-lg mb-4 shadow-sm border border-gray-200">
+                        <p>Linda works as a project manager and carries a thin, modern laptop from meeting to meeting. When she returns to her desk, she does not want to plug in a power brick, a monitor cable, and a mouse. Her new 4K monitor has a built-in hub. She plugs a single <strong>USB-C</strong> cable from the monitor into her laptop. This single interface simultaneously charges her laptop battery, sends crisp 4K video and audio to the monitor, and connects her to the wired mouse plugged into the back of the screen.</p>
                     </div>
                 `
             },
             'wireless-details': {
-                title: 'Wireless Display Technology (Mirroring & Casting)',
-                icon: '<i class="fa-solid fa-wifi text-emerald-600"></i>',
+                title: 'Wireless Displays (Mirroring vs Casting)',
+                icon: '<i class="fa-solid fa-wifi text-purple-600"></i>',
                 html: `
-                    <p class="mb-5">While physical cables remain the gold standard for high-refresh-rate gaming and uncompressed professional editing, modern conference rooms, classrooms, and living rooms increasingly rely on wireless display technologies. Wireless display standards eliminate the physical clutter of HDMI and DisplayPort cords, allowing users to project their screens instantly across local Wi-Fi networks. The two primary paradigms in wireless display are <strong>Mirroring</strong> and <strong>Casting</strong>, each serving fundamentally different user workflows and operational mechanics.</p>
+                    <p class="mb-5">As mobile technology and high-speed local networks evolved, the necessity to physically tether a device to a display with a cable diminished. Wireless display technologies allow users to beam visual and audio content across a room seamlessly. However, it is vital to understand that "sending video wirelessly" actually encompasses two fundamentally different technical processes: <strong>Mirroring</strong> and <strong>Casting</strong>.</p>
                     
-                    <p class="mb-5"><strong>Mirroring</strong> is the process of exact real-time screen duplication. When mirroring is activated, every single pixel, window, notification pop-up, background app, and cursor movement on the primary source device (such as a smartphone or laptop) is captured, encoded into compressed video streams, and transmitted over Wi-Fi to be replicated identically on the target display receiver. Mirroring is exceptionally easy to configure because it requires almost no app-specific setup—it is built directly into modern operating systems like Apple iOS, macOS, Windows, and Android.</p>
+                    <p class="mb-5"><strong>Screen Mirroring</strong> is the process of creating an exact, pixel-for-pixel duplicate of the source device's screen on the target display. If you open an app, swipe a menu, or receive a text notification on your phone or laptop, that exact visual is replicated in real-time on the television. Common protocols that utilize mirroring include Miracast (native to Windows and Android) and Apple's AirPlay Mirroring.</p>
                     
-                    <p class="mb-5">Common mirroring protocols include Apple AirPlay Mirroring, Miracast (an open Wi-Fi Alliance standard used extensively in Windows and Android ecosystems), and Google Chromecast Mirror Mode. While convenient, mirroring has inherent limitations: because the secondary display is rendering an exact pixel clone of the primary device, any performance lag on the source device is immediately visible on the big screen. Furthermore, if you receive a private text message or email notification while mirroring your laptop during a professional business meeting, that notification pops up for everyone in the room to see.</p>
+                    <p class="mb-5">Mirroring requires the source device (like a laptop) to do all the heavy processing work. The laptop renders the screen, compresses the video, and streams it constantly over the local Wi-Fi network to the television. This requires a stable network. If the Wi-Fi signal drops, the mirroring will experience severe lag, artifacting, or disconnect entirely. Furthermore, the source device's battery will drain rapidly since its screen must remain on, and it cannot be easily used for a separate private task while mirroring.</p>
                     
-                    <p class="mb-5"><strong>Casting</strong>, by contrast, is a smarter, more targeted form of wireless media transmission. Instead of blindly duplicating the entire screen, casting involves sending specific media content streams (such as a YouTube video, Netflix movie, or Spotify audio track) directly from an app on the source device to the target display receiver. Once the stream is initiated, the target display fetches and decodes the media stream directly from the internet or local network.</p>
+                    <p class="mb-5"><strong>Casting</strong>, on the other hand, operates entirely differently. When a user "casts" a video (like a YouTube video) from their phone to a Smart TV or Google Chromecast, they are not sending the actual video file from their phone. Instead, the phone acts merely as a smart remote control. It sends a small internet link (a URL) to the TV, instructing the TV to connect directly to the YouTube servers and play the video using the TV's own processing power.</p>
                     
-                    <p class="mb-5">The most revolutionary advantage of casting is device multitasking independence. When Austin casts a music video from his smartphone to his living room Smart TV, his phone transforms into a remote control. Austin can exit the YouTube app, answer phone calls, text friends, or even walk out of Wi-Fi range, and the video on the TV continues playing uninterrupted because the TV itself is handling the data stream rendering, not the phone CPU.</p>
-                    
-                    <p class="mb-5">Protocols like Google Chromecast, Apple AirPlay (media streaming mode), and DLNA (Digital Living Network Alliance) govern casting operations. They require both the source device and the target receiver to be connected to the same local Wi-Fi network or subnet, raising important enterprise network security considerations for IT administrators configuring corporate guest Wi-Fi isolation rules.</p>
-                    
-                    <p>In conclusion, mastering the distinction between mirroring and casting allows IT professionals and educators to select the correct tool for collaboration: mirroring for impromptu slide presentations and software demos where entire desktop control is needed, and casting for media streaming and continuous background content delivery without tying up user devices.</p>
+                    <p>Because the television is handling the heavy lifting of streaming the video directly from the internet, Casting is incredibly efficient. Once the "cast" command is sent, the user's phone is completely free. The user can open other apps, answer a phone call, or even turn their phone's screen completely off to save battery, and the video will continue playing flawlessly on the television. Casting is superior for media consumption, while mirroring is necessary for live demonstrations of software or slideshows.</p>
                 `
             },
             'wireless-usecase': {
-                title: 'Wireless Display Technology: Use Cases',
+                title: 'Wireless Displays: Practical Use Cases',
                 icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
                 html: `
                     <div class="mb-8">
-                        <h4 class="text-xl font-bold text-emerald-800 mb-2 border-b-2 border-emerald-200 pb-1">Case 1: Corporate Conference Room Presentations</h4>
-                        <p class="mb-2">A business professional needs to present a quarterly sales report in a conference room without crawling under tables to plug in proprietary video cables.</p>
-                        <ul class="list-disc pl-5 mb-4 text-gray-700">
-                            <li class="mb-2"><strong>Example 1 (Screen Mirroring):</strong> Karlie opens her laptop display settings, activates Apple AirPlay, and instantly mirrors her entire desktop onto the wall-mounted conference room TV to walk through live software demos.</li>
-                            <li><strong>Example 2 (Miracast Windows Collaboration):</strong> A colleague using a Windows 10 laptop presses Win+K, selects the conference room wireless receiver, and securely mirrors their slide deck presentation without plugging in a single wire.</li>
-                        </ul>
+                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Scenario 1: Live Software Demonstration (Mirroring)</h4>
+                        <img src="https://placehold.co/800x300/faf5ff/7e22ce?text=Corporate+Screen+Mirroring" alt="Screen Mirroring Diagram" class="w-full h-auto rounded-lg mb-4 shadow-sm border border-gray-200">
+                        <p>Karlie is leading a corporate meeting and needs to show her team how to use a new spreadsheet software. She utilizes <strong>Screen Mirroring</strong> (like Miracast) to connect her laptop wirelessly to the conference room TV. Every click, mouse movement, and window she opens on her laptop is duplicated exactly on the big screen, allowing the entire room to follow her live demonstration step-by-step.</p>
                     </div>
                     <div class="mb-8">
-                        <h4 class="text-xl font-bold text-emerald-800 mb-2 border-b-2 border-emerald-200 pb-1">Case 2: Multimedia Streaming & Mobile Multitasking</h4>
-                        <p class="mb-2">A user wants to stream educational video content to a large screen in their living room while continuing to use their mobile phone for messaging and browsing.</p>
-                        <ul class="list-disc pl-5 mb-4 text-gray-700">
-                            <li class="mb-2"><strong>Example 1 (Google Chromecast Casting):</strong> Austin opens the YouTube app on his smartphone, taps the Cast icon, and sends a 4K documentary stream directly to his Smart TV while continuing to text and check emails on his phone.</li>
-                            <li><strong>Example 2 (AirPlay Media Streaming):</strong> A family member casts a Spotify music playlist from an iPhone to an AirPlay-enabled sound system, walking around the house freely while maintaining remote playback control.</li>
-                        </ul>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                        <div>
-                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Wireless Casting & Streaming</p>
-                            <img src="https://images.unsplash.com/photo-1593508512255-86ab42a8e620?auto=format&fit=crop&w=600&h=350" alt="Smart TV streaming content wirelessly" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
-                        </div>
-                        <div>
-                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Meeting Room Mirroring</p>
-                            <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=600&h=350" alt="Collaborative meeting room with wireless display screen" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
-                        </div>
+                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Scenario 2: Relaxed Media Consumption (Casting)</h4>
+                        <img src="https://placehold.co/800x300/faf5ff/7e22ce?text=Smartphone+Video+Casting" alt="Media Casting Diagram" class="w-full h-auto rounded-lg mb-4 shadow-sm border border-gray-200">
+                        <p>Austin is sitting on his couch and finds a funny hour-long video on his phone. He taps the <strong>Cast</strong> icon to send it to his Smart TV. His phone tells the TV where to find the video on the internet. The TV begins playing the video directly. Austin's phone is now completely free; he locks the screen to save battery and continues texting his friends without interrupting the movie playing on the television.</p>
                     </div>
                 `
             }
         };
 
-        // Modal Control Functions
         function openBriefing(key) {
             const modal = document.getElementById('briefing-modal');
             const data = briefingData[key];
@@ -854,168 +677,123 @@
             document.getElementById('custom-modal').classList.add('hidden');
         }
 
-        // --- LAB 1: Signal Type Categorization ---
-        let draggedLab1 = null;
-        let lab1Count = 0;
+        // --- Lab 1: Categorization Logic ---
+        let draggedCatItem = null;
 
-        document.querySelectorAll('#lab1-items .io-item').forEach(item => {
+        document.querySelectorAll('.io-item').forEach(item => {
             item.addEventListener('dragstart', function() {
-                draggedLab1 = this;
+                draggedCatItem = this;
                 setTimeout(() => this.classList.add('opacity-50'), 0);
             });
             item.addEventListener('dragend', function() {
                 setTimeout(() => this.classList.remove('opacity-50'), 0);
-                draggedLab1 = null;
+                draggedCatItem = null;
             });
         });
 
-        document.querySelectorAll('#activity-section .cat-dropzone').forEach(zone => {
+        document.querySelectorAll('.cat-dropzone').forEach(zone => {
             zone.addEventListener('dragover', e => e.preventDefault());
+            zone.addEventListener('dragenter', function(e) { e.preventDefault(); this.classList.add('brightness-95'); });
+            zone.addEventListener('dragleave', function() { this.classList.remove('brightness-95'); });
             zone.addEventListener('drop', function() {
-                if(draggedLab1) {
-                    if(draggedLab1.dataset.type === this.dataset.target) {
-                        this.appendChild(draggedLab1);
-                        draggedLab1.classList.remove('cursor-grab');
-                        draggedLab1.classList.add('bg-green-100', 'text-green-800', 'cursor-default', 'mt-2', 'w-[90%]');
-                        draggedLab1.setAttribute('draggable', 'false');
-                        lab1Count++;
-                        document.getElementById('lab1-feedback').innerText = "Correct interface classification!";
-                        if(lab1Count === 4) {
-                            showModal('Lab 1 Complete!', 'Successfully categorized all interface signal types.', 'success');
+                this.classList.remove('brightness-95');
+                if(draggedCatItem) {
+                    if(draggedCatItem.dataset.type === this.dataset.target) {
+                        this.appendChild(draggedCatItem);
+                        draggedCatItem.classList.remove('bg-indigo-100', 'cursor-grab');
+                        draggedCatItem.classList.add('bg-green-100', 'text-green-800', 'cursor-default', 'mb-2');
+                        draggedCatItem.setAttribute('draggable', 'false');
+                        
+                        document.getElementById('lab1-feedback').innerText = "Correctly Categorized!";
+                        document.getElementById('lab1-feedback').className = "text-center font-bold mt-4 h-6 text-green-600";
+                        
+                        if(document.getElementById('cat-items').children.length === 0) {
+                            setTimeout(() => showModal('Excellent!', 'You successfully categorized all the display technologies!', 'success'), 500);
                         }
                     } else {
-                        document.getElementById('lab1-feedback').innerText = "Incorrect category. Review whether the interface carries analog, digital, or hybrid signals.";
+                        document.getElementById('lab1-feedback').innerText = "Incorrect category. Try again.";
                         document.getElementById('lab1-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
                     }
                 }
             });
         });
 
-        // --- LAB 2: Audio & Video Support Matrix ---
-        function toggleMatrix(btn, isCorrect) {
-            btn.classList.toggle('active');
-            btn.dataset.correct = isCorrect;
-        }
+        // --- Lab 2: Scenario Matcher Logic ---
+        let selectedScenario = null;
+        let selectedTool = null;
+        let lab2Matches = 0;
 
-        function checkLab2() {
-            const hdmiActive = document.getElementById('mat-hdmi').classList.contains('active');
-            const dpActive = document.getElementById('mat-dp').classList.contains('active');
-            const vgaActive = document.getElementById('mat-vga').classList.contains('active');
-            const dviActive = document.getElementById('mat-dvi').classList.contains('active');
+        document.querySelectorAll('.scenario-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if(this.classList.contains('matched')) return;
+                document.querySelectorAll('.scenario-btn').forEach(b => b.classList.remove('ring-4', 'ring-red-300', 'bg-red-50'));
+                this.classList.add('ring-4', 'ring-red-300', 'bg-red-50');
+                selectedScenario = this;
+                checkMatch2();
+            });
+        });
 
-            if(hdmiActive && dpActive && !vgaActive && !dviActive) {
-                document.getElementById('lab2-feedback').innerText = "Correct! HDMI and DisplayPort natively support simultaneous A/V.";
-                showModal('Lab 2 Complete!', 'Successfully verified audio/video transmission standards.', 'success');
-            } else {
-                document.getElementById('lab2-feedback').innerText = "Incorrect selection. Remember VGA and standard DVI do not carry audio signals.";
-                document.getElementById('lab2-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
+        document.querySelectorAll('.tool-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if(this.classList.contains('matched')) return;
+                document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('ring-4', 'ring-red-300', 'bg-gray-100'));
+                this.classList.add('ring-4', 'ring-red-300', 'bg-gray-100');
+                selectedTool = this;
+                checkMatch2();
+            });
+        });
+
+        function checkMatch2() {
+            if(selectedScenario && selectedTool) {
+                if(selectedScenario.dataset.match === selectedTool.dataset.match) {
+                    selectedScenario.classList.add('matched', 'bg-green-100', 'text-green-800', 'border-green-500');
+                    selectedScenario.classList.remove('ring-4', 'ring-red-300');
+                    selectedTool.classList.add('matched', 'bg-green-100', 'text-green-800', 'border-green-500');
+                    selectedTool.classList.remove('ring-4', 'ring-red-300');
+                    
+                    document.getElementById('lab2-feedback').innerText = "Correct Match!";
+                    document.getElementById('lab2-feedback').className = "text-center font-bold mt-4 h-6 text-green-600";
+                    lab2Matches++;
+                    
+                    if(lab2Matches === 7) {
+                        setTimeout(() => showModal('Great Job!', 'You properly identified the correct display solutions for all users.', 'success'), 500);
+                    }
+                } else {
+                    document.getElementById('lab2-feedback').innerText = "Incorrect. Consider analog vs digital, or casting vs mirroring.";
+                    document.getElementById('lab2-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
+                    selectedScenario.classList.remove('ring-4', 'ring-red-300', 'bg-red-50');
+                    selectedTool.classList.remove('ring-4', 'ring-red-300', 'bg-gray-100');
+                }
+                selectedScenario = null;
+                selectedTool = null;
             }
         }
 
-        // --- LAB 3: Gaming Monitor Selector ---
-        function checkLab3(choice) {
-            if(choice === 'DisplayPort') {
-                document.getElementById('lab3-feedback').innerText = "Correct! DisplayPort provides maximum bandwidth for high refresh rate gaming.";
-                showModal('Lab 3 Complete!', 'Successfully selected high-performance gaming interface.', 'success');
-            } else {
-                document.getElementById('lab3-feedback').innerText = "Incorrect. Legacy analog or low-bandwidth connections cannot sustain high refresh rate 4K gaming.";
-                document.getElementById('lab3-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
-            }
-        }
-
-        // --- LAB 4: USB-C Multitasking Configuration ---
-        function toggleUSBC(btn) {
-            btn.classList.toggle('active');
-        }
-
-        function checkLab4() {
-            const activeBtns = document.querySelectorAll('#activity-section .matrix-cell.active');
-            // We want video, data, and power delivery (3 active buttons)
-            if(activeBtns.length === 3) {
-                document.getElementById('lab4-feedback').innerText = "Correct! USB-C Alt Mode, USB 3.1+ data, and USB-PD power delivery are all active.";
-                showModal('Lab 4 Complete!', 'Successfully configured USB-C multitasking dock.', 'success');
-            } else {
-                document.getElementById('lab4-feedback').innerText = "Incomplete configuration. Linda needs video, data, and charging simultaneously.";
-                document.getElementById('lab4-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
-            }
-        }
-
-        // --- LAB 5: Legacy Projector Setup ---
-        function checkLab5(choice) {
-            if(choice === 'VGA') {
-                document.getElementById('lab5-feedback').innerText = "Correct! VGA is the required legacy analog standard for older projectors.";
-                showModal('Lab 5 Complete!', 'Successfully identified legacy analog projector interface.', 'success');
-            } else {
-                document.getElementById('lab5-feedback').innerText = "Incorrect. The projector only supports analog video signals.";
-                document.getElementById('lab5-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
-            }
-        }
-
-        // --- LAB 6: Wireless Mode Identifier ---
-        function checkLab6() {
-            const q1 = document.getElementById('lab6-q1').value;
-            const q2 = document.getElementById('lab6-q2').value;
-
-            if(q1 === 'mirror' && q2 === 'cast') {
-                document.getElementById('lab6-feedback').innerText = "Correct! Karlie needs Mirroring, while Austin needs Casting.";
-                showModal('Lab 6 Complete!', 'Successfully distinguished mirroring vs casting workflows.', 'success');
-            } else {
-                document.getElementById('lab6-feedback').innerText = "Incorrect. Review the difference between duplicating an entire screen vs streaming app content independently.";
-                document.getElementById('lab6-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
-            }
-        }
-
-        // --- LAB 7: Cable Length & Signal Degradation Simulator ---
-        function updateCableSim(val) {
-            document.getElementById('cable-val').innerText = val;
-            const status = document.getElementById('cable-status');
-            if(val <= 5) {
-                status.className = "p-3 rounded bg-green-50 text-green-800 font-bold border border-green-200";
-                status.innerText = "Signal Integrity: Excellent (Full 4K @ 60Hz)";
-            } else if(val <= 15) {
-                status.className = "p-3 rounded bg-yellow-50 text-yellow-800 font-bold border border-yellow-200";
-                status.innerText = "Signal Integrity: Moderate (Standard 1080p Stable)";
-            } else {
-                status.className = "p-3 rounded bg-rose-50 text-rose-800 font-bold border border-rose-200";
-                status.innerText = "Signal Integrity: Degraded! Passive attenuation causes packet drop & black screen. Active fiber cable required.";
-            }
-        }
-
-        // --- LAB 8: Adapter Compatibility ---
-        function checkLab8(isCorrect) {
-            if(isCorrect) {
-                document.getElementById('lab8-feedback').innerText = "Correct! A DisplayPort to HDMI adapter bridges the graphics card output to the projector.";
-                showModal('Lab 8 Complete!', 'Successfully selected correct interface adapter.', 'success');
-            } else {
-                document.getElementById('lab8-feedback').innerText = "Incorrect adapter type selected.";
-                document.getElementById('lab8-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
-            }
-        }
-
-
-        // --- QUIZ LOGIC (20 Questions: 10 official + 10 extended from briefing) ---
+        // --- Quiz Logic (20 Questions) ---
         const quizData = [
-            { q: "What are display interfaces?", options: ["They connect a device to a network to exchange packets.", "The connections and standards that allow devices to send video and audio signals to a display.", "Short-range wireless radio connections.", "Peripheral power supply connectors."], answer: 1 },
-            { q: "Which interfaces transmit video signals (but not audio)?", options: ["HDMI and USB-C", "DisplayPort and HDMI", "VGA and DVI", "USB-C and DisplayPort"], answer: 2 },
+            // Original 10 Questions 
+            { q: "What are display interfaces?", options: ["They allow a computer or device to connect to a network so it can send and receive data from other devices.", "The connections and standards that allow for devices to send video and audio signals to a display.", "It is a short-range wireless connection where devices can communicate and share data using radio signals.", "The connections between a device and peripherals so they can exchange data and/or power."], answer: 1 },
+            { q: "Which interfaces transmit video signals (but not audio)?", options: ["DisplayPort", "VGA", "HDMI", "DVI"], answer: 1 },
             { q: "What technology allows a user to duplicate their screen to another device?", options: ["Projection", "Streaming", "Casting", "Mirroring"], answer: 3 },
             { q: "Which interface only carries analog signals?", options: ["DisplayPort", "DVI", "VGA", "USB-C"], answer: 2 },
-            { q: "Which interface can transmit video, audio, and power to a device simultaneously?", options: ["USB-C", "HDMI", "USB-B", "Bluetooth"], answer: 0 },
-            { q: "Casting is different from mirroring because:", options: ["Casting only sends video, not audio.", "Casting mirrors the entire device to the screen.", "Casting streams selected content directly to the target display, freeing the source device for other tasks.", "Casting requires a wired cable."], answer: 2 },
-            { q: "Which interface supports high resolutions and ultra-high refresh rates for gaming?", options: ["DisplayPort", "HDMI", "VGA", "USB-C"], answer: 0 },
-            { q: "Which interfaces can transmit audio and video simultaneously?", options: ["HDMI, USB-C, and DisplayPort", "VGA and DVI", "VGA and HDMI", "DVI and DisplayPort"], answer: 0 },
-            { q: "Which interface is fully compatible with older analog devices and equipment?", options: ["DisplayPort", "DVI", "VGA", "HDMI"], answer: 2 },
-            { q: "Which interface can carry both analog and digital signals?", options: ["USB-C", "DisplayPort", "VGA", "DVI"], answer: 3 },
-            // 10 extended questions from briefing details
-            { q: "What standard protocol allows DisplayPort video signals to be transmitted over a USB-C physical connection?", options: ["Consumer Electronics Control (CEC)", "DisplayPort Alternate Mode (Alt Mode)", "High-bandwidth Digital Content Protection (HDCP)", "Multi-Stream Transport (MST)"], answer: 1 },
-            { q: "What does HDMI-CEC allow connected multimedia devices to do?", options: ["Charge laptop batteries at 100W", "Allow a single remote control to power on and control multiple connected devices", "Transmit uncompressed raw PCIe data packets", "Convert analog VGA signals into digital 4K streams"], answer: 1 },
-            { q: "What is the primary advantage of DisplayPort Multi-Stream Transport (MST)?", options: ["Daisy-chaining multiple monitors together from a single video output port", "Providing wireless mirroring over Wi-Fi", "Eliminating the need for HDCP encryption", "Converting digital audio into analog sound waves"], answer: 0 },
-            { q: "Why are passive HDMI cables prone to signal degradation over long distances (exceeding 15 meters)?", options: ["Because HDMI is an analog standard", "High-frequency digital packets suffer from attenuation and packet loss over long copper runs", "They require continuous battery power inside the connector", "Long cables convert video into audio signals"], answer: 1 },
-            { q: "What security protocol encrypts digital video content between a source device and a display to prevent digital piracy?", options: ["HDCP", "VGA-SEC", "USB-PD", "MST-Auth"], answer: 0 },
-            { q: "Which wireless protocol is an open Wi-Fi Alliance standard used extensively for wireless screen mirroring on Windows and Android devices?", options: ["Apple AirPlay", "Miracast", "DLNA", "Bluetooth LE"], answer: 1 },
-            { q: "What is the main security risk associated with screen mirroring in a professional business meeting?", options: ["Private notification pop-ups and emails on the source device are visible to everyone in the room", "It drains the laptop battery within 5 minutes", "It automatically downloads malware from the target TV", "It transmits unencrypted audio over open radio frequencies"], answer: 0 },
-            { q: "What technology allows USB-C to supply up to 100W+ of electrical power to charge laptops and peripherals?", options: ["USB Power Delivery (USB-PD)", "DisplayPort Alt Mode", "Transition Minimized Differential Signaling", "Consumer Electronics Control"], answer: 0 },
-            { q: "What is the primary visual symptom of a bent pin on pin 1 (Red Video) of a VGA connector?", options: ["The screen turns completely black", "The entire display renders with a harsh cyan tint due to the loss of the red channel", "Resolution automatically upgrades to 4K", "Audio playback stops working"], answer: 1 },
-            { q: "When Austin casts a video from his phone to his Smart TV, why can he continue texting and browsing on his phone without interrupting the video?", options: ["Because casting streams specific content directly to the TV receiver, which handles its own rendering", "Because casting uses Bluetooth audio instead of Wi-Fi video", "Because the phone disconnects from the internet entirely", "Because mirroring and casting are identical technologies"], answer: 0 }
+            { q: "Which interface can handle transmit video, audio, and power to a device?", options: ["USB-C", "HDMI", "USB-B", "Bluetooth"], answer: 0 },
+            { q: "Casting is different from mirroring because:", options: ["Casting only sends video, not audio.", "Casting mirrors the entire device to the screen.", "Casting streams selected content directly to the target display, freeing the source device for other tasks.", "Casting requires a wired connection."], answer: 2 },
+            { q: "Which interface supports high resolutions and high refresh rates commonly sought by PC gamers?", options: ["DisplayPort", "HDMI", "VGA", "USB-C"], answer: 0 },
+            { q: "Which interfaces can transmit audio and video simultaneously?", options: ["HDMI", "USB-C", "DisplayPort", "VGA"], answer: 0 },
+            { q: "Which interface is highly compatible with older legacy devices and equipment but is susceptible to interference?", options: ["DisplayPort", "DVI", "VGA", "HDMI"], answer: 2 },
+            { q: "Which legacy interface acts as a bridge and can carry both analog and digital signals depending on the pin layout?", options: ["USB-C", "DisplayPort", "VGA", "DVI"], answer: 3 },
+            
+            // 10 Additional Content-Aligned Questions
+            { q: "What does the acronym 'VGA' stand for?", options: ["Visual Graphics Adaptor", "Video Graphics Array", "Virtual Gaming Architecture", "Video Generation Audio"], answer: 1 },
+            { q: "What does the acronym 'DVI' stand for?", options: ["Digital Video Interface", "Digital Visual Interface", "Data Video Interconnect", "Dual Visual Input"], answer: 1 },
+            { q: "What does the acronym 'HDMI' stand for?", options: ["High-Definition Multimedia Interface", "High-Data Media Input", "Heavy-Duty Monitor Interface", "High-Display Media Interconnect"], answer: 0 },
+            { q: "Which technology is a common standard for wireless screen mirroring natively used in Windows and Android devices?", options: ["AirPlay", "Chromecast", "Miracast", "DLNA"], answer: 2 },
+            { q: "Which proprietary Apple technology is used to mirror or cast media content directly from Apple devices?", options: ["AirDrop", "Apple AirPlay", "iCast", "MacMirror"], answer: 1 },
+            { q: "What HDMI feature allows multiple connected devices (like a TV and Blu-Ray player) to be controlled with a single remote?", options: ["HDCP", "Alt Mode", "CEC (Consumer Electronics Control)", "DLNA"], answer: 2 },
+            { q: "Which video connection is identifiable by its bulky blue connector and 15 pins?", options: ["VGA", "DVI", "DisplayPort", "USB-B"], answer: 0 },
+            { q: "What type of signal is continuous, represented by waves, and often results in blurry images on modern LCDs if degraded?", options: ["Digital", "Binary", "Analog", "Packet-based"], answer: 2 },
+            { q: "Which display interface supports a feature called 'daisy-chaining' to connect multiple monitors from a single port?", options: ["HDMI", "VGA", "DVI", "DisplayPort"], answer: 3 },
+            { q: "How is a USB-C port able to send native video signals to a modern monitor?", options: ["It uses an internal VGA converter", "It utilizes DisplayPort Alternate Mode (Alt Mode)", "It connects via Bluetooth internally", "It only sends analog signals"], answer: 1 }
         ];
 
         const quizContainer = document.getElementById('quiz-container');
@@ -1023,6 +801,7 @@
         quizData.forEach((item, index) => {
             const qDiv = document.createElement('div');
             qDiv.className = "bg-gray-50 p-6 rounded-lg border border-gray-200 transition-all";
+            qDiv.id = `q-block-${index}`;
             
             const qTitle = document.createElement('h3');
             qTitle.className = "font-bold text-lg text-gray-800 mb-4";
@@ -1077,6 +856,7 @@
             
             const percentage = (score / quizData.length) * 100;
             
+            // Requires 18/20 (90%)
             if(score >= 18) { 
                 const navGame = document.getElementById('nav-game');
                 const navGameMobile = document.getElementById('nav-game-mobile');
@@ -1097,88 +877,94 @@
                 document.getElementById('proceed-game-btn').classList.remove('hidden');
                 document.getElementById('submit-quiz-btn').classList.add('hidden');
 
-                showModal('Outstanding!', `You scored ${score}/20 (${percentage}%). You have unlocked your Certificate of Mastery AND Display Defender!`, 'success');
+                showModal('Outstanding!', `You scored ${score}/20 (${percentage}%). You have unlocked your Certificate of Mastery AND the Retro Game!`, 'success');
             } else {
                 quizData.forEach((_, i) => {
                     const selected = document.querySelector(`input[name="q${i}"]:checked`);
                     if(selected) selected.checked = false;
                 });
-                showModal('Keep Trying!', `You scored ${score}/20 (${percentage}%). You need 90% (18/20) to unlock the game and certificate. Your answers have been reset so you can try again.`, 'error');
+                showModal('Keep Trying!', `You scored ${score}/20 (${percentage}%). You need 90% (18/20) to earn the certificate. Your answers have been reset so you can try again.`, 'error');
                 document.getElementById('quiz-section').scrollIntoView({ behavior: 'smooth' });
             }
         }
 
-        // --- RETRO GAME LOGIC: DISPLAY DEFENDER (Space Invaders) ---
+        // --- Retro Game Logic (Display Defender / Space Invaders style) ---
         const canvas = document.getElementById('game-canvas');
         const ctx = canvas.getContext('2d');
         
         let score = 0;
-        let lives = 3;
+        let highScore = 0;
         let gameRunning = false;
         let animationId;
         
-        let player = { x: 275, y: 400, width: 50, height: 20, speed: 6 };
+        const player = { x: canvas.width/2 - 15, y: canvas.height - 30, width: 30, height: 20, speed: 4 };
         let bullets = [];
-        let invaders = [];
-        let invaderBullets = [];
-        let invaderDirection = 1;
-        let invaderSpeed = 1;
-        
-        let keys = { ArrowLeft: false, ArrowRight: false, Space: false };
-
-        window.addEventListener('keydown', e => {
-            if(e.key === 'ArrowLeft') keys.ArrowLeft = true;
-            if(e.key === 'ArrowRight') keys.ArrowRight = true;
-            if(e.key === ' ' || e.key === 'Spacebar') {
-                e.preventDefault();
-                playerShoot();
-            }
-        });
-
-        window.addEventListener('keyup', e => {
-            if(e.key === 'ArrowLeft') keys.ArrowLeft = false;
-            if(e.key === 'ArrowRight') keys.ArrowRight = false;
-        });
-
-        function movePlayer(dir) {
-            player.x += dir * 15;
-            if(player.x < 10) player.x = 10;
-            if(player.x > canvas.width - player.width - 10) player.x = canvas.width - player.width - 10;
-        }
-
-        function playerShoot() {
-            if(!gameRunning) return;
-            bullets.push({ x: player.x + player.width/2 - 2, y: player.y, width: 4, height: 12, speed: 8 });
-        }
+        let enemies = [];
+        let enemyDirection = 1;
+        let enemySpeed = 1;
+        let rightPressed = false;
+        let leftPressed = false;
+        let spacePressed = false;
+        let lastShot = 0;
 
         const overlay = document.getElementById('game-overlay');
         const startBtn = document.getElementById('start-game-btn');
+
         startBtn.addEventListener('click', startGame);
 
-        function resetGame() {
-            score = 0;
-            lives = 3;
-            document.getElementById('game-score').innerText = score;
-            document.getElementById('game-lives').innerText = lives;
-            player.x = 275;
-            bullets = [];
-            invaderBullets = [];
-            
-            // Create Invader grid (4 rows x 8 cols) representing rogue analog noise packets
-            invaders = [];
-            for(let r = 0; r < 4; r++) {
-                for(let c = 0; c < 8; c++) {
-                    invaders.push({
-                        x: 60 + c * 60,
-                        y: 50 + r * 40,
-                        width: 36,
-                        height: 24,
-                        alive: true,
-                        type: r === 0 ? 'VGA' : (r === 1 ? 'RFI' : 'NOISE')
-                    });
+        document.addEventListener("keydown", keyDownHandler, false);
+        document.addEventListener("keyup", keyUpHandler, false);
+
+        // Touch Controls
+        const btnLeft = document.getElementById('btn-left');
+        const btnRight = document.getElementById('btn-right');
+        const btnFire = document.getElementById('btn-fire');
+
+        btnLeft.addEventListener("touchstart", (e) => { e.preventDefault(); leftPressed = true; }, {passive: false});
+        btnLeft.addEventListener("touchend", (e) => { e.preventDefault(); leftPressed = false; }, {passive: false});
+        btnLeft.addEventListener("mousedown", () => leftPressed = true);
+        btnLeft.addEventListener("mouseup", () => leftPressed = false);
+
+        btnRight.addEventListener("touchstart", (e) => { e.preventDefault(); rightPressed = true; }, {passive: false});
+        btnRight.addEventListener("touchend", (e) => { e.preventDefault(); rightPressed = false; }, {passive: false});
+        btnRight.addEventListener("mousedown", () => rightPressed = true);
+        btnRight.addEventListener("mouseup", () => rightPressed = false);
+
+        btnFire.addEventListener("touchstart", (e) => { e.preventDefault(); spacePressed = true; }, {passive: false});
+        btnFire.addEventListener("touchend", (e) => { e.preventDefault(); spacePressed = false; }, {passive: false});
+        btnFire.addEventListener("mousedown", () => spacePressed = true);
+        btnFire.addEventListener("mouseup", () => spacePressed = false);
+
+        function keyDownHandler(e) {
+            if(e.key == "Right" || e.key == "ArrowRight") rightPressed = true;
+            else if(e.key == "Left" || e.key == "ArrowLeft") leftPressed = true;
+            else if(e.key == " " || e.key == "Spacebar") { e.preventDefault(); spacePressed = true; }
+        }
+
+        function keyUpHandler(e) {
+            if(e.key == "Right" || e.key == "ArrowRight") rightPressed = false;
+            else if(e.key == "Left" || e.key == "ArrowLeft") leftPressed = false;
+            else if(e.key == " " || e.key == "Spacebar") spacePressed = false;
+        }
+
+        function initEnemies() {
+            enemies = [];
+            let rows = 4;
+            let cols = 8;
+            for(let r = 0; r < rows; r++) {
+                for(let c = 0; c < cols; c++) {
+                    enemies.push({ x: c * 35 + 30, y: r * 30 + 30, width: 20, height: 15, status: 1 });
                 }
             }
-            invaderSpeed = 1;
+        }
+
+        function resetGame() {
+            player.x = canvas.width/2 - 15;
+            bullets = [];
+            score = 0;
+            enemySpeed = 1;
+            document.getElementById('game-score').innerText = score;
+            initEnemies();
         }
 
         function startGame() {
@@ -1190,124 +976,114 @@
             }
         }
 
-        function drawGame() {
-            if(!gameRunning) return;
-            
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // Handle Player Movement
-            if(keys.ArrowLeft) movePlayer(-1);
-            if(keys.ArrowRight) movePlayer(1);
-            
-            // Draw Player (Digital Transceiver)
-            ctx.fillStyle = '#10b981';
+        function drawPlayer() {
+            // Draw a little monitor
+            ctx.fillStyle = "#94a3b8";
             ctx.fillRect(player.x, player.y, player.width, player.height);
-            ctx.fillStyle = '#34d399';
-            ctx.fillRect(player.x + 20, player.y - 6, 10, 6); // antenna
-            
-            // Update & Draw Bullets
-            ctx.fillStyle = '#38bdf8';
-            for(let i = bullets.length - 1; i >= 0; i--) {
-                let b = bullets[i];
-                b.y -= b.speed;
-                ctx.fillRect(b.x, b.y, b.width, b.height);
-                
-                if(b.y < 0) {
-                    bullets.splice(i, 1);
-                    continue;
-                }
-                
-                // Check collision with invaders
-                for(let inv of invaders) {
-                    if(inv.alive && b.x < inv.x + inv.width && b.x + b.width > inv.x && b.y < inv.y + inv.height && b.y + b.height > inv.y) {
-                        inv.alive = false;
-                        bullets.splice(i, 1);
-                        score += 100;
-                        document.getElementById('game-score').innerText = score;
-                        break;
+            ctx.fillStyle = "#38bdf8"; // Screen
+            ctx.fillRect(player.x+2, player.y+2, player.width-4, player.height-4);
+            ctx.fillStyle = "#64748b"; // Stand
+            ctx.fillRect(player.x+12, player.y+player.height, 6, 6);
+        }
+
+        function drawEnemies() {
+            let hitWall = false;
+            let allDead = true;
+
+            for(let i = 0; i < enemies.length; i++) {
+                let e = enemies[i];
+                if(e.status == 1) {
+                    allDead = false;
+                    e.x += enemySpeed * enemyDirection;
+                    if(e.x + e.width > canvas.width || e.x < 0) {
+                        hitWall = true;
                     }
-                }
-            }
+                    // Draw "Analog Bug"
+                    ctx.fillStyle = "#f87171";
+                    ctx.fillRect(e.x, e.y, e.width, e.height);
+                    ctx.fillStyle = "#111827";
+                    ctx.fillRect(e.x+4, e.y+4, 4, 4);
+                    ctx.fillRect(e.x+12, e.y+4, 4, 4);
 
-            // Update & Draw Invader Bullets
-            ctx.fillStyle = '#f87171';
-            for(let i = invaderBullets.length - 1; i >= 0; i--) {
-                let ib = invaderBullets[i];
-                ib.y += ib.speed;
-                ctx.fillRect(ib.x, ib.y, ib.width, ib.height);
-                
-                if(ib.y > canvas.height) {
-                    invaderBullets.splice(i, 1);
-                    continue;
-                }
-                
-                // Check collision with player
-                if(ib.x < player.x + player.width && ib.x + ib.width > player.x && ib.y < player.y + player.height && ib.y + ib.height > player.y) {
-                    invaderBullets.splice(i, 1);
-                    loseLife();
-                }
-            }
-
-            // Move & Draw Invaders
-            let hitEdge = false;
-            for(let inv of invaders) {
-                if(!inv.alive) continue;
-                inv.x += invaderSpeed * invaderDirection;
-                if(inv.x <= 15 || inv.x >= canvas.width - inv.width - 15) {
-                    hitEdge = true;
-                }
-                
-                // Draw invader representation
-                ctx.fillStyle = inv.type === 'VGA' ? '#fbbf24' : (inv.type === 'RFI' ? '#ef4444' : '#a855f7');
-                ctx.fillRect(inv.x, inv.y, inv.width, inv.height);
-                ctx.fillStyle = '#ffffff';
-                ctx.font = '9px monospace';
-                ctx.fillText(inv.type, inv.x + 3, inv.y + 15);
-                
-                // Random shooting
-                if(Math.random() < 0.002) {
-                    invaderBullets.push({ x: inv.x + inv.width/2 - 2, y: inv.y + inv.height, width: 4, height: 10, speed: 4 });
-                }
-            }
-
-            if(hitEdge) {
-                invaderDirection *= -1;
-                for(let inv of invaders) {
-                    inv.y += 12;
-                    if(inv.alive && inv.y >= player.y - 15) {
+                    if(e.y + e.height > player.y) {
                         gameOver();
                     }
                 }
             }
 
-            // Check Win condition (all invaders destroyed)
-            let remaining = invaders.filter(inv => inv.alive).length;
-            if(remaining === 0) {
-                // Respawn faster wave
-                invaders.forEach(inv => inv.alive = true);
-                invaderSpeed += 0.5;
+            if(hitWall) {
+                enemyDirection *= -1;
+                for(let i = 0; i < enemies.length; i++) {
+                    enemies[i].y += 15; // Drop down
+                }
             }
 
-            animationId = requestAnimationFrame(drawGame);
+            if(allDead) {
+                enemySpeed += 0.5;
+                initEnemies();
+            }
         }
 
-        function loseLife() {
-            lives--;
-            document.getElementById('game-lives').innerText = lives;
-            if(lives <= 0) {
-                gameOver();
+        function drawBullets() {
+            for(let i = 0; i < bullets.length; i++) {
+                let b = bullets[i];
+                if(b.active) {
+                    b.y -= 5;
+                    ctx.fillStyle = "#facc15"; // digital laser
+                    ctx.fillRect(b.x, b.y, 4, 10);
+                    
+                    if(b.y < 0) b.active = false;
+
+                    // Collision
+                    for(let j = 0; j < enemies.length; j++) {
+                        let e = enemies[j];
+                        if(e.status == 1 && b.x > e.x && b.x < e.x + e.width && b.y > e.y && b.y < e.y + e.height) {
+                            e.status = 0;
+                            b.active = false;
+                            score += 10;
+                            document.getElementById('game-score').innerText = score;
+                            if(score > highScore) {
+                                highScore = score;
+                                document.getElementById('game-highscore').innerText = highScore;
+                            }
+                        }
+                    }
+                }
             }
+        }
+
+        function drawGame() {
+            if(!gameRunning) return;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Movement
+            if(rightPressed && player.x < canvas.width - player.width) player.x += player.speed;
+            else if(leftPressed && player.x > 0) player.x -= player.speed;
+            
+            // Shooting
+            if(spacePressed && Date.now() - lastShot > 300) {
+                bullets.push({ x: player.x + player.width/2 - 2, y: player.y, active: true });
+                lastShot = Date.now();
+            }
+
+            drawPlayer();
+            drawBullets();
+            drawEnemies();
+
+            animationId = requestAnimationFrame(drawGame);
         }
 
         function gameOver() {
             gameRunning = false;
             cancelAnimationFrame(animationId);
             overlay.classList.remove('hidden');
-            document.getElementById('game-overlay-title').innerText = "SYSTEM CORRUPTED";
-            startBtn.innerText = "Reboot Bus";
+            startBtn.innerText = "Signal Lost! Try Again";
+            startBtn.classList.replace('bg-blue-500', 'bg-red-500');
+            startBtn.classList.replace('border-blue-700', 'border-red-700');
         }
 
-        // --- CERTIFICATE LOGIC ---
+        // --- Certificate Logic ---
         function updateCertName() {
             let name = document.getElementById('student-name-input').value.trim();
             if(name) {
@@ -1362,6 +1138,13 @@
                 btn.disabled = false;
                 showModal('Error', 'Failed to generate image. Try using a desktop browser.', 'error');
             });
+        }
+
+        window.onload = () => {
+            initEnemies();
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawEnemies();
+            drawPlayer();
         }
     </script>
 </body>

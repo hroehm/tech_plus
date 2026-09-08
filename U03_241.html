@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unit 03 Section 2.4.1 Mastery - Install/Configure Peripherals</title>
+    <title>Unit 03 Section 2.4.1 Mastery</title>
     
     <!-- Load Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -25,7 +25,7 @@
         .tab-content.active { display: block; }
         
         /* Interactive Elements CSS */
-        .io-dropzone { min-height: 60px; min-width: 120px; border: 2px dashed #9ca3af; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: #f9fafb; transition: all 0.2s;}
+        .io-dropzone { min-height: 70px; min-width: 130px; border: 2px dashed #9ca3af; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: #f9fafb; transition: all 0.2s;}
         .io-dropzone.drag-over { background: #e5e7eb; border-color: #16a34a; box-shadow: inset 0 0 10px rgba(22, 163, 74, 0.2);}
         
         .io-item { cursor: grab; transition: transform 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
@@ -41,14 +41,14 @@
 
         /* Retro Game Canvas */
         #game-canvas {
-            background-color: #0f172a;
+            background-color: #111827;
             border: 4px solid #374151;
             border-radius: 8px;
             box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
             max-width: 100%;
             height: auto;
-            touch-action: none;
         }
+        .game-btn { touch-action: manipulation; user-select: none; }
 
         /* --- CERTIFICATE STYLES --- */
         .font-serif { font-family: 'Playfair Display', serif; }
@@ -143,9 +143,6 @@
         @media (max-width: 768px) {
             #certificate { transform: scale(0.4); transform-origin: top left; margin-bottom: -490px; margin-right: -630px; }
         }
-        
-        .lab-row { transition: background-color 0.2s; }
-        .lab-row:hover { background-color: #fca5a5; cursor: pointer; }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col">
@@ -154,7 +151,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <div class="flex items-center space-x-3">
-                    <i class="fa-solid fa-plug text-2xl"></i>
+                    <i class="fa-solid fa-keyboard text-2xl"></i>
                     <span class="font-bold text-xl tracking-wider hidden sm:inline-block">Tech+ Unit 03 Section 2.4.1</span>
                     <span class="font-bold text-xl tracking-wider sm:hidden">2.4.1</span>
                 </div>
@@ -169,10 +166,9 @@
                 </div>
             </div>
         </div>
-        <!-- Mobile Nav -->
         <div class="md:hidden flex flex-wrap justify-center gap-2 py-2 px-2 bg-green-800">
             <button onclick="switchTab('briefing')" class="nav-btn-mobile px-3 py-1 text-sm rounded bg-green-900" id="nav-briefing-mobile">Briefing</button>
-            <button onclick="switchTab('activity')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-activity-mobile">Lab Activity</button>
+            <button onclick="switchTab('activity')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-activity-mobile">Lab</button>
             <button onclick="switchTab('quiz')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-quiz-mobile">Quiz</button>
             <button onclick="switchTab('game')" class="nav-btn-mobile px-3 py-1 text-sm rounded text-gray-400 cursor-not-allowed" id="nav-game-mobile" disabled><i class="fa-solid fa-lock"></i></button>
             <button onclick="switchTab('cert')" id="nav-cert-mobile" class="hidden px-2 py-1 text-sm text-yellow-300 rounded"><i class="fa-solid fa-award"></i></button>
@@ -185,26 +181,26 @@
         <div id="briefing-section" class="tab-content active no-print">
             <div class="text-center mb-10">
                 <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">Install & Configure Peripherals</h1>
-                <p class="text-lg text-gray-600 max-w-3xl mx-auto">Explore how external hardware devices connect to computers, expand functionality, and require proper installation, driver configuration, and network management.</p>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">Learn how to properly connect, install, and configure the external hardware devices that bring computers to life. Review this briefing before moving to the Lab Activity.</p>
             </div>
 
-            <!-- 4 Briefing Tiles matching curriculum topics -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 
                 <!-- Tile 1 -->
                 <div class="bg-white rounded-xl shadow-md border-t-4 border-blue-500 overflow-hidden flex flex-col">
                     <div class="p-6 flex-grow">
-                        <h2 class="text-2xl font-bold mb-3 text-blue-700"><i class="fa-solid fa-print mr-2"></i>Core Peripherals & Types</h2>
+                        <h2 class="text-2xl font-bold mb-3 text-blue-700"><i class="fa-solid fa-print mr-2"></i>Peripheral Devices</h2>
                         <ul class="space-y-3 text-gray-700 mb-4">
-                            <li><strong>Definition:</strong> External devices connecting to computers to add features, improve performance, or provide I/O options.</li>
-                            <li><strong>Common Devices:</strong> Printers, scanners, keyboards, mice, web cameras, external storage, displays, audio gear, and UPS units.</li>
-                            <li><strong>Hardware Distinction:</strong> External peripherals operate outside the main computer casing via wired or wireless standards.</li>
+                            <li><strong>Definition:</strong> External devices that connect to a computer to add features, improve performance, or provide I/O options.</li>
+                            <li><strong>Input:</strong> Keyboards, mice, web cameras, scanners. Send data *to* the system.</li>
+                            <li><strong>Output:</strong> Printers, displays, speakers. Receive data *from* the system.</li>
+                            <li><strong>Power/Storage:</strong> UPS (Uninterruptible Power Supply) and external hard drives.</li>
                         </ul>
                     </div>
                     <div class="bg-gray-50 border-t border-gray-100 p-4">
                         <div class="flex gap-4">
-                            <button onclick="openBriefing('peripherals-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
-                            <button onclick="openBriefing('peripherals-usecase')" class="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                            <button onclick="openBriefing('devices-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('devices-usecase')" class="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
                         </div>
                     </div>
                 </div>
@@ -212,17 +208,17 @@
                 <!-- Tile 2 -->
                 <div class="bg-white rounded-xl shadow-md border-t-4 border-green-500 overflow-hidden flex flex-col">
                     <div class="p-6 flex-grow">
-                        <h2 class="text-2xl font-bold mb-3 text-green-700"><i class="fa-solid fa-screwdriver-wrench mr-2"></i>Installation & Setup Steps</h2>
+                        <h2 class="text-2xl font-bold mb-3 text-green-700"><i class="fa-solid fa-download mr-2"></i>Installation Types</h2>
                         <ul class="space-y-3 text-gray-700 mb-4">
-                            <li><strong>Manual Review:</strong> Consult manufacturer documentation for specific installation guidelines.</li>
-                            <li><strong>Drivers & Firmware:</strong> Ensure operating systems utilize up-to-date driver software and firmware patches.</li>
-                            <li><strong>System Testing:</strong> Rigorously test input and output functions immediately after completing setup.</li>
+                            <li><strong>Installation:</strong> The process of setting up software or hardware so it can begin working on a system.</li>
+                            <li><strong>Plug-and-Play (PnP):</strong> Devices automatically recognized and configured by the OS. No manual driver install needed.</li>
+                            <li><strong>Driver Installation:</strong> Required for hardware not automatically recognized. A driver acts as a software translator between the OS and the device.</li>
                         </ul>
                     </div>
                      <div class="bg-gray-50 border-t border-gray-100 p-4">
                         <div class="flex gap-4">
-                            <button onclick="openBriefing('installation-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
-                            <button onclick="openBriefing('installation-usecase')" class="flex-1 bg-green-100 hover:bg-green-200 text-green-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                            <button onclick="openBriefing('install-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('install-usecase')" class="flex-1 bg-green-100 hover:bg-green-200 text-green-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
                         </div>
                     </div>
                 </div>
@@ -230,35 +226,35 @@
                 <!-- Tile 3 -->
                 <div class="bg-white rounded-xl shadow-md border-t-4 border-purple-500 overflow-hidden flex flex-col">
                     <div class="p-6 flex-grow">
-                        <h2 class="text-2xl font-bold mb-3 text-purple-700"><i class="fa-solid fa-bolt mr-2"></i>Plug-and-Play vs Drivers</h2>
+                        <h2 class="text-2xl font-bold mb-3 text-purple-700"><i class="fa-solid fa-sliders mr-2"></i>Configuration & Testing</h2>
                         <ul class="space-y-3 text-gray-700 mb-4">
-                            <li><strong>Plug-and-Play (PnP):</strong> Automatically recognized and configured by modern operating systems without user intervention.</li>
-                            <li><strong>Driver Installation:</strong> Required for specialized or high-end devices needing proprietary software packages.</li>
-                            <li><strong>Additional Steps:</strong> Calibration, software utility installation, and fine-tuning device preferences.</li>
+                            <li><strong>Configuration:</strong> Adjusting settings *after* installation to ensure the device operates exactly as the user wants.</li>
+                            <li><strong>Testing:</strong> The critical final step (e.g., printing a test page, checking a video feed, calibrating a scanner).</li>
+                            <li><strong>Firmware:</strong> Checking for updates to the hardware's internal permanent software for stability and security.</li>
                         </ul>
                     </div>
                      <div class="bg-gray-50 border-t border-gray-100 p-4">
                         <div class="flex gap-4">
-                            <button onclick="openBriefing('pnp-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
-                            <button onclick="openBriefing('pnp-usecase')" class="flex-1 bg-purple-100 hover:bg-purple-200 text-purple-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                            <button onclick="openBriefing('config-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('config-usecase')" class="flex-1 bg-purple-100 hover:bg-purple-200 text-purple-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
                         </div>
                     </div>
                 </div>
 
                 <!-- Tile 4 -->
-                <div class="bg-white rounded-xl shadow-md border-t-4 border-red-500 overflow-hidden flex flex-col">
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-orange-500 overflow-hidden flex flex-col">
                     <div class="p-6 flex-grow">
-                        <h2 class="text-2xl font-bold mb-3 text-red-700"><i class="fa-solid fa-network-wired mr-2"></i>IP Peripherals & Web Config</h2>
+                        <h2 class="text-2xl font-bold mb-3 text-orange-700"><i class="fa-solid fa-network-wired mr-2"></i>IP-Based Peripherals</h2>
                         <ul class="space-y-3 text-gray-700 mb-4">
-                            <li><strong>Network Peripherals:</strong> Devices like network printers and IP cameras connecting directly via local networks.</li>
-                            <li><strong>IP Assignment:</strong> Utilizing DHCP or static IP addressing for network discoverability.</li>
-                            <li><strong>Web Interfaces:</strong> Managing advanced configuration settings via browser-based portals (e.g., CUPS).</li>
+                            <li><strong>Definition:</strong> Peripherals that connect to a user's network rather than directly to a single computer.</li>
+                            <li><strong>Addressing:</strong> Handled dynamically via DHCP or manually via a Static IP address.</li>
+                            <li><strong>Web-Based Configuration:</strong> Managing the peripheral's settings by typing its IP address into a standard web browser (like Firefox/Chrome).</li>
                         </ul>
                     </div>
                     <div class="bg-gray-50 border-t border-gray-100 p-4">
                         <div class="flex gap-4">
                             <button onclick="openBriefing('ip-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
-                            <button onclick="openBriefing('ip-usecase')" class="flex-1 bg-red-100 hover:bg-red-200 text-red-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                            <button onclick="openBriefing('ip-usecase')" class="flex-1 bg-orange-100 hover:bg-orange-200 text-orange-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
                         </div>
                     </div>
                 </div>
@@ -269,264 +265,68 @@
             </div>
         </div>
 
-        <!-- LAB ACTIVITY SECTION (8 Labs: 2 per Briefing Tile) -->
+        <!-- LAB ACTIVITY SECTION -->
         <div id="activity-section" class="tab-content no-print">
             <div class="text-center mb-8">
-                <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Comprehensive Interactive Labs</h1>
-                <p class="text-gray-600">Each of the 4 briefing topics features 2 distinct, highly interactive labs to ensure absolute mastery.</p>
+                <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Interactive Lab Activity</h1>
+                <p class="text-gray-600">Apply your knowledge of peripheral installation, configuration, and IP networking.</p>
             </div>
 
-            <!-- SECTION A: Core Peripherals Labs (Labs 1 & 2) -->
-            <div class="mb-12 border-b-2 border-blue-200 pb-8">
-                <h2 class="text-2xl font-bold text-blue-800 mb-6 flex items-center"><i class="fa-solid fa-print mr-2"></i>Topic 1 Labs: Core Peripherals & Hardware Types</h2>
-
-                <!-- Lab 1: Peripheral Category Sorter -->
-                <div class="bg-white p-6 rounded-xl shadow-md mb-6 border border-gray-200">
-                    <h3 class="text-xl font-bold mb-3 text-blue-700">Lab 1.1: Peripheral Category Sorter (Drag & Drop)</h3>
-                    <p class="text-sm text-gray-600 mb-4">Drag each peripheral device and drop it into its correct functional category.</p>
-                    
-                    <div class="flex flex-wrap gap-3 mb-6" id="cat-items">
-                        <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold text-sm" draggable="true" data-type="output">Laser Printer</div>
-                        <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold text-sm" draggable="true" data-type="input">Mechanical Keyboard</div>
-                        <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold text-sm" draggable="true" data-type="storage">External SSD Drive</div>
-                        <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold text-sm" draggable="true" data-type="power">Uninterruptible Power Supply (UPS)</div>
-                        <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold text-sm" draggable="true" data-type="input">Document Flatbed Scanner</div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <div class="cat-dropzone border-2 border-dashed border-indigo-400 bg-indigo-50 rounded-lg p-3 min-h-[100px] flex flex-col items-center" data-target="input">
-                            <h4 class="font-bold text-indigo-800 mb-2 border-b border-indigo-200 w-full text-center pb-1 text-xs">Input Peripherals</h4>
-                        </div>
-                        <div class="cat-dropzone border-2 border-dashed border-green-400 bg-green-50 rounded-lg p-3 min-h-[100px] flex flex-col items-center" data-target="output">
-                            <h4 class="font-bold text-green-800 mb-2 border-b border-green-200 w-full text-center pb-1 text-xs">Output Peripherals</h4>
-                        </div>
-                        <div class="cat-dropzone border-2 border-dashed border-purple-400 bg-purple-50 rounded-lg p-3 min-h-[100px] flex flex-col items-center" data-target="storage">
-                            <h4 class="font-bold text-purple-800 mb-2 border-b border-purple-200 w-full text-center pb-1 text-xs">Storage Peripherals</h4>
-                        </div>
-                        <div class="cat-dropzone border-2 border-dashed border-red-400 bg-red-50 rounded-lg p-3 min-h-[100px] flex flex-col items-center" data-target="power">
-                            <h4 class="font-bold text-red-800 mb-2 border-b border-red-200 w-full text-center pb-1 text-xs">Power Protection</h4>
-                        </div>
-                    </div>
-                    <div id="lab1-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
+            <!-- Lab 1: Interface Categorization -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-blue-700"><i class="fa-solid fa-boxes-packing mr-2"></i>Lab 1: Hardware Classification</h2>
+                <p class="text-sm text-gray-600 mb-4">Drag and drop the peripheral devices into their correct primary functional category.</p>
+                
+                <div class="flex flex-wrap gap-3 mb-6" id="cat-items">
+                    <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold" draggable="true" data-type="input">Keyboard</div>
+                    <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold" draggable="true" data-type="output">Laser Printer</div>
+                    <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold" draggable="true" data-type="input">Web Camera</div>
+                    <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold" draggable="true" data-type="output">Smart TV / Monitor</div>
+                    <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold" draggable="true" data-type="input">Document Scanner</div>
+                    <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold" draggable="true" data-type="other">External Hard Drive</div>
+                    <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold" draggable="true" data-type="other">UPS (Uninterruptible Power Supply)</div>
                 </div>
 
-                <!-- Lab 2: Connection Port Inspector -->
-                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
-                    <h3 class="text-xl font-bold mb-3 text-blue-700">Lab 1.2: Connection Standard Matcher</h3>
-                    <p class="text-sm text-gray-600 mb-4">Match each peripheral device with its correct standard connection type.</p>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                        <div class="bg-gray-50 p-4 rounded border">
-                            <p class="font-bold text-gray-800 mb-2">1. 4K Computer Monitor</p>
-                            <select id="match-mon" class="w-full border rounded p-2 bg-white text-sm">
-                                <option value="">-- Select Cable --</option>
-                                <option value="hdmi">HDMI / DisplayPort</option>
-                                <option value="usb">USB-A</option>
-                                <option value="audio">3.5mm Audio Jack</option>
-                            </select>
-                        </div>
-                        <div class="bg-gray-50 p-4 rounded border">
-                            <p class="font-bold text-gray-800 mb-2">2. Wired Office Keyboard</p>
-                            <select id="match-kbd" class="w-full border rounded p-2 bg-white text-sm">
-                                <option value="">-- Select Cable --</option>
-                                <option value="vga">VGA</option>
-                                <option value="usba">USB-A</option>
-                                <option value="audio">3.5mm Audio Jack</option>
-                            </select>
-                        </div>
-                        <div class="bg-gray-50 p-4 rounded border">
-                            <p class="font-bold text-gray-800 mb-2">3. Studio Headset</p>
-                            <select id="match-audio" class="w-full border rounded p-2 bg-white text-sm">
-                                <option value="">-- Select Cable --</option>
-                                <option value="jack">3.5mm Audio Jack / USB</option>
-                                <option value="hdmi">HDMI</option>
-                                <option value="vga">VGA</option>
-                            </select>
-                        </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="cat-dropzone border-2 border-dashed border-green-400 bg-green-50 rounded-lg p-4 min-h-[150px] flex flex-col items-center" data-target="input">
+                        <h3 class="font-bold text-green-800 mb-2 border-b border-green-200 w-full text-center pb-1"><i class="fa-solid fa-arrow-right-to-bracket mr-1"></i>Input Devices</h3>
                     </div>
-                    <div class="text-center">
-                        <button onclick="checkLab12()" class="bg-blue-600 text-white px-6 py-2 rounded font-bold hover:bg-blue-700">Verify Connections</button>
+                    <div class="cat-dropzone border-2 border-dashed border-orange-400 bg-orange-50 rounded-lg p-4 min-h-[150px] flex flex-col items-center" data-target="output">
+                        <h3 class="font-bold text-orange-800 mb-2 border-b border-orange-200 w-full text-center pb-1"><i class="fa-solid fa-arrow-right-from-bracket mr-1"></i>Output Devices</h3>
                     </div>
-                    <div id="lab12-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
+                    <div class="cat-dropzone border-2 border-dashed border-purple-400 bg-purple-50 rounded-lg p-4 min-h-[150px] flex flex-col items-center" data-target="other">
+                        <h3 class="font-bold text-purple-800 mb-2 border-b border-purple-200 w-full text-center pb-1"><i class="fa-solid fa-hard-drive mr-1"></i>Storage & Power</h3>
+                    </div>
                 </div>
+                <div id="lab1-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
             </div>
 
-            <!-- SECTION B: Installation & Setup Labs (Labs 3 & 4) -->
-            <div class="mb-12 border-b-2 border-green-200 pb-8">
-                <h2 class="text-2xl font-bold text-green-800 mb-6 flex items-center"><i class="fa-solid fa-screwdriver-wrench mr-2"></i>Topic 2 Labs: Installation & Setup Procedures</h2>
-
-                <!-- Lab 3: Peripheral Troubleshooting Simulator -->
-                <div class="bg-white p-6 rounded-xl shadow-md mb-6 border border-gray-200">
-                    <h3 class="text-xl font-bold mb-3 text-green-700">Lab 2.1: Diagnostic Log Analyzer</h3>
-                    <p class="text-sm text-gray-600 mb-4">A user reports a hardware issue. Review the diagnostic log below and click the faulty installation or driver state requiring correction.</p>
+            <!-- Lab 2: Scenario Matcher -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
+                <h2 class="text-xl font-bold mb-4 text-red-700"><i class="fa-solid fa-wrench mr-2"></i>Lab 2: Installation Scenario Matcher</h2>
+                <p class="text-sm text-gray-600 mb-4">Click the real-world scenario on the left, then click the correct IT concept it describes on the right.</p>
+                
+                <div class="flex flex-col md:flex-row justify-around items-stretch gap-6">
+                    <div class="flex flex-col gap-3 flex-1">
+                        <button class="scenario-btn px-4 py-3 bg-gray-100 border-2 border-gray-300 rounded text-left hover:bg-red-50 text-sm font-semibold transition" data-match="pnp">"A user plugs in a basic USB mouse. The OS instantly recognizes it, installs generic software in the background, and the mouse works in seconds."</button>
+                        <button class="scenario-btn px-4 py-3 bg-gray-100 border-2 border-gray-300 rounded text-left hover:bg-red-50 text-sm font-semibold transition" data-match="driver">"A gamer buys a specialized keyboard with macro keys. They must go to the manufacturer's website and download specific software so the OS can understand the new buttons."</button>
+                        <button class="scenario-btn px-4 py-3 bg-gray-100 border-2 border-gray-300 rounded text-left hover:bg-red-50 text-sm font-semibold transition" data-match="webconfig">"An IT tech sets up a network printer. Instead of using a screen on the printer, they open Firefox, type 'http://192.168.1.50', and log in to adjust the paper settings."</button>
+                        <button class="scenario-btn px-4 py-3 bg-gray-100 border-2 border-gray-300 rounded text-left hover:bg-red-50 text-sm font-semibold transition" data-match="dhcp">"A new IP camera is plugged into the network switch. A protocol automatically hands it an IP address so it can communicate on the network without manual setup."</button>
+                        <button class="scenario-btn px-4 py-3 bg-gray-100 border-2 border-gray-300 rounded text-left hover:bg-red-50 text-sm font-semibold transition" data-match="config">"After installing a dual-monitor setup, the user goes into Windows Settings to adjust the resolution, refresh rate, and physical orientation of the screens."</button>
+                    </div>
                     
-                    <div class="border rounded border-gray-300 overflow-hidden">
-                        <div class="bg-gray-100 border-b border-gray-300 px-4 py-2 font-bold flex text-sm">
-                            <div class="w-1/2">Peripheral Device</div>
-                            <div class="w-1/4">Status</div>
-                            <div class="w-1/4 text-right">Details</div>
-                        </div>
-                        <div class="lab-row px-4 py-3 border-b border-gray-200 flex text-sm" onclick="checkLab21('false')">
-                            <div class="w-1/2"><i class="fa-solid fa-keyboard text-blue-500 mr-2"></i>USB Gaming Keyboard</div>
-                            <div class="w-1/4 text-green-600">Plug-and-Play Active</div>
-                            <div class="w-1/4 text-right">HID Driver OK</div>
-                        </div>
-                        <div class="lab-row px-4 py-3 border-b border-gray-200 flex text-sm" onclick="checkLab21('false')">
-                            <div class="w-1/2"><i class="fa-solid fa-display text-blue-400 mr-2"></i>HDMI 4K Monitor</div>
-                            <div class="w-1/4 text-green-600">Connected</div>
-                            <div class="w-1/4 text-right">60Hz Native</div>
-                        </div>
-                        <div class="lab-row px-4 py-3 border-b border-gray-200 flex text-sm bg-red-50 text-red-800 font-bold" onclick="checkLab21('true')">
-                            <div class="w-1/2"><i class="fa-solid fa-print text-red-500 mr-2"></i>High-End Laser Printer</div>
-                            <div class="w-1/4">Driver Missing</div>
-                            <div class="w-1/4 text-right text-red-600">Generic Driver Only</div>
-                        </div>
-                        <div class="lab-row px-4 py-3 flex text-sm" onclick="checkLab21('false')">
-                            <div class="w-1/2"><i class="fa-solid fa-headphones text-purple-500 mr-2"></i>USB Audio Headset</div>
-                            <div class="w-1/4 text-gray-500">Ready</div>
-                            <div class="w-1/4 text-right">Default Output</div>
-                        </div>
+                    <div class="flex flex-col gap-3 flex-1 justify-center">
+                        <button class="tool-btn px-4 py-3 bg-white border-2 border-gray-300 rounded text-center hover:bg-gray-100 font-bold text-gray-700 shadow-sm transition" data-match="webconfig"><i class="fa-solid fa-globe text-blue-500 mr-2"></i>Web-Based Configuration</button>
+                        <button class="tool-btn px-4 py-3 bg-white border-2 border-gray-300 rounded text-center hover:bg-gray-100 font-bold text-gray-700 shadow-sm transition" data-match="pnp"><i class="fa-solid fa-plug-circle-check text-green-600 mr-2"></i>Plug-and-Play (PnP)</button>
+                        <button class="tool-btn px-4 py-3 bg-white border-2 border-gray-300 rounded text-center hover:bg-gray-100 font-bold text-gray-700 shadow-sm transition" data-match="config"><i class="fa-solid fa-sliders text-purple-500 mr-2"></i>Post-Install Configuration</button>
+                        <button class="tool-btn px-4 py-3 bg-white border-2 border-gray-300 rounded text-center hover:bg-gray-100 font-bold text-gray-700 shadow-sm transition" data-match="dhcp"><i class="fa-solid fa-network-wired text-orange-500 mr-2"></i>DHCP Protocol</button>
+                        <button class="tool-btn px-4 py-3 bg-white border-2 border-gray-300 rounded text-center hover:bg-gray-100 font-bold text-gray-700 shadow-sm transition" data-match="driver"><i class="fa-solid fa-compact-disc text-gray-700 mr-2"></i>Manual Driver Installation</button>
                     </div>
-                    <div id="lab21-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
                 </div>
-
-                <!-- Lab 4: UPS Battery Backup Configuration Checklist -->
-                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
-                    <h3 class="text-xl font-bold mb-3 text-green-700">Lab 2.2: UPS Protection Setup Checklist</h3>
-                    <p class="text-sm text-gray-600 mb-4">Check all 3 correct setup steps required for a Uninterruptible Power Supply (UPS).</p>
-                    <div class="space-y-3 max-w-xl mx-auto bg-gray-50 p-4 rounded border">
-                        <label class="flex items-center space-x-3 cursor-pointer"><input type="checkbox" id="ups-1" class="h-5 w-5 text-green-600"><span>Connect the UPS battery unit to grounded AC power</span></label>
-                        <label class="flex items-center space-x-3 cursor-pointer"><input type="checkbox" id="ups-2" class="h-5 w-5 text-green-600"><span>Plug critical computer and monitor into battery-backed surge outlets</span></label>
-                        <label class="flex items-center space-x-3 cursor-pointer"><input type="checkbox" id="ups-3" class="h-5 w-5 text-green-600"><span>Connect USB communication cable for automated OS shutdown monitoring</span></label>
-                        <label class="flex items-center space-x-3 cursor-pointer"><input type="checkbox" id="ups-4" class="h-5 w-5 text-red-600"><span>Plug the UPS into an ungrounded extension cord without surge protection</span></label>
-                    </div>
-                    <div class="text-center mt-4">
-                        <button onclick="checkLab22()" class="bg-green-600 text-white px-6 py-2 rounded font-bold hover:bg-green-700">Validate UPS Setup</button>
-                    </div>
-                    <div id="lab22-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
-                </div>
+                <div id="lab2-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
             </div>
 
-            <!-- SECTION C: Plug-and-Play vs Drivers Labs (Labs 5 & 6) -->
-            <div class="mb-12 border-b-2 border-purple-200 pb-8">
-                <h2 class="text-2xl font-bold text-purple-800 mb-6 flex items-center"><i class="fa-solid fa-bolt mr-2"></i>Topic 3 Labs: Plug-and-Play vs Driver Installation</h2>
-
-                <!-- Lab 5: PnP vs Driver Classifier -->
-                <div class="bg-white p-6 rounded-xl shadow-md mb-6 border border-gray-200">
-                    <h3 class="text-xl font-bold mb-3 text-purple-700">Lab 3.1: Installation Type Classifier</h3>
-                    <p class="text-sm text-gray-600 mb-4">Determine whether each device is typically Plug-and-Play (PnP) or requires explicit Driver Installation.</p>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div class="bg-gray-50 p-4 rounded border">
-                            <p class="font-bold text-gray-800 mb-2">Standard USB Optical Mouse</p>
-                            <select id="pnp-mouse" class="w-full border rounded p-2 bg-white text-sm">
-                                <option value="">-- Choose Type --</option>
-                                <option value="pnp">Plug-and-Play (PnP)</option>
-                                <option value="driver">Driver Installation Required</option>
-                            </select>
-                        </div>
-                        <div class="bg-gray-50 p-4 rounded border">
-                            <p class="font-bold text-gray-800 mb-2">Enterprise Multi-Tray Laser Plotter</p>
-                            <select id="pnp-plotter" class="w-full border rounded p-2 bg-white text-sm">
-                                <option value="">-- Choose Type --</option>
-                                <option value="pnp">Plug-and-Play (PnP)</option>
-                                <option value="driver">Driver Installation Required</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="text-center">
-                        <button onclick="checkLab31()" class="bg-purple-600 text-white px-6 py-2 rounded font-bold hover:bg-purple-700">Check Classification</button>
-                    </div>
-                    <div id="lab31-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
-                </div>
-
-                <!-- Lab 6: External Drive Partition Formatter -->
-                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
-                    <h3 class="text-xl font-bold mb-3 text-purple-700">Lab 3.2: External Storage Drive Partitioning</h3>
-                    <p class="text-sm text-gray-600 mb-4">You connected a new 1TB external storage drive. Click exactly 4 unallocated storage blocks (total 400GB) to format a dedicated backup partition.</p>
-                    
-                    <div class="flex flex-wrap gap-2 justify-center" id="disk-grid">
-                        <!-- Generated via JS -->
-                    </div>
-                    <div id="lab32-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
-                </div>
-            </div>
-
-            <!-- SECTION D: IP Peripherals & Web Config Labs (Labs 7 & 8) -->
-            <div class="mb-8">
-                <h2 class="text-2xl font-bold text-red-800 mb-6 flex items-center"><i class="fa-solid fa-network-wired mr-2"></i>Topic 4 Labs: IP Peripherals & Web Configuration</h2>
-
-                <!-- Lab 7: CUPS IP Printer Configurator -->
-                <div class="bg-white p-6 rounded-xl shadow-md mb-6 border border-gray-200">
-                    <h3 class="text-xl font-bold mb-3 text-red-700">Lab 4.1: CUPS IP Printer Setup Simulator</h3>
-                    <p class="text-sm text-gray-600 mb-4">Simulate configuring an IP-based network printer via the CUPS web interface (port 631). Select protocol, enter URI, and apply default settings.</p>
-                    
-                    <div class="bg-gray-900 p-4 rounded-lg text-green-400 font-mono text-sm mb-4">
-                        <p class="text-gray-400"># Terminal Setup Simulation</p>
-                        <p>$ sudo systemctl start cups</p>
-                        <p>$ sudo usermod -aG lpadmin $USER</p>
-                        <p class="text-yellow-400 mt-2">> Browser opened to http://localhost:631/admin</p>
-                    </div>
-
-                    <div class="space-y-4 max-w-xl mx-auto bg-gray-50 p-6 rounded-lg border border-gray-300">
-                        <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-1">Select Network Protocol:</label>
-                            <select id="cups-protocol" class="w-full border rounded p-2 bg-white">
-                                <option value="">-- Choose Protocol --</option>
-                                <option value="ipp">Internet Printing Protocol (ipp)</option>
-                                <option value="http">Internet Printing Protocol (http)</option>
-                                <option value="socket">AppSocket/HP JetDirect</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-1">Connection URI:</label>
-                            <input type="text" id="cups-uri" placeholder="http://labprinter01:631/mock-printer" class="w-full border rounded p-2 bg-white">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-1">Default Paper Size:</label>
-                            <select id="cups-paper" class="w-full border rounded p-2 bg-white">
-                                <option value="">-- Select Size --</option>
-                                <option value="letter">US Letter</option>
-                                <option value="a4">A4</option>
-                            </select>
-                        </div>
-                        <div class="text-center pt-2">
-                            <button onclick="checkLab41()" class="bg-blue-600 text-white px-6 py-2 rounded font-bold hover:bg-blue-700">Set Default Options & Test</button>
-                        </div>
-                    </div>
-                    <div id="lab41-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
-                </div>
-
-                <!-- Lab 8: IP Camera Static IP Assignment -->
-                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
-                    <h3 class="text-xl font-bold mb-3 text-red-700">Lab 4.2: IP Security Camera Web Configuration</h3>
-                    <p class="text-sm text-gray-600 mb-4">Configure an IP security camera web portal. Assign static IP <code>192.168.1.150</code>, subnet mask <code>255.255.255.0</code>, and resolution <code>1080p</code>.</p>
-                    
-                    <div class="space-y-4 max-w-xl mx-auto bg-gray-50 p-6 rounded-lg border border-gray-300">
-                        <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-1">IP Address:</label>
-                            <input type="text" id="cam-ip" placeholder="192.168.1.150" class="w-full border rounded p-2 bg-white">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-1">Subnet Mask:</label>
-                            <input type="text" id="cam-mask" placeholder="255.255.255.0" class="w-full border rounded p-2 bg-white">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-1">Video Stream Quality:</label>
-                            <select id="cam-res" class="w-full border rounded p-2 bg-white">
-                                <option value="">-- Choose Resolution --</option>
-                                <option value="720p">720p HD</option>
-                                <option value="1080p">1080p Full HD</option>
-                                <option value="4k">4K Ultra</option>
-                            </select>
-                        </div>
-                        <div class="text-center pt-2">
-                            <button onclick="checkLab42()" class="bg-red-600 text-white px-6 py-2 rounded font-bold hover:bg-red-700">Apply Camera Config</button>
-                        </div>
-                    </div>
-                    <div id="lab42-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
-                </div>
-            </div>
-
-            <div class="text-center mt-10">
+            <div class="text-center">
                 <button onclick="switchTab('quiz')" class="bg-green-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-green-500 shadow-lg transition transform hover:scale-105">Take the Mastery Quiz <i class="fa-solid fa-clipboard-check ml-2"></i></button>
             </div>
         </div>
@@ -536,7 +336,7 @@
             <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-xl max-w-4xl mx-auto">
                 <div class="text-center mb-8 border-b pb-4">
                     <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Unit 03 Section 2.4.1 Mastery Quiz</h1>
-                    <p class="text-gray-600">Score 90% or higher (18/20) to earn your Certificate of Mastery and unlock "Peripheral Squash" (Retro Pong)!</p>
+                    <p class="text-gray-600">Score 90% or higher (18/20) to earn your Certificate of Mastery and unlock the Retro Game!</p>
                 </div>
 
                 <div id="quiz-container" class="space-y-8">
@@ -552,28 +352,34 @@
 
         <!-- RETRO GAME SECTION -->
         <div id="game-section" class="tab-content no-print">
-            <div class="bg-gray-900 p-6 sm:p-8 rounded-2xl shadow-xl max-w-4xl mx-auto border-4 border-gray-700 flex flex-col items-center">
-                <div class="text-center mb-4 w-full">
-                    <h1 class="text-3xl font-extrabold text-green-400 mb-2 tracking-widest uppercase" style="font-family: monospace;">Peripheral Squash</h1>
-                    <p class="text-gray-300 text-sm">Classic Retro Pong Arcade! Use your mouse, touch, or W/S keys to control the paddle and bounce the peripheral data packet across the net. Score 5 points to complete the arcade challenge!</p>
+            <div class="bg-gray-900 p-6 sm:p-8 rounded-2xl shadow-xl max-w-4xl mx-auto border-4 border-gray-700">
+                <div class="text-center mb-4">
+                    <h1 class="text-3xl font-extrabold text-blue-400 mb-2 tracking-widest uppercase" style="font-family: monospace;">Peripheral Squash</h1>
+                    <p class="text-gray-300 text-sm">Keep the data packet alive! Use <kbd class="bg-gray-700 px-1 rounded text-white">&uarr;</kbd> and <kbd class="bg-gray-700 px-1 rounded text-white">&darr;</kbd> to move your paddle. The packet gets faster with every hit.</p>
                 </div>
                 
-                <div class="flex justify-between items-center w-full max-w-[400px] sm:max-w-[600px] mb-2 px-4 text-white font-mono text-xl">
-                    <div>Player: <span id="game-score" class="text-green-400 font-bold">0</span></div>
-                    <div>Computer: <span id="cpu-score" class="text-red-400 font-bold">0</span></div>
+                <div class="flex justify-between items-center mb-2 px-4 text-white font-mono text-xl">
+                    <div>Score: <span id="game-score" class="text-green-400 font-bold">0</span></div>
+                    <div>High Score: <span id="game-highscore" class="text-yellow-400 font-bold">0</span></div>
                 </div>
 
                 <div class="relative flex justify-center w-full">
                     <!-- Game Canvas -->
-                    <canvas id="game-canvas" width="600" height="400" class="w-full max-w-[400px] sm:max-w-[600px] bg-gray-900 border-2 border-gray-600 rounded shadow-lg"></canvas>
+                    <canvas id="game-canvas" width="400" height="400" class="w-full max-w-[400px] sm:max-w-[500px]"></canvas>
                     
                     <!-- Overlay Start Button -->
-                    <div id="game-overlay" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-80 rounded-lg max-w-[400px] sm:max-w-[600px] mx-auto z-10">
-                        <button id="start-game-btn" class="bg-green-600 hover:bg-green-500 text-white font-bold font-mono py-3 px-6 rounded-lg text-xl border-4 border-green-800 uppercase transform transition hover:scale-105">Start Peripheral Squash</button>
+                    <div id="game-overlay" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-70 rounded-lg max-w-[400px] sm:max-w-[500px] mx-auto z-10">
+                        <button id="start-game-btn" class="bg-blue-500 hover:bg-blue-400 text-white font-bold font-mono py-3 px-6 rounded-lg text-xl border-4 border-blue-700 uppercase transform transition hover:scale-105">Insert Coin (Start)</button>
                     </div>
                 </div>
 
-                <div class="mt-8 text-center w-full border-t border-gray-700 pt-6">
+                <!-- Mobile Controls -->
+                <div class="flex flex-col items-center gap-4 w-full mx-auto mt-6 sm:hidden">
+                    <button id="btn-up" class="game-btn bg-gray-700 text-white rounded py-4 px-12 active:bg-gray-500 w-48"><i class="fa-solid fa-arrow-up text-2xl"></i></button>
+                    <button id="btn-down" class="game-btn bg-gray-700 text-white rounded py-4 px-12 active:bg-gray-500 w-48"><i class="fa-solid fa-arrow-down text-2xl"></i></button>
+                </div>
+
+                <div class="mt-8 text-center border-t border-gray-700 pt-6">
                     <button onclick="switchTab('cert')" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">View Certificate <i class="fa-solid fa-award ml-2"></i></button>
                 </div>
             </div>
@@ -586,7 +392,7 @@
                 <!-- Controls -->
                 <div class="bg-white p-6 rounded shadow mb-6 no-print text-center border border-gray-200">
                     <h2 class="text-2xl font-bold text-green-600 mb-2">🎉 Congratulations! 🎉</h2>
-                    <p class="text-gray-700 mb-4">You have achieved mastery of Unit 03 Section 2.4.1 - Install/Configure Peripherals.</p>
+                    <p class="text-gray-700 mb-4">You have achieved mastery of Peripheral Installation and Configuration.</p>
                     <div class="flex flex-col md:flex-row justify-center items-center gap-4">
                         <input type="text" id="student-name-input" value="Student" placeholder="Enter your first name" class="border-2 border-gray-300 rounded px-4 py-2 w-full md:w-64 focus:border-green-500 focus:outline-none">
                         <button onclick="updateCertName()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">Update Name</button>
@@ -627,7 +433,7 @@
                                 Has successfully completed the assessment for 
                                 <strong class="text-[1.8rem] text-[#1e3a8a] block mt-4 mb-2 font-serif">Cyber.org Tech+ Unit 03 Section 2.4.1</strong>
                                 <strong class="text-[1.5rem] text-black block mb-4 font-serif italic">Install & Configure Peripherals</strong>
-                                <span class="text-[1.1rem] text-gray-700 leading-snug block">Demonstrating comprehensive proficiency in identifying peripheral hardware types, distinguishing plug-and-play versus driver installations, managing external storage and UPS units, and configuring IP-based network peripherals via web-based management.</span>
+                                <span class="text-[1.1rem] text-gray-700 leading-snug block">Demonstrating proficiency in understanding input/output devices, mastering plug-and-play vs driver installations, and correctly managing IP-based peripherals using web-based configuration tools.</span>
                             </p>
                             
                             <div class="flex justify-end gap-16 items-end mt-auto mb-[60px] w-full pr-8">
@@ -652,7 +458,7 @@
         </div>
     </main>
 
-    <!-- Custom Modal for Alerts -->
+    <!-- Custom Modal -->
     <div id="custom-modal" class="fixed inset-0 bg-black bg-opacity-50 z-[100] hidden flex justify-center items-center backdrop-blur-sm">
         <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all">
             <div class="text-center">
@@ -684,215 +490,134 @@
     </div>
 
     <script>
-        // --- Detailed Briefing Content Data (7+ Paragraphs, 2 Use Cases with 2 Examples each, 2 Images) ---
+        // --- Expanded Briefing Content Data (Min 5 Paragraphs per detail) ---
         const briefingData = {
-            'peripherals-details': {
-                title: 'Core Peripherals & Hardware Types',
+            'devices-details': {
+                title: 'Peripheral Devices: Detailed Breakdown',
                 icon: '<i class="fa-solid fa-print text-blue-600"></i>',
                 html: `
-                    <p class="mb-5">Modern computing systems rely heavily on external hardware components known as peripherals to extend machine functionality, improve performance, and provide flexible input and output options. While the core computer enclosure houses the essential processing units—such as the CPU, RAM, and motherboard—it is isolated from the physical environment without peripheral devices. Peripherals act as the bridge between human intent and machine execution, transforming digital data into physical output or capturing physical inputs for digital processing.</p>
+                    <p class="mb-5">A computer, at its core, is simply a processor and memory. Without external components to interact with it, it is essentially a closed loop, incapable of receiving human instructions or displaying results. <strong>Peripheral devices</strong> are the critical external hardware components that bridge this gap. They connect to the computer to drastically expand its functionality, improve its performance, and provide the essential input and output options required for daily use.</p>
                     
-                    <p class="mb-5">Printers represent one of the most critical electromechanical output devices in both home and enterprise environments. Inkjet printers utilize microscopic nozzles to spray liquid ink precisely onto paper, making them ideal for high-resolution color photographs and graphics. Laser printers leverage laser beams, electrostatic charges, and powdered toner to fuse text onto paper at high speeds, making them the gold standard for high-volume office text processing. 3D printers extend this capability into physical space, constructing three-dimensional objects layer by layer using extruded plastic filament or photopolymer resins.</p>
+                    <p class="mb-5">Peripherals are broadly categorized into three main functions: Input, Output, and Storage/Power. <strong>Input devices</strong> are designed exclusively to send data and commands <em>from</em> the user <em>to</em> the computer system. The most universal examples are keyboards (for text entry) and mice (for graphical navigation). However, input devices also include web cameras, which capture live video data, and document scanners, which convert physical paper documents into digital image files for the computer to process.</p>
                     
-                    <p class="mb-5">Scanners perform the exact inverse function of printers, converting physical documents, photographs, or drawings into high-resolution digital image files that can be edited, indexed, or stored. Flatbed scanners use a moving optical light source and sensor array, while sheet-fed scanners utilize motorized rollers. Many modern multi-function printers (MFPs) combine printing, scanning, copying, and faxing into a single standalone peripheral unit, streamlining office workflows and reducing hardware footprint.</p>
+                    <p class="mb-5">Conversely, <strong>Output devices</strong> receive processed data <em>from</em> the computer system and translate it into a format that humans can understand or utilize. Display devices—such as computer monitors, smart TVs, and projectors—are the most common output peripherals, converting digital signals into visual pixels. Printers (both inkjet and laser) output digital documents into physical, printed media. Audio equipment, like desktop speakers and headsets, translates digital audio files back into physical sound waves.</p>
                     
-                    <p class="mb-5">Keyboards and mice serve as the primary human-computer interaction input devices. Keyboards translate individual keypresses into unique hardware scan codes, communicating text and command inputs to the operating system. Physical mice, trackpads, and pointing devices allow users to manipulate 2D graphical cursors across displays by tracking physical motion and button clicks. Modern keyboards and mice connect via wired USB interfaces or wireless RF and Bluetooth protocols, offering ergonomic comfort and untethered mobility.</p>
+                    <p class="mb-5">A third crucial category involves <strong>Storage and Power</strong> peripherals. External hard drives and USB flash drives provide expansive, portable storage outside of the computer's internal chassis, allowing users to backup massive amounts of data or transfer it physically between different machines. On the power side, an Uninterruptible Power Supply (UPS) is a vital peripheral that provides temporary battery backup to a computer during a sudden blackout, while also acting as a heavy-duty surge protector against electrical spikes that could fry the internal components.</p>
                     
-                    <p class="mb-5">Web cameras, external storage drives, and audio peripherals further expand system capability. Webcams capture live digital video streams for teleconferencing, streaming, and security monitoring. External hard drives and solid-state drives (SSDs) plug into high-speed USB ports to provide massive portable backup and storage capacity. Speakers and headsets output audio signals generated by sound cards or integrated audio processors, while microphones capture acoustic waves for voice input.</p>
-                    
-                    <p class="mb-5">Display devices—including computer monitors, digital projectors, and smart TVs—receive visual data signals from graphics cards via HDMI, DisplayPort, VGA, or DVI connections, rendering graphical user interfaces and multimedia. Furthermore, specialized hardware like Uninterruptible Power Supplies (UPS) provide battery backup and surge suppression, protecting sensitive electronics against sudden electrical blackouts and voltage spikes.</p>
-                    
-                    <p>Understanding the distinct categories of internal versus external hardware is foundational for IT technicians. While internal expansion cards and hard drives integrate directly onto the motherboard, peripheral devices require careful attention to physical connection standards, power requirements, cable management, and driver compatibility to ensure seamless integration into the computing environment.</p>
+                    <p>Understanding these categories is foundational for any IT technician. When a user requests a new hardware setup, the technician must accurately identify what type of peripherals are required to achieve the user's goals. Furthermore, they must ensure the host computer has the correct available physical ports (like USB, HDMI, or audio jacks) to support the sheer variety of these external devices without overloading the system's power limits.</p>
                 `
             },
-            'peripherals-usecase': {
-                title: 'Core Peripherals & Types: Use Cases',
+            'devices-usecase': {
+                title: 'Peripheral Devices: Practical Use Cases',
                 icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
                 html: `
                     <div class="mb-8">
-                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 1: Enterprise Office Document Workflow</h4>
-                        <p class="mb-2">Corporate business environments require robust peripheral ecosystems to handle high-volume paperwork, scanning archives, and daily digital communication.</p>
-                        <ul class="list-disc pl-5 mb-4 text-gray-700">
-                            <li class="mb-2"><strong>Example 1 (High-Speed Laser Printing):</strong> An accounting department uses networked laser printers capable of producing 45 pages per minute of crisp monochrome tax reports and invoices for clients.</li>
-                            <li><strong>Example 2 (Flatbed Archival Scanning):</strong> Legal assistants use high-resolution flatbed scanners to digitize fragile signed paper contracts into searchable PDF archives for secure cloud storage.</li>
-                        </ul>
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Use Case 1: The Graphic Designer Setup</h4>
+                        <img src="https://placehold.co/800x300/e0f2fe/0369a1?text=Graphic+Design+Peripherals" alt="Graphic Design Setup" class="w-full h-auto rounded-lg mb-4 shadow-sm border border-gray-200">
+                        <p>A professional graphic designer requires specialized peripherals far beyond a standard office setup. For <strong>Input</strong>, they utilize a high-resolution drawing tablet that tracks pen pressure, allowing them to digitally paint. For <strong>Output</strong>, they rely on a massive, color-calibrated 4K monitor to ensure color accuracy, and a high-end photo printer to produce physical proofs of their artwork for clients.</p>
                     </div>
                     <div class="mb-8">
-                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 2: Multimedia Creation & Workstation Setup</h4>
-                        <p class="mb-2">Creative professionals and gamers rely on specialized peripheral configurations to maximize input precision, audio fidelity, and visual output quality.</p>
-                        <ul class="list-disc pl-5 mb-4 text-gray-700">
-                            <li class="mb-2"><strong>Example 1 (Ergonomic Input Peripherals):</strong> A video editor connects a multi-button programmable macro keyboard and a high-DPI optical mouse to execute complex editing shortcuts instantly in Adobe Premiere.</li>
-                            <li><strong>Example 2 (Display & Audio Integration):</strong> A digital artist attaches dual 4K IPS monitors via DisplayPort and professional studio monitors via USB audio interfaces to achieve color-accurate visual workflows.</li>
-                        </ul>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                        <div>
-                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Peripheral Hardware Overview</p>
-                            <img src="https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=600&h=350" alt="Workstation peripherals including monitor, keyboard, and mouse" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
-                        </div>
-                        <div>
-                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Office Document Processing</p>
-                            <img src="https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?auto=format&fit=crop&w=600&h=350" alt="Office printer and scanning station in use" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
-                        </div>
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Use Case 2: Enterprise Data Protection</h4>
+                        <img src="https://placehold.co/800x300/e0f2fe/0369a1?text=Server+UPS+and+External+Drive" alt="Server Protection Diagram" class="w-full h-auto rounded-lg mb-4 shadow-sm border border-gray-200">
+                        <p>A small business owner runs a local database server holding sensitive customer records. To protect this vital machine, they connect two specific peripherals. First, a heavy-duty <strong>UPS (Uninterruptible Power Supply)</strong> to ensure that if the building loses power, the server stays on long enough to shut down safely without corrupting the database. Second, they attach an <strong>External Hard Drive</strong> to run scheduled, automated nightly backups of all company data.</p>
                     </div>
                 `
             },
-            'installation-details': {
-                title: 'Installation & Setup Procedures',
-                icon: '<i class="fa-solid fa-screwdriver-wrench text-green-600"></i>',
+            'install-details': {
+                title: 'Installation Types: Detailed Breakdown',
+                icon: '<i class="fa-solid fa-download text-green-600"></i>',
                 html: `
-                    <p class="mb-5">Installing and configuring peripheral devices correctly is vital for achieving optimal system performance, hardware compatibility, and device longevity. When a new peripheral is introduced to a computer system, technicians should never rely solely on guesswork. The first essential step in the installation protocol is thoroughly reviewing the manufacturer's user manual or technical documentation. The manual provides specific hardware requirements, pinout diagrams, recommended connection ports, and step-by-step software setup instructions tailored to that exact model.</p>
+                    <p class="mb-5">Simply physically plugging a peripheral into a computer does not guarantee it will immediately work. The computer's Operating System (OS) must understand exactly what the device is and how to communicate with it. This process of establishing communication and preparing the device for first use is known as <strong>Installation</strong>. Historically, this was a tedious manual process, but modern computing has largely divided installation into two distinct experiences.</p>
                     
-                    <p class="mb-5">The second fundamental step involves verifying and updating device drivers and firmware. Hardware manufacturers frequently release software patches and firmware updates after a device has been manufactured to resolve security vulnerabilities, fix bugs, improve power efficiency, and enhance processing speed. Technicians must check the manufacturer's support website or utilize operating system update tools to ensure that the installed driver version matches the latest stable release before putting the peripheral into production.</p>
+                    <p class="mb-5">The most user-friendly installation method is <strong>Plug-and-Play (PnP)</strong>. When a PnP device is connected, the operating system automatically detects the new hardware, identifies its basic functions, and instantly installs a generic, pre-loaded driver in the background without requiring any manual intervention from the user. Within seconds, a message pops up stating the device is ready to use. Standard keyboards, basic mice, and USB flash drives universally utilize Plug-and-Play.</p>
                     
-                    <p class="mb-5">The third critical step is systematic testing and validation. Once physical connections are established and software is installed, the technician must execute functional tests. For a printer, this means printing a test page to verify ink nozzle alignment and toner fusing. For a webcam, it involves opening video conferencing software to inspect frame rate and resolution. For an external hard drive, it requires verifying read and write speeds by transferring sample files.</p>
+                    <p class="mb-5">However, complex or highly specialized devices often require <strong>Manual Driver Installation</strong>. A driver is a specialized piece of software that acts as a dedicated translator between the computer's Operating System and the specific physical hardware. While an OS might recognize that a device is a "printer," it doesn't natively know how to instruct that specific model of printer to print on both sides of the paper or check ink levels.</p>
                     
-                    <p class="mb-5">Connection standards play a major role in physical installation. USB (Universal Serial Bus) standards have evolved significantly, including USB-A (legacy rectangular ports for keyboards and mice), USB-B (square connectors typically used on printers and scanners), USB Micro-B (older mobile devices), and modern USB-C (reversible high-speed data and power delivery connectors). Understanding physical port limitations ensures that devices are plugged into ports capable of delivering adequate bandwidth and electrical current.</p>
+                    <p class="mb-5">For devices requiring manual installation, the user must obtain the specific driver software. In the past, this was done via a CD-ROM included in the box. Today, best practice dictates downloading the absolute latest version of the driver directly from the hardware manufacturer's official website. This ensures the user receives the most up-to-date features and security patches, bypassing outdated software that might have shipped in the physical box months or years ago.</p>
                     
-                    <p class="mb-5">Display and video peripherals utilize specialized video connection standards. HDMI (High-Definition Multimedia Interface) transmits uncompressed digital video and audio to monitors, TVs, and projectors. DisplayPort offers high bandwidth and multi-display daisy-chaining capabilities preferred in professional workstations. Legacy interfaces such as VGA (Video Graphics Array) and DVI (Digital Visual Interface) are occasionally encountered on older equipment during hardware maintenance and legacy system support.</p>
-                    
-                    <p class="mb-5">Audio peripherals connect through standard 3.5mm analog audio jacks, dedicated USB audio controllers, or wireless Bluetooth protocols. When configuring audio devices, technicians must explicitly designate the correct input and output endpoints within the operating system's sound control panel, ensuring microphones capture audio and speakers output sound correctly.</p>
-                    
-                    <p>Finally, power protection peripherals like Uninterruptible Power Supplies (UPS) require careful setup. Technicians must connect the UPS battery unit to AC power, plug critical computer and monitor hardware into battery-backed surge outlets, and install UPS monitoring software to enable automatic graceful OS shutdown during extended power outages.</p>
+                    <p class="mb-5">Interestingly, these two installation types often overlap. A user might plug in a high-end gaming mouse, and the OS will use Plug-and-Play to make the basic left-click, right-click, and cursor movement work immediately. However, to unlock the advanced features of the mouse—such as programming its 12 side buttons or changing its RGB lighting colors—the user must still undergo manual driver installation to get the manufacturer's specific software suite installed.</p>
                 `
             },
-            'installation-usecase': {
-                title: 'Installation & Setup Procedures: Use Cases',
+            'install-usecase': {
+                title: 'Installation: Practical Use Cases',
                 icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
                 html: `
                     <div class="mb-8">
-                        <h4 class="text-xl font-bold text-green-800 mb-2 border-b-2 border-green-200 pb-1">Case 1: Setting Up a Workstation UPS Battery Backup</h4>
-                        <p class="mb-2">Protecting critical financial trading terminals from sudden power loss requires installing and configuring an Uninterruptible Power Supply.</p>
-                        <ul class="list-disc pl-5 mb-4 text-gray-700">
-                            <li class="mb-2"><strong>Example 1 (Physical & Power Setup):</strong> A technician plugs the UPS into a grounded wall outlet, connects the computer and dual monitors into the surge-protected battery outlets, and plugs in a USB communication cable.</li>
-                            <li><strong>Example 2 (Software & Auto-Shutdown):</strong> The technician installs the UPS power management software and configures the OS to trigger an automatic safe shutdown when battery power drops below 15% during a blackout.</li>
-                        </ul>
+                        <h4 class="text-xl font-bold text-green-800 mb-2 border-b-2 border-green-200 pb-1">Use Case 1: The Seamless User Experience (PnP)</h4>
+                        <img src="https://placehold.co/800x300/dcfce7/166534?text=USB+Mouse+Plug+and+Play" alt="USB Mouse Plug and Play" class="w-full h-auto rounded-lg mb-4 shadow-sm border border-gray-200">
+                        <p>An office worker is issued a new standard USB mouse. They unpack it and plug it into an available USB-A port on their running Windows laptop. Because the mouse follows universal interface standards, the Windows OS utilizes <strong>Plug-and-Play (PnP)</strong>. A notification silently appears in the corner stating "Setting up device," followed three seconds later by "Device is ready." The worker begins using the mouse immediately without downloading a single file.</p>
                     </div>
                     <div class="mb-8">
-                        <h4 class="text-xl font-bold text-green-800 mb-2 border-b-2 border-green-200 pb-1">Case 2: Upgrading Multi-Monitor Display Peripherals</h4>
-                        <p class="mb-2">An engineering firm upgrades employee workstations with high-resolution 4K monitors requiring strict attention to connection cables and firmware.</p>
-                        <ul class="list-disc pl-5 mb-4 text-gray-700">
-                            <li class="mb-2"><strong>Example 1 (Cabling & Port Selection):</strong> Technicians ensure that monitors are connected using certified DisplayPort 1.4 cables rather than legacy VGA adapters to support native 4K resolution at 60Hz.</li>
-                            <li><strong>Example 2 (Firmware & Color Calibration):</strong> Technicians apply monitor firmware updates and run hardware color calibration tools to ensure accurate color reproduction for CAD engineering drawings.</li>
-                        </ul>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                        <div>
-                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Physical Connection Standards</p>
-                            <img src="https://images.unsplash.com/photo-1544652478-6653e09f18a2?auto=format&fit=crop&w=600&h=350" alt="Cables and connection ports representing installation standards" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
-                        </div>
-                        <div>
-                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Multi-Display Workstation Setup</p>
-                            <img src="https://images.unsplash.com/photo-1526738549149-8e07eca6c147?auto=format&fit=crop&w=600&h=350" alt="Multiple monitors and hardware setup in an office" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
-                        </div>
+                        <h4 class="text-xl font-bold text-green-800 mb-2 border-b-2 border-green-200 pb-1">Use Case 2: Advanced Hardware (Driver Installation)</h4>
+                        <img src="https://placehold.co/800x300/dcfce7/166534?text=Downloading+Manufacturer+Drivers" alt="Driver Download Diagram" class="w-full h-auto rounded-lg mb-4 shadow-sm border border-gray-200">
+                        <p>A video editor purchases a high-end, multi-function scanner. Upon plugging it in via USB, the OS only recognizes it as a generic "Imaging Device," and the scanner's physical buttons do not respond. To gain full functionality, the editor visits the manufacturer's website, downloads the specific software package for their exact model, and runs the installer. This <strong>Driver Installation</strong> teaches the OS how to interface with the scanner's optical sensors and hardware buttons properly.</p>
                     </div>
                 `
             },
-            'pnp-details': {
-                title: 'Plug-and-Play vs Driver Installation',
-                icon: '<i class="fa-solid fa-bolt text-purple-600"></i>',
+            'config-details': {
+                title: 'Configuration & Testing: Detailed Breakdown',
+                icon: '<i class="fa-solid fa-sliders text-purple-600"></i>',
                 html: `
-                    <p class="mb-5">When connecting peripheral devices to a modern computer, the method by which the operating system recognizes and incorporates the hardware falls generally into two categories: Plug-and-Play (PnP) or manual driver installation. Understanding the distinction between these two mechanisms is essential for efficient IT support, hardware procurement, and system troubleshooting.</p>
+                    <p class="mb-5">While installation is the process of simply getting the hardware recognized by the system, <strong>Configuration</strong> is the critical follow-up step. Configuration involves customizing, tuning, and adjusting the specific settings of the peripheral device to ensure it operates exactly according to the user's preferences, specific physical environment, or workflow requirements. A device that is perfectly installed may still be completely useless if it is configured improperly.</p>
                     
-                    <p class="mb-5">Plug-and-Play (PnP) devices are engineered to be automatically recognized, configured, and initialized by the operating system without requiring additional driver disks or complex manual setup routines. When a PnP device—such as a standard USB mouse, a basic keyboard, or a generic flash drive—is connected to a computer, the operating system's PnP manager queries the device for its Hardware ID. The OS then matches this ID against its internal database of pre-compiled generic drivers, loads the appropriate software stack, and enables the device within seconds.</p>
+                    <p class="mb-5">Different peripherals require vastly different configuration steps. For example, a newly installed printer might default to printing strictly on A4-sized paper. If the user is in the United States, they must enter the printer's configuration settings via the OS to change the default paper size to standard US Letter, set default double-sided printing, and adjust the default print quality to save ink on draft documents.</p>
                     
-                    <p class="mb-5">While PnP devices function immediately with zero user intervention, users often have the option to install manufacturer-specific optional software or proprietary control utilities. For instance, while a gaming mouse functions immediately as a basic pointing device via PnP drivers, installing the manufacturer's software suite unlocks advanced configuration features such as custom macro programming, adjustable DPI sensor sensitivity, and RGB LED lighting customization.</p>
+                    <p class="mb-5">Another crucial aspect of configuration is <strong>Calibration</strong>. Devices that rely on precise physical measurements or optical sensors—such as flatbed scanners, touchscreens, or high-end color monitors—often drift from their factory settings. Calibration software runs the device through a series of tests to realign its sensors, ensuring that the physical input or output remains completely accurate and true to life.</p>
                     
-                    <p class="mb-5">Conversely, many advanced or specialized peripherals—such as high-end enterprise laser printers, professional flatbed scanners, multi-button macro controllers, and specialized MIDI music production interfaces—cannot rely solely on generic PnP drivers. These devices require explicit driver installation to achieve full functionality. A driver is specialized software that acts as a translator between the operating system and the hardware device's unique instruction set.</p>
+                    <p class="mb-5">Part of the initial configuration phase should always involve checking for <strong>Firmware Updates</strong>. Firmware is the permanent, foundational software programmed directly into a microchip inside the peripheral device itself (unlike a driver, which lives on the computer's hard drive). Manufacturers frequently release firmware updates to fix hardware bugs, patch severe security vulnerabilities, or even increase the physical performance speed of the device months after it was manufactured.</p>
                     
-                    <p class="mb-5">The driver installation process typically involves connecting the hardware, downloading the official driver package from the manufacturer's website (or using the OS driver update utility), and executing an installation wizard. The wizard guides the user through software deployment, registers system services, and occasionally requires a system reboot to hook deep into the OS kernel.</p>
-                    
-                    <p class="mb-5">Beyond basic drivers and PnP recognition, technicians must frequently execute other required setup steps. Software installation provides user-facing utility applications for configuring advanced device settings. Firmware updates flash new microcode onto the peripheral's onboard EEPROM chips. Calibration procedures—such as aligning printer printheads or calibrating scanner white balance—ensure physical precision.</p>
-                    
-                    <p>Finally, peripheral configuration allows users to customize device settings to fit personal or professional preferences. Examples include adjusting mouse double-click speeds, setting keyboard layout languages and key repeat rates, selecting default print paper sizes, and formatting external storage drives with appropriate file systems (such as NTFS, exFAT, or APFS).</p>
+                    <p class="mb-5">Finally, no configuration is complete without rigorous <strong>Testing</strong>. Testing verifies that both the installation and configuration phases were successful. For a printer, this involves navigating to the settings menu and clicking "Print Test Page" to verify communication and ink flow. For a webcam, it involves opening a camera application to ensure the lens is capturing light, the frame rate is smooth, and the built-in microphone is actively picking up audio signals.</p>
                 `
             },
-            'pnp-usecase': {
-                title: 'Plug-and-Play vs Driver Installation: Use Cases',
+            'config-usecase': {
+                title: 'Configuration & Testing: Practical Use Cases',
                 icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
                 html: `
                     <div class="mb-8">
-                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Case 1: Deploying Standard Office Keyboards and Mice</h4>
-                        <p class="mb-2">Enterprise IT rollouts require rapid deployment of standard input peripherals across hundreds of employee workstations without manual software configuration.</p>
-                        <ul class="list-disc pl-5 mb-4 text-gray-700">
-                            <li class="mb-2"><strong>Example 1 (Instant PnP Recognition):</strong> An employee plugs a new USB keyboard into their laptop; Windows instantly detects the HID (Human Interface Device) standard and makes the keyboard functional in under three seconds.</li>
-                            <li><strong>Example 2 (Optional Utility Software):</strong> An employee installs optional vendor software to program custom shortcut keys on their office keyboard for faster spreadsheet navigation.</li>
-                        </ul>
+                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Use Case 1: Multi-Monitor Display Configuration</h4>
+                        <img src="https://placehold.co/800x300/f3e8ff/6b21a8?text=Display+Arrangement+Settings" alt="Display Settings Diagram" class="w-full h-auto rounded-lg mb-4 shadow-sm border border-gray-200">
+                        <p>A programmer plugs a second, identical monitor into their desktop. The OS automatically installs it (PnP), but initially, it "mirrors" the first screen, showing the exact same image on both. The programmer must open the OS Display Settings to <strong>Configure</strong> the setup. They change the mode to "Extend Desktop," adjust the digital arrangement of the screens so the mouse moves cleanly from the left monitor to the right monitor, and increase the refresh rate to 144Hz for smoother scrolling.</p>
                     </div>
                     <div class="mb-8">
-                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Case 2: Installing Specialized Plotters and Scanners</h4>
-                        <p class="mb-2">Architectural firms utilizing wide-format engineering plotters require precise manufacturer driver packages and calibration utilities.</p>
-                        <ul class="list-disc pl-5 mb-4 text-gray-700">
-                            <li class="mb-2"><strong>Example 1 (Driver Installation Wizard):</strong> A technician downloads the proprietary PostScript driver suite for a new architectural plotter, running the installation wizard to establish custom paper roll trays.</li>
-                            <li><strong>Example 2 (Device Calibration):</strong> The technician runs a color calibration routine on a high-end photo scanner to ensure digital blueprint scans match physical blueprints with absolute color fidelity.</li>
-                        </ul>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                        <div>
-                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Plug-and-Play Input Devices</p>
-                            <img src="https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=600&h=350" alt="Mechanical keyboard representing plug-and-play setup" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
-                        </div>
-                        <div>
-                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Advanced Hardware Configuration</p>
-                            <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=600&h=350" alt="Screen showing driver installation and advanced configuration" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
-                        </div>
+                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Use Case 2: Web Camera Testing & Firmware</h4>
+                        <img src="https://placehold.co/800x300/f3e8ff/6b21a8?text=Webcam+Testing+and+Firmware" alt="Webcam Firmware Diagram" class="w-full h-auto rounded-lg mb-4 shadow-sm border border-gray-200">
+                        <p>Before a major company-wide presentation, a CEO plugs in a new 4K web camera. During initial <strong>Testing</strong> by opening the video conferencing software, they notice the video is incredibly dark and choppy. They download the manufacturer's utility app, which prompts them to install a <strong>Firmware Update</strong> directly to the camera's internal chip. Once updated, they configure the exposure settings, completely resolving the visual issues before the meeting begins.</p>
                     </div>
                 `
             },
             'ip-details': {
-                title: 'IP Peripherals & Web Configuration',
-                icon: '<i class="fa-solid fa-network-wired text-red-600"></i>',
+                title: 'IP-Based Peripherals: Detailed Breakdown',
+                icon: '<i class="fa-solid fa-network-wired text-orange-600"></i>',
                 html: `
-                    <p class="mb-5">As local area networks (LANs) have matured in both home and enterprise settings, peripheral connectivity has expanded beyond direct USB and cable attachments. Modern peripherals frequently operate as independent network nodes known as <strong>IP-based peripherals</strong>. Common examples include networked office laser printers, IP security surveillance cameras, and Network-Attached Storage (NAS) units. These devices connect directly to a network switch, router, or wireless access point via Ethernet cabling or Wi-Fi rather than plugging into an individual computer.</p>
+                    <p class="mb-5">Traditionally, a peripheral like a printer or external hard drive was physically tethered via a USB cable directly to a single host computer. If another user in the office needed to print, they had to send the file to that specific host computer, which had to be powered on. <strong>IP-Based Peripherals</strong> solve this bottleneck by connecting directly to the local network (via an Ethernet cable or Wi-Fi), completely bypassing the need for a dedicated host computer.</p>
                     
-                    <p class="mb-5">Because IP-based peripherals reside on the network rather than a local bus, they require an IP address to communicate with client computers. The IP address assignment typically occurs via Dynamic Host Configuration Protocol (DHCP), where a local router automatically leases an IP address to the device upon connection. For enterprise network printers and security cameras, system administrators frequently assign a permanent static IP address to ensure the device remains permanently accessible at a predictable network location.</p>
+                    <p class="mb-5">Because these devices reside on the network, they act essentially as independent miniature computers. They require an Internet Protocol (IP) address to communicate. In most standard office or home environments, a protocol called <strong>DHCP (Dynamic Host Configuration Protocol)</strong> automatically hands the peripheral a temporary IP address the moment it is plugged into the network switch, allowing it to communicate immediately without complex manual network setup.</p>
                     
-                    <p class="mb-5">To discover an IP peripheral's assigned address, technicians can check the device's physical LCD display panel, print a network configuration summary sheet directly from the device menu, or utilize network scanning tools like ARP and IP scanners. Once the IP address is identified, administrators interact with the device through <strong>web-based configuration</strong>.</p>
+                    <p class="mb-5">However, in enterprise environments, relying on dynamically changing IP addresses for critical infrastructure is risky. If the printer's IP address changes overnight, dozens of employees' computers will suddenly lose their connection to it. To prevent this, network administrators will configure the peripheral to use a <strong>Static IP Address</strong>—a permanent, unchanging digital address manually typed into the device's settings to ensure rock-solid stability and constant availability.</p>
                     
-                    <p class="mb-5">Web-based configuration allows administrators to use any standard web browser (such as Firefox, Chrome, or Edge) to manage, set up, and modify device settings remotely. By typing the device's IP address or hostname into the browser URL bar (e.g., <code>http://192.168.1.50</code> or <code>http://labprinter01:631</code>), the user loads the embedded web server hosted directly on the peripheral device.</p>
+                    <p class="mb-5">Since IP-based peripherals do not have an attached keyboard or large monitor to navigate complex settings, manufacturers equip them with a <strong>Web-Based Configuration</strong> interface. The device runs a tiny, invisible web server internally. A technician can sit at any computer on the network, open a standard web browser (like Chrome or Firefox), and type the peripheral's specific IP address into the URL search bar (e.g., http://192.168.1.100).</p>
                     
-                    <p class="mb-5">After navigating to the web interface, administrators must authenticate by logging in with default or customized credentials (such as username <code>admin</code> and password). Once authenticated, the web portal provides granular control over device parameters, including network protocols, security encryption, user permission lists, firmware update channels, and device-specific operational features.</p>
-                    
-                    <p class="mb-5">A prime example of web-based printing management in Linux environments is CUPS (Common UNIX Printing System). CUPS operates as a modular print server accessible via port 631 (<code>http://localhost:631</code>). It enables Linux computers to act as print servers, letting administrators add network printers, select Internet Printing Protocol (IPP) backends, assign PPD (PostScript Printer Description) driver files, manage print job queues, and configure server sharing settings.</p>
-                    
-                    <p>Finally, testing the configuration of an IP-based peripheral is the mandatory concluding step. Technicians verify successful setup by printing test pages, streaming live IP camera video feeds, testing user permission boundaries, and confirming that all client workstations across the network can successfully route jobs to the peripheral device.</p>
+                    <p class="mb-5">Typing in this IP address loads a graphical control panel webpage served directly from the peripheral itself. After logging in with administrator credentials (usually found in the device's manual), the technician can completely manage the hardware remotely. They can check toner levels, assign static IPs, manage user permissions, and update firmware from across the building. In Linux environments, systems like CUPS (Common UNIX Printing System) utilize this exact web-based paradigm (often via http://localhost:631) to manage print server queues.</p>
                 `
             },
             'ip-usecase': {
-                title: 'IP Peripherals & Web Configuration: Use Cases',
+                title: 'IP-Based Peripherals: Practical Use Cases',
                 icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
                 html: `
                     <div class="mb-8">
-                        <h4 class="text-xl font-bold text-red-800 mb-2 border-b-2 border-red-200 pb-1">Case 1: Configuring a Network Laser Printer via CUPS</h4>
-                        <p class="mb-2">System administrators in enterprise Linux environments utilize web-based print servers to manage department-wide IP printing.</p>
-                        <ul class="list-disc pl-5 mb-4 text-gray-700">
-                            <li class="mb-2"><strong>Example 1 (Accessing Web Portal):</strong> An administrator opens Firefox on a Linux workstation, navigates to <code>http://localhost:631/admin</code>, and authenticates with administrative credentials.</li>
-                            <li><strong>Example 2 (Adding Network Printer):</strong> The admin selects the IPP protocol, enters the printer URI (<code>http://labprinter01:631/mock-printer</code>), selects the Xerox PostScript model, and configures default US Letter paper size and double-sided printing.</li>
-                        </ul>
+                        <h4 class="text-xl font-bold text-orange-800 mb-2 border-b-2 border-orange-200 pb-1">Use Case 1: The Corporate Network Printer</h4>
+                        <img src="https://placehold.co/800x300/ffedd5/c2410c?text=Web-Based+Printer+Configuration" alt="Web Config Printer" class="w-full h-auto rounded-lg mb-4 shadow-sm border border-gray-200">
+                        <p>An IT admin deploys a massive laser printer to the 3rd floor. They plug it into an Ethernet wall jack. To configure it, they return to their desk on the 1st floor, open a web browser, and type the printer's IP address. This loads the printer's <strong>Web-Based Configuration</strong> page. The admin logs in, sets the printer's name to "Floor3_Laser", restricts color printing to management only, and assigns it a <strong>Static IP</strong> so the hundreds of computers connecting to it never lose the path.</p>
                     </div>
                     <div class="mb-8">
-                        <h4 class="text-xl font-bold text-red-800 mb-2 border-b-2 border-red-200 pb-1">Case 2: Deploying IP Security Surveillance Cameras</h4>
-                        <p class="mb-2">Security teams install IP-based cameras across a campus network, utilizing embedded web interfaces for configuration.</p>
-                        <ul class="list-disc pl-5 mb-4 text-gray-700">
-                            <li class="mb-2"><strong>Example 1 (Static IP Assignment):</strong> Technicians connect an IP security camera to a Power-over-Ethernet (PoE) switch and log into its web server to assign a dedicated static IP address.</li>
-                            <li><strong>Example 2 (Security & Video Stream Testing):</strong> The security team configures admin credentials, adjusts video stream resolution to 1080p, and tests motion-detection recording alerts via the browser portal.</li>
-                        </ul>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                        <div>
-                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Network Switch & IP Peripherals</p>
-                            <img src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=600&h=350" alt="Networking equipment representing IP-based peripherals" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
-                        </div>
-                        <div>
-                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Web-Based Management Portal</p>
-                            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&h=350" alt="Dashboard showing web configuration and network management" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
-                        </div>
+                        <h4 class="text-xl font-bold text-orange-800 mb-2 border-b-2 border-orange-200 pb-1">Use Case 2: CUPS Print Server Setup (Linux)</h4>
+                        <img src="https://placehold.co/800x300/ffedd5/c2410c?text=CUPS+Localhost+Web+Interface" alt="CUPS Interface Diagram" class="w-full h-auto rounded-lg mb-4 shadow-sm border border-gray-200">
+                        <p>A student in a cybersecurity lab is learning how Linux handles print queues. They start the CUPS service in their terminal. To actually configure the simulated IP-based printer, they open Firefox within their Linux machine and navigate to <strong>http://localhost:631</strong>. This brings up the CUPS web interface, allowing them to graphically add the printer, choose the correct "Make" and "Model" drivers, and set default paper sizes directly through the browser.</p>
                     </div>
                 `
             }
         };
 
-        // Modal Control Functions
         function openBriefing(key) {
             const modal = document.getElementById('briefing-modal');
             const data = briefingData[key];
@@ -911,7 +636,9 @@
         }
 
         document.getElementById('briefing-modal').addEventListener('click', function(e) {
-            if(e.target === this) closeBriefing();
+            if(e.target === this) {
+                closeBriefing();
+            }
         });
         
         function switchTab(tabId) {
@@ -956,9 +683,8 @@
             document.getElementById('custom-modal').classList.add('hidden');
         }
 
-        // --- LAB 1.1: Peripheral Categorization Logic ---
+        // --- Lab 1: Categorization Logic ---
         let draggedCatItem = null;
-        let lab1Count = 0;
 
         document.querySelectorAll('.io-item').forEach(item => {
             item.addEventListener('dragstart', function() {
@@ -981,186 +707,99 @@
                     if(draggedCatItem.dataset.type === this.dataset.target) {
                         this.appendChild(draggedCatItem);
                         draggedCatItem.classList.remove('bg-indigo-100', 'cursor-grab');
-                        draggedCatItem.classList.add('bg-green-100', 'text-green-800', 'cursor-default', 'mt-2', 'w-[90%]');
+                        draggedCatItem.classList.add('bg-green-100', 'text-green-800', 'cursor-default', 'mb-2');
                         draggedCatItem.setAttribute('draggable', 'false');
-                        lab1Count++;
                         
-                        document.getElementById('lab1-feedback').innerText = "Correct Peripheral Category!";
+                        document.getElementById('lab1-feedback').innerText = "Correct Classification!";
                         document.getElementById('lab1-feedback').className = "text-center font-bold mt-4 h-6 text-green-600";
                         
-                        if(lab1Count === 5) {
-                            setTimeout(() => showModal('Lab 1.1 Complete!', 'You successfully categorized all peripheral hardware types.', 'success'), 500);
+                        if(document.getElementById('cat-items').children.length === 0) {
+                            setTimeout(() => showModal('Excellent!', 'You successfully classified all hardware peripherals!', 'success'), 500);
                         }
                     } else {
-                        document.getElementById('lab1-feedback').innerText = "Incorrect category. Review input, output, storage, and power definitions.";
+                        document.getElementById('lab1-feedback').innerText = "Incorrect category. Try again.";
                         document.getElementById('lab1-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
                     }
                 }
             });
         });
 
-        // --- LAB 1.2: Connection Standard Matcher ---
-        function checkLab12() {
-            const mon = document.getElementById('match-mon').value;
-            const kbd = document.getElementById('match-kbd').value;
-            const audio = document.getElementById('match-audio').value;
+        // --- Lab 2: Tool Scenario Matcher Logic ---
+        let selectedScenario = null;
+        let selectedTool = null;
+        let lab2Matches = 0;
 
-            if(mon === 'hdmi' && kbd === 'usba' && audio === 'jack') {
-                document.getElementById('lab12-feedback').innerText = "All connection standards matched correctly!";
-                document.getElementById('lab12-feedback').className = "text-center font-bold mt-4 h-6 text-green-600";
-                setTimeout(() => showModal('Lab 1.2 Complete!', 'You successfully matched all core peripheral connection standards.', 'success'), 500);
-            } else {
-                document.getElementById('lab12-feedback').innerText = "Some cable matches are incorrect. Review connection types.";
-                document.getElementById('lab12-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
-            }
-        }
+        document.querySelectorAll('.scenario-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if(this.classList.contains('matched')) return;
+                document.querySelectorAll('.scenario-btn').forEach(b => b.classList.remove('ring-4', 'ring-red-300', 'bg-red-50'));
+                this.classList.add('ring-4', 'ring-red-300', 'bg-red-50');
+                selectedScenario = this;
+                checkMatch2();
+            });
+        });
 
-        // --- LAB 2.1: Troubleshooting Logic ---
-        let lab21Solved = false;
-        function checkLab21(isCorrect) {
-            if(lab21Solved) return;
-            if(isCorrect === 'true') {
-                lab21Solved = true;
-                document.getElementById('lab21-feedback').innerText = "Correct! Driver installation initiated and peripheral fully operational.";
-                document.getElementById('lab21-feedback').className = "text-center font-bold mt-4 h-6 text-green-600";
-                event.currentTarget.classList.add('opacity-75', 'bg-green-100');
-                setTimeout(() => showModal('Lab 2.1 Complete!', 'You successfully identified and resolved the missing driver issue.', 'success'), 500);
-            } else {
-                document.getElementById('lab21-feedback').innerText = "Incorrect. That peripheral is already functioning normally.";
-                document.getElementById('lab21-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
-            }
-        }
+        document.querySelectorAll('.tool-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if(this.classList.contains('matched')) return;
+                document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('ring-4', 'ring-red-300', 'bg-gray-100'));
+                this.classList.add('ring-4', 'ring-red-300', 'bg-gray-100');
+                selectedTool = this;
+                checkMatch2();
+            });
+        });
 
-        // --- LAB 2.2: UPS Checklist ---
-        function checkLab22() {
-            const u1 = document.getElementById('ups-1').checked;
-            const u2 = document.getElementById('ups-2').checked;
-            const u3 = document.getElementById('ups-3').checked;
-            const u4 = document.getElementById('ups-4').checked;
-
-            if(u1 && u2 && u3 && !u4) {
-                document.getElementById('lab22-feedback').innerText = "UPS installation checklist verified successfully!";
-                document.getElementById('lab22-feedback').className = "text-center font-bold mt-4 h-6 text-green-600";
-                setTimeout(() => showModal('Lab 2.2 Complete!', 'You successfully verified all UPS power protection and auto-shutdown steps.', 'success'), 500);
-            } else {
-                document.getElementById('lab22-feedback').innerText = "Checklist error. Ensure only valid protective setup steps are selected.";
-                document.getElementById('lab22-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
-            }
-        }
-
-        // --- LAB 3.1: PnP vs Driver Classifier ---
-        function checkLab31() {
-            const m = document.getElementById('pnp-mouse').value;
-            const p = document.getElementById('pnp-plotter').value;
-
-            if(m === 'pnp' && p === 'driver') {
-                document.getElementById('lab31-feedback').innerText = "Correct classification of PnP and driver installations!";
-                document.getElementById('lab31-feedback').className = "text-center font-bold mt-4 h-6 text-green-600";
-                setTimeout(() => showModal('Lab 3.1 Complete!', 'You successfully distinguished between PnP and specialized driver requirements.', 'success'), 500);
-            } else {
-                document.getElementById('lab31-feedback').innerText = "Incorrect. Review standard mice versus enterprise plotters.";
-                document.getElementById('lab31-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
-            }
-        }
-
-        // --- LAB 3.2: External Drive Partition Logic ---
-        const diskGrid = document.getElementById('disk-grid');
-        let selectedBlocks = 0;
-        let lab32Solved = false;
-        
-        for(let i=0; i<10; i++) {
-            let block = document.createElement('div');
-            block.className = "disk-block w-14 h-16 bg-gray-200 border-2 border-gray-400 rounded cursor-pointer flex items-center justify-center text-xs font-bold text-gray-600 transition hover:bg-gray-300";
-            block.innerText = "100GB";
-            block.onclick = function() {
-                if(lab32Solved) return;
-                if(this.classList.contains('allocated')) {
-                    this.classList.remove('allocated', 'bg-purple-600', 'text-white', 'border-purple-800');
-                    this.classList.add('bg-gray-200', 'text-gray-600');
-                    selectedBlocks--;
-                } else {
-                    if(selectedBlocks < 4) {
-                        this.classList.add('allocated', 'bg-purple-600', 'text-white', 'border-purple-800');
-                        this.classList.remove('bg-gray-200', 'text-gray-600');
-                        selectedBlocks++;
-                    } else {
-                        document.getElementById('lab32-feedback').innerText = "You only need 400GB (4 blocks). Deselect a block first.";
-                        document.getElementById('lab32-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
-                        return;
+        function checkMatch2() {
+            if(selectedScenario && selectedTool) {
+                if(selectedScenario.dataset.match === selectedTool.dataset.match) {
+                    selectedScenario.classList.add('matched', 'bg-green-100', 'text-green-800', 'border-green-500');
+                    selectedScenario.classList.remove('ring-4', 'ring-red-300');
+                    selectedTool.classList.add('matched', 'bg-green-100', 'text-green-800', 'border-green-500');
+                    selectedTool.classList.remove('ring-4', 'ring-red-300');
+                    
+                    document.getElementById('lab2-feedback').innerText = "Correct Match!";
+                    document.getElementById('lab2-feedback').className = "text-center font-bold mt-4 h-6 text-green-600";
+                    lab2Matches++;
+                    
+                    if(lab2Matches === 5) {
+                        setTimeout(() => showModal('Great Job!', 'You properly identified the correct installation and configuration concepts.', 'success'), 500);
                     }
-                }
-                
-                if(selectedBlocks === 4) {
-                    lab32Solved = true;
-                    document.getElementById('lab32-feedback').innerText = "Backup Partition Formatted & Mounted Successfully!";
-                    document.getElementById('lab32-feedback').className = "text-center font-bold mt-4 h-6 text-green-600";
-                    setTimeout(() => showModal('Lab 3.2 Complete!', 'You successfully allocated and configured the external backup drive partition.', 'success'), 500);
                 } else {
-                    document.getElementById('lab32-feedback').innerText = `Selected: ${selectedBlocks * 100}GB / 400GB`;
-                    document.getElementById('lab32-feedback').className = "text-center font-bold mt-4 h-6 text-blue-600";
+                    document.getElementById('lab2-feedback').innerText = "Incorrect. Consider the type of setup or protocol required.";
+                    document.getElementById('lab2-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
+                    selectedScenario.classList.remove('ring-4', 'ring-red-300', 'bg-red-50');
+                    selectedTool.classList.remove('ring-4', 'ring-red-300', 'bg-gray-100');
                 }
-            };
-            diskGrid.appendChild(block);
-        }
-
-        // --- LAB 4.1: CUPS Simulator Logic ---
-        function checkLab41() {
-            const proto = document.getElementById('cups-protocol').value;
-            const uri = document.getElementById('cups-uri').value.trim();
-            const paper = document.getElementById('cups-paper').value;
-
-            if(proto === 'http' && uri === 'http://labprinter01:631/mock-printer' && paper === 'letter') {
-                document.getElementById('lab41-feedback').innerText = "CUPS Printer Added & Test Page Printed Successfully!";
-                document.getElementById('lab41-feedback').className = "text-center font-bold mt-4 h-6 text-green-600";
-                setTimeout(() => showModal('Lab 4.1 Complete!', 'You successfully configured an IP-based network printer using CUPS web management.', 'success'), 500);
-            } else {
-                document.getElementById('lab41-feedback').innerText = "Configuration Error. Verify protocol, mock URI format, and paper size.";
-                document.getElementById('lab41-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
+                selectedScenario = null;
+                selectedTool = null;
             }
         }
 
-        // --- LAB 4.2: IP Camera Configurator ---
-        function checkLab42() {
-            const ip = document.getElementById('cam-ip').value.trim();
-            const mask = document.getElementById('cam-mask').value.trim();
-            const res = document.getElementById('cam-res').value;
-
-            if(ip === '192.168.1.150' && mask === '255.255.255.0' && res === '1080p') {
-                document.getElementById('lab42-feedback').innerText = "IP Camera Static Address & Video Stream Active!";
-                document.getElementById('lab42-feedback').className = "text-center font-bold mt-4 h-6 text-green-600";
-                setTimeout(() => showModal('Lab 4.2 Complete!', 'You successfully configured an IP camera via its web-based management portal.', 'success'), 500);
-            } else {
-                document.getElementById('lab42-feedback').innerText = "Configuration Error. Verify static IP, subnet mask, and resolution.";
-                document.getElementById('lab42-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
-            }
-        }
-
-
-        // --- QUIZ LOGIC (20 Questions: 10 original + 10 extended) ---
+        // --- Quiz Logic (20 Questions) ---
         const quizData = [
-            // 10 provided questions from Word doc
+            // Original 10 Questions from DOCX mapping
             { q: "Which of the following best defines a peripheral device?", options: ["Software that runs in the background of an operating system", "External hardware that adds functionality to a computer", "Internal components like the CPU and RAM", "The operating system itself"], answer: 1 },
             { q: "What are the three basic steps to install and configure most peripherals?", options: ["Plug in device, restart computer, uninstall drivers", "Install antivirus, enable firewall, test network", "Turn off the computer, install software, turn on the computer", "Check manual, update drivers/firmware, test device"], answer: 3 },
-            { q: "Which of the following is a configuration option for a printer? (Select all that apply.)", options: ["Set as default printer", "Adjust paper size", "Change print quality", "All of the above (Set default, paper size, print quality)"], answer: 3 },
+            { q: "Which of the following is a common configuration option for a printer?", options: ["Adjust scan resolution", "Adjust pointer speed", "Adjust paper size", "Configure display orientation"], answer: 2 },
             { q: "Which configuration option is unique to scanners?", options: ["Adjust scan resolution", "Adjust pointer speed", "Configure display orientation", "Enable surround sound"], answer: 0 },
-            { q: "Plug-and-Play (PnP) means…", options: ["A device requires manual driver installation", "The device cannot be configured after installation", "The device only works with wireless connections", "The device automatically installs drivers without user input"], answer: 3 },
-            { q: "True or False: Keyboards and mice are usually plug-and-play devices, while high-end printers and scanners often require driver installation.", options: ["True", "False", "Not applicable", "Only on Linux systems"], answer: 0 },
+            { q: "Plug-and-Play (PnP) means...", options: ["A device requires manual driver installation", "The device cannot be configured after installation", "The device only works with wireless connections", "The device automatically installs drivers without user input"], answer: 3 },
+            { q: "True or False: Keyboards and mice are usually plug-and-play devices, while high-end printers and scanners often require driver installation.", options: ["True", "False"], answer: 0 },
             { q: "Which of the following is NOT typically a configuration option for an external drive?", options: ["Format the drive", "Set file system and compatibility", "Adjust screen resolution", "Manage permissions"], answer: 2 },
             { q: "Which of the following correctly lists the steps for installing and configuring an IP-based peripheral using web-based configuration?", options: ["Connect → Install drivers → Restart → Test → Share → Print", "Connect to network → Obtain IP address → Access web interface → Log in → Configure settings → Test configuration", "Plug in → Open Device Manager → Install updates → Calibrate → Test", "Restart system → Open browser → Connect via Bluetooth → Configure → Test"], answer: 1 },
             { q: "Which connection type is MOST likely used to connect a modern display device such as a monitor or projector?", options: ["VGA", "3.5mm audio jack", "HDMI", "USB Micro-B"], answer: 2 },
-            { q: "An uninterruptable power supply (UPS) is primarily used to…", options: ["Provide a wireless internet connection", "Backup user files to the cloud automatically", "Improve video quality on a display", "Provide temporary power during outages and protect from surges"], answer: 3 },
+            { q: "An uninterruptible power supply (UPS) is primarily used to...", options: ["Provide a wireless internet connection", "Backup user files to the cloud automatically", "Improve video quality on a display", "Provide temporary power during outages and protect from surges"], answer: 3 },
             
-            // 10 extended questions from briefing details
-            { q: "Which printer technology utilizes microscopic nozzles to spray liquid droplets of ink onto paper?", options: ["Laser printer", "Inkjet printer", "3D resin printer", "Thermal plotter"], answer: 1 },
-            { q: "What port number does the CUPS (Common UNIX Printing System) web interface use by default on Linux?", options: ["Port 80", "Port 443", "Port 631", "Port 8080"], answer: 2 },
-            { q: "Which protocol automatically assigns IP addresses to network peripherals like IP cameras and network printers?", options: ["DHCP", "DNS", "FTP", "SSH"], answer: 0 },
-            { q: "What is the primary function of a device driver?", options: ["To supply electrical power to external peripherals", "To act as a software translator between the OS and the hardware device", "To encrypt hard drive partitions", "To manage wireless Wi-Fi SSIDs"], answer: 1 },
-            { q: "Which USB standard connector is traditionally found on square printer and scanner peripheral ports?", options: ["USB-A", "USB-B", "USB Micro-B", "Lightning"], answer: 1 },
-            { q: "What is the term for writing firmware updates onto a peripheral device's onboard memory chip?", options: ["Formatting", "Flashing", "Spooling", "Partitioning"], answer: 1 },
-            { q: "Which display connection standard offers high bandwidth and supports professional multi-display daisy-chaining?", options: ["VGA", "DisplayPort", "RCA composite", "Serial port"], answer: 1 },
-            { q: "When installing an IP-based peripheral, what is required if automatic IP assignment is disabled?", options: ["A static IP address", "A parallel port cable", "A BIOS update", "An optical CD-ROM"], answer: 0 },
-            { q: "What mechanism allows a user to manage peripheral settings remotely using Firefox, Chrome, or Edge?", options: ["Command line telnet", "Web-based configuration", "Kernel debugging", "Registry editing"], answer: 1 },
-            { q: "Why is testing the configuration of a peripheral immediately after installation mandatory?", options: ["To verify that input and output functions operate correctly", "To reset the computer clock", "To clear temporary internet files", "To update antivirus definitions"], answer: 0 }
+            // 10 Additional New Questions
+            { q: "What is the primary difference between 'Installation' and 'Configuration'?", options: ["Installation is for hardware; configuration is for software.", "Installation prepares the device to work; configuration adjusts settings to user preferences.", "Installation requires an internet connection; configuration does not.", "Installation only happens on Linux; configuration happens on Windows."], answer: 1 },
+            { q: "Which of the following devices is strictly considered an 'Input' peripheral?", options: ["Computer Monitor", "Desktop Speakers", "Web Camera", "Laser Printer"], answer: 2 },
+            { q: "In a Linux environment, what is CUPS typically used for?", options: ["Storing backup data on external drives", "Acting as a modular printing system/print server", "Managing webcam frame rates", "Updating the motherboard firmware"], answer: 1 },
+            { q: "Why might a user still need to manually install drivers for a Plug-and-Play (PnP) gaming mouse?", options: ["Because PnP mice will not function at all without them.", "To unlock advanced features like macro keys and custom lighting.", "To prevent the mouse from overheating.", "Because Windows does not support mice out of the box."], answer: 1 },
+            { q: "What is a 'Firmware Update' on a peripheral device?", options: ["An update to the operating system's registry.", "A physical replacement of a broken wire.", "An update to the permanent software programmed directly into the device's microchip.", "A weekly subscription fee paid to the manufacturer."], answer: 2 },
+            { q: "Which network protocol automatically assigns an IP address to a newly connected network peripheral?", options: ["HTTP", "DNS", "DHCP", "FTP"], answer: 2 },
+            { q: "If you need to ensure a network printer always maintains the exact same IP address so users never lose connection, what should you assign it?", options: ["A dynamic IP address", "A local host IP address", "A static IP address", "A loopback address"], answer: 2 },
+            { q: "How do you typically access the web-based configuration interface of an IP camera?", options: ["By plugging a monitor directly into the camera.", "By typing the camera's IP address into a web browser.", "By physically pressing a reset button on the camera for 10 seconds.", "By downloading a driver via Windows Update."], answer: 1 },
+            { q: "Which configuration step is critical to ensure a flatbed scanner is accurately capturing colors and dimensions?", options: ["Calibration", "Defragmentation", "Format the drive", "Adjusting the refresh rate"], answer: 0 },
+            { q: "Which of the following is considered a 'Storage' peripheral?", options: ["Uninterruptible Power Supply (UPS)", "External Hard Drive", "Document Scanner", "Bluetooth Headset"], answer: 1 }
         ];
 
         const quizContainer = document.getElementById('quiz-container');
@@ -1223,7 +862,8 @@
             
             const percentage = (score / quizData.length) * 100;
             
-            if(score >= 18) { // 90% threshold (18/20)
+            // Requires 18/20 (90%)
+            if(score >= 18) { 
                 const navGame = document.getElementById('nav-game');
                 const navGameMobile = document.getElementById('nav-game-mobile');
                 
@@ -1243,7 +883,7 @@
                 document.getElementById('proceed-game-btn').classList.remove('hidden');
                 document.getElementById('submit-quiz-btn').classList.add('hidden');
 
-                showModal('Outstanding!', `You scored ${score}/20 (${percentage}%). You have unlocked your Certificate of Mastery AND "Peripheral Squash" (Retro Pong)!`, 'success');
+                showModal('Outstanding!', `You scored ${score}/20 (${percentage}%). You have unlocked your Certificate of Mastery AND the Retro Game!`, 'success');
             } else {
                 quizData.forEach((_, i) => {
                     const selected = document.querySelector(`input[name="q${i}"]:checked`);
@@ -1254,82 +894,71 @@
             }
         }
 
-        // --- RETRO GAME LOGIC: Peripheral Squash (Pong Clone) ---
+        // --- Retro Game Logic (Peripheral Squash/Pong Survival) ---
         const canvas = document.getElementById('game-canvas');
         const ctx = canvas.getContext('2d');
         
-        let playerScore = 0;
-        let cpuScore = 0;
+        let score = 0;
+        let highScore = 0;
         let gameRunning = false;
         let animationId;
         
-        const paddleWidth = 12;
-        const paddleHeight = 80;
+        // Game Objects
+        const ball = { x: canvas.width/2, y: canvas.height/2, dx: 4, dy: 4, radius: 6 };
+        const paddle = { height: 80, width: 12, x: 20, y: (canvas.height-80)/2, speed: 6, dy: 0 };
         
-        let playerY = canvas.height / 2 - paddleHeight / 2;
-        let cpuY = canvas.height / 2 - paddleHeight / 2;
-        
-        let ballX = canvas.width / 2;
-        let ballY = canvas.height / 2;
-        let ballSpeedX = 5;
-        let ballSpeedY = 3;
-        
-        const overlay = document.getElementById('game-overlay');
-        const startBtn = document.getElementById('start-game-btn');
-        startBtn.addEventListener('click', startGame);
-
         let upPressed = false;
         let downPressed = false;
 
-        window.addEventListener('keydown', (e) => {
-            if(e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') upPressed = true;
-            if(e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') downPressed = true;
-        });
-        window.addEventListener('keyup', (e) => {
-            if(e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') upPressed = false;
-            if(e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') downPressed = false;
-        });
+        const overlay = document.getElementById('game-overlay');
+        const startBtn = document.getElementById('start-game-btn');
 
-        canvas.addEventListener('mousemove', (e) => {
-            if(!gameRunning) return;
-            const rect = canvas.getBoundingClientRect();
-            const root = document.documentElement;
-            let mouseY = e.clientY - rect.top - root.scrollTop;
-            let scaleY = canvas.height / rect.height;
-            playerY = mouseY * scaleY - paddleHeight / 2;
-            if(playerY < 0) playerY = 0;
-            if(playerY > canvas.height - paddleHeight) playerY = canvas.height - paddleHeight;
-        });
+        startBtn.addEventListener('click', startGame);
 
-        canvas.addEventListener('touchmove', (e) => {
-            if(!gameRunning) return;
-            e.preventDefault();
-            const rect = canvas.getBoundingClientRect();
-            let touchY = e.touches[0].clientY - rect.top;
-            let scaleY = canvas.height / rect.height;
-            playerY = touchY * scaleY - paddleHeight / 2;
-            if(playerY < 0) playerY = 0;
-            if(playerY > canvas.height - paddleHeight) playerY = canvas.height - paddleHeight;
-        }, {passive: false});
+        document.addEventListener("keydown", keyDownHandler, false);
+        document.addEventListener("keyup", keyUpHandler, false);
 
-        function resetBall() {
-            ballX = canvas.width / 2;
-            ballY = canvas.height / 2;
-            ballSpeedX = -ballSpeedX;
-            ballSpeedY = (Math.random() - 0.5) * 6;
+        // Touch Controls
+        const btnUp = document.getElementById('btn-up');
+        const btnDown = document.getElementById('btn-down');
+
+        btnUp.addEventListener("touchstart", (e) => { e.preventDefault(); upPressed = true; }, {passive: false});
+        btnUp.addEventListener("touchend", (e) => { e.preventDefault(); upPressed = false; }, {passive: false});
+        btnUp.addEventListener("mousedown", () => upPressed = true);
+        btnUp.addEventListener("mouseup", () => upPressed = false);
+        btnUp.addEventListener("mouseleave", () => upPressed = false);
+
+        btnDown.addEventListener("touchstart", (e) => { e.preventDefault(); downPressed = true; }, {passive: false});
+        btnDown.addEventListener("touchend", (e) => { e.preventDefault(); downPressed = false; }, {passive: false});
+        btnDown.addEventListener("mousedown", () => downPressed = true);
+        btnDown.addEventListener("mouseup", () => downPressed = false);
+        btnDown.addEventListener("mouseleave", () => downPressed = false);
+
+
+        function keyDownHandler(e) {
+            if(e.key == "Up" || e.key == "ArrowUp") {
+                upPressed = true;
+            } else if(e.key == "Down" || e.key == "ArrowDown") {
+                downPressed = true;
+            }
+        }
+
+        function keyUpHandler(e) {
+            if(e.key == "Up" || e.key == "ArrowUp") {
+                upPressed = false;
+            } else if(e.key == "Down" || e.key == "ArrowDown") {
+                downPressed = false;
+            }
         }
 
         function resetGame() {
-            playerScore = 0;
-            cpuScore = 0;
-            document.getElementById('game-score').innerText = playerScore;
-            document.getElementById('cpu-score').innerText = cpuScore;
-            playerY = canvas.height / 2 - paddleHeight / 2;
-            cpuY = canvas.height / 2 - paddleHeight / 2;
-            ballX = canvas.width / 2;
-            ballY = canvas.height / 2;
-            ballSpeedX = 5;
-            ballSpeedY = 3;
+            ball.x = canvas.width/2;
+            ball.y = canvas.height/2;
+            ball.dx = 4 * (Math.random() > 0.5 ? 1 : -1); 
+            ball.dy = 4 * (Math.random() > 0.5 ? 1 : -1);
+            paddle.y = (canvas.height-paddle.height)/2;
+            score = 0;
+            document.getElementById('game-score').innerText = score;
         }
 
         function startGame() {
@@ -1341,111 +970,102 @@
             }
         }
 
+        function drawBall() {
+            ctx.beginPath();
+            ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI*2);
+            ctx.fillStyle = "#60a5fa"; // blue-400
+            ctx.fill();
+            ctx.closePath();
+        }
+
+        function drawPaddle() {
+            ctx.beginPath();
+            ctx.rect(paddle.x, paddle.y, paddle.width, paddle.height);
+            ctx.fillStyle = "#9ca3af";
+            ctx.fill();
+            ctx.closePath();
+            
+            // Design details on paddle
+            ctx.fillStyle = "#111827";
+            ctx.fillRect(paddle.x + 3, paddle.y + 10, 6, 15);
+            ctx.fillRect(paddle.x + 3, paddle.y + paddle.height - 25, 6, 15);
+        }
+
         function drawGame() {
             if(!gameRunning) return;
             
-            // Keyboard movement
-            if(upPressed) {
-                playerY -= 7;
-                if(playerY < 0) playerY = 0;
-            }
-            if(downPressed) {
-                playerY += 7;
-                if(playerY > canvas.height - paddleHeight) playerY = canvas.height - paddleHeight;
-            }
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw Right Wall (Server)
+            ctx.fillStyle = "#374151";
+            ctx.fillRect(canvas.width - 15, 0, 15, canvas.height);
+            
+            drawBall();
+            drawPaddle();
 
-            // AI CPU Paddle Movement
-            let cpuCenter = cpuY + paddleHeight / 2;
-            if(cpuCenter < ballY - 35) {
-                cpuY += 5;
-            } else if(cpuCenter > ballY + 35) {
-                cpuY -= 5;
+            // Collision with Top and Bottom
+            if(ball.y + ball.dy > canvas.height - ball.radius || ball.y + ball.dy < ball.radius) {
+                ball.dy = -ball.dy;
             }
-            if(cpuY < 0) cpuY = 0;
-            if(cpuY > canvas.height - paddleHeight) cpuY = canvas.height - paddleHeight;
-
-            // Ball Physics
-            ballX += ballSpeedX;
-            ballY += ballSpeedY;
-
-            // Wall collision (Top/Bottom)
-            if(ballY < 10) {
-                ballY = 10;
-                ballSpeedY = -ballSpeedY;
+            
+            // Collision with Right Wall
+            if(ball.x + ball.dx > canvas.width - 15 - ball.radius) {
+                ball.dx = -ball.dx;
             }
-            if(ballY > canvas.height - 10) {
-                ballY = canvas.height - 10;
-                ballSpeedY = -ballSpeedY;
-            }
-
-            // Player Paddle Collision (Left)
-            if(ballX - 10 <= 25 + paddleWidth && ballY >= playerY && ballY <= playerY + paddleHeight) {
-                ballX = 25 + paddleWidth + 10;
-                let deltaY = ballY - (playerY + paddleHeight / 2);
-                ballSpeedX = -ballSpeedX * 1.05; // slight speed increase
-                ballSpeedY = deltaY * 0.25;
-            }
-
-            // CPU Paddle Collision (Right)
-            if(ballX + 10 >= canvas.width - 25 - paddleWidth && ballY >= cpuY && ballY <= cpuY + paddleHeight) {
-                ballX = canvas.width - 25 - paddleWidth - 10;
-                let deltaY = ballY - (cpuY + paddleHeight / 2);
-                ballSpeedX = -ballSpeedX * 1.05;
-                ballSpeedY = deltaY * 0.25;
-            }
-
-            // Scoring
-            if(ballX < 0) {
-                cpuScore++;
-                document.getElementById('cpu-score').innerText = cpuScore;
-                resetBall();
-            } else if(ballX > canvas.width) {
-                playerScore++;
-                document.getElementById('game-score').innerText = playerScore;
-                resetBall();
-                if(playerScore >= 5) {
-                    gameRunning = false;
-                    overlay.classList.remove('hidden');
-                    startBtn.innerText = "Victory! Play Again";
-                    showModal('Arcade Victory!', 'You won Peripheral Squash! Your arcade reflexes match your IT expertise.', 'success');
+            
+            // Collision with Left (Paddle or Game Over)
+            if(ball.x + ball.dx < paddle.x + paddle.width + ball.radius) {
+                if(ball.y > paddle.y && ball.y < paddle.y + paddle.height && ball.x > paddle.x) {
+                    // Hit the paddle!
+                    ball.dx = -ball.dx;
+                    // Slightly increase speed
+                    ball.dx = (Math.abs(ball.dx) + 0.3) * Math.sign(ball.dx);
+                    ball.dy = (Math.abs(ball.dy) + 0.3) * Math.sign(ball.dy);
+                    
+                    // Add spin based on hit location
+                    let hitPoint = ball.y - (paddle.y + paddle.height/2);
+                    ball.dy += hitPoint * 0.05;
+                    
+                    score += 10;
+                    document.getElementById('game-score').innerText = score;
+                    if(score > highScore) {
+                        highScore = score;
+                        document.getElementById('game-highscore').innerText = highScore;
+                    }
+                } else if (ball.x + ball.dx < ball.radius) {
+                    gameOver();
                     return;
                 }
             }
 
-            // Render Graphics
-            ctx.fillStyle = '#0f172a';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            // Move Paddle
+            if(upPressed && paddle.y > 0) {
+                paddle.y -= paddle.speed;
+            }
+            else if(downPressed && paddle.y < canvas.height - paddle.height) {
+                paddle.y += paddle.speed;
+            }
 
-            // Center Net
-            ctx.strokeStyle = '#334155';
-            ctx.lineWidth = 4;
-            ctx.setLineDash([10, 10]);
-            ctx.beginPath();
-            ctx.moveTo(canvas.width / 2, 0);
-            ctx.lineTo(canvas.width / 2, canvas.height);
-            ctx.stroke();
-            ctx.setLineDash([]); // reset
-
-            // Player Paddle (Green)
-            ctx.fillStyle = '#10b981';
-            ctx.fillRect(25, playerY, paddleWidth, paddleHeight);
-
-            // CPU Paddle (Red)
-            ctx.fillStyle = '#ef4444';
-            ctx.fillRect(canvas.width - 25 - paddleWidth, cpuY, paddleWidth, paddleHeight);
-
-            // Ball (White data packet)
-            ctx.fillStyle = '#f8fafc';
-            ctx.beginPath();
-            ctx.arc(ballX, ballY, 10, 0, Math.PI * 2);
-            ctx.fill();
+            // Move Ball
+            ball.x += ball.dx;
+            ball.y += ball.dy;
 
             animationId = requestAnimationFrame(drawGame);
         }
 
-        // --- CERTIFICATE LOGIC ---
+        function gameOver() {
+            gameRunning = false;
+            cancelAnimationFrame(animationId);
+            overlay.classList.remove('hidden');
+            startBtn.innerText = "Game Over. Try Again";
+            startBtn.classList.replace('bg-blue-500', 'bg-red-500');
+            startBtn.classList.replace('border-blue-700', 'border-red-700');
+        }
+
+        // --- Certificate Logic ---
         function updateCertName() {
             let name = document.getElementById('student-name-input').value.trim();
+            
             if(name) {
                 if (name.includes(' ')) {
                     name = name.split(' ')[0];
@@ -1464,9 +1084,9 @@
         function downloadCert() {
             const certEl = document.getElementById('certificate');
             const name = document.getElementById('cert-student-name').innerText;
-            let filename = 'Peripheral_Certificate.png';
+            let filename = 'Certificate.png';
             if (name && name !== 'Student') {
-                filename = `${name.replace(/\s+/g, '_')}_Peripheral_Certificate.png`;
+                filename = `${name.replace(/\s+/g, '_')}_Certificate.png`;
             }
 
             const originalTransform = certEl.style.transform;
@@ -1501,13 +1121,12 @@
         }
 
         window.onload = () => {
-            // Draw static background for game preview
-            ctx.fillStyle = '#0f172a';
-            ctx.fillRect(0,0,canvas.width,canvas.height);
-            ctx.fillStyle = '#10b981';
-            ctx.font = '20px monospace';
-            ctx.textAlign = 'center';
-            ctx.fillText('PERIPHERAL SQUASH READY', canvas.width/2, canvas.height/2);
+            // Initial Draw for Game Canvas preview
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#374151";
+            ctx.fillRect(canvas.width - 15, 0, 15, canvas.height);
+            drawPaddle();
+            drawBall();
         }
     </script>
 </body>

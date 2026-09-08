@@ -47,8 +47,6 @@
             box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
             max-width: 100%;
             height: auto;
-            touch-action: none;
-            cursor: crosshair;
         }
         .game-btn { touch-action: manipulation; user-select: none; }
 
@@ -145,18 +143,15 @@
         @media (max-width: 768px) {
             #certificate { transform: scale(0.4); transform-origin: top left; margin-bottom: -490px; margin-right: -630px; }
         }
-        
-        .scenario-card { transition: all 0.2s; }
-        .scenario-card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col">
 
-    <nav class="bg-green-700 text-white shadow-lg sticky top-0 z-50">
+    <nav class="bg-green-700 text-white shadow-lg sticky top-0 z-50 no-print">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <div class="flex items-center space-x-3">
-                    <i class="fa-solid fa-network-wired text-2xl"></i>
+                    <i class="fa-solid fa-globe text-2xl"></i>
                     <span class="font-bold text-xl tracking-wider hidden sm:inline-block">Tech+ Unit 03 Section 2.7.1</span>
                     <span class="font-bold text-xl tracking-wider sm:hidden">2.7.1</span>
                 </div>
@@ -184,61 +179,38 @@
     <main class="flex-grow w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
         
         <!-- BRIEFING SECTION -->
-        <div id="briefing-section" class="tab-content active">
+        <div id="briefing-section" class="tab-content active no-print">
             <div class="text-center mb-10">
                 <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">Internet Service Types</h1>
-                <p class="text-lg text-gray-600 max-w-3xl mx-auto">Explore how broadband connections transmit data across the globe, and evaluate the equipment, speed, latency, availability, and trade-offs of each connection type.</p>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">Explore the various broadband internet connections available, how they function physically, and how to choose the right service based on a user's location, speed requirements, and budget.</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 
-                <!-- Tile 1: Fiber Optic -->
+                <!-- Tile 1 -->
                 <div class="bg-white rounded-xl shadow-md border-t-4 border-blue-500 overflow-hidden flex flex-col">
                     <div class="p-6 flex-grow">
-                        <h2 class="text-2xl font-bold mb-3 text-blue-700"><i class="fa-solid fa-gem mr-2"></i>Fiber Optic</h2>
+                        <h2 class="text-2xl font-bold mb-3 text-blue-700"><i class="fa-solid fa-network-wired mr-2"></i>Wired Broadband (Fiber & Cable)</h2>
                         <ul class="space-y-3 text-gray-700 mb-4">
-                            <li><strong>Technology:</strong> Transmits data as light signals through glass or plastic cores.</li>
-                            <li><strong>Speed:</strong> 100Mbps up to 25Gbps (Symmetrical).</li>
-                            <li><strong>Latency:</strong> Extremely low (10ms to 25ms).</li>
-                            <li><strong>Pros:</strong> Unmatched speed, high bandwidth, immune to electrical interference.</li>
+                            <li><strong>Fiber Optic:</strong> Transmits data via light signals through glass/plastic cores. Extremely fast, low latency, symmetrical speeds.</li>
+                            <li><strong>Cable Internet:</strong> Uses copper coaxial cables and DOCSIS standards. Wide availability, asymmetrical speeds, shared bandwidth.</li>
                         </ul>
                     </div>
                     <div class="bg-gray-50 border-t border-gray-100 p-4">
                         <div class="flex gap-4">
-                            <button onclick="openBriefing('fiber-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
-                            <button onclick="openBriefing('fiber-usecase')" class="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                            <button onclick="openBriefing('wired-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('wired-usecase')" class="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Tile 2: Cable Internet -->
-                <div class="bg-white rounded-xl shadow-md border-t-4 border-indigo-500 overflow-hidden flex flex-col">
-                    <div class="p-6 flex-grow">
-                        <h2 class="text-2xl font-bold mb-3 text-indigo-700"><i class="fa-solid fa-tv mr-2"></i>Cable Internet</h2>
-                        <ul class="space-y-3 text-gray-700 mb-4">
-                            <li><strong>Technology:</strong> Uses copper coaxial cables originally built for cable television.</li>
-                            <li><strong>Speed:</strong> 10Mbps up to 2Gbps (Asymmetrical).</li>
-                            <li><strong>Latency:</strong> Low to moderate (10ms to 50ms).</li>
-                            <li><strong>Pros:</strong> Widely available in urban/suburban zones, easy installation.</li>
-                        </ul>
-                    </div>
-                     <div class="bg-gray-50 border-t border-gray-100 p-4">
-                        <div class="flex gap-4">
-                            <button onclick="openBriefing('cable-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
-                            <button onclick="openBriefing('cable-usecase')" class="flex-1 bg-indigo-100 hover:bg-indigo-200 text-indigo-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Tile 3: DSL Internet -->
+                <!-- Tile 2 -->
                 <div class="bg-white rounded-xl shadow-md border-t-4 border-green-500 overflow-hidden flex flex-col">
                     <div class="p-6 flex-grow">
-                        <h2 class="text-2xl font-bold mb-3 text-green-700"><i class="fa-solid fa-phone mr-2"></i>DSL Internet</h2>
+                        <h2 class="text-2xl font-bold mb-3 text-green-700"><i class="fa-solid fa-phone-volume mr-2"></i>Telephone & Fixed Wireless (DSL & RF)</h2>
                         <ul class="space-y-3 text-gray-700 mb-4">
-                            <li><strong>Technology:</strong> Uses existing twisted-pair telephone lines for data transmission.</li>
-                            <li><strong>Speed:</strong> 5Mbps up to 30Mbps.</li>
-                            <li><strong>Latency:</strong> Moderate (20ms to 50ms).</li>
-                            <li><strong>Pros:</strong> Available anywhere there is a landline phone; affordable.</li>
+                            <li><strong>DSL:</strong> Digital Subscriber Line. Runs over existing copper telephone wires. Budget-friendly, highly distance-dependent.</li>
+                            <li><strong>RF (Radio Frequency):</strong> Fixed wireless using antennas. Requires line-of-sight to a base tower. Great for rural valleys.</li>
                         </ul>
                     </div>
                      <div class="bg-gray-50 border-t border-gray-100 p-4">
@@ -249,63 +221,39 @@
                     </div>
                 </div>
 
-                <!-- Tile 4: Radio Frequency (RF) -->
-                <div class="bg-white rounded-xl shadow-md border-t-4 border-yellow-500 overflow-hidden flex flex-col">
-                    <div class="p-6 flex-grow">
-                        <h2 class="text-2xl font-bold mb-3 text-yellow-700"><i class="fa-solid fa-tower-broadcast mr-2"></i>Radio Frequency (RF)</h2>
-                        <ul class="space-y-3 text-gray-700 mb-4">
-                            <li><strong>Technology:</strong> Fixed wireless using rooftop antennas communicating with base station towers.</li>
-                            <li><strong>Speed:</strong> 1Mbps up to 30Mbps.</li>
-                            <li><strong>Latency:</strong> Moderate (20ms to 60ms).</li>
-                            <li><strong>Pros:</strong> Delivers internet to remote rural areas without wired infrastructure.</li>
-                        </ul>
-                    </div>
-                    <div class="bg-gray-50 border-t border-gray-100 p-4">
-                        <div class="flex gap-4">
-                            <button onclick="openBriefing('rf-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
-                            <button onclick="openBriefing('rf-usecase')" class="flex-1 bg-yellow-100 hover:bg-yellow-200 text-yellow-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Tile 5: Satellite Internet -->
+                <!-- Tile 3 -->
                 <div class="bg-white rounded-xl shadow-md border-t-4 border-purple-500 overflow-hidden flex flex-col">
                     <div class="p-6 flex-grow">
-                        <h2 class="text-2xl font-bold mb-3 text-purple-700"><i class="fa-solid fa-satellite-dish mr-2"></i>Satellite Internet</h2>
+                        <h2 class="text-2xl font-bold mb-3 text-purple-700"><i class="fa-solid fa-satellite-dish mr-2"></i>Space & Cellular (Satellite & 5G)</h2>
                         <ul class="space-y-3 text-gray-700 mb-4">
-                            <li><strong>Technology:</strong> Communicates via orbiting satellites in space and local dishes.</li>
-                            <li><strong>Speed:</strong> 3Mbps up to 250Mbps.</li>
-                            <li><strong>Latency:</strong> High (100ms and over due to distance).</li>
-                            <li><strong>Pros:</strong> Global coverage, perfect for extremely remote or mountainous regions.</li>
+                            <li><strong>Satellite:</strong> Broadcasts globally from orbit. Excellent for extreme remote areas. Plagued by high latency and weather interference.</li>
+                            <li><strong>Cellular:</strong> Utilizes mobile network towers (4G/LTE/5G). Perfect for mobility and on-the-go access. Often features data limits.</li>
                         </ul>
                     </div>
-                    <div class="bg-gray-50 border-t border-gray-100 p-4">
+                     <div class="bg-gray-50 border-t border-gray-100 p-4">
                         <div class="flex gap-4">
-                            <button onclick="openBriefing('satellite-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
-                            <button onclick="openBriefing('satellite-usecase')" class="flex-1 bg-purple-100 hover:bg-purple-200 text-purple-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                            <button onclick="openBriefing('space-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('space-usecase')" class="flex-1 bg-purple-100 hover:bg-purple-200 text-purple-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Tile 6: Cellular Internet -->
-                <div class="bg-white rounded-xl shadow-md border-t-4 border-red-500 overflow-hidden flex flex-col">
+                <!-- Tile 4 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-orange-500 overflow-hidden flex flex-col">
                     <div class="p-6 flex-grow">
-                        <h2 class="text-2xl font-bold mb-3 text-red-700"><i class="fa-solid fa-signal mr-2"></i>Cellular Internet</h2>
+                        <h2 class="text-2xl font-bold mb-3 text-orange-700"><i class="fa-solid fa-gauge-high mr-2"></i>Crucial Performance Factors</h2>
                         <ul class="space-y-3 text-gray-700 mb-4">
-                            <li><strong>Technology:</strong> Transmits data over 4G, LTE, and 5G mobile network towers.</li>
-                            <li><strong>Speed:</strong> 40Mbps up to 300Mbps.</li>
-                            <li><strong>Latency:</strong> Low (1ms up to 30ms).</li>
-                            <li><strong>Pros:</strong> High mobility, works anywhere with cell reception, easy tethering.</li>
+                            <li><strong>Speed vs Latency:</strong> Speed dictates how much data flows per second (Bandwidth). Latency dictates the delay before the flow begins (Ping).</li>
+                            <li><strong>Considerations:</strong> Choosing the right ISP requires balancing Equipment needs, Coverage availability, and Cost/Data limits.</li>
                         </ul>
                     </div>
                     <div class="bg-gray-50 border-t border-gray-100 p-4">
                         <div class="flex gap-4">
-                            <button onclick="openBriefing('cellular-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
-                            <button onclick="openBriefing('cellular-usecase')" class="flex-1 bg-red-100 hover:bg-red-200 text-red-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                            <button onclick="openBriefing('factors-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('factors-usecase')" class="flex-1 bg-orange-100 hover:bg-orange-200 text-orange-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
                         </div>
                     </div>
                 </div>
-
             </div>
             
             <div class="mt-8 flex justify-center">
@@ -314,139 +262,74 @@
         </div>
 
         <!-- LAB ACTIVITY SECTION -->
-        <div id="activity-section" class="tab-content">
+        <div id="activity-section" class="tab-content no-print">
             <div class="text-center mb-8">
-                <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Interactive Lab Activities</h1>
-                <p class="text-gray-600">Test your mastery across 6 distinct interactive labs corresponding to each internet service type.</p>
+                <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Interactive Lab Activity</h1>
+                <p class="text-gray-600">Apply your knowledge of internet infrastructures and recommend the right ISP for specific scenarios.</p>
             </div>
 
-            <!-- Lab 1: Fiber Optic - Light Pulse & Connector Matching -->
+            <!-- Lab 1: Infrastructure Mapping -->
             <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
-                <h2 class="text-xl font-bold mb-4 text-blue-700"><i class="fa-solid fa-gem mr-2"></i>Lab 1: Fiber Optic Light Core & Connectors</h2>
-                <p class="text-sm text-gray-600 mb-4">Fiber optic cables rely on total internal reflection of light. Drag each term or connector to its correct description box below.</p>
+                <h2 class="text-xl font-bold mb-4 text-blue-700"><i class="fa-solid fa-network-wired mr-2"></i>Lab 1: Infrastructure Mapping</h2>
+                <p class="text-sm text-gray-600 mb-4">Drag and drop the physical medium or equipment to the correct Internet Service Type.</p>
                 
-                <div class="flex flex-wrap gap-3 mb-6" id="fiber-items">
-                    <div class="io-item px-4 py-2 bg-blue-100 border border-blue-300 rounded font-bold text-sm" draggable="true" data-fiber="cladding">Reflective Cladding (Acts like mirror)</div>
-                    <div class="io-item px-4 py-2 bg-blue-100 border border-blue-300 rounded font-bold text-sm" draggable="true" data-fiber="sc">Subscriber Connector (SC - Push/Pull)</div>
-                    <div class="io-item px-4 py-2 bg-blue-100 border border-blue-300 rounded font-bold text-sm" draggable="true" data-fiber="lc">Local Connector (LC - Small form factor with tab)</div>
-                    <div class="io-item px-4 py-2 bg-blue-100 border border-blue-300 rounded font-bold text-sm" draggable="true" data-fiber="ftth">FTTH (Direct to home/business)</div>
+                <div class="flex flex-wrap gap-3 mb-6" id="cat-items">
+                    <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold text-sm" draggable="true" data-type="fiber">Glass/Plastic Light Core</div>
+                    <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold text-sm" draggable="true" data-type="cable">Copper Coaxial Cable</div>
+                    <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold text-sm" draggable="true" data-type="dsl">Twisted Pair Telephone Wire</div>
+                    <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold text-sm" draggable="true" data-type="rf">Line-of-Sight Outdoor Antenna</div>
+                    <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold text-sm" draggable="true" data-type="sat">Orbiting Spacecraft & Dish</div>
+                    <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold text-sm" draggable="true" data-type="cell">Mobile Network Tower</div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div class="cat-dropzone border-2 border-dashed border-blue-400 bg-blue-50 rounded-lg p-3 min-h-[100px] flex flex-col items-center justify-center text-center" data-target="cladding">
-                        <span class="text-xs font-bold text-blue-800">Outer layer reflecting light signals inward</span>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <div class="cat-dropzone border-2 border-dashed border-blue-400 bg-blue-50 rounded-lg p-3 min-h-[100px] flex flex-col items-center" data-target="fiber">
+                        <h3 class="font-bold text-blue-800 mb-1 border-b border-blue-200 w-full text-center pb-1">Fiber Optic</h3>
                     </div>
-                    <div class="cat-dropzone border-2 border-dashed border-blue-400 bg-blue-50 rounded-lg p-3 min-h-[100px] flex flex-col items-center justify-center text-center" data-target="sc">
-                        <span class="text-xs font-bold text-blue-800">Push/pull simple insertion connector</span>
+                    <div class="cat-dropzone border-2 border-dashed border-gray-400 bg-gray-50 rounded-lg p-3 min-h-[100px] flex flex-col items-center" data-target="cable">
+                        <h3 class="font-bold text-gray-800 mb-1 border-b border-gray-200 w-full text-center pb-1">Cable Internet</h3>
                     </div>
-                    <div class="cat-dropzone border-2 border-dashed border-blue-400 bg-blue-50 rounded-lg p-3 min-h-[100px] flex flex-col items-center justify-center text-center" data-target="lc">
-                        <span class="text-xs font-bold text-blue-800">Tabbed small-form connector</span>
+                    <div class="cat-dropzone border-2 border-dashed border-green-400 bg-green-50 rounded-lg p-3 min-h-[100px] flex flex-col items-center" data-target="dsl">
+                        <h3 class="font-bold text-green-800 mb-1 border-b border-green-200 w-full text-center pb-1">DSL</h3>
                     </div>
-                    <div class="cat-dropzone border-2 border-dashed border-blue-400 bg-blue-50 rounded-lg p-3 min-h-[100px] flex flex-col items-center justify-center text-center" data-target="ftth">
-                        <span class="text-xs font-bold text-blue-800">Cables run straight from ISP data center</span>
+                    <div class="cat-dropzone border-2 border-dashed border-orange-400 bg-orange-50 rounded-lg p-3 min-h-[100px] flex flex-col items-center" data-target="rf">
+                        <h3 class="font-bold text-orange-800 mb-1 border-b border-orange-200 w-full text-center pb-1">RF (Fixed Wireless)</h3>
+                    </div>
+                    <div class="cat-dropzone border-2 border-dashed border-purple-400 bg-purple-50 rounded-lg p-3 min-h-[100px] flex flex-col items-center" data-target="sat">
+                        <h3 class="font-bold text-purple-800 mb-1 border-b border-purple-200 w-full text-center pb-1">Satellite</h3>
+                    </div>
+                    <div class="cat-dropzone border-2 border-dashed border-red-400 bg-red-50 rounded-lg p-3 min-h-[100px] flex flex-col items-center" data-target="cell">
+                        <h3 class="font-bold text-red-800 mb-1 border-b border-red-200 w-full text-center pb-1">Cellular</h3>
                     </div>
                 </div>
                 <div id="lab1-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
             </div>
 
-            <!-- Lab 2: Cable Internet - DOCSIS & Bandwidth Congestion Simulator -->
+            <!-- Lab 2: Scenario Matcher -->
             <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
-                <h2 class="text-xl font-bold mb-4 text-indigo-700"><i class="fa-solid fa-tv mr-2"></i>Lab 2: Cable Shared Bandwidth & Peak Hours</h2>
-                <p class="text-sm text-gray-600 mb-4">Cable internet uses shared coaxial bandwidth. Simulate peak neighborhood usage by clicking the active neighbors until speeds drop below threshold!</p>
+                <h2 class="text-xl font-bold mb-4 text-red-700"><i class="fa-solid fa-users-gear mr-2"></i>Lab 2: ISP Recommendation Engine</h2>
+                <p class="text-sm text-gray-600 mb-4">Read the client scenario on the left, then click the best Internet Service Type recommendation on the right.</p>
                 
-                <div class="bg-indigo-50 p-4 rounded-lg border border-indigo-200 mb-4 flex flex-col sm:flex-row justify-between items-center">
-                    <div>
-                        <div class="font-bold text-indigo-900">Current Neighborhood Load: <span id="cable-load" class="text-red-600 font-extrabold">1</span> Active Household</div>
-                        <div class="text-sm text-indigo-700">Calculated Download Speed: <span id="cable-speed" class="font-bold">1000 Mbps</span></div>
+                <div class="flex flex-col md:flex-row justify-around items-stretch gap-6">
+                    <div class="flex flex-col gap-3 flex-1">
+                        <button class="scenario-btn px-4 py-3 bg-gray-100 border-2 border-gray-300 rounded text-left hover:bg-red-50 text-sm font-semibold transition" data-match="fiber">"Jennifer works from home in the suburbs. She needs the absolute fastest, most reliable connection for HD video conferencing and uploading massive files."</button>
+                        <button class="scenario-btn px-4 py-3 bg-gray-100 border-2 border-gray-300 rounded text-left hover:bg-red-50 text-sm font-semibold transition" data-match="rf">"Liam lives in a rural valley without physical wires. Fortunately, his house has a clear line-of-sight to a telecommunications tower on a nearby hill."</button>
+                        <button class="scenario-btn px-4 py-3 bg-gray-100 border-2 border-gray-300 rounded text-left hover:bg-red-50 text-sm font-semibold transition" data-match="cable">"Maria lives in a downtown apartment. She wants an affordable, high-speed connection for streaming. She doesn't mind if speeds drop slightly during peak evening hours."</button>
+                        <button class="scenario-btn px-4 py-3 bg-gray-100 border-2 border-gray-300 rounded text-left hover:bg-red-50 text-sm font-semibold transition" data-match="sat">"Zeke lives completely off the grid in a remote mountain cabin. There are no wires, no cell service, and huge mountains block the line-of-sight to the nearest town."</button>
+                        <button class="scenario-btn px-4 py-3 bg-gray-100 border-2 border-gray-300 rounded text-left hover:bg-red-50 text-sm font-semibold transition" data-match="dsl">"Ellie lives in an older, small town. She is on a strict budget and only needs internet to check emails. Her house has standard telephone jacks."</button>
+                        <button class="scenario-btn px-4 py-3 bg-gray-100 border-2 border-gray-300 rounded text-left hover:bg-red-50 text-sm font-semibold transition" data-match="cell">"Nina travels across the country weekly for sales. She needs reliable internet on-the-go in various cities to download contracts and answer emails."</button>
                     </div>
-                    <button class="mt-3 sm:mt-0 bg-indigo-600 text-white px-4 py-2 rounded font-bold hover:bg-indigo-700 transition" onclick="simulateNeighbor()">Simulate Neighbor Joining</button>
-                </div>
-                <div id="lab2-feedback" class="text-center font-bold mt-2 h-6 text-indigo-800"></div>
-            </div>
-            
-            <!-- Lab 3: DSL Internet - Twisted Pair Frequency Separator -->
-            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
-                <h2 class="text-xl font-bold mb-4 text-green-700"><i class="fa-solid fa-phone mr-2"></i>Lab 3: DSL Frequency Band Splitter</h2>
-                <p class="text-sm text-gray-600 mb-4">DSL uses telephone lines while allowing simultaneous voice calls. Click the correct frequency filter to isolate Voice vs Data without interference.</p>
-                
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
-                    <div class="p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-green-500 transition" onclick="checkDSL('voice')">
-                        <i class="fa-solid fa-headset text-3xl text-gray-600 mb-2"></i>
-                        <h3 class="font-bold text-gray-800">Voice Band</h3>
-                        <p class="text-xs text-gray-500 mt-1">Lower frequency range for telephone calls</p>
-                    </div>
-                    <div class="p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-green-500 transition" onclick="checkDSL('data')">
-                        <i class="fa-solid fa-globe text-3xl text-blue-600 mb-2"></i>
-                        <h3 class="font-bold text-gray-800">Data Band (DSL)</h3>
-                        <p class="text-xs text-gray-500 mt-1">Higher frequency range for internet traffic</p>
-                    </div>
-                    <div class="p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-green-500 transition" onclick="checkDSL('twisted')">
-                        <i class="fa-solid fa-bolt text-3xl text-yellow-600 mb-2"></i>
-                        <h3 class="font-bold text-gray-800">Twisted-Pair Shielding</h3>
-                        <p class="text-xs text-gray-500 mt-1">Stops unwanted electrical interference</p>
+                    
+                    <div class="flex flex-col gap-3 flex-1 justify-center">
+                        <button class="tool-btn px-4 py-3 bg-white border-2 border-gray-300 rounded text-center hover:bg-gray-100 font-bold text-gray-700 shadow-sm transition" data-match="rf"><i class="fa-solid fa-broadcast-tower text-orange-500 mr-2"></i>Radio Frequency (RF)</button>
+                        <button class="tool-btn px-4 py-3 bg-white border-2 border-gray-300 rounded text-center hover:bg-gray-100 font-bold text-gray-700 shadow-sm transition" data-match="cable"><i class="fa-solid fa-tv text-gray-500 mr-2"></i>Cable Internet</button>
+                        <button class="tool-btn px-4 py-3 bg-white border-2 border-gray-300 rounded text-center hover:bg-gray-100 font-bold text-gray-700 shadow-sm transition" data-match="sat"><i class="fa-solid fa-satellite text-purple-500 mr-2"></i>Satellite</button>
+                        <button class="tool-btn px-4 py-3 bg-white border-2 border-gray-300 rounded text-center hover:bg-gray-100 font-bold text-gray-700 shadow-sm transition" data-match="cell"><i class="fa-solid fa-mobile-screen text-red-500 mr-2"></i>Cellular</button>
+                        <button class="tool-btn px-4 py-3 bg-white border-2 border-gray-300 rounded text-center hover:bg-gray-100 font-bold text-gray-700 shadow-sm transition" data-match="fiber"><i class="fa-solid fa-lightbulb text-blue-600 mr-2"></i>Fiber Optic</button>
+                        <button class="tool-btn px-4 py-3 bg-white border-2 border-gray-300 rounded text-center hover:bg-gray-100 font-bold text-gray-700 shadow-sm transition" data-match="dsl"><i class="fa-solid fa-phone text-green-600 mr-2"></i>DSL</button>
                     </div>
                 </div>
-                <div id="lab3-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
-            </div>
-            
-            <!-- Lab 4: RF Internet - Line-of-Sight Tower Alignment -->
-            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
-                <h2 class="text-xl font-bold mb-4 text-yellow-700"><i class="fa-solid fa-tower-broadcast mr-2"></i>Lab 4: RF Line-of-Sight Alignment</h2>
-                <p class="text-sm text-gray-600 mb-4">Radio Frequency internet requires a clear line-of-sight under 10 miles. Adjust the rooftop antenna angle to establish signal lock with the base station tower.</p>
-                
-                <div class="flex flex-col items-center">
-                    <div class="relative w-full max-w-md h-40 bg-gray-900 rounded-lg flex items-center justify-between px-8 overflow-hidden mb-4 border border-gray-700">
-                        <div class="text-yellow-400 text-center"><i class="fa-solid fa-tower-broadcast text-3xl"></i><div class="text-xs">Tower</div></div>
-                        <div id="rf-beam" class="absolute left-20 right-20 h-1 bg-red-500 transition-all duration-300"></div>
-                        <div class="text-green-400 text-center"><i class="fa-solid fa-house text-3xl"></i><div class="text-xs">Rooftop Antenna</div></div>
-                    </div>
-                    <div class="w-full max-w-md flex items-center gap-4">
-                        <span class="text-xs font-bold">0°</span>
-                        <input type="range" id="rf-slider" min="0" max="100" value="25" class="w-full accent-yellow-600" oninput="updateRF(this.value)">
-                        <span class="text-xs font-bold">100°</span>
-                    </div>
-                </div>
-                <div id="lab4-feedback" class="text-center font-bold mt-4 h-6 text-yellow-700">Adjust slider to 75° for exact line-of-sight alignment.</div>
-            </div>
-
-            <!-- Lab 5: Satellite Internet - Dish Elevation & Latency Challenge -->
-            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
-                <h2 class="text-xl font-bold mb-4 text-purple-700"><i class="fa-solid fa-satellite-dish mr-2"></i>Lab 5: Satellite Latency & Dish Pointing</h2>
-                <p class="text-sm text-gray-600 mb-4">Satellite signals travel thousands of miles to space and back, resulting in high latency. Align the satellite dish to achieve signal lock.</p>
-                
-                <div class="flex flex-col sm:flex-row justify-center items-center gap-6">
-                    <div class="text-center">
-                        <div class="text-5xl text-purple-600 mb-2"><i class="fa-solid fa-satellite"></i></div>
-                        <p class="text-xs text-gray-500 font-mono">Orbiting 22,236 miles up</p>
-                    </div>
-                    <div class="flex flex-col items-center">
-                        <button id="dish-btn" class="bg-purple-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-purple-700 shadow transition" onclick="alignSatellite()">Align Satellite Dish</button>
-                        <div id="satellite-status" class="mt-3 text-sm font-bold text-gray-700">Status: Unaligned (High Latency / No Signal)</div>
-                    </div>
-                </div>
-                <div id="lab5-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
-            </div>
-
-            <!-- Lab 6: Cellular Internet - 4G/5G Tower Handoff Simulator -->
-            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
-                <h2 class="text-xl font-bold mb-4 text-red-700"><i class="fa-solid signal mr-2"></i>Lab 6: Cellular 5G Tower Handoff</h2>
-                <p class="text-sm text-gray-600 mb-4">Mobile devices switch between cell towers as users move. Click the closest cell tower to maintain seamless 5G connectivity without signal drop.</p>
-                
-                <div class="grid grid-cols-3 gap-4 text-center mb-4">
-                    <div class="p-4 bg-gray-100 rounded-lg border cursor-pointer hover:bg-red-50 transition" onclick="checkCell('tower1')">
-                        <i class="fa-solid fa-tower-broadcast text-2xl text-gray-500 mb-1"></i>
-                        <div class="font-bold text-sm">Tower A (Distant)</div>
-                    </div>
-                    <div class="p-4 bg-gray-100 rounded-lg border cursor-pointer hover:bg-red-50 transition" onclick="checkCell('tower2')">
-                        <i class="fa-solid fa-tower-broadcast text-2xl text-red-600 mb-1"></i>
-                        <div class="font-bold text-sm">Tower B (Closest 5G)</div>
-                    </div>
-                    <div class="p-4 bg-gray-100 rounded-lg border cursor-pointer hover:bg-red-50 transition" onclick="checkCell('tower3')">
-                        <i class="fa-solid fa-tower-broadcast text-2xl text-gray-500 mb-1"></i>
-                        <div class="font-bold text-sm">Tower C (Obstructed)</div>
-                    </div>
-                </div>
-                <div id="lab6-feedback" class="text-center font-bold mt-4 h-6 text-red-600"></div>
+                <div id="lab2-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
             </div>
 
             <div class="text-center">
@@ -455,7 +338,7 @@
         </div>
 
         <!-- QUIZ SECTION -->
-        <div id="quiz-section" class="tab-content">
+        <div id="quiz-section" class="tab-content no-print">
             <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-xl max-w-4xl mx-auto">
                 <div class="text-center mb-8 border-b pb-4">
                     <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Unit 03 Section 2.7.1 Mastery Quiz</h1>
@@ -473,38 +356,40 @@
             </div>
         </div>
 
-        <!-- RETRO GAME SECTION: Data Packet Crossing (Frogger Clone) -->
-        <div id="game-section" class="tab-content">
+        <!-- RETRO GAME SECTION -->
+        <div id="game-section" class="tab-content no-print">
             <div class="bg-gray-900 p-6 sm:p-8 rounded-2xl shadow-xl max-w-4xl mx-auto border-4 border-gray-700 flex flex-col items-center">
                 <div class="text-center mb-4 w-full">
                     <h1 class="text-3xl font-extrabold text-green-400 mb-2 tracking-widest uppercase" style="font-family: monospace;">Data Packet Crossing</h1>
-                    <p class="text-gray-300 text-sm">Guide your Data Packet (<span class="text-green-400 font-bold">🟩 PKT</span>) across busy network traffic lanes to reach the Destination Server! Avoid destructive interference packets (<span class="text-red-400 font-bold">🟥</span>) and hop across reliable carrier logs.</p>
+                    <p class="text-gray-300 text-sm">You are the Green Data Packet. Navigate through the heavy network traffic (red blocks) to reach the server at the top. Use the Arrow Keys (or buttons) to move.</p>
                 </div>
                 
-                <div class="flex justify-between items-center w-full max-w-[600px] mb-2 px-4 text-white font-mono text-xl">
-                    <div>Packets Delivered: <span id="game-score" class="text-green-400 font-bold">0</span></div>
+                <div class="flex justify-between items-center w-full max-w-[400px] sm:max-w-[500px] mb-2 px-4 text-white font-mono text-xl">
+                    <div>Score: <span id="game-score" class="text-green-400 font-bold">0</span></div>
                     <div>Lives: <span id="game-lives" class="text-red-400 font-bold">3</span></div>
                 </div>
 
                 <div class="relative flex justify-center w-full">
-                    <canvas id="game-canvas" width="600" height="450" class="w-full max-w-[600px] bg-gray-900 border-2 border-green-600 rounded shadow-lg"></canvas>
+                    <!-- Game Canvas -->
+                    <canvas id="game-canvas" width="400" height="400" class="w-full max-w-[400px] sm:max-w-[500px]"></canvas>
                     
-                    <div id="game-overlay" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-80 rounded-lg max-w-[600px] mx-auto z-10">
-                        <button id="start-game-btn" class="bg-green-600 hover:bg-green-500 text-white font-bold font-mono py-3 px-6 rounded-lg text-xl border-4 border-green-800 uppercase transform transition hover:scale-105">Launch Packet (Start)</button>
+                    <!-- Overlay Start Button -->
+                    <div id="game-overlay" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-70 rounded-lg max-w-[400px] sm:max-w-[500px] mx-auto z-10">
+                        <button id="start-game-btn" class="bg-green-600 hover:bg-green-500 text-white font-bold font-mono py-3 px-6 rounded-lg text-xl border-4 border-green-800 uppercase transform transition hover:scale-105">Initialize Connection (Start)</button>
                     </div>
                 </div>
 
-                <!-- On-Screen Controls for Mobile / Touch -->
-                <div class="grid grid-cols-3 gap-2 mt-4 w-48 sm:hidden">
+                <!-- Mobile Controls -->
+                <div class="grid grid-cols-3 gap-2 w-48 mt-6 sm:hidden">
                     <div></div>
-                    <button class="game-btn bg-gray-700 hover:bg-gray-600 text-white p-3 rounded font-bold" onclick="movePlayer('up')"><i class="fa-solid fa-arrow-up"></i></button>
+                    <button class="game-btn bg-gray-700 text-white rounded p-4 active:bg-gray-500" id="btn-up"><i class="fa-solid fa-arrow-up"></i></button>
                     <div></div>
-                    <button class="game-btn bg-gray-700 hover:bg-gray-600 text-white p-3 rounded font-bold" onclick="movePlayer('left')"><i class="fa-solid fa-arrow-left"></i></button>
-                    <button class="game-btn bg-gray-700 hover:bg-gray-600 text-white p-3 rounded font-bold" onclick="movePlayer('down')"><i class="fa-solid fa-arrow-down"></i></button>
-                    <button class="game-btn bg-gray-700 hover:bg-gray-600 text-white p-3 rounded font-bold" onclick="movePlayer('right')"><i class="fa-solid fa-arrow-right"></i></button>
+                    <button class="game-btn bg-gray-700 text-white rounded p-4 active:bg-gray-500" id="btn-left"><i class="fa-solid fa-arrow-left"></i></button>
+                    <button class="game-btn bg-gray-700 text-white rounded p-4 active:bg-gray-500" id="btn-down"><i class="fa-solid fa-arrow-down"></i></button>
+                    <button class="game-btn bg-gray-700 text-white rounded p-4 active:bg-gray-500" id="btn-right"><i class="fa-solid fa-arrow-right"></i></button>
                 </div>
 
-                <div class="mt-6 text-center w-full border-t border-gray-700 pt-4">
+                <div class="mt-8 text-center w-full border-t border-gray-700 pt-6">
                     <button onclick="switchTab('cert')" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">View Certificate <i class="fa-solid fa-award ml-2"></i></button>
                 </div>
             </div>
@@ -514,9 +399,10 @@
         <div id="cert-section" class="tab-content">
             <div class="max-w-5xl mx-auto">
                 
-                <div class="bg-white p-6 rounded shadow mb-6 text-center border border-gray-200">
+                <!-- Controls -->
+                <div class="bg-white p-6 rounded shadow mb-6 no-print text-center border border-gray-200">
                     <h2 class="text-2xl font-bold text-green-600 mb-2">🎉 Congratulations! 🎉</h2>
-                    <p class="text-gray-700 mb-4">You have achieved mastery of Unit 03 Section 2.7.1 - Internet Service Types.</p>
+                    <p class="text-gray-700 mb-4">You have achieved mastery of Internet Service Types.</p>
                     <div class="flex flex-col md:flex-row justify-center items-center gap-4">
                         <input type="text" id="student-name-input" value="Student" placeholder="Enter your first name" class="border-2 border-gray-300 rounded px-4 py-2 w-full md:w-64 focus:border-green-500 focus:outline-none">
                         <button onclick="updateCertName()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">Update Name</button>
@@ -526,7 +412,8 @@
                     </div>
                 </div>
 
-                <div class="cert-preview-container">
+                <!-- Certificate Render Container -->
+                <div class="cert-preview-container print:p-0 print:bg-white">
                     <div id="certificate">
                         <div class="gold-seal">
                             <div class="gold-seal-inner-1">
@@ -556,7 +443,7 @@
                                 Has successfully completed the assessment for 
                                 <strong class="text-[1.8rem] text-[#1e3a8a] block mt-4 mb-2 font-serif">Cyber.org Tech+ Unit 03 Section 2.7.1</strong>
                                 <strong class="text-[1.5rem] text-black block mb-4 font-serif italic">Internet Service Types</strong>
-                                <span class="text-[1.1rem] text-gray-700 leading-snug block">Demonstrating comprehensive proficiency in evaluating broadband connection types (Fiber, Cable, DSL, RF, Satellite, Cellular), analyzing equipment, speeds, latency, and matching user scenarios.</span>
+                                <span class="text-[1.1rem] text-gray-700 leading-snug block">Demonstrating proficiency in comparing broadband connections including Fiber, Cable, DSL, RF, Satellite, and Cellular, and evaluating internet capabilities based on speed, latency, equipment, and environmental scenarios.</span>
                             </p>
                             
                             <div class="flex justify-end gap-16 items-end mt-auto mb-[60px] w-full pr-8">
@@ -613,311 +500,129 @@
     </div>
 
     <script>
-        // --- Extensive Briefing Content Data (Min 7 Paragraphs + Use Cases + Images) ---
+        // --- Expanded Briefing Content Data (Min 5 Paragraphs per detail) ---
         const briefingData = {
-            'fiber-details': {
-                title: 'Fiber Optic Internet Technology',
-                icon: '<i class="fa-solid fa-gem text-blue-600"></i>',
+            'wired-details': {
+                title: 'Wired Broadband (Fiber & Cable): Detailed Breakdown',
+                icon: '<i class="fa-solid fa-network-wired text-blue-600"></i>',
                 html: `
-                    <p class="mb-5">Fiber optic internet represents the pinnacle of modern broadband data transmission, utilizing microscopic strands of pure glass or plastic rather than traditional copper metal wires to carry digital signals across vast distances at unprecedented speeds.</p>
+                    <p class="mb-5"><strong>Broadband Internet</strong> is the overarching term for high-speed internet connections that allow multiple devices to remain connected simultaneously while data flows quickly and smoothly. Unlike the dial-up connections of the 1990s, broadband connections are "always-on." Within the broadband family, wired connections provide the most stable, reliable, and fastest physical infrastructure available to consumers and businesses today.</p>
                     
-                    <p class="mb-5">At the core of fiber optic technology is total internal reflection. The central core of the glass fiber is surrounded by a specialized layer of reflective cladding. When laser pulses enter the core, they bounce continuously off the cladding mirrors without escaping, traveling miles with negligible signal degradation.</p>
+                    <p class="mb-5"><strong>Fiber Optic Internet</strong> is widely considered the absolute gold standard of internet connectivity. Instead of transmitting data using electrical signals over copper wires, fiber optics transmit data as rapid pulses of light. The cables themselves are constructed with a central core of incredibly pure, clear plastic or glass, surrounded by a layer of reflective cladding that acts like a mirror, bouncing the light down the cable. Because light is not affected by electromagnetic interference, fiber optic connections are incredibly stable, even over massive geographical distances.</p>
                     
-                    <p class="mb-5">Unlike older copper mediums that suffer from severe electrical resistance and electromagnetic interference (EMI) from power lines, fiber optic light signals are completely immune to electrical noise, lightning storms, and high-voltage power lines running nearby.</p>
+                    <p class="mb-5">One of the most significant advantages of Fiber Optic Internet is that it often provides <em>symmetrical speeds</em>. This means your upload speed (sending data to the internet) is exactly as fast as your download speed (pulling data from the internet). Symmetrical speeds are essential for modern workflows that require heavy cloud computing, uploading massive video files, or hosting high-definition video conferences. The primary drawbacks of fiber are its high installation costs and lack of availability; deploying new fiber infrastructure is expensive, meaning it is often restricted to urban and heavily populated suburban areas.</p>
                     
-                    <p class="mb-5">Fiber optic connections provide true symmetrical speeds, meaning your upload speed can match your download speed (reaching anywhere from 100Mbps up to 25Gbps). This is a massive advantage for remote workers uploading 4K video files or participating in heavy video conferencing.</p>
+                    <p class="mb-5"><strong>Cable Internet</strong> is another incredibly common wired broadband solution. It utilizes the massive, pre-existing network of coaxial cables originally laid underground to deliver cable television. These copper-based coaxial cables transmit data through electrical signals. To differentiate internet data from television signals, Cable Internet utilizes the DOCSIS (Data Over Cable Service Interface Specification) standard. A user requires a cable modem to convert the incoming radio frequency (RF) signals from the coaxial line into digital data that a router can distribute to home devices.</p>
                     
-                    <p class="mb-5">Deployment architectures vary between Fiber-to-the-Home (FTTH), where dedicated glass lines run directly into a residence, and Fiber-to-the-Curb (FTTC), where fiber terminates at a neighborhood street cabinet before connecting via high-speed VDSL copper drops.</p>
-                    
-                    <p class="mb-5">Physical connectors are critical for fiber installations. The Subscriber Connector (SC) utilizes a simple push/pull locking design, while the Local Connector (LC) is a compact, space-saving small-form-factor connector secured with a retaining tab.</p>
-                    
-                    <p>Despite offering the lowest latency (10ms to 25ms) and highest bandwidth available, the primary trade-offs of fiber optic internet are higher installation costs and limited availability in rural or remote geographic regions.</p>
+                    <p class="mb-5">While Cable Internet is widely available and relatively fast (capable of reaching gigabit download speeds), it possesses two distinct disadvantages compared to fiber. First, cable internet typically provides <em>asymmetrical speeds</em>, meaning upload speeds are intentionally throttled to be significantly slower than download speeds. Second, cable internet utilizes a <em>shared bandwidth</em> model. Your internet connection is shared with your physical neighbors on the same network node; consequently, during peak evening usage hours when everyone is streaming movies, cable users frequently experience network congestion and noticeable speed drops.</p>
                 `
             },
-            'fiber-usecase': {
-                title: 'Fiber Optic: Use Cases',
+            'wired-usecase': {
+                title: 'Wired Broadband: Practical Use Cases',
                 icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
                 html: `
                     <div class="mb-8">
-                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 1: Remote Work & Cloud Storage</h4>
-                        <p class="mb-2">Professionals working from home uploading multi-gigabyte engineering schematics or video footage require symmetrical speeds and minimal latency.</p>
-                        <ul class="list-disc pl-5 mb-4 text-gray-700">
-                            <li class="mb-2"><strong>Example 1:</strong> A video editor uploading a 50GB 4K movie project to AWS cloud storage in under two minutes using symmetrical gigabit fiber upload speeds.</li>
-                            <li><strong>Example 2:</strong> A corporate executive participating in an uninterrupted 4K video conference with zero packet loss or lag spikes.</li>
-                        </ul>
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Use Case 1: The Remote Content Creator (Fiber Optic)</h4>
+                        <img src="https://placehold.co/800x250/e0f2fe/0369a1?text=Symmetrical+Fiber+Connection" alt="Fiber connection showing equal up and down arrows" class="w-full h-auto rounded-lg mb-4 shadow-sm border border-gray-200">
+                        <p>Jennifer operates a freelance video editing business from her suburban home. She routinely downloads raw 4K video files from clients, edits them, and uploads the final massive files back to cloud storage servers. Because her work relies heavily on uploading, she specifically chooses <strong>Fiber Optic Internet</strong>. The symmetrical speeds (e.g., 1000 Mbps Down / 1000 Mbps Up) ensure that sending a 50GB file to a client takes minutes rather than hours, drastically improving her business efficiency.</p>
                     </div>
                     <div class="mb-8">
-                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 2: Smart Healthcare & Hospitals</h4>
-                        <p class="mb-2">Medical facilities transmitting high-resolution MRI scans and hosting real-time remote robotic surgeries require absolute reliability and zero latency.</p>
-                        <ul class="list-disc pl-5 mb-4 text-gray-700">
-                            <li class="mb-2"><strong>Example 1:</strong> Streaming live 8K surgical camera feeds to specialist consultants across the globe instantly.</li>
-                            <li><strong>Example 2:</strong> Synchronizing massive electronic health record databases across multiple hospital campuses instantly.</li>
-                        </ul>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                        <div>
-                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Fiber Optic Glass Cores</p>
-                            <img src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=600&h=350" alt="Glowing fiber optic cables" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
-                        </div>
-                        <div>
-                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: High-Speed Data Center</p>
-                            <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=600&h=350" alt="Data center server racks with fiber connections" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
-                        </div>
-                    </div>
-                `
-            },
-            'cable-details': {
-                title: 'Cable Internet Technology',
-                icon: '<i class="fa-solid fa-tv text-indigo-600"></i>',
-                html: `
-                    <p class="mb-5">Cable internet is currently the most widespread broadband connection type in urban and suburban households, leveraging the existing coaxial cable television infrastructure originally built to deliver television channels.</p>
-                    
-                    <p class="mb-5">Coaxial cables are constructed with a copper-based core wrapped in insulating dielectric material and a braided metal shield that protects electrical signals from external interference.</p>
-                    
-                    <p class="mb-5">Data transmission over cable networks complies with the Data Over Cable Service Interface Specification (DOCSIS) standard, which enables high-speed digital data to travel alongside TV broadcast signals on the same physical line.</p>
-                    
-                    <p class="mb-5">Speeds typically range from 10Mbps up to 2Gbps depending on neighborhood infrastructure and DOCSIS tier, with asymmetrical performance offering much faster download speeds than upload speeds.</p>
-                    
-                    <p class="mb-5">Equipment requirements include a coaxial wall cable, a cable modem to modulate RF signals into digital Ethernet packets, and a Wi-Fi router for home device distribution.</p>
-                    
-                    <p class="mb-5">A key characteristic of cable internet is shared bandwidth. Entire neighborhoods share a common trunk line, meaning speeds can experience congestion during peak evening hours when neighbors stream movies simultaneously.</p>
-                    
-                    <p>Despite shared bandwidth fluctuations, cable internet remains immensely popular due to its ubiquitous availability and straightforward installation for homes already wired for cable TV.</p>
-                `
-            },
-            'cable-usecase': {
-                title: 'Cable Internet: Use Cases',
-                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
-                html: `
-                    <div class="mb-8">
-                        <h4 class="text-xl font-bold text-indigo-800 mb-2 border-b-2 border-indigo-200 pb-1">Case 1: Urban Family Streaming & Gaming</h4>
-                        <p class="mb-2">Suburban households with multiple family members streaming 4K movies and playing online multiplayer games concurrently.</p>
-                        <ul class="list-disc pl-5 mb-4 text-gray-700">
-                            <li class="mb-2"><strong>Example 1:</strong> Streaming Netflix in 4K on the living room smart TV while teenagers play competitive online multiplayer games on their PCs.</li>
-                            <li><strong>Example 2:</strong> Quick downloading of 80GB video game titles over 500Mbps downstream cable connections.</li>
-                        </ul>
-                    </div>
-                    <div class="mb-8">
-                        <h4 class="text-xl font-bold text-indigo-800 mb-2 border-b-2 border-indigo-200 pb-1">Case 2: Small Business POS & Browsing</h4>
-                        <p class="mb-2">Local retail shops needing reliable broadband for credit card point-of-sale terminals and guest Wi-Fi access.</p>
-                        <ul class="list-disc pl-5 mb-4 text-gray-700">
-                            <li class="mb-2"><strong>Example 1:</strong> Processing instant credit card transactions through secure cloud terminals.</li>
-                            <li><strong>Example 2:</strong> Providing secure customer guest Wi-Fi in a coffee shop using standard coaxial cable modems.</li>
-                        </ul>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                        <div>
-                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Coaxial Copper Cables</p>
-                            <img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=600&h=350" alt="Coaxial cables and network gear" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
-                        </div>
-                        <div>
-                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Modern Home Entertainment</p>
-                            <img src="https://images.unsplash.com/photo-1593784991095-a205069470b6?auto=format&fit=crop&w=600&h=350" alt="Smart TV streaming entertainment" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
-                        </div>
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Use Case 2: The Urban Family Apartment (Cable)</h4>
+                        <img src="https://placehold.co/800x250/e0f2fe/0369a1?text=Coaxial+Cable+Splitter" alt="Coaxial cable splitting into TV and Modem" class="w-full h-auto rounded-lg mb-4 shadow-sm border border-gray-200">
+                        <p>Maria lives in a downtown apartment building that was wired for cable television decades ago. She wants an affordable internet plan primarily for casual web surfing and streaming Netflix. Since she rarely uploads large files, she chooses <strong>Cable Internet</strong>. It is cheap, already wired into her wall, and provides excellent download speeds. She accepts the trade-off that on Friday nights, her stream might occasionally buffer due to neighborhood network congestion.</p>
                     </div>
                 `
             },
             'dsl-details': {
-                title: 'DSL Internet Technology',
-                icon: '<i class="fa-solid fa-phone text-green-600"></i>',
+                title: 'Telephone & Fixed Wireless (DSL & RF)',
+                icon: '<i class="fa-solid fa-phone-volume text-green-600"></i>',
                 html: `
-                    <p class="mb-5">Digital Subscriber Line (DSL) internet utilizes existing twisted-pair copper telephone lines to transmit high-frequency digital data simultaneously alongside traditional analog voice phone calls.</p>
+                    <p class="mb-5">Not every location has access to high-end fiber or robust cable infrastructure. In many older towns or sprawling areas, internet service must be delivered over legacy systems or through the air. <strong>Digital Subscriber Line (DSL)</strong> is a technology that provides internet access by transmitting digital data over the existing copper wires of a local telephone network. Because telephone lines were laid globally over the last century, DSL has a massive availability footprint, even in places where modern cables have not yet reached.</p>
                     
-                    <p class="mb-5">DSL separates voice and data signals using specific frequency bands. High frequencies handle internet data packets, while lower frequencies handle voice conversations, allowing simultaneous phone use without internet drops.</p>
+                    <p class="mb-5">DSL functions by separating the voice and data signals into completely different frequency bands on the same copper wire. This allows a user to make a traditional telephone call while simultaneously browsing the internet. DSL comes in several variations. ADSL (Asymmetric DSL) is the most common for homes, offering faster downloads than uploads. SDSL (Symmetric DSL) offers balanced speeds for small businesses. VDSL (Very high bit-rate DSL) provides significantly faster speeds but only works over extremely short physical distances.</p>
                     
-                    <p class="mb-5">Common variants include Asymmetric DSL (ADSL) optimized for residential download speeds, Symmetric DSL (SDSL) providing equal upload/download speeds for businesses, and Very high bit-rate DSL (VDSL) delivering higher speeds over short copper distances.</p>
+                    <p class="mb-5">The most critical limitation of DSL is signal degradation over distance. The physical copper telephone wires are highly susceptible to electrical resistance. The further a user's house is from the ISP's central switching office, the weaker the signal becomes, and the slower their internet speed will be. If a house is more than a few miles from the central office, DSL may not function at all. Overall, DSL offers lower top speeds than cable or fiber but provides a cheap, dedicated line (no neighborhood sharing) for basic web browsing.</p>
                     
-                    <p class="mb-5">Speeds typically range from 5Mbps up to 30Mbps, making it suitable for basic web browsing, social media, and music streaming on a budget.</p>
+                    <p class="mb-5">When physical wires of any kind (cable, fiber, or telephone) are impossible to run due to difficult terrain or extreme cost, <strong>Radio Frequency (RF) Internet</strong> (also known as Fixed Wireless) becomes a viable solution. RF internet uses a specific radio frequency band to transmit data through the air from a central base station tower directly to a receiver antenna mounted on the outside of the user's home or business.</p>
                     
-                    <p class="mb-5">Equipment required includes a telephone line wall jack, a DSL microfilter, a DSL modem, and a Wi-Fi router.</p>
-                    
-                    <p class="mb-5">A major limitation of DSL is distance attenuation: signal quality and speed degrade significantly the farther your home is located from the telephone company's central switching exchange office.</p>
-                    
-                    <p>Despite slower speeds compared to fiber and cable, DSL remains widely available in rural and remote towns where phone infrastructure predates cable television wiring.</p>
+                    <p class="mb-5">The major requirement for RF internet is a strict <em>line-of-sight</em>. The receiver antenna on the user's roof must have an unobstructed physical view of the ISP's broadcast tower, typically within a 10-mile radius. If a large building, a dense forest, or a mountain sits between the house and the tower, the radio waves will be blocked, and the service will fail. While faster to deploy than laying physical cables, RF speeds can be heavily affected by severe weather conditions like heavy rain or dense fog, which can scatter the radio waves.</p>
                 `
             },
             'dsl-usecase': {
-                title: 'DSL Internet: Use Cases',
+                title: 'DSL & RF: Practical Use Cases',
                 icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
                 html: `
                     <div class="mb-8">
-                        <h4 class="text-xl font-bold text-green-800 mb-2 border-b-2 border-green-200 pb-1">Case 1: Budget-Conscious Rural Browsing</h4>
-                        <p class="mb-2">Users in small towns with limited budgets who only require basic web browsing and email checks.</p>
-                        <ul class="list-disc pl-5 mb-4 text-gray-700">
-                            <li class="mb-2"><strong>Example 1:</strong> Checking email and reading online news portals on a fixed monthly budget.</li>
-                            <li><strong>Example 2:</strong> Streaming online radio stations and music playlists without heavy video bandwidth demands.</li>
-                        </ul>
+                        <h4 class="text-xl font-bold text-green-800 mb-2 border-b-2 border-green-200 pb-1">Use Case 1: The Budget Setup in a Small Town (DSL)</h4>
+                        <img src="https://placehold.co/800x250/dcfce7/166534?text=Telephone+Line+to+Modem" alt="Telephone line connecting to a DSL Modem" class="w-full h-auto rounded-lg mb-4 shadow-sm border border-gray-200">
+                        <p>Ellie lives in a small, historic town with an aging infrastructure. She is on a strict budget and only uses the internet to check emails and read news articles. Her older home already has RJ-11 telephone jacks in the wall. She opts for <strong>DSL Internet</strong>. While the 15 Mbps speed is slow compared to modern standards, it is incredibly cost-effective, perfectly suited to her minimal needs, and utilizes the wiring that already exists in her walls.</p>
                     </div>
                     <div class="mb-8">
-                        <h4 class="text-xl font-bold text-green-800 mb-2 border-b-2 border-green-200 pb-1">Case 2: Small Office Landline Integration</h4>
-                        <p class="mb-2">Small rural offices utilizing traditional telephone copper lines for combined voice communications and modest internet access.</p>
-                        <ul class="list-disc pl-5 mb-4 text-gray-700">
-                            <li class="mb-2"><strong>Example 1:</strong> Operating office VoIP phones and credit card verification terminals over standard telephone lines.</li>
-                            <li><strong>Example 2:</strong> Submitting daily electronic tax forms and checking invoices.</li>
-                        </ul>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                        <div>
-                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Twisted Copper Wire Pairs</p>
-                            <img src="https://images.unsplash.com/photo-1558346490-a72e53ae2d4f?auto=format&fit=crop&w=600&h=350" alt="Copper telephone wiring" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
-                        </div>
-                        <div>
-                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Small Office Administration</p>
-                            <img src="https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=600&h=350" alt="Office workspace representing basic internet needs" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
-                        </div>
+                        <h4 class="text-xl font-bold text-green-800 mb-2 border-b-2 border-green-200 pb-1">Use Case 2: The Rural Valley Farm (RF / Fixed Wireless)</h4>
+                        <img src="https://placehold.co/800x250/dcfce7/166534?text=Line-of-Sight+Antenna+to+Tower" alt="House antenna pointing to a distant radio tower" class="w-full h-auto rounded-lg mb-4 shadow-sm border border-gray-200">
+                        <p>Liam lives on a farm in a rural valley. Running miles of fiber or cable down the dirt roads to his house is financially impossible for local ISPs. However, there is a large telecommunications tower on a tall hill three miles away, and Liam can clearly see it from his roof. The ISP installs a small directional antenna on Liam's roof pointing exactly at the tower, providing him with <strong>RF Internet</strong>. This gives him broadband speeds fast enough for video calls, overcoming the lack of physical wired infrastructure.</p>
                     </div>
                 `
             },
-            'rf-details': {
-                title: 'Radio Frequency (RF) Internet Technology',
-                icon: '<i class="fa-solid fa-tower-broadcast text-yellow-600"></i>',
-                html: `
-                    <p class="mb-5">Radio Frequency (RF) internet, also known as fixed wireless internet, transmits high-speed data using radio waves through the open air between a provider base station tower and a fixed rooftop receiver antenna.</p>
-                    
-                    <p class="mb-5">Service providers mount powerful transceivers on tall towers, hills, or water tanks. A specialized outdoor antenna is installed on the subscriber's home or business, connected via cable to an indoor modem and router.</p>
-                    
-                    <p class="mb-5">Speeds typically range from 1Mbps up to 30Mbps with latencies between 20ms and 60ms, providing a viable broadband alternative where digging trenches for physical cables is impossible.</p>
-                    
-                    <p class="mb-5">A strict requirement for RF internet is clear line-of-sight. The rooftop antenna must be within approximately 10 miles of the base station without major obstructions like mountains, dense forests, or skyscrapers blocking the signal path.</p>
-                    
-                    <p class="mb-5">Outdoor antennas are engineered to withstand severe weather, including heavy snowstorms, high winds, and torrential downpours.</p>
-                    
-                    <p class="mb-5">Deployment is significantly faster than laying physical fiber or cable through difficult rural terrain, making it a favorite for rural Internet Service Providers (ISPs).</p>
-                    
-                    <p>Trade-offs include vulnerability to severe environmental obstructions, distance degradation, and variable speeds based on atmospheric conditions.</p>
-                `
-            },
-            'rf-usecase': {
-                title: 'Radio Frequency (RF): Use Cases',
-                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
-                html: `
-                    <div class="mb-8">
-                        <h4 class="text-xl font-bold text-yellow-800 mb-2 border-b-2 border-yellow-200 pb-1">Case 1: Rural Valley Remote Work</h4>
-                        <p class="mb-2">Residents living in rural valleys with no wired infrastructure but possessing direct line-of-sight to a nearby cellular/wireless hilltop tower.</p>
-                        <ul class="list-disc pl-5 mb-4 text-gray-700">
-                            <li class="mb-2"><strong>Example 1:</strong> A remote accountant working from a rural farmhouse holding video meetings via fixed wireless RF antennas.</li>
-                            <li><strong>Example 2:</strong> Streaming movies and browsing web content where cable companies refuse to run lines.</li>
-                        </ul>
-                    </div>
-                    <div class="mb-8">
-                        <h4 class="text-xl font-bold text-yellow-800 mb-2 border-b-2 border-yellow-200 pb-1">Case 2: Agricultural Farm Automation</h4>
-                        <p class="mb-2">Large agricultural farms connecting remote barns, automated irrigation systems, and livestock monitoring sensors across expansive fields.</p>
-                        <ul class="list-disc pl-5 mb-4 text-gray-700">
-                            <li class="mb-2"><strong>Example 1:</strong> Transmitting real-time soil moisture sensor data from remote fields back to the farm headquarters.</li>
-                            <li><strong>Example 2:</strong> Monitoring livestock security camera feeds wirelessly across distant acreage.</li>
-                        </ul>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                        <div>
-                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Fixed Wireless Base Towers</p>
-                            <img src="https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=600&h=350" alt="Communication tower representing RF wireless" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
-                        </div>
-                        <div>
-                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Rural Farmhouse Connectivity</p>
-                            <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=600&h=350" alt="Rural landscape representing fixed wireless coverage" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
-                        </div>
-                    </div>
-                `
-            },
-            'satellite-details': {
-                title: 'Satellite Internet Technology',
+            'space-details': {
+                title: 'Space & Cellular (Satellite & 5G)',
                 icon: '<i class="fa-solid fa-satellite-dish text-purple-600"></i>',
                 html: `
-                    <p class="mb-5">Satellite internet provides global broadband connectivity by bouncing radio signals between orbiting spacecraft in space and ground-based satellite dishes mounted on homes or businesses.</p>
+                    <p class="mb-5">When terrain is so extreme that even line-of-sight towers cannot be built, technology must look to the sky. <strong>Satellite Internet</strong> provides global coverage by bouncing data signals off satellites orbiting the Earth. A user installs a small satellite dish on their property, which communicates with a satellite in space, which in turn communicates with a massive ground station connected to the core internet backbone.</p>
                     
-                    <p class="mb-5">Traditional geostationary (GEO) satellites orbit approximately 22,236 miles above Earth, while newer Low Earth Orbit (LEO) constellations orbit much closer (around 300 to 1,000 miles) to reduce signal delay.</p>
+                    <p class="mb-5">The greatest strength of Satellite Internet is its absolute ubiquity; as long as the dish has a clear view of the open sky, it can receive internet in the middle of a desert, on a boat in the ocean, or in an isolated mountain cabin. However, this method comes with two massive drawbacks. The first is "weather fade." Heavy rain, snowstorms, or thick cloud cover can physically block the signals traveling to and from space, causing the internet to drop completely during bad weather.</p>
                     
-                    <p class="mb-5">Equipment requirements include an outdoor satellite dish precisely aimed at the orbital path, connected to a satellite modem and home Wi-Fi router.</p>
+                    <p class="mb-5">The second major drawback of traditional satellite internet is extreme latency. Traditional geostationary satellites orbit roughly 22,000 miles above the Earth. A data packet must travel 22,000 miles up, 22,000 miles down to the ISP, 22,000 miles back up, and 22,000 miles back to the user. This incredible physical distance creates a noticeable delay (often 500ms or higher). While fine for loading a webpage, this high latency makes real-time activities like competitive gaming or fast-paced video conferencing nearly impossible. (Note: Newer Low Earth Orbit (LEO) systems like Starlink orbit much closer, significantly reducing this latency issue).</p>
                     
-                    <p class="mb-5">Speeds range from 3Mbps up to 250Mbps, making high-speed broadband accessible in the most isolated regions on Earth where cables and towers cannot reach.</p>
+                    <p class="mb-5">For users who demand extreme mobility rather than fixed locations, <strong>Cellular Internet</strong> is the answer. Cellular internet utilizes the exact same mobile network towers that handle smartphone calls to transmit digital data using 4G LTE or 5G radio waves. While most commonly accessed directly on a mobile phone, users can also purchase dedicated cellular modems or portable "hotspots" that convert the cellular signal into a standard Wi-Fi network for laptops and tablets.</p>
                     
-                    <p class="mb-5">The primary drawback of satellite internet is high latency (often 100ms and above) because data must travel tens of thousands of miles up into space and back down to earth.</p>
-                    
-                    <p class="mb-5">Environmental conditions such as heavy thunderstorms, blizzards, dense snow accumulation on the dish, and heavy cloud cover can cause signal attenuation or temporary rain fade.</p>
-                    
-                    <p>Despite latency challenges, satellite internet is the ultimate lifeline for maritime vessels, remote desert outposts, scientific research stations, and mountainous rural communities.</p>
+                    <p class="mb-5">Cellular internet is incredibly versatile, allowing a traveling worker to have high-speed broadband on a train, in a hotel, or in a coffee shop without relying on insecure public Wi-Fi. The expansion of 5G networks has brought cellular speeds into direct competition with home cable internet. However, cellular plans are notorious for enforcing strict <em>data limits</em>. If a user downloads too many large files, the cellular provider will often severely throttle their speed or charge massive overage fees, making it less ideal as a primary home connection for heavy users.</p>
                 `
             },
-            'satellite-usecase': {
-                title: 'Satellite Internet: Use Cases',
+            'space-usecase': {
+                title: 'Space & Cellular: Practical Use Cases',
                 icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
                 html: `
                     <div class="mb-8">
-                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Case 1: Mountain Cabin Online Classes</h4>
-                        <p class="mb-2">Students residing in remote mountainous areas with zero wired infrastructure and no cell tower visibility attending virtual school sessions.</p>
-                        <ul class="list-disc pl-5 mb-4 text-gray-700">
-                            <li class="mb-2"><strong>Example 1:</strong> Participating in live Zoom classroom lectures from an isolated mountain cabin using satellite dishes.</li>
-                            <li><strong>Example 2:</strong> Downloading educational homework packets and submitting assignments online.</li>
-                        </ul>
+                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Use Case 1: The Off-Grid Mountain Cabin (Satellite)</h4>
+                        <img src="https://placehold.co/800x250/f3e8ff/6b21a8?text=Satellite+Dish+pointing+to+Orbit" alt="Cabin with satellite dish pointing to space" class="w-full h-auto rounded-lg mb-4 shadow-sm border border-gray-200">
+                        <p>Zeke lives entirely off the grid in a cabin surrounded by massive mountain peaks. There are no cables, no phone lines, no cell towers, and the mountains block line-of-sight to the nearest town. His only possible option for internet is <strong>Satellite</strong>. He mounts a dish on his roof pointing straight up to the open sky. He accepts the trade-off that heavy snowstorms will knock out his connection and the high latency makes fast-paced gaming impossible, but it provides vital connectivity where nothing else can.</p>
                     </div>
                     <div class="mb-8">
-                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Case 2: Maritime & Offshore Operations</h4>
-                        <p class="mb-2">Commercial cargo ships, oil drilling rigs, and wilderness expedition teams requiring reliable global communication.</p>
-                        <ul class="list-disc pl-5 mb-4 text-gray-700">
-                            <li class="mb-2"><strong>Example 1:</strong> Transmitting cargo manifests and navigation telemetry from ships in the middle of the Pacific Ocean.</li>
-                            <li><strong>Example 2:</strong> Enabling emergency satellite SOS communications for wilderness rescue teams.</li>
-                        </ul>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                        <div>
-                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Space Satellite Constellation</p>
-                            <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=600&h=350" alt="Satellite orbiting Earth in space" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
-                        </div>
-                        <div>
-                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Remote Mountain Dish Setup</p>
-                            <img src="https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=600&h=350" alt="Remote mountain landscape representing satellite coverage" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
-                        </div>
+                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Use Case 2: The Traveling Salesperson (Cellular)</h4>
+                        <img src="https://placehold.co/800x250/f3e8ff/6b21a8?text=Mobile+Hotspot+Broadcasting+Wi-Fi" alt="Smartphone acting as a mobile hotspot" class="w-full h-auto rounded-lg mb-4 shadow-sm border border-gray-200">
+                        <p>Nina travels constantly, visiting clients in a different city every three days. She needs a secure, fast connection to submit sensitive sales contracts from her laptop, regardless of whether she is in a rental car, a hotel, or an airport. She purchases a 5G <strong>Cellular Mobile Hotspot</strong>. This small battery-powered device pulls in a cellular signal from nearby towers and broadcasts a private Wi-Fi network for her laptop. She must carefully monitor her usage to avoid hitting her 50GB monthly data limit.</p>
                     </div>
                 `
             },
-            'cellular-details': {
-                title: 'Cellular Internet Technology',
-                icon: '<i class="fa-solid fa-signal text-red-600"></i>',
+            'factors-details': {
+                title: 'Crucial Performance Factors',
+                icon: '<i class="fa-solid fa-gauge-high text-orange-600"></i>',
                 html: `
-                    <p class="mb-5">Cellular internet transmits high-speed digital data wirelessly over mobile cellular network infrastructures, including 4G LTE and modern 5G networks, using radio frequency waves.</p>
+                    <p class="mb-5">When evaluating an internet connection, users often incorrectly assume that "speed" is the only metric that matters. In reality, evaluating an internet service requires understanding the complex interplay between five critical factors: Speed, Latency, Equipment, Availability, and Cost/Data limits. A connection that excels in one area may fail miserably in another.</p>
                     
-                    <p class="mb-5">Mobile devices feature built-in cellular modems, while home fixed-wireless cellular setups use a dedicated 5G gateway router equipped with SIM cards to receive local cell tower signals.</p>
+                    <p class="mb-5"><strong>Speed</strong> (or Bandwidth) refers to the volume of data that can be transmitted over the connection in a given amount of time, typically measured in Megabits per second (Mbps). Think of bandwidth as the width of a highway; a wider highway allows more cars to travel side-by-side. High speed is crucial for downloading massive video game updates quickly or streaming 4K video to four different televisions in a house simultaneously without buffering.</p>
                     
-                    <p class="mb-5">Cell towers provide broadcast coverage ranging from several hundred feet in dense urban centers up to 5 miles in suburban/rural zones, supporting rapid data transmission rates.</p>
+                    <p class="mb-5"><strong>Latency</strong> (or Ping) is entirely different. It refers to the physical time delay between a user initiating a request (clicking a link or pressing a button) and the data actually arriving at the server and returning. Latency is measured in milliseconds (ms). Even if you have a massive 1000 Mbps "fast" connection, if your latency is 600ms (like satellite internet), your video calls will have a noticeable, frustrating delay, and competitive multiplayer games will be unplayable. For real-time interaction, low latency is just as important as high speed.</p>
                     
-                    <p class="mb-5">Speeds typically range from 40Mbps up to 300Mbps+ with very low latency (1ms to 30ms), rivaling traditional home broadband connections.</p>
+                    <p class="mb-5">The <strong>Equipment</strong> required also varies drastically between services. Cable requires a DOCSIS modem, Fiber requires an Optical Network Terminal (ONT), and RF requires an outdoor directional antenna. Often, ISPs rent this equipment to users for a monthly fee, though tech-savvy users can sometimes purchase their own compatible modems to save money. Regardless of the modem type, a Router is almost always required afterward to take the single internet connection and split it (via Wi-Fi or Ethernet) to all the devices in the home.</p>
                     
-                    <p class="mb-5">The standout advantage of cellular internet is absolute mobility, allowing users to stay connected on-the-go via smartphones, tablets, and portable hotspots while traveling.</p>
-                    
-                    <p class="mb-5">Trade-offs include potential monthly data caps or throttling limits after high usage thresholds, as well as signal interference caused by heavy concrete buildings, metal structures, and dense foliage.</p>
-                    
-                    <p>As 5G tower deployment expands globally, cellular internet is increasingly adopted as a primary high-speed home broadband solution in suburban and regional markets.</p>
+                    <p class="mb-5">Finally, <strong>Availability</strong> and <strong>Cost/Data Limits</strong> are the ultimate deciding factors. Fiber optic might be the best technology on earth, but if the infrastructure hasn't been physically buried in your neighborhood, you cannot buy it. When comparing available services, users must read the fine print regarding Data Caps. Many cellular and satellite providers impose strict limits (e.g., 100GB per month). Once that limit is reached, the ISP will intentionally throttle the connection down to dial-up speeds until the next billing cycle, ruining the user experience.</p>
                 `
             },
-            'cellular-usecase': {
-                title: 'Cellular Internet: Use Cases',
+            'factors-usecase': {
+                title: 'Performance Factors: Practical Use Cases',
                 icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
                 html: `
                     <div class="mb-8">
-                        <h4 class="text-xl font-bold text-red-800 mb-2 border-b-2 border-red-200 pb-1">Case 1: Frequent Traveler Remote Work</h4>
-                        <p class="mb-2">Mobile professionals traveling constantly for business staying productive from hotels, airports, and client sites without trusting public Wi-Fi.</p>
-                        <ul class="list-disc pl-5 mb-4 text-gray-700">
-                            <li class="mb-2"><strong>Example 1:</strong> Using smartphone 5G hotspot tethering to join client video conferences from an airport terminal.</li>
-                            <li><strong>Example 2:</strong> Accessing secure corporate VPNs from hotel rooms using cellular USB dongles.</li>
-                        </ul>
+                        <h4 class="text-xl font-bold text-orange-800 mb-2 border-b-2 border-orange-200 pb-1">Use Case 1: The Impact of Latency on Gaming</h4>
+                        <img src="https://placehold.co/800x250/ffedd5/c2410c?text=Low+Latency+vs+High+Latency" alt="Comparison showing fast ping vs slow ping" class="w-full h-auto rounded-lg mb-4 shadow-sm border border-gray-200">
+                        <p>Two gamers are playing a competitive online shooter. Gamer A has a basic 25 Mbps DSL connection with a latency of 15ms. Gamer B has a massive 250 Mbps Satellite connection with a latency of 600ms. Despite Gamer B having 10 times the "speed" (bandwidth), Gamer A will win every firefight because their physical actions (button presses) reach the game server nearly instantly, whereas Gamer B suffers from a massive half-second delay on every action.</p>
                     </div>
                     <div class="mb-8">
-                        <h4 class="text-xl font-bold text-red-800 mb-2 border-b-2 border-red-200 pb-1">Case 2: Emergency Response Mobile Command</h4>
-                        <p class="mb-2">First responders establishing instant high-speed communication networks at disaster sites where wired infrastructure is destroyed.</p>
-                        <ul class="list-disc pl-5 mb-4 text-gray-700">
-                            <li class="mb-2"><strong>Example 1:</strong> Deploying 5G cellular command vehicles during natural disasters to coordinate rescue teams.</li>
-                            <li><strong>Example 2:</strong> Streaming live drone surveillance video back to emergency management headquarters.</li>
-                        </ul>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                        <div>
-                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: 5G Cellular Towers</p>
-                            <img src="https://images.unsplash.com/photo-1563770660941-20978e870e26?auto=format&fit=crop&w=600&h=350" alt="Cell tower antenna array" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
-                        </div>
-                        <div>
-                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Mobile Productivity</p>
-                            <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=600&h=350" alt="Mobile device working on the go" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
-                        </div>
+                        <h4 class="text-xl font-bold text-orange-800 mb-2 border-b-2 border-orange-200 pb-1">Use Case 2: The Danger of Data Caps</h4>
+                        <img src="https://placehold.co/800x250/ffedd5/c2410c?text=Data+Limit+Warning:+95%25+Used" alt="Data limit warning graphic" class="w-full h-auto rounded-lg mb-4 shadow-sm border border-gray-200">
+                        <p>A family moves to a rural area and chooses a 5G Cellular Home Internet plan because it advertises fast 150 Mbps speeds. However, they fail to read the contract details. The plan has a hard data cap of 50GB per month. After one week of the family streaming Netflix in 4K resolution, they consume all 50GB of data. For the remaining three weeks of the month, the provider severely throttles their speed down to 1 Mbps, making it impossible to watch videos or work efficiently.</p>
                     </div>
                 `
             }
@@ -986,129 +691,120 @@
             document.getElementById('custom-modal').classList.add('hidden');
         }
 
-        // --- LAB 1: Fiber Optic Drag & Drop ---
-        let draggedFiberItem = null;
-        let lab1Count = 0;
+        let draggedCatItem = null;
 
-        document.querySelectorAll('#fiber-items .io-item').forEach(item => {
+        document.querySelectorAll('.io-item').forEach(item => {
             item.addEventListener('dragstart', function() {
-                draggedFiberItem = this;
+                draggedCatItem = this;
                 setTimeout(() => this.classList.add('opacity-50'), 0);
             });
             item.addEventListener('dragend', function() {
                 setTimeout(() => this.classList.remove('opacity-50'), 0);
-                draggedFiberItem = null;
+                draggedCatItem = null;
             });
         });
 
-        document.querySelectorAll('#activity-section .cat-dropzone').forEach(zone => {
+        document.querySelectorAll('.cat-dropzone').forEach(zone => {
             zone.addEventListener('dragover', e => e.preventDefault());
+            zone.addEventListener('dragenter', function(e) { e.preventDefault(); this.classList.add('brightness-95'); });
+            zone.addEventListener('dragleave', function() { this.classList.remove('brightness-95'); });
             zone.addEventListener('drop', function() {
-                if(draggedFiberItem) {
-                    if(draggedFiberItem.dataset.fiber === this.dataset.target) {
-                        this.appendChild(draggedFiberItem);
-                        draggedFiberItem.classList.remove('bg-blue-100', 'cursor-grab');
-                        draggedFiberItem.classList.add('bg-green-100', 'text-green-800', 'cursor-default', 'mt-2', 'w-[90%]');
-                        draggedFiberItem.setAttribute('draggable', 'false');
-                        lab1Count++;
-                        document.getElementById('lab1-feedback').innerText = "Correct Fiber Match!";
-                        if(lab1Count === 4) {
-                            setTimeout(() => showModal('Lab 1 Complete!', 'You successfully matched all fiber optic components and architecture terms.', 'success'), 500);
+                this.classList.remove('brightness-95');
+                if(draggedCatItem) {
+                    if(draggedCatItem.dataset.type === this.dataset.target) {
+                        this.appendChild(draggedCatItem);
+                        draggedCatItem.classList.remove('bg-indigo-100', 'cursor-grab');
+                        draggedCatItem.classList.add('bg-green-100', 'text-green-800', 'cursor-default', 'mt-2', 'w-[90%]');
+                        draggedCatItem.setAttribute('draggable', 'false');
+                        
+                        document.getElementById('lab1-feedback').innerText = "Correct Mapping!";
+                        document.getElementById('lab1-feedback').className = "text-center font-bold mt-4 h-6 text-green-600";
+                        
+                        if(document.getElementById('cat-items').children.length === 0) {
+                            setTimeout(() => showModal('Excellent!', 'You successfully mapped all the physical infrastructure mediums to their service types!', 'success'), 500);
                         }
                     } else {
-                        document.getElementById('lab1-feedback').innerText = "Incorrect match. Review fiber characteristics.";
+                        document.getElementById('lab1-feedback').innerText = "Incorrect medium. Consider the physical traits of the connection.";
                         document.getElementById('lab1-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
                     }
                 }
             });
         });
 
-        // --- LAB 2: Cable Shared Bandwidth Simulator ---
-        let cableLoads = 1;
-        function simulateNeighbor() {
-            cableLoads++;
-            document.getElementById('cable-load').innerText = cableLoads;
-            let speed = Math.max(50, 1000 - (cableLoads - 1) * 120);
-            document.getElementById('cable-speed').innerText = speed + " Mbps";
-            if(cableLoads >= 5) {
-                document.getElementById('lab2-feedback').innerText = "Congestion Alert! Speeds dropped due to shared neighborhood coaxial bandwidth.";
-                showModal('Lab 2 Complete!', 'You simulated how cable bandwidth congestion impacts user speeds during peak hours.', 'success');
+        let selectedScenario = null;
+        let selectedTool = null;
+        let lab2Matches = 0;
+
+        document.querySelectorAll('.scenario-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if(this.classList.contains('matched')) return;
+                document.querySelectorAll('.scenario-btn').forEach(b => b.classList.remove('ring-4', 'ring-red-300', 'bg-red-50'));
+                this.classList.add('ring-4', 'ring-red-300', 'bg-red-50');
+                selectedScenario = this;
+                checkMatch2();
+            });
+        });
+
+        document.querySelectorAll('.tool-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if(this.classList.contains('matched')) return;
+                document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('ring-4', 'ring-red-300', 'bg-gray-100'));
+                this.classList.add('ring-4', 'ring-red-300', 'bg-gray-100');
+                selectedTool = this;
+                checkMatch2();
+            });
+        });
+
+        function checkMatch2() {
+            if(selectedScenario && selectedTool) {
+                if(selectedScenario.dataset.match === selectedTool.dataset.match) {
+                    selectedScenario.classList.add('matched', 'bg-green-100', 'text-green-800', 'border-green-500');
+                    selectedScenario.classList.remove('ring-4', 'ring-red-300');
+                    selectedTool.classList.add('matched', 'bg-green-100', 'text-green-800', 'border-green-500');
+                    selectedTool.classList.remove('ring-4', 'ring-red-300');
+                    
+                    document.getElementById('lab2-feedback').innerText = "Correct Recommendation!";
+                    document.getElementById('lab2-feedback').className = "text-center font-bold mt-4 h-6 text-green-600";
+                    lab2Matches++;
+                    
+                    if(lab2Matches === 6) {
+                        setTimeout(() => showModal('Great Job!', 'You properly analyzed user needs and recommended the correct ISP solutions.', 'success'), 500);
+                    }
+                } else {
+                    document.getElementById('lab2-feedback').innerText = "Incorrect recommendation. Re-read the user constraints carefully.";
+                    document.getElementById('lab2-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
+                    selectedScenario.classList.remove('ring-4', 'ring-red-300', 'bg-red-50');
+                    selectedTool.classList.remove('ring-4', 'ring-red-300', 'bg-gray-100');
+                }
+                selectedScenario = null;
+                selectedTool = null;
             }
         }
 
-        // --- LAB 3: DSL Frequency Splitter ---
-        function checkDSL(type) {
-            if(type === 'data' || type === 'twisted') {
-                document.getElementById('lab3-feedback').innerText = "Correct! DSL uses high-frequency bands for data and twisted-pair shielding to stop interference.";
-                showModal('Lab 3 Complete!', 'You correctly identified DSL data frequency handling.', 'success');
-            } else {
-                document.getElementById('lab3-feedback').innerText = "Incorrect. Voice band is for phone calls; choose the Data or Shielding option.";
-                document.getElementById('lab3-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
-            }
-        }
-
-        // --- LAB 4: RF Line-of-Sight Slider ---
-        function updateRF(val) {
-            let v = parseInt(val);
-            let beam = document.getElementById('rf-beam');
-            if(v >= 70 && v <= 80) {
-                beam.style.backgroundColor = '#10b981';
-                document.getElementById('lab4-feedback').innerText = "Signal Lock Achieved! Clear Line-of-Sight established.";
-                document.getElementById('lab4-feedback').className = "text-center font-bold mt-4 h-6 text-green-600";
-                setTimeout(() => showModal('Lab 4 Complete!', 'You successfully aligned the RF fixed wireless antenna with the base station tower.', 'success'), 500);
-            } else {
-                beam.style.backgroundColor = '#ef4444';
-                document.getElementById('lab4-feedback').innerText = `Current angle ${v}°: No signal lock. Adjust to 75°.`;
-            }
-        }
-
-        // --- LAB 5: Satellite Dish Alignment ---
-        let satelliteAligned = false;
-        function alignSatellite() {
-            satelliteAligned = true;
-            document.getElementById('satellite-status').innerText = "Status: Aligned! Signal Locked (High Latency ~600ms)";
-            document.getElementById('satellite-status').className = "mt-3 text-sm font-bold text-green-600";
-            document.getElementById('lab5-feedback').innerText = "Satellite dish aligned successfully!";
-            setTimeout(() => showModal('Lab 5 Complete!', 'You successfully locked onto the orbiting satellite dish.', 'success'), 500);
-        }
-
-        // --- LAB 6: Cellular Tower Handoff ---
-        function checkCell(tower) {
-            if(tower === 'tower2') {
-                document.getElementById('lab6-feedback').innerText = "Seamless 5G Handoff Successful! Optimal signal strength maintained.";
-                showModal('Lab 6 Complete!', 'You successfully executed a cell tower handoff.', 'success');
-            } else {
-                document.getElementById('lab6-feedback').innerText = "Dropped Signal! The selected tower is either too distant or obstructed.";
-                document.getElementById('lab6-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
-            }
-        }
-
-
-        // --- QUIZ LOGIC (20 Questions: 10 official + 10 extended) ---
         const quizData = [
-            // 10 Official Questions from 2.7.1 Quiz Answers
+            // Original 10 Questions from Document
             { q: "Which internet service typically provides the fastest speeds and lowest latency?", options: ["Satellite", "Cellular", "Fiber Optic", "DSL"], answer: 2 },
             { q: "What equipment do you usually need for a Cable internet connection?", options: ["Coaxial cables, router, and modem", "Telephone lines, router, and modem", "Mobile device and cell tower", "Satellite dish, router, and modem"], answer: 0 },
-            { q: "Which type of internet relies on radio frequency and requires a clear line of sight to a tower?", options: ["Satellite", "Cable", "Fiber Optic", "RF"], answer: 3 },
-            { q: "What is a common drawback of satellite internet?", options: ["Requires cables", "High latency", "Low latency", "Only in Urban areas"], answer: 1 },
-            { q: "Which of the following internet services are most likely available in a remote rural area with no wired infrastructure? (Select all that apply - choose best primary match)", options: ["Satellite", "Cable", "DSL", "Fiber Optic"], answer: 0 },
-            { q: "Which factor describes the delay between sending a request and receiving a response on the internet?", options: ["Coverage", "Speed", "Latency", "Bandwidth"], answer: 2 },
-            { q: "DSL internet is delivered over:", options: ["Cellular towers", "Cable TV lines", "Telephone lines", "Satellite signals"], answer: 2 },
-            { q: "Which service types can be affected by weather conditions such as heavy rain or snow?", options: ["Fiber Optic", "DSL", "Cable", "Satellite"], answer: 3 },
-            { q: "Which wireless service uses antennas mounted on rooftops to connect to a provider’s tower?", options: ["RF", "Satellite", "DSL", "Cellular"], answer: 0 },
-            { q: "Which common broadband service can deliver nearly equal download and upload speeds?", options: ["Cable", "Fiber Optic", "Satellite", "Cellular"], answer: 1 },
+            { q: "Which type of internet relies on radio frequency and requires a clear line of sight to a tower?", options: ["Satellite", "Cable", "Fiber Optic", "RF (Fixed Wireless)"], answer: 3 },
+            { q: "What is a common drawback of satellite internet?", options: ["Requires physical cables to be buried", "High latency (delay)", "Low latency", "Only available in urban areas"], answer: 1 },
+            { q: "Which internet service is MOST likely to be recommended in a remote rural area with mountains, no wired infrastructure, and no line-of-sight to towers?", options: ["Satellite", "Cable", "Fiber Optic", "DSL"], answer: 0 },
+            { q: "Which factor describes the delay between sending a request and receiving a response on the internet?", options: ["Coverage", "Speed / Bandwidth", "Latency", "Data limit"], answer: 2 },
+            { q: "DSL internet is delivered physically over:", options: ["Cellular towers", "Cable TV coaxial lines", "Copper telephone lines", "Satellite signals"], answer: 2 },
+            { q: "Which service type is most severely affected by weather conditions such as heavy rain or snow?", options: ["Fiber Optic", "DSL", "Cable", "Satellite"], answer: 3 },
+            { q: "Which wireless service utilizes directional antennas mounted on rooftops to connect to a provider's base station tower up to 10 miles away?", options: ["RF (Fixed Wireless)", "Satellite", "DSL", "Cellular"], answer: 0 },
+            { q: "Which common broadband service is renowned for delivering symmetrical (nearly equal) download and upload speeds?", options: ["Cable", "Fiber Optic", "Satellite", "Cellular"], answer: 1 },
             
-            // 10 Extended Questions based on Briefing Details
-            { q: "What is the primary physical medium used to transmit data in fiber optic internet?", options: ["Copper coaxial wire", "Twisted copper telephone pairs", "Glass or plastic light cores", "Radio frequency waves"], answer: 2 },
-            { q: "What standard protocol governs data transmission over cable television coaxial networks?", options: ["DOCSIS", "TCP/IP", "Bluetooth", "VDSL"], answer: 0 },
-            { q: "Which fiber connector uses a push/pull locking mechanism?", options: ["Local Connector (LC)", "Subscriber Connector (SC)", "Coaxial F-type", "RJ-45"], answer: 1 },
-            { q: "What is the primary advantage of FTTH (Fiber-to-the-Home) over FTTC?", options: ["Uses old telephone lines", "Runs dedicated glass straight to the residence without copper bottlenecks", "Requires satellite dishes", "Cheaper installation cost"], answer: 1 },
-            { q: "Why does DSL internet experience speed degradation over distance?", options: ["Satellite interference", "Copper wire signal attenuation from the central office exchange", "Atmospheric rain fade", "Shared neighborhood congestion"], answer: 1 },
-            { q: "What is the typical maximum reliable distance for RF fixed wireless line-of-sight connections?", options: ["22,236 miles", "10 miles", "500 feet", "Unlimited"], answer: 1 },
-            { q: "Why does satellite internet suffer from high latency (100ms+)?", options: ["Because of copper wire resistance", "Because data must travel tens of thousands of miles to space and back", "Because of local Wi-Fi router limits", "Because of cell tower handoffs"], answer: 1 },
-            { q: "What cellular network generations are currently utilized for high-speed mobile internet?", options: ["1G and 2G analog", "4G LTE and 5G", "Dial-up ISDN", "Satellite GEO"], answer: 1 },
-            { q: "What is a major trade-off of cellular home internet compared to wired fiber?", options: ["Monthly data caps or throttling limits", "Requires physical telephone lines", "High latency over 500ms", "Requires a satellite dish on the roof"], answer: 0 },
-            { q: "What phenomenon causes cable internet speeds to drop during peak evening hours?", options: ["Rain fade", "Shared neighborhood bandwidth congestion", "Satellite orbit shift", "Twisted pair distance limitations"], answer: 1 }
+            // 10 Additional Rigorous Questions
+            { q: "What does the DOCSIS standard primarily apply to?", options: ["Transmitting data over light pulses in Fiber Optic", "Routing data over space via Satellites", "Transmitting digital data over copper coaxial cables for Cable Internet", "Managing voice calls over DSL"], answer: 2 },
+            { q: "Why do Cable Internet users frequently experience noticeable speed drops during peak evening hours?", options: ["The physical cables expand when they get hot.", "Because Cable Internet utilizes a shared bandwidth model for the neighborhood.", "Because the line-of-sight to the tower is blocked at night.", "Because DOCSIS turns off at night."], answer: 1 },
+            { q: "What physical property ensures that Fiber Optic connections are not affected by electromagnetic interference from nearby power lines?", options: ["They use incredibly thick copper shielding.", "They transmit data using light signals through glass, rather than electrical signals.", "They operate in outer space.", "They utilize 5G radio frequencies."], answer: 1 },
+            { q: "What is a primary disadvantage of Cellular 5G home internet compared to a wired Fiber connection?", options: ["It requires laying cables in your yard.", "It only works on Apple devices.", "It often comes with strict data usage caps and potential throttling.", "It has higher latency than Satellite."], answer: 2 },
+            { q: "Which variation of DSL provides significantly faster speeds but only works over extremely short physical distances from the ISP central office?", options: ["ADSL", "SDSL", "VDSL", "Dial-Up"], answer: 2 },
+            { q: "A traveling salesperson needs internet on a moving train. Which service type is the only viable option?", options: ["RF (Fixed Wireless)", "DSL", "Cellular", "Cable"], answer: 3 },
+            { q: "Which acronym describes the process of running a fiber optic cable all the way directly into a user's residence, rather than stopping at a street cabinet?", options: ["FTTC", "DOCSIS", "ADSL", "FTTH"], answer: 3 },
+            { q: "Why is a traditional Geostationary Satellite connection terrible for competitive, fast-paced video gaming?", options: ["The data limit is too small to download the game.", "The signal cannot carry video data.", "The data must travel roughly 44,000 miles round-trip to space, causing massive latency delay.", "It provides asymmetrical speeds."], answer: 2 },
+            { q: "In the context of internet speed, what does 'asymmetrical' mean?", options: ["The connection drops frequently.", "The download speed is significantly faster than the upload speed.", "The connection is shared with neighbors.", "The cable has a twisted pair of copper wires inside."], answer: 1 },
+            { q: "Which term accurately describes the width of the digital 'highway' (how much volume of data can flow per second)?", options: ["Latency", "Ping", "Bandwidth", "Line-of-Sight"], answer: 2 }
         ];
 
         const quizContainer = document.getElementById('quiz-container');
@@ -1171,7 +867,7 @@
             
             const percentage = (score / quizData.length) * 100;
             
-            if(score >= 18) { // 90%
+            if(score >= 18) { 
                 const navGame = document.getElementById('nav-game');
                 const navGameMobile = document.getElementById('nav-game-mobile');
                 
@@ -1202,7 +898,6 @@
             }
         }
 
-        // --- RETRO GAME LOGIC: Data Packet Crossing (Frogger Clone) ---
         const canvas = document.getElementById('game-canvas');
         const ctx = canvas.getContext('2d');
         
@@ -1211,79 +906,88 @@
         let gameRunning = false;
         let animationId;
         
-        let player = { x: 275, y: 410, size: 25, speed: 25 };
-        let obstacles = [];
-        let logs = [];
-        let lastTime = 0;
+        const grid = 40; // 400x400 canvas, 10x10 grid
+        const player = { x: 4 * grid, y: 9 * grid, width: 30, height: 30 };
         
+        // Traffic lanes (y-coordinates)
+        const obstacles = [];
+        
+        function initObstacles() {
+            obstacles.length = 0;
+            // Network Traffic (Cars) - Bottom half
+            obstacles.push({ y: 8 * grid, speed: -2, items: [{x: 100, w: 40}, {x: 300, w: 40}], type: 'car', color: '#ef4444' }); // Red blocks
+            obstacles.push({ y: 7 * grid, speed: 2.5, items: [{x: 50, w: 60}, {x: 250, w: 60}], type: 'car', color: '#f97316' });
+            obstacles.push({ y: 6 * grid, speed: -1.5, items: [{x: 0, w: 40}, {x: 150, w: 40}, {x: 300, w: 40}], type: 'car', color: '#ef4444' });
+            
+            // Safe zone at 5 * grid
+            
+            // Fiber Optic Rivers (Logs) - Top half
+            obstacles.push({ y: 4 * grid, speed: 1.5, items: [{x: 50, w: 80}, {x: 250, w: 80}], type: 'log', color: '#3b82f6' }); // Blue data stream
+            obstacles.push({ y: 3 * grid, speed: -2, items: [{x: 0, w: 100}, {x: 200, w: 100}], type: 'log', color: '#60a5fa' });
+            obstacles.push({ y: 2 * grid, speed: 2.5, items: [{x: 100, w: 60}, {x: 300, w: 60}], type: 'log', color: '#3b82f6' });
+            obstacles.push({ y: 1 * grid, speed: -1, items: [{x: 20, w: 120}, {x: 250, w: 120}], type: 'log', color: '#60a5fa' });
+        }
+
+        let rightPressed = false;
+        let leftPressed = false;
+        let upPressed = false;
+        let downPressed = false;
+        let moveTimer = 0;
+
         const overlay = document.getElementById('game-overlay');
         const startBtn = document.getElementById('start-game-btn');
         startBtn.addEventListener('click', startGame);
 
-        function initGameObjects() {
-            player = { x: 275, y: 410, size: 25, speed: 30 };
-            
-            obstacles = [
-                // Lane 1 (Fast Interference)
-                { x: 50, y: 90, w: 60, h: 25, speed: 3.5, color: '#ef4444' },
-                { x: 250, y: 90, w: 60, h: 25, speed: 3.5, color: '#ef4444' },
-                { x: 450, y: 90, w: 60, h: 25, speed: 3.5, color: '#ef4444' },
-                
-                // Lane 2 (Malware Packet)
-                { x: 100, y: 150, w: 50, h: 25, speed: -2.5, color: '#f97316' },
-                { x: 350, y: 150, w: 50, h: 25, speed: -2.5, color: '#f97316' },
-                
-                // Lane 3 (Congestion Storm)
-                { x: 0, y: 210, w: 70, h: 25, speed: 2.0, color: '#ef4444' },
-                { x: 300, y: 210, w: 70, h: 25, speed: 2.0, color: '#ef4444' }
-            ];
+        document.addEventListener("keydown", keyDownHandler, false);
 
-            logs = [
-                // Lane 4 (Fiber Carrier Log)
-                { x: 80, y: 290, w: 90, h: 25, speed: 2.2, color: '#3b82f6' },
-                { x: 320, y: 290, w: 90, h: 25, speed: 2.2, color: '#3b82f6' },
-                
-                // Lane 5 (Broadband Backbone)
-                { x: 50, y: 350, w: 110, h: 25, speed: -1.8, color: '#10b981' },
-                { x: 380, y: 350, w: 110, h: 25, speed: -1.8, color: '#10b981' }
-            ];
+        // Touch Controls
+        const btnUp = document.getElementById('btn-up');
+        const btnDown = document.getElementById('btn-down');
+        const btnLeft = document.getElementById('btn-left');
+        const btnRight = document.getElementById('btn-right');
+
+        function setupBtn(btn, action) {
+            btn.addEventListener("touchstart", (e) => { e.preventDefault(); action(); }, {passive: false});
+            btn.addEventListener("mousedown", () => action());
         }
 
-        function movePlayer(dir) {
+        setupBtn(btnUp, () => movePlayer(0, -grid));
+        setupBtn(btnDown, () => movePlayer(0, grid));
+        setupBtn(btnLeft, () => movePlayer(-grid, 0));
+        setupBtn(btnRight, () => movePlayer(grid, 0));
+
+        function keyDownHandler(e) {
             if(!gameRunning) return;
-            if(dir === 'up') player.y -= player.speed;
-            if(dir === 'down') player.y = Math.min(410, player.y + player.speed);
-            if(dir === 'left') player.x = Math.max(0, player.x - player.speed);
-            if(dir === 'right') player.x = Math.min(canvas.width - player.size, player.x + player.speed);
-            
-            // Win condition (Reached top server zone y < 50)
-            if(player.y <= 50) {
-                score++;
+            if(e.key === "ArrowUp") { e.preventDefault(); movePlayer(0, -grid); }
+            else if(e.key === "ArrowDown") { e.preventDefault(); movePlayer(0, grid); }
+            else if(e.key === "ArrowLeft") { e.preventDefault(); movePlayer(-grid, 0); }
+            else if(e.key === "ArrowRight") { e.preventDefault(); movePlayer(grid, 0); }
+        }
+
+        function movePlayer(dx, dy) {
+            let newX = player.x + dx;
+            let newY = player.y + dy;
+            if(newX >= 0 && newX < canvas.width && newY >= 0 && newY < canvas.height) {
+                player.x = newX;
+                player.y = newY;
+            }
+            if(player.y === 0) {
+                // Reached Server
+                score += 50;
                 document.getElementById('game-score').innerText = score;
-                resetPlayer();
+                player.x = 4 * grid;
+                player.y = 9 * grid;
             }
         }
 
-        window.addEventListener('keydown', e => {
-            if(!gameRunning) return;
-            if(e.key === 'ArrowUp' || e.key === 'w') { e.preventDefault(); movePlayer('up'); }
-            if(e.key === 'ArrowDown' || e.key === 's') { e.preventDefault(); movePlayer('down'); }
-            if(e.key === 'ArrowLeft' || e.key === 'a') { e.preventDefault(); movePlayer('left'); }
-            if(e.key === 'ArrowRight' || e.key === 'd') { e.preventDefault(); movePlayer('right'); }
-        });
-
-        function resetPlayer() {
-            player.x = 275;
-            player.y = 410;
-        }
-
         function resetGame() {
+            player.x = 4 * grid;
+            player.y = 9 * grid;
             score = 0;
             lives = 3;
             document.getElementById('game-score').innerText = score;
             document.getElementById('game-lives').innerText = lives;
-            initGameObjects();
-            lastTime = Date.now();
+            initObstacles();
         }
 
         function startGame() {
@@ -1295,110 +999,113 @@
             }
         }
 
+        function drawBackground() {
+            // Start area (dark grey)
+            ctx.fillStyle = '#1f2937';
+            ctx.fillRect(0, 9 * grid, canvas.width, grid);
+            // Traffic area (grey)
+            ctx.fillStyle = '#374151';
+            ctx.fillRect(0, 6 * grid, canvas.width, 3 * grid);
+            // Safe zone (dark grey)
+            ctx.fillStyle = '#1f2937';
+            ctx.fillRect(0, 5 * grid, canvas.width, grid);
+            // River area (dark blue)
+            ctx.fillStyle = '#1e3a8a';
+            ctx.fillRect(0, 1 * grid, canvas.width, 4 * grid);
+            // End area (green Server rack)
+            ctx.fillStyle = '#065f46';
+            ctx.fillRect(0, 0, canvas.width, grid);
+            ctx.fillStyle = '#34d399';
+            for(let i=0; i<10; i++) {
+                ctx.fillRect(i*grid + 10, 10, 20, 20); // Server slots
+            }
+        }
+
+        function updateObstacles() {
+            for(let row of obstacles) {
+                for(let item of row.items) {
+                    item.x += row.speed;
+                    if(row.speed > 0 && item.x > canvas.width) item.x = -item.w;
+                    else if(row.speed < 0 && item.x + item.w < 0) item.x = canvas.width;
+                }
+            }
+        }
+
+        function drawObstacles() {
+            for(let row of obstacles) {
+                ctx.fillStyle = row.color;
+                for(let item of row.items) {
+                    // Draw with slight padding
+                    ctx.fillRect(item.x + 2, row.y + 5, item.w - 4, 30);
+                }
+            }
+        }
+
+        function checkCollisions() {
+            let inRiver = player.y >= grid && player.y <= 4 * grid;
+            let onLog = false;
+            
+            for(let row of obstacles) {
+                if(row.y === player.y) {
+                    for(let item of row.items) {
+                        // Check horizontal overlap
+                        if(player.x + 15 > item.x && player.x + 15 < item.x + item.w) {
+                            if(row.type === 'car') {
+                                die(); return;
+                            } else if (row.type === 'log') {
+                                onLog = true;
+                                player.x += row.speed; // Ride log
+                                if(player.x < 0 || player.x > canvas.width - player.width) {
+                                    die(); return; // Carried off screen
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            if(inRiver && !onLog) {
+                die(); // Fell in river
+            }
+        }
+
+        function die() {
+            lives--;
+            document.getElementById('game-lives').innerText = lives;
+            player.x = 4 * grid;
+            player.y = 9 * grid;
+            
+            if(lives <= 0) {
+                gameRunning = false;
+                cancelAnimationFrame(animationId);
+                overlay.classList.remove('hidden');
+                startBtn.innerText = "Connection Dropped! Try Again";
+                startBtn.classList.replace('bg-green-600', 'bg-red-600');
+                startBtn.classList.replace('border-green-800', 'border-red-800');
+            }
+        }
+
+        function drawPlayer() {
+            ctx.fillStyle = "#10b981"; // Bright green packet
+            ctx.fillRect(player.x + 5, player.y + 5, player.width, player.height);
+            // Add a little tech design
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(player.x + 10, player.y + 10, 10, 10);
+        }
+
         function drawGame() {
             if(!gameRunning) return;
             
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // Draw zones
-            // Server Home Zone (Top)
-            ctx.fillStyle = '#065f46';
-            ctx.fillRect(0, 0, canvas.width, 60);
-            ctx.fillStyle = '#ffffff';
-            ctx.font = '14px monospace';
-            ctx.textAlign = 'center';
-            ctx.fillText('DESTINATION SERVER (HOME ZONE)', canvas.width/2, 35);
-            
-            // Safe Start Zone (Bottom)
-            ctx.fillStyle = '#1e293b';
-            ctx.fillRect(0, 390, canvas.width, 60);
-            ctx.fillStyle = '#94a3b8';
-            ctx.fillText('ISP GATEWAY (START)', canvas.width/2, 425);
-
-            // Update & Draw Obstacles (Traffic / Interference)
-            for(let obs of obstacles) {
-                obs.x += obs.speed;
-                if(obs.x > canvas.width) obs.x = -obs.w;
-                if(obs.x < -obs.w) obs.x = canvas.width;
-                
-                ctx.fillStyle = obs.color;
-                ctx.fillRect(obs.x, obs.y, obs.w, obs.h);
-                ctx.fillStyle = '#ffffff';
-                ctx.font = '10px monospace';
-                ctx.fillText('ERR', obs.x + obs.w/2, obs.y + 16);
-                
-                // Collision check
-                if(player.x < obs.x + obs.w && player.x + player.size > obs.x &&
-                   player.y < obs.y + obs.h && player.y + player.size > obs.y) {
-                    loseLife();
-                }
-            }
-
-            // Update & Draw Carrier Logs (Safe Transit Lanes)
-            let onLog = false;
-            let logSpeed = 0;
-            for(let log of logs) {
-                log.x += log.speed;
-                if(log.x > canvas.width) log.x = -log.w;
-                if(log.x < -log.w) log.x = canvas.width;
-                
-                ctx.fillStyle = log.color;
-                ctx.fillRect(log.x, log.y, log.w, log.h);
-                ctx.fillStyle = '#ffffff';
-                ctx.font = '10px monospace';
-                ctx.fillText('CARRIER', log.x + log.w/2, log.y + 16);
-                
-                // Check if player is on middle river log lanes (y between 270 and 370)
-                if(player.y >= log.y && player.y <= log.y + log.h) {
-                    if(player.x < log.x + log.w && player.x + player.size > log.x) {
-                        onLog = true;
-                        logSpeed = log.speed;
-                    }
-                }
-            }
-
-            // River check (Lane y between 280 and 380)
-            if(player.y > 270 && player.y < 380) {
-                if(onLog) {
-                    player.x += logSpeed;
-                    if(player.x < 0 || player.x > canvas.width - player.size) {
-                        loseLife(); // Fell off screen edge
-                    }
-                } else {
-                    loseLife(); // Fell in water
-                }
-            }
-
-            // Draw Player Packet
-            ctx.fillStyle = '#22c55e';
-            ctx.fillRect(player.x, player.y, player.size, player.size);
-            ctx.fillStyle = '#ffffff';
-            ctx.font = '10px monospace';
-            ctx.textAlign = 'center';
-            ctx.fillText('PKT', player.x + player.size/2, player.y + 16);
+            drawBackground();
+            updateObstacles();
+            drawObstacles();
+            checkCollisions();
+            drawPlayer();
 
             animationId = requestAnimationFrame(drawGame);
         }
 
-        function loseLife() {
-            lives--;
-            document.getElementById('game-lives').innerText = lives;
-            resetPlayer();
-            if(lives <= 0) {
-                gameOver();
-            }
-        }
-
-        function gameOver() {
-            gameRunning = false;
-            cancelAnimationFrame(animationId);
-            overlay.classList.remove('hidden');
-            startBtn.innerText = "Connection Dropped! Reconnect";
-            startBtn.classList.replace('bg-green-600', 'bg-gray-700');
-            startBtn.classList.replace('border-green-800', 'border-gray-900');
-        }
-
-        // --- CERTIFICATE LOGIC ---
         function updateCertName() {
             let name = document.getElementById('student-name-input').value.trim();
             if(name) {
@@ -1419,9 +1126,9 @@
         function downloadCert() {
             const certEl = document.getElementById('certificate');
             const name = document.getElementById('cert-student-name').innerText;
-            let filename = 'Internet_Service_Certificate.png';
+            let filename = 'Certificate.png';
             if (name && name !== 'Student') {
-                filename = `${name.replace(/\s+/g, '_')}_Internet_Service_Certificate.png`;
+                filename = `${name.replace(/\s+/g, '_')}_Certificate.png`;
             }
 
             const originalTransform = certEl.style.transform;
@@ -1456,12 +1163,11 @@
         }
 
         window.onload = () => {
-            ctx.fillStyle = '#111827';
-            ctx.fillRect(0,0,canvas.width,canvas.height);
-            ctx.fillStyle = '#10b981';
-            ctx.font = '18px monospace';
-            ctx.textAlign = 'center';
-            ctx.fillText('DATA PACKET CROSSING READY', canvas.width/2, canvas.height/2);
+            initObstacles();
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawBackground();
+            drawObstacles();
+            drawPlayer();
         }
     </script>
 </body>

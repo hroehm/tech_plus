@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unit 03 Section 2.5.2 Mastery - Peripheral Devices</title>
+    <title>Unit 03 Section 2.5.2 Mastery</title>
     
     <!-- Load Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -39,15 +39,14 @@
         ::-webkit-scrollbar-thumb { background: #10b981; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #059669; }
 
-        /* Retro Breakout Game Canvas */
+        /* Retro Game Canvas */
         #game-canvas {
-            background-color: #0f172a;
-            border: 4px solid #334155;
+            background-color: #111827;
+            border: 4px solid #374151;
             border-radius: 8px;
-            box-shadow: 0 0 25px rgba(16, 185, 129, 0.4);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
             max-width: 100%;
             height: auto;
-            touch-action: none;
         }
         .game-btn { touch-action: manipulation; user-select: none; }
 
@@ -144,11 +143,6 @@
         @media (max-width: 768px) {
             #certificate { transform: scale(0.4); transform-origin: top left; margin-bottom: -490px; margin-right: -630px; }
         }
-        
-        /* Lab Specific Styles */
-        .match-card { transition: all 0.2s; cursor: pointer; }
-        .match-card.selected { border-color: #2563eb; background-color: #eff6ff; box-shadow: 0 0 10px rgba(37,99,235,0.3); }
-        .match-card.matched { background-color: #f0fdf4; border-color: #16a34a; opacity: 0.8; cursor: default; }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col">
@@ -157,7 +151,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <div class="flex items-center space-x-3">
-                    <i class="fa-solid fa-plug text-2xl"></i>
+                    <i class="fa-brands fa-usb text-2xl"></i>
                     <span class="font-bold text-xl tracking-wider hidden sm:inline-block">Tech+ Unit 03 Section 2.5.2</span>
                     <span class="font-bold text-xl tracking-wider sm:hidden">2.5.2</span>
                 </div>
@@ -172,7 +166,6 @@
                 </div>
             </div>
         </div>
-        <!-- Mobile Nav -->
         <div class="md:hidden flex flex-wrap justify-center gap-2 py-2 px-2 bg-green-800">
             <button onclick="switchTab('briefing')" class="nav-btn-mobile px-3 py-1 text-sm rounded bg-green-900" id="nav-briefing-mobile">Briefing</button>
             <button onclick="switchTab('activity')" class="nav-btn-mobile px-3 py-1 text-sm rounded" id="nav-activity-mobile">Lab</button>
@@ -188,102 +181,80 @@
         <div id="briefing-section" class="tab-content active no-print">
             <div class="text-center mb-10">
                 <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">Peripheral Devices & Interfaces</h1>
-                <p class="text-lg text-gray-600 max-w-3xl mx-auto">Explore how computers connect with input, output, and external storage devices through wired standards like USB and Thunderbolt, as well as wireless frequencies like Bluetooth and RF.</p>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">Master the wired and wireless connections that empower computers to communicate with external hardware. Review this briefing before moving to the Lab Activity.</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 
-                <!-- Tile 1: USB (A/B/C) -->
+                <!-- Tile 1 -->
                 <div class="bg-white rounded-xl shadow-md border-t-4 border-blue-500 overflow-hidden flex flex-col">
                     <div class="p-6 flex-grow">
-                        <h2 class="text-2xl font-bold mb-3 text-blue-700"><i class="fa-solid fa-usb mr-2"></i>USB (A/B/C Standards)</h2>
-                        <ul class="space-y-3 text-gray-700 mb-4 text-sm">
-                            <li><strong>Universal Standard:</strong> Standardized interface used for data transfer and/or power supply across systems.</li>
-                            <li><strong>USB-A:</strong> Most common rectangular connector for keyboards, mice, and flash drives.</li>
-                            <li><strong>USB-B:</strong> Square connector used primarily for printers and older scanners.</li>
-                            <li><strong>USB-C:</strong> Modern, reversible, high-speed universal connector for modern laptops and phones.</li>
+                        <h2 class="text-2xl font-bold mb-3 text-blue-700"><i class="fa-solid fa-plug mr-2"></i>Peripheral Basics</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Purpose:</strong> Peripheral interfaces are connection points that allow computers to communicate with external devices.</li>
+                            <li><strong>Functionality:</strong> They provide vital pathways for both data transfer and power supply.</li>
+                            <li><strong>Standardization:</strong> They define a common way for devices to connect, minimizing compatibility issues across different hardware brands.</li>
                         </ul>
                     </div>
                     <div class="bg-gray-50 border-t border-gray-100 p-4">
+                        <div class="flex gap-4">
+                            <button onclick="openBriefing('basic-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('basic-usecase')" class="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 2 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-green-500 overflow-hidden flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <h2 class="text-2xl font-bold mb-3 text-green-700"><i class="fa-brands fa-usb mr-2"></i>Universal Serial Bus (USB)</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>USB-A:</strong> The most common, older rectangular connector. Primarily used for standard peripherals like keyboards and mice.</li>
+                            <li><strong>USB-B:</strong> A square-shaped connector with beveled corners, typically used for printers and scanners.</li>
+                            <li><strong>USB-C:</strong> The modern, versatile, and reversible connector. Supports high data transfer rates and higher power for charging devices.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-gray-50 border-t border-gray-100 p-4">
                         <div class="flex gap-4">
                             <button onclick="openBriefing('usb-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
-                            <button onclick="openBriefing('usb-usecase')" class="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                            <button onclick="openBriefing('usb-usecase')" class="flex-1 bg-green-100 hover:bg-green-200 text-green-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Tile 2: Thunderbolt -->
-                <div class="bg-white rounded-xl shadow-md border-t-4 border-cyan-500 overflow-hidden flex flex-col">
-                    <div class="p-6 flex-grow">
-                        <h2 class="text-2xl font-bold mb-3 text-cyan-700"><i class="fa-solid fa-bolt mr-2"></i>Thunderbolt Interface</h2>
-                        <ul class="space-y-3 text-gray-700 mb-4 text-sm">
-                            <li><strong>High Speed:</strong> Advanced interface supporting data transfer rates up to 40 Gbps.</li>
-                            <li><strong>Multi-Function:</strong> Supports simultaneous data transfer, 4K/8K video output, and laptop charging over one USB-C form factor cable.</li>
-                            <li><strong>Daisy Chaining:</strong> Connects multiple displays and external storage arrays in series through a single port.</li>
-                        </ul>
-                    </div>
-                     <div class="bg-gray-50 border-t border-gray-100 p-4">
-                        <div class="flex gap-4">
-                            <button onclick="openBriefing('thunderbolt-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
-                            <button onclick="openBriefing('thunderbolt-usecase')" class="flex-1 bg-cyan-100 hover:bg-cyan-200 text-cyan-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Tile 3: Bluetooth -->
-                <div class="bg-white rounded-xl shadow-md border-t-4 border-indigo-500 overflow-hidden flex flex-col">
-                    <div class="p-6 flex-grow">
-                        <h2 class="text-2xl font-bold mb-3 text-indigo-700"><i class="fa-brands fa-bluetooth mr-2"></i>Bluetooth Wireless</h2>
-                        <ul class="space-y-3 text-gray-700 mb-4 text-sm">
-                            <li><strong>Short-Range:</strong> Wireless technology designed for connecting peripherals over relatively short distances.</li>
-                            <li><strong>Low Power:</strong> Highly optimized for battery-operated accessories like wireless mice, keyboards, and headphones.</li>
-                            <li><strong>Compatibility:</strong> Built natively into almost all modern smartphones, tablets, and laptops.</li>
-                        </ul>
-                    </div>
-                     <div class="bg-gray-50 border-t border-gray-100 p-4">
-                        <div class="flex gap-4">
-                            <button onclick="openBriefing('bluetooth-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
-                            <button onclick="openBriefing('bluetooth-usecase')" class="flex-1 bg-indigo-100 hover:bg-indigo-200 text-indigo-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Tile 4: Radio Frequency (RF) -->
+                <!-- Tile 3 -->
                 <div class="bg-white rounded-xl shadow-md border-t-4 border-purple-500 overflow-hidden flex flex-col">
                     <div class="p-6 flex-grow">
-                        <h2 class="text-2xl font-bold mb-3 text-purple-700"><i class="fa-solid fa-tower-broadcast mr-2"></i>Radio Frequency (RF)</h2>
-                        <ul class="space-y-3 text-gray-700 mb-4 text-sm">
-                            <li><strong>Wave Communication:</strong> Uses dedicated radio waves to communicate with specialized USB dongles.</li>
-                            <li><strong>Low Latency:</strong> Provides near-wired performance without lag, ideal for competitive gaming mice and keyboards.</li>
-                            <li><strong>Broad Spectrum:</strong> Encompasses Wi-Fi, Bluetooth, and NFC while operating on discrete frequencies to minimize interference.</li>
+                        <h2 class="text-2xl font-bold mb-3 text-purple-700"><i class="fa-solid fa-bolt mr-2"></i>High-Speed & Proprietary</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Thunderbolt:</strong> A high-speed interface that utilizes the USB-C physical connector. Supports massive data transfer rates (up to 40 Gbps), video output, and power delivery simultaneously.</li>
+                            <li><strong>Lightning:</strong> A proprietary, reversible connector developed strictly by Apple for older iPhones and iPads. Supports data transfer and charging.</li>
                         </ul>
                     </div>
-                    <div class="bg-gray-50 border-t border-gray-100 p-4">
+                     <div class="bg-gray-50 border-t border-gray-100 p-4">
                         <div class="flex gap-4">
-                            <button onclick="openBriefing('rf-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
-                            <button onclick="openBriefing('rf-usecase')" class="flex-1 bg-purple-100 hover:bg-purple-200 text-purple-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                            <button onclick="openBriefing('high-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('high-usecase')" class="flex-1 bg-purple-100 hover:bg-purple-200 text-purple-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Tile 5: Lightning -->
-                <div class="bg-white rounded-xl shadow-md border-t-4 border-amber-500 overflow-hidden flex flex-col md:col-span-2 lg:col-span-1">
+                <!-- Tile 4 -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-orange-500 overflow-hidden flex flex-col">
                     <div class="p-6 flex-grow">
-                        <h2 class="text-2xl font-bold mb-3 text-amber-700"><i class="fa-solid fa-bolt-lightning mr-2"></i>Apple Lightning</h2>
-                        <ul class="space-y-3 text-gray-700 mb-4 text-sm">
-                            <li><strong>Proprietary Standard:</strong> Specialized 8-pin connector developed exclusively by Apple for iOS devices.</li>
-                            <li><strong>Reversible Design:</strong> Small, symmetrical connector that can be inserted in either orientation.</li>
-                            <li><strong>Ecosystem Transition:</strong> Widely used on older iPhones and iPads before regulatory shifts toward universal USB-C.</li>
+                        <h2 class="text-2xl font-bold mb-3 text-orange-700"><i class="fa-solid fa-wifi mr-2"></i>Wireless Interfaces</h2>
+                        <ul class="space-y-3 text-gray-700 mb-4">
+                            <li><strong>Bluetooth:</strong> A short-range wireless technology that is designed for low power consumption, making it highly compatible with battery-operated devices (headphones, mice).</li>
+                            <li><strong>Radio Frequency (RF):</strong> A broader category that uses specific radio waves to communicate. Often used with a dedicated USB dongle to provide very low-latency connections for competitive gaming.</li>
                         </ul>
                     </div>
                     <div class="bg-gray-50 border-t border-gray-100 p-4">
                         <div class="flex gap-4">
-                            <button onclick="openBriefing('lightning-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
-                            <button onclick="openBriefing('lightning-usecase')" class="flex-1 bg-amber-100 hover:bg-amber-200 text-amber-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                            <button onclick="openBriefing('wire-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('wire-usecase')" class="flex-1 bg-orange-100 hover:bg-orange-200 text-orange-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
                         </div>
                     </div>
                 </div>
-
             </div>
             
             <div class="mt-8 flex justify-center">
@@ -294,100 +265,62 @@
         <!-- LAB ACTIVITY SECTION -->
         <div id="activity-section" class="tab-content no-print">
             <div class="text-center mb-8">
-                <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Interactive Peripheral Labs</h1>
-                <p class="text-gray-600">Complete these interactive simulations covering USB, Thunderbolt, Bluetooth, RF, and Lightning to master hardware connectivity.</p>
+                <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Interactive Lab Activity</h1>
+                <p class="text-gray-600">Test your hands-on hardware knowledge with these lab exercises.</p>
             </div>
 
-            <!-- Lab 1: Peripheral Interface Matchmaker (USB Types) -->
+            <!-- Lab 1: Interface Categorization -->
             <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
-                <h2 class="text-xl font-bold mb-4 text-blue-700"><i class="fa-solid fa-usb mr-2"></i>Lab 1: USB Port & Connector Matchmaker</h2>
-                <p class="text-sm text-gray-600 mb-4">Match each USB connector type (A, B, or C) with its correct characteristic description by clicking one item from each column.</p>
+                <h2 class="text-xl font-bold mb-4 text-blue-700"><i class="fa-solid fa-layer-group mr-2"></i>Lab 1: Peripheral Categorization</h2>
+                <p class="text-sm text-gray-600 mb-4">Drag and drop the interface technologies into their correct primary category based on how they connect.</p>
                 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="space-y-3" id="usb-terms">
-                        <h3 class="font-bold text-gray-700 text-sm uppercase">Connectors</h3>
-                        <div class="match-card p-4 border-2 border-gray-300 rounded-lg font-semibold text-gray-800" data-match="usb-a" onclick="selectMatchCard(this, 'term')">USB-A Connector</div>
-                        <div class="match-card p-4 border-2 border-gray-300 rounded-lg font-semibold text-gray-800" data-match="usb-b" onclick="selectMatchCard(this, 'term')">USB-B Connector</div>
-                        <div class="match-card p-4 border-2 border-gray-300 rounded-lg font-semibold text-gray-800" data-match="usb-c" onclick="selectMatchCard(this, 'term')">USB-C Connector</div>
+                <div class="flex flex-wrap gap-3 mb-6" id="cat-items">
+                    <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold" draggable="true" data-type="standard">USB-A</div>
+                    <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold" draggable="true" data-type="wireless">Bluetooth</div>
+                    <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold" draggable="true" data-type="special">Thunderbolt</div>
+                    <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold" draggable="true" data-type="standard">USB-C</div>
+                    <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold" draggable="true" data-type="wireless">Radio Frequency (RF)</div>
+                    <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold" draggable="true" data-type="special">Lightning</div>
+                    <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold" draggable="true" data-type="standard">USB-B</div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="cat-dropzone border-2 border-dashed border-green-400 bg-green-50 rounded-lg p-4 min-h-[150px] flex flex-col items-center" data-target="standard">
+                        <h3 class="font-bold text-green-800 mb-2 border-b border-green-200 w-full text-center pb-1"><i class="fa-brands fa-usb mr-1"></i>Standard Wired (USB)</h3>
                     </div>
-                    <div class="space-y-3" id="usb-defs">
-                        <h3 class="font-bold text-gray-700 text-sm uppercase">Descriptions</h3>
-                        <div class="match-card p-4 border-2 border-gray-300 rounded-lg text-sm text-gray-700" data-match="usb-b" onclick="selectMatchCard(this, 'def')">Square connector typically used for printers, scanners, and devices with infrequent plugging.</div>
-                        <div class="match-card p-4 border-2 border-gray-300 rounded-lg text-sm text-gray-700" data-match="usb-c" onclick="selectMatchCard(this, 'def')">Modern reversible connector supporting high-speed data transfer and high power delivery for charging.</div>
-                        <div class="match-card p-4 border-2 border-gray-300 rounded-lg text-sm text-gray-700" data-match="usb-a" onclick="selectMatchCard(this, 'def')">Most common rectangular connector universally supported for mice, keyboards, and flash drives.</div>
+                    <div class="cat-dropzone border-2 border-dashed border-purple-400 bg-purple-50 rounded-lg p-4 min-h-[150px] flex flex-col items-center" data-target="special">
+                        <h3 class="font-bold text-purple-800 mb-2 border-b border-purple-200 w-full text-center pb-1"><i class="fa-solid fa-bolt mr-1"></i>Specialized / Proprietary</h3>
+                    </div>
+                    <div class="cat-dropzone border-2 border-dashed border-orange-400 bg-orange-50 rounded-lg p-4 min-h-[150px] flex flex-col items-center" data-target="wireless">
+                        <h3 class="font-bold text-orange-800 mb-2 border-b border-orange-200 w-full text-center pb-1"><i class="fa-solid fa-wifi mr-1"></i>Wireless</h3>
                     </div>
                 </div>
                 <div id="lab1-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
             </div>
 
-            <!-- Lab 2: Thunderbolt Workstation Setup -->
+            <!-- Lab 2: Scenario Matcher -->
             <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
-                <h2 class="text-xl font-bold mb-4 text-cyan-700"><i class="fa-solid fa-bolt mr-2"></i>Lab 2: Thunderbolt High-Speed Workstation Configurator</h2>
-                <p class="text-sm text-gray-600 mb-4">Jordan is editing 4K video on a laptop. Select the 3 required peripheral devices that Thunderbolt can handle simultaneously through a single high-bandwidth cable.</p>
+                <h2 class="text-xl font-bold mb-4 text-red-700"><i class="fa-solid fa-wrench mr-2"></i>Lab 2: Scenario Interface Matcher</h2>
+                <p class="text-sm text-gray-600 mb-4">Click the scenario on the left, then click the best interface required to solve it based on user needs.</p>
                 
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-                    <button class="tb-item p-4 border-2 border-gray-300 rounded-lg text-center font-bold text-gray-700 hover:border-cyan-500 transition" data-correct="true" onclick="toggleTbItem(this)">External 4K Monitor</button>
-                    <button class="tb-item p-4 border-2 border-gray-300 rounded-lg text-center font-bold text-gray-700 hover:border-cyan-500 transition" data-correct="true" onclick="toggleTbItem(this)">High-Speed NVMe SSD</button>
-                    <button class="tb-item p-4 border-2 border-gray-300 rounded-lg text-center font-bold text-gray-700 hover:border-cyan-500 transition" data-correct="true" onclick="toggleTbItem(this)">Laptop Power Delivery (PD)</button>
-                    <button class="tb-item p-4 border-2 border-gray-300 rounded-lg text-center font-bold text-gray-700 hover:border-cyan-500 transition" data-correct="false" onclick="toggleTbItem(this)">Old Parallel Dot-Matrix Printer</button>
-                </div>
-                <div class="text-center">
-                    <button class="bg-cyan-600 text-white px-6 py-2 rounded font-bold hover:bg-cyan-700 transition" onclick="checkLab2()">Verify Workstation Setup</button>
+                <div class="flex flex-col md:flex-row justify-around items-stretch gap-6">
+                    <div class="flex flex-col gap-3 flex-1">
+                        <button class="scenario-btn px-4 py-3 bg-gray-100 border-2 border-gray-300 rounded text-left hover:bg-red-50 text-sm font-semibold transition" data-match="thunderbolt">"Jordan edits 4k video. Needs to connect an external monitor, an SSD, and keep his laptop charged for long work sessions."</button>
+                        <button class="scenario-btn px-4 py-3 bg-gray-100 border-2 border-gray-300 rounded text-left hover:bg-red-50 text-sm font-semibold transition" data-match="lightning">"A company issues iPhones to employees and needs a standard cable for transferring media."</button>
+                        <button class="scenario-btn px-4 py-3 bg-gray-100 border-2 border-gray-300 rounded text-left hover:bg-red-50 text-sm font-semibold transition" data-match="rf">"Alex is a competitive gamer who wants a wireless keyboard and mouse but needs the lowest latency possible."</button>
+                        <button class="scenario-btn px-4 py-3 bg-gray-100 border-2 border-gray-300 rounded text-left hover:bg-red-50 text-sm font-semibold transition" data-match="bluetooth">"A company wants to give all employees wireless headphones for virtual meetings. Needs easy connectivity to built-in laptop radios."</button>
+                        <button class="scenario-btn px-4 py-3 bg-gray-100 border-2 border-gray-300 rounded text-left hover:bg-red-50 text-sm font-semibold transition" data-match="usb">"Chris needs to connect an older office printer to his desktop. The printer has a square port and no wireless."</button>
+                    </div>
+                    
+                    <div class="flex flex-col gap-3 flex-1 justify-center">
+                        <button class="tool-btn px-4 py-3 bg-white border-2 border-gray-300 rounded text-center hover:bg-gray-100 font-bold text-gray-700 shadow-sm transition" data-match="lightning"><i class="fa-solid fa-mobile-screen text-gray-500 mr-2"></i>Lightning</button>
+                        <button class="tool-btn px-4 py-3 bg-white border-2 border-gray-300 rounded text-center hover:bg-gray-100 font-bold text-gray-700 shadow-sm transition" data-match="thunderbolt"><i class="fa-solid fa-bolt text-purple-500 mr-2"></i>Thunderbolt</button>
+                        <button class="tool-btn px-4 py-3 bg-white border-2 border-gray-300 rounded text-center hover:bg-gray-100 font-bold text-gray-700 shadow-sm transition" data-match="usb"><i class="fa-brands fa-usb text-green-600 mr-2"></i>USB-A / USB-B</button>
+                        <button class="tool-btn px-4 py-3 bg-white border-2 border-gray-300 rounded text-center hover:bg-gray-100 font-bold text-gray-700 shadow-sm transition" data-match="bluetooth"><i class="fa-brands fa-bluetooth text-blue-500 mr-2"></i>Bluetooth</button>
+                        <button class="tool-btn px-4 py-3 bg-white border-2 border-gray-300 rounded text-center hover:bg-gray-100 font-bold text-gray-700 shadow-sm transition" data-match="rf"><i class="fa-solid fa-tower-broadcast text-orange-500 mr-2"></i>Radio Frequency (RF)</button>
+                    </div>
                 </div>
                 <div id="lab2-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
-            </div>
-            
-            <!-- Lab 3: Wireless Selector (Bluetooth vs RF) -->
-            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
-                <h2 class="text-xl font-bold mb-4 text-purple-700"><i class="fa-solid fa-tower-broadcast mr-2"></i>Lab 3: Wireless Technology Selector</h2>
-                <p class="text-sm text-gray-600 mb-4">Read each user requirement below and click the correct wireless interface (Bluetooth or Radio Frequency) to fulfill their need.</p>
-                
-                <div class="space-y-4 mb-6" id="wireless-scenarios">
-                    <div class="p-4 bg-gray-50 rounded-lg border border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4">
-                        <span class="text-sm text-gray-800 font-medium">1. An employee needs wireless headphones for office virtual meetings that pair easily with phones and laptops.</span>
-                        <div class="flex gap-2">
-                            <button class="px-4 py-2 bg-white border border-gray-300 rounded font-bold text-xs hover:bg-indigo-50" onclick="checkWireless(this, 1, 'bluetooth')">Bluetooth</button>
-                            <button class="px-4 py-2 bg-white border border-gray-300 rounded font-bold text-xs hover:bg-purple-50" onclick="checkWireless(this, 1, 'rf')">Radio Frequency</button>
-                        </div>
-                    </div>
-                    <div class="p-4 bg-gray-50 rounded-lg border border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4">
-                        <span class="text-sm text-gray-800 font-medium">2. A competitive esports gamer requires a wireless gaming mouse with absolute lowest latency.</span>
-                        <div class="flex gap-2">
-                            <button class="px-4 py-2 bg-white border border-gray-300 rounded font-bold text-xs hover:bg-indigo-50" onclick="checkWireless(this, 2, 'bluetooth')">Bluetooth</button>
-                            <button class="px-4 py-2 bg-white border border-gray-300 rounded font-bold text-xs hover:bg-purple-50" onclick="checkWireless(this, 2, 'rf')">Radio Frequency</button>
-                        </div>
-                    </div>
-                </div>
-                <div id="lab3-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
-            </div>
-            
-            <!-- Lab 4: Proprietary vs Universal Connector -->
-            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
-                <h2 class="text-xl font-bold mb-4 text-amber-700"><i class="fa-solid fa-bolt-lightning mr-2"></i>Lab 4: Ecosystem Compatibility Auditor</h2>
-                <p class="text-sm text-gray-600 mb-4">A corporate IT fleet manager is stocking cables for devices. Identify whether each cable type is strictly proprietary to Apple or universal across multi-brand devices.</p>
-                
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-                    <div class="p-4 bg-gray-50 rounded-lg border border-gray-200 flex justify-between items-center">
-                        <span class="font-bold text-sm text-gray-800">Lightning Cable</span>
-                        <select id="audit-lightning" class="border rounded p-1 text-sm bg-white font-medium">
-                            <option value="">Select Type...</option>
-                            <option value="proprietary">Proprietary (Apple Only)</option>
-                            <option value="universal">Universal (All Brands)</option>
-                        </select>
-                    </div>
-                    <div class="p-4 bg-gray-50 rounded-lg border border-gray-200 flex justify-between items-center">
-                        <span class="font-bold text-sm text-gray-800">USB-C Cable</span>
-                        <select id="audit-usbc" class="border rounded p-1 text-sm bg-white font-medium">
-                            <option value="">Select Type...</option>
-                            <option value="proprietary">Proprietary (Apple Only)</option>
-                            <option value="universal">Universal (All Brands)</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="text-center">
-                    <button class="bg-amber-600 text-white px-6 py-2 rounded font-bold hover:bg-amber-700 transition" onclick="checkLab4()">Verify Ecosystem Audit</button>
-                </div>
-                <div id="lab4-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
             </div>
 
             <div class="text-center">
@@ -400,7 +333,7 @@
             <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-xl max-w-4xl mx-auto">
                 <div class="text-center mb-8 border-b pb-4">
                     <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Unit 03 Section 2.5.2 Mastery Quiz</h1>
-                    <p class="text-gray-600">Score 90% or higher (18/20) to earn your Certificate of Mastery and unlock "Peripheral Breakout"!</p>
+                    <p class="text-gray-600">Score 90% or higher (18/20) to earn your Certificate of Mastery and unlock the Retro Game!</p>
                 </div>
 
                 <div id="quiz-container" class="space-y-8">
@@ -409,35 +342,41 @@
 
                 <div class="mt-10 text-center border-t pt-6 flex flex-col md:flex-row justify-center items-center gap-4">
                     <button id="submit-quiz-btn" onclick="gradeQuiz()" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">Submit Quiz</button>
-                    <button id="proceed-game-btn" onclick="switchTab('game')" class="hidden bg-purple-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-purple-700 shadow-lg transition w-full md:w-auto">Play Peripheral Breakout <i class="fa-solid fa-gamepad ml-2"></i></button>
+                    <button id="proceed-game-btn" onclick="switchTab('game')" class="hidden bg-purple-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-purple-700 shadow-lg transition w-full md:w-auto">Play Retro Game <i class="fa-solid fa-gamepad ml-2"></i></button>
                 </div>
             </div>
         </div>
 
         <!-- RETRO GAME SECTION -->
         <div id="game-section" class="tab-content no-print">
-            <div class="bg-gray-900 p-6 sm:p-8 rounded-2xl shadow-xl max-w-4xl mx-auto border-4 border-gray-700 flex flex-col items-center">
-                <div class="text-center mb-4 w-full">
-                    <h1 class="text-3xl font-extrabold text-cyan-400 mb-2 tracking-widest uppercase" style="font-family: monospace;">Peripheral Breakout</h1>
-                    <p class="text-gray-300 text-sm">Control the paddle to bounce the data packet ball and destroy all the peripheral hardware bricks (USB, Thunderbolt, Bluetooth, RF, Lightning)! Use Left/Right Arrow keys or mouse/touch movement.</p>
+            <div class="bg-gray-900 p-6 sm:p-8 rounded-2xl shadow-xl max-w-4xl mx-auto border-4 border-gray-700">
+                <div class="text-center mb-4">
+                    <h1 class="text-3xl font-extrabold text-purple-400 mb-2 tracking-widest uppercase" style="font-family: monospace;">Peripheral Breakout</h1>
+                    <p class="text-gray-300 text-sm">You are the USB paddle! Bounce the data packet to break the firewall bricks. Use <kbd class="bg-gray-700 px-1 rounded text-white">&larr;</kbd> and <kbd class="bg-gray-700 px-1 rounded text-white">&rarr;</kbd> to move.</p>
                 </div>
                 
-                <div class="flex justify-between items-center w-full max-w-[400px] sm:max-w-[600px] mb-2 px-4 text-white font-mono text-xl">
-                    <div>Score: <span id="game-score" class="text-cyan-400 font-bold">0</span></div>
-                    <div>Lives: <span id="game-lives" class="text-red-400 font-bold">3</span></div>
+                <div class="flex justify-between items-center mb-2 px-4 text-white font-mono text-xl">
+                    <div>Score: <span id="game-score" class="text-green-400 font-bold">0</span></div>
+                    <div>High Score: <span id="game-highscore" class="text-yellow-400 font-bold">0</span></div>
                 </div>
 
                 <div class="relative flex justify-center w-full">
                     <!-- Game Canvas -->
-                    <canvas id="game-canvas" width="600" height="450" class="w-full max-w-[400px] sm:max-w-[600px] bg-slate-900 border-2 border-slate-700 rounded shadow-lg"></canvas>
+                    <canvas id="game-canvas" width="400" height="400" class="w-full max-w-[400px] sm:max-w-[500px]"></canvas>
                     
                     <!-- Overlay Start Button -->
-                    <div id="game-overlay" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-80 rounded-lg max-w-[400px] sm:max-w-[600px] mx-auto z-10">
-                        <button id="start-game-btn" class="bg-cyan-600 hover:bg-cyan-500 text-white font-bold font-mono py-3 px-6 rounded-lg text-xl border-4 border-cyan-800 uppercase transform transition hover:scale-105">Launch Game (Start)</button>
+                    <div id="game-overlay" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-70 rounded-lg max-w-[400px] sm:max-w-[500px] mx-auto">
+                        <button id="start-game-btn" class="bg-purple-500 hover:bg-purple-400 text-white font-bold font-mono py-3 px-6 rounded-lg text-xl border-4 border-purple-700 uppercase transform transition hover:scale-105">Insert Coin (Start)</button>
                     </div>
                 </div>
 
-                <div class="mt-8 text-center w-full border-t border-gray-700 pt-6">
+                <!-- Mobile Controls -->
+                <div class="flex justify-center gap-4 w-full mx-auto mt-6 sm:hidden">
+                    <button id="btn-left" class="game-btn bg-gray-700 text-white rounded p-6 active:bg-gray-500 flex-1 max-w-[120px]"><i class="fa-solid fa-arrow-left text-2xl"></i></button>
+                    <button id="btn-right" class="game-btn bg-gray-700 text-white rounded p-6 active:bg-gray-500 flex-1 max-w-[120px]"><i class="fa-solid fa-arrow-right text-2xl"></i></button>
+                </div>
+
+                <div class="mt-8 text-center border-t border-gray-700 pt-6">
                     <button onclick="switchTab('cert')" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">View Certificate <i class="fa-solid fa-award ml-2"></i></button>
                 </div>
             </div>
@@ -450,7 +389,7 @@
                 <!-- Controls -->
                 <div class="bg-white p-6 rounded shadow mb-6 no-print text-center border border-gray-200">
                     <h2 class="text-2xl font-bold text-green-600 mb-2">🎉 Congratulations! 🎉</h2>
-                    <p class="text-gray-700 mb-4">You have achieved mastery of Unit 03 Section 2.5.2 - Peripheral Devices.</p>
+                    <p class="text-gray-700 mb-4">You have achieved mastery of Peripheral Devices.</p>
                     <div class="flex flex-col md:flex-row justify-center items-center gap-4">
                         <input type="text" id="student-name-input" value="Student" placeholder="Enter your first name" class="border-2 border-gray-300 rounded px-4 py-2 w-full md:w-64 focus:border-green-500 focus:outline-none">
                         <button onclick="updateCertName()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">Update Name</button>
@@ -490,8 +429,8 @@
                             <p class="text-[1.3rem] font-body text-gray-800 leading-relaxed w-full pr-4">
                                 Has successfully completed the assessment for 
                                 <strong class="text-[1.8rem] text-[#1e3a8a] block mt-4 mb-2 font-serif">Cyber.org Tech+ Unit 03 Section 2.5.2</strong>
-                                <strong class="text-[1.5rem] text-black block mb-4 font-serif italic">Peripheral Devices & Interfaces</strong>
-                                <span class="text-[1.1rem] text-gray-700 leading-snug block">Demonstrating comprehensive proficiency in comparing input and output peripheral interfaces including USB (A/B/C), Thunderbolt, Bluetooth, Radio Frequency, and Lightning standards.</span>
+                                <strong class="text-[1.5rem] text-black block mb-4 font-serif italic">Peripheral Devices</strong>
+                                <span class="text-[1.1rem] text-gray-700 leading-snug block">Demonstrating proficiency in understanding wired and wireless interfaces, differentiating between USB and proprietary standards, and selecting appropriate connections based on performance and latency requirements.</span>
                             </p>
                             
                             <div class="flex justify-end gap-16 items-end mt-auto mb-[60px] w-full pr-8">
@@ -516,7 +455,7 @@
         </div>
     </main>
 
-    <!-- Custom Modal for Alerts -->
+    <!-- Custom Modal -->
     <div id="custom-modal" class="fixed inset-0 bg-black bg-opacity-50 z-[100] hidden flex justify-center items-center backdrop-blur-sm">
         <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all">
             <div class="text-center">
@@ -548,266 +487,142 @@
     </div>
 
     <script>
-        // --- Extensive Briefing Content Data (Min 7 Paragraphs + Use Cases with 2 cases, 2 examples, and 2 images) ---
+        // --- Expanded Briefing Content Data (Min 5 Paragraphs per detail) ---
         const briefingData = {
-            'usb-details': {
-                title: 'Universal Serial Bus (USB) Standards',
-                icon: '<i class="fa-solid fa-usb text-blue-600"></i>',
+            'basic-details': {
+                title: 'Peripheral Interfaces Overview',
+                icon: '<i class="fa-solid fa-plug text-blue-600"></i>',
                 html: `
-                    <p class="mb-5">Universal Serial Bus (USB) technology represents one of the most successful and ubiquitous hardware interface standards in the history of computing. Prior to the widespread adoption of USB in the late 1990s, connecting peripheral devices to a computer was a frustrating, non-standardized endeavor. Motherboards featured an array of incompatible ports including serial ports, parallel ports, dedicated PS/2 keyboard and mouse ports, and proprietary game controller connectors. Each peripheral required specific IRQ (Interrupt Request) configurations, and users frequently had to restart their computers or install jumper pins to get hardware recognized.</p>
+                    <p class="mb-5">Peripheral devices are external hardware components that connect to a computer to add features, improve performance, or provide additional input and output options. Common examples include keyboards for data entry, mice for navigation, external storage drives for backups, and printers for generating physical documents. Without these peripheral devices, a computer would be largely unusable, lacking ways for a user to provide instructions or receive necessary feedback.</p>
                     
-                    <p class="mb-5">The introduction of USB revolutionized this landscape by establishing a single, standardized, plug-and-play architecture. A USB interface provides both data communication pathways and DC electrical power over a single standardized cable. This dual functionality means that a peripheral device can exchange data packets with the host processor while simultaneously drawing the electrical current required to operate its internal circuitry or charge its internal battery, eliminating the need for bulky separate power adapters for minor accessories.</p>
+                    <p class="mb-5"><strong>Peripheral interfaces</strong> are the physical or wireless connection points that allow these devices to communicate seamlessly with the host computer. They act as the designated gateways, ensuring that the complex digital signals originating from the peripheral are translated into a format that the computer's processor and operating system can understand and utilize.</p>
                     
-                    <p class="mb-5">The <strong>USB-A</strong> connector is the most widely recognized legacy and current USB form factor. Characterized by its flat, rectangular shape, USB-A is designed to be inserted into host computers, hubs, and charging bricks in only one specific orientation. While newer standards have emerged, USB-A remains ubiquitous due to its exceptional mechanical durability and backward compatibility across decades of computing hardware. It is routinely used to connect human interface devices like mice, keyboards, flash memory drives, and legacy audio equipment.</p>
+                    <p class="mb-5">These interfaces serve two primary functions that are critical to the operation of modern technology. The first function is <strong>Data Transfer</strong>. They enable the incredibly fast and reliable communication of digital information between the device and the host. This includes everything from transmitting the simple, tiny signal of a single key press on a mechanical keyboard to maintaining the massive, continuous stream of data required to render high-definition video files from an external camera.</p>
                     
-                    <p class="mb-5">In contrast, the <strong>USB-B</strong> connector features a distinct square or near-square profile with beveled top corners. It was engineered specifically for larger peripheral devices where the cable connection is robustly supported and infrequently unplugged. The primary domain of USB-B has been peripheral devices such as desktop laser and inkjet printers, document scanners, and external desktop hard drive enclosures. On the peripheral device end, a USB-B port provides a secure physical anchor that prevents accidental dislodging during high-vibration printing operations.</p>
+                    <p class="mb-5">The second primary function is <strong>Power Supply</strong>. Many modern interfaces provide direct electrical power from the host computer to the peripheral device. This allows external hardware to run, or allows batteries in mobile devices to charge, without needing a completely separate wall plug and power adapter. This capability significantly reduces cable clutter on a user's desk and simplifies the process of using portable technology.</p>
                     
-                    <p class="mb-5">The modern pinnacle of the USB standard is <strong>USB-C</strong>. Unlike its predecessors, USB-C features an oval, highly compact, and fully reversible physical connector. Users no longer need to check connector orientation before plugging it in. Furthermore, USB-C supports advanced protocol encapsulation, allowing it to transfer high-speed data at multi-gigabit rates, deliver high-wattage power delivery (PD) for charging powerful laptops, and transmit native DisplayPort video signals all through the exact same slender cable.</p>
+                    <p class="mb-5">Historically, connecting devices was an incredibly complex and frustrating process. Computers often featured a wide array of proprietary ports specific to certain manufacturers or specific types of devices (like parallel ports for printers and serial ports for mice). This led to massive compatibility issues, where a printer from one brand might completely fail to physically connect to a computer from another brand without specialized, expensive adapters.</p>
+
+                    <p>The standardization of peripheral interfaces fundamentally changed this landscape. By defining a common set of rules, communication protocols, and standardized physical connector shapes, these interfaces minimize compatibility issues. This standardization ensures that a USB mouse manufactured today will work perfectly when plugged into almost any computer built in the last twenty years, which is a massive benefit for both consumers and IT professionals alike.</p>
+                `
+            },
+            'basic-usecase': {
+                title: 'Peripheral Basics: Practical Use Cases',
+                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
+                html: `
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Use Case 1: Identifying Needs for a Home Office</h4>
+                        <img src="https://placehold.co/800x300/e0f2fe/0369a1?text=Home+Office+Setup+Diagram" alt="Home Office Setup Diagram" class="w-full h-auto rounded-lg mb-4 shadow-sm border border-gray-200">
+                        <p>When setting up a home office, a user must fundamentally understand peripheral interfaces to purchase compatible equipment. They need to ensure their chosen laptop has the correct video ports (e.g., HDMI or DisplayPort) to connect to their external monitor, and enough standard USB ports to support their preferred wired mechanical keyboard and ergonomic mouse without requiring extra hubs or dongles.</p>
+                    </div>
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Use Case 2: Troubleshooting Connectivity</h4>
+                        <img src="https://placehold.co/800x300/e0f2fe/0369a1?text=Helpdesk+Troubleshooting" alt="Troubleshooting Diagram" class="w-full h-auto rounded-lg mb-4 shadow-sm border border-gray-200">
+                        <p>A helpdesk technician receives a ticket that a user's new external hard drive isn't being recognized by their older desktop computer. By understanding peripheral interfaces, the technician first checks if the drive is connected to a port capable of providing enough power (some older ports cannot power large drives). They also verify if the drive uses a newer standard that might be entirely incompatible with the user's older hardware without an adapter.</p>
+                    </div>
+                `
+            },
+            'usb-details': {
+                title: 'Universal Serial Bus (USB)',
+                icon: '<i class="fa-brands fa-usb text-green-600"></i>',
+                html: `
+                    <p class="mb-5">The Universal Serial Bus (USB) is arguably the most significant and widely adopted advancement in peripheral connectivity in the history of personal computing. It was designed to replace a chaotic assortment of older, proprietary serial and parallel ports, fundamentally simplifying the process of connecting peripherals. Before USB, installing a new device often required manually configuring software, adjusting hardware switches, and repeatedly restarting the computer.</p>
                     
-                    <p class="mb-5">Behind the physical connectors, USB protocol revisions have dramatically increased performance thresholds. From early USB 1.1 speeds of 12 Mbps to USB 2.0 (480 Mbps), USB 3.0/3.1 (5 to 10 Gbps), and modern USB4 specifications reaching up to 40 Gbps, the bus has scaled to meet the massive data demands of modern solid-state drives and 4K video capture cards. The USB Implementers Forum (USB-IF) continues to refine these protocols to ensure backward compatibility while unlocking extreme performance.</p>
+                    <p class="mb-5">The primary goal of USB was to provide a standardized, "plug-and-play" experience for the average user. It allows devices to be connected and disconnected while the computer is currently running (a feature known as hot-swappable), and it automatically manages the configuration and driver installation process in most cases. USB also introduced the critical feature of providing 5V power alongside data, eliminating the need for bulky separate power bricks for many smaller devices.</p>
                     
-                    <p>Understanding USB standards is essential for IT professionals troubleshooting hardware connectivity. When evaluating whether a peripheral will function optimally, technicians must verify not only the physical connector type (A, B, or C) but also the underlying USB generation protocol supported by both the host port and the peripheral cable to avoid bandwidth bottlenecks.</p>
+                    <p class="mb-5">Over the years, the USB standard has evolved significantly, leading to different physical connector types. <strong>USB-A</strong> is the traditional, large rectangular connector. It has been universally supported by almost all desktop computers and older laptops for decades. Its main drawback is its physical design: it is not reversible—it only plugs in one way, often leading to user frustration. Furthermore, older versions of USB-A (like USB 2.0) generally have much lower data transfer rates compared to modern standards.</p>
+                    
+                    <p class="mb-5"><strong>USB-B</strong> is a much sturdier, square-shaped connector with slightly beveled top corners. Because of its large size and extremely tight, secure physical fit, it is typically used for large devices that are stationary and not frequently plugged and unplugged. You will almost exclusively find USB-B ports acting as the input on the back of heavy-duty office printers, flatbed document scanners, and large external hard drive enclosures.</p>
+                    
+                    <p class="mb-5">The modern era of computing is defined by <strong>USB-C</strong>. This compact and highly versatile connector is entirely reversible, meaning there is no "upside down," entirely solving the primary annoyance of the older USB-A connector. Because of its small footprint, it has become the standard on ultra-thin laptops and modern mobile phones.</p>
+
+                    <p>More importantly than its shape, USB-C supports massive data transfer rates, high-resolution video output, and can deliver significantly higher wattage power. This incredible versatility allows a single USB-C cable to charge modern laptops, connect them to high-resolution external displays, and transfer data at blazing speeds simultaneously, making it the ultimate all-in-one cable solution.</p>
                 `
             },
             'usb-usecase': {
-                title: 'USB (A/B/C): Use Cases & Examples',
+                title: 'USB: Practical Use Cases',
                 icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
                 html: `
                     <div class="mb-8">
-                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 1: Office Workstation Setup (USB-A & USB-B)</h4>
-                        <p class="mb-2">Standard corporate office environments rely heavily on durable, established wired peripherals that remain permanently connected to desktop workstations.</p>
-                        <ul class="list-disc pl-5 mb-4 text-gray-700">
-                            <li class="mb-2"><strong>Example 1 (USB-A Keyboard/Mouse):</strong> An accountant plugs a standard wired keyboard and optical mouse into the back USB-A ports of their desktop tower for reliable, zero-latency input without ever needing battery replacements.</li>
-                            <li><strong>Example 2 (USB-B Printer Connection):</strong> The office administrator connects a heavy-duty networked laser printer to a central workstation using a standard USB-A to USB-B cable, ensuring a secure, physical data link for printing invoices.</li>
-                        </ul>
+                        <h4 class="text-xl font-bold text-green-800 mb-2 border-b-2 border-green-200 pb-1">Use Case 1: The Standard Office Setup</h4>
+                        <img src="https://placehold.co/800x300/dcfce7/166534?text=USB-A+and+USB-B+Connections" alt="USB Connections in Office" class="w-full h-auto rounded-lg mb-4 shadow-sm border border-gray-200">
+                        <p>Chris is setting up a new workstation. He uses a <strong>USB-A</strong> port on the back of his PC tower to connect a basic wired keyboard. However, his heavy laser printer only has a square port on the back. He uses a standard printer cable that has a <strong>USB-B</strong> connector (which goes securely into the printer) and a USB-A connector on the other end (which plugs into the PC tower).</p>
                     </div>
                     <div class="mb-8">
-                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Case 2: Mobile Productivity & Charging (USB-C)</h4>
-                        <p class="mb-2">Modern professionals require highly versatile, compact laptops and smartphones that can connect to external docks, fast chargers, and high-speed storage using a single connector type.</p>
-                        <ul class="list-disc pl-5 mb-4 text-gray-700">
-                            <li class="mb-2"><strong>Example 1 (Universal Laptop Docking):</strong> A traveling sales executive plugs a single USB-C cable from a multi-port desktop dock into their ultrabook, instantly connecting power, dual monitors, ethernet, and USB peripherals.</li>
-                            <li><strong>Example 2 (Smartphone Fast Charging):</strong> A user plugs a reversible USB-C cable into their modern smartphone, achieving rapid power delivery charging and high-speed photo backups to a portable solid-state drive.</li>
-                        </ul>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                        <div>
-                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: USB Connectors (A, B, C)</p>
-                            <img src="https://images.unsplash.com/photo-1544652478-6653e09f18a2?auto=format&fit=crop&w=600&h=350" alt="USB cables and connectors representing standard hardware interfaces" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
-                        </div>
-                        <div>
-                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Modern Workstation Docking</p>
-                            <img src="https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=600&h=350" alt="Modern computer workstation setup with USB peripherals" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
-                        </div>
+                        <h4 class="text-xl font-bold text-green-800 mb-2 border-b-2 border-green-200 pb-1">Use Case 2: Modern Laptop Docking</h4>
+                        <img src="https://placehold.co/800x300/dcfce7/166534?text=Single+Cable+USB-C+Dock" alt="USB-C Dock Diagram" class="w-full h-auto rounded-lg mb-4 shadow-sm border border-gray-200">
+                        <p>A mobile employee returns to their desk after a meeting. Instead of plugging in a separate power cable, a heavy monitor cable, and a small mouse dongle, they simply connect one single <strong>USB-C</strong> cable from a desk hub to their laptop. This single connection routes up to 100 watts of power to charge the laptop, sends 4K video to the external monitor, and provides a data connection to the wired network and desktop peripherals.</p>
                     </div>
                 `
             },
-            'thunderbolt-details': {
-                title: 'Thunderbolt Interface Standards',
-                icon: '<i class="fa-solid fa-bolt text-cyan-600"></i>',
+            'high-details': {
+                title: 'High-Speed & Proprietary Interfaces',
+                icon: '<i class="fa-solid fa-bolt text-purple-600"></i>',
                 html: `
-                    <p class="mb-5">Thunderbolt is an elite, high-performance hardware interface standard originally developed by Intel in collaboration with Apple. Designed to handle the most demanding data and video workflows in professional computing, Thunderbolt bridges the gap between internal PCI Express (PCIe) system buses and external peripheral enclosures. By tunneling PCIe data, DisplayPort video streams, and DC electrical power across a single cable, Thunderbolt eliminates the need for multiple specialized expansion cards and proprietary connection cables.</p>
+                    <p class="mb-5">While basic USB connectivity handles standard tasks for the vast majority of consumers, specific professional use cases demand extreme performance or utilize specialized, brand-specific ecosystems that push beyond the capabilities of standard connections. These high-speed and proprietary interfaces are specifically designed for power users, creative professionals, and highly specific hardware environments.</p>
                     
-                    <p class="mb-5">Bandwidth is the defining characteristic that separates Thunderbolt from standard USB connections. While standard USB ports are optimized for general peripherals, modern Thunderbolt iterations (Thunderbolt 3 and Thunderbolt 4) deliver astonishing bi-directional bandwidth up to 40 Gbps. This massive data throughput allows creative professionals to connect external graphics processing units (eGPUs), multi-drive RAID storage arrays, and uncompressed capture cards without encountering data bottlenecks.</p>
+                    <p class="mb-5"><strong>Thunderbolt</strong> represents the absolute pinnacle of wired connectivity for general consumers and professionals alike. Developed initially in collaboration between Intel and Apple, Thunderbolt is a premium, incredibly high-speed interface. It is important to note that modern iterations (Thunderbolt 3 and 4) utilize the exact same physical oval connector shape as USB-C. The crucial difference lies in the advanced controller technology and protocols behind the port, which allow for significantly higher performance.</p>
                     
-                    <p class="mb-5">A critical architectural evolution occurred with the release of Thunderbolt 3, which adopted the physical <strong>USB-C connector</strong> form factor. This meant that Thunderbolt cables and ports became physically compatible with standard USB-C devices, simplifying user connectivity. However, true Thunderbolt ports feature specialized controller chips and active circuitry capable of handling the rigorous high-speed signalling requirements that standard USB-C ports may omit.</p>
+                    <p class="mb-5">Thunderbolt supports incredible data transfer rates, officially reaching up to 40 Gbps on standard cables. This immense bandwidth is what allows it to handle multiple demanding tasks simultaneously without lagging. A single Thunderbolt port can connect multiple demanding devices—such as dual 4K displays, external graphics processing units (eGPUs), and massive arrays of high-speed Solid State Drives (SSDs)—through a process called "daisy chaining."</p>
                     
-                    <p class="mb-5">Another powerful feature of Thunderbolt is <strong>Daisy Chaining</strong>. Unlike traditional star-topology USB connections where every device must plug directly into a computer or hub, Thunderbolt allows up to six distinct devices to be connected in a linear series. A user can plug their laptop into an external 4K monitor via Thunderbolt, then connect a high-speed external NVMe SSD directly into the back of the monitor, and the computer will communicate with both devices flawlessly over that single cable.</p>
+                    <p class="mb-5">Because Thunderbolt requires specialized, high-end controller chips inside both the host computer and the peripheral device, hardware utilizing Thunderbolt is typically significantly more expensive than hardware utilizing standard USB protocols. This makes it a specialized tool rather than a universal budget solution.</p>
                     
-                    <p class="mb-5">Power Delivery (PD) is also deeply integrated into the Thunderbolt specification. Capable of supplying up to 100 watts or more of electrical power, a single Thunderbolt cable can power a high-performance workstation laptop while simultaneously driving external displays and charging connected accessories. This transforms the cable into a true single-wire docking solution for demanding professional environments.</p>
+                    <p class="mb-5">On the proprietary side of the industry, <strong>Lightning</strong> was a connector developed exclusively by Apple. Introduced in 2012, long before USB-C was standardized, it is a small, fully reversible 8-pin connector. It became the dominant standard for all Apple mobile devices, including iPhones, iPads, and AirPods, easily supporting both data transfer and device charging while being much more durable than older mobile connectors.</p>
                     
-                    <p class="mb-5">Despite its immense technical superiority, Thunderbolt hardware and certified cables are typically more expensive than standard USB alternatives due to the inclusion of active retimer chips and rigorous Intel certification processes. Furthermore, older PCs or budget motherboards often lack native Thunderbolt controller hardware, requiring dedicated PCIe expansion cards.</p>
-                    
-                    <p>For IT technicians supporting video editors, software engineers, and financial analysts, mastering Thunderbolt configuration is vital. Ensuring users utilize certified 40 Gbps Thunderbolt cables rather than generic charging cables prevents intermittent display flickering and data corruption during heavy file transfers.</p>
+                    <p>While Lightning was optimized specifically for the seamless Apple ecosystem, it remained highly restricted. Accessories designed for Lightning would absolutely not work with any other brand of hardware, and they often carried a premium price tag due to Apple's licensing fees. Furthermore, its data transfer speeds largely remained capped at older USB 2.0 standards, heavily lagging behind modern USB-C capabilities. Consequently, due to technological limits and regulatory pressure, Apple is currently transitioning away from Lightning toward the universal USB-C standard across all its product lines.</p>
                 `
             },
-            'thunderbolt-usecase': {
-                title: 'Thunderbolt: Use Cases & Examples',
+            'high-usecase': {
+                title: 'High-Speed & Proprietary Use Cases',
                 icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
                 html: `
                     <div class="mb-8">
-                        <h4 class="text-xl font-bold text-cyan-800 mb-2 border-b-2 border-cyan-200 pb-1">Case 1: Professional 4K/8K Video Editing Workstation</h4>
-                        <p class="mb-2">Freelance video editors working with massive uncompressed media files require extreme data transfer speeds and multi-monitor output without lag.</p>
-                        <ul class="list-disc pl-5 mb-4 text-gray-700">
-                            <li class="mb-2"><strong>Example 1 (High-Speed Storage Arrays):</strong> An editor connects an external 8-bay NVMe RAID storage enclosure via Thunderbolt, enabling real-time playback of multi-stream 8K video footage directly from the external drive.</li>
-                            <li><strong>Example 2 (Simultaneous Power & Display):</strong> The editor connects their laptop to a professional color-accurate 4K reference monitor using a single Thunderbolt cable that simultaneously delivers 85W of charging power and ultra-HD video.</li>
-                        </ul>
+                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Use Case 1: 4K Video Editing</h4>
+                        <img src="https://placehold.co/800x300/f3e8ff/6b21a8?text=Thunderbolt+Daisy+Chain" alt="Thunderbolt Daisy Chain Diagram" class="w-full h-auto rounded-lg mb-4 shadow-sm border border-gray-200">
+                        <p>Jordan is a freelancer who edits massive 4K video files on his laptop. He needs to connect a color-accurate external monitor, a high-speed external SSD holding his gigabytes of raw video files, and keep his laptop charged for long work sessions. By utilizing a <strong>Thunderbolt</strong> dock, he can handle all three of these extremely bandwidth-heavy tasks simultaneously through one single cable, ensuring his video editing software runs without dropping frames.</p>
                     </div>
                     <div class="mb-8">
-                        <h4 class="text-xl font-bold text-cyan-800 mb-2 border-b-2 border-cyan-200 pb-1">Case 2: Software Development & Daisy Chaining</h4>
-                        <p class="mb-2">Software engineers running complex virtual machines and multi-display coding environments need clean desk setups with minimal cable clutter.</p>
-                        <ul class="list-disc pl-5 mb-4 text-gray-700">
-                            <li class="mb-2"><strong>Example 1 (Daisy-Chained Monitors):</strong> A developer links two 4K widescreen monitors in a daisy chain from their laptop's single Thunderbolt port, keeping desk space clear while expanding their coding workspace.</li>
-                            <li><strong>Example 2 (External eGPU Acceleration):</strong> A machine learning engineer plugs an external graphics enclosure (eGPU) housing an enterprise GPU into their laptop via Thunderbolt to accelerate local AI model training.</li>
-                        </ul>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                        <div>
-                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: High-Speed Thunderbolt Port</p>
-                            <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=600&h=350" alt="High-end laptop representing Thunderbolt video and data capabilities" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
-                        </div>
-                        <div>
-                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Professional Creative Studio</p>
-                            <img src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=600&h=350" alt="Professional video editing workstation with dual monitors" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
-                        </div>
+                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Use Case 2: Corporate Device Management</h4>
+                        <img src="https://placehold.co/800x300/f3e8ff/6b21a8?text=Lightning+Cable+Fleet" alt="Lightning Cable Fleet" class="w-full h-auto rounded-lg mb-4 shadow-sm border border-gray-200">
+                        <p>A large corporation issues older iPhone 13s to all its field employees to manage costs. The IT department needs to order standard cables to allow employees to charge the devices in their fleet vehicles and transfer photos to their workstations. Because these specific devices pre-date Apple's recent shift to USB-C, the company must explicitly order proprietary <strong>Lightning</strong> cables, as standard USB-C or Micro-USB cables will simply not physically fit into the Apple ports.</p>
                     </div>
                 `
             },
-            'bluetooth-details': {
-                title: 'Bluetooth Wireless Technology',
-                icon: '<i class="fa-brands fa-bluetooth text-indigo-600"></i>',
+            'wire-details': {
+                title: 'Wireless Peripheral Interfaces',
+                icon: '<i class="fa-solid fa-wifi text-orange-600"></i>',
                 html: `
-                    <p class="mb-5">Bluetooth is a short-range wireless technology standard used for exchanging data over relatively short distances between fixed and mobile devices. Developed originally as a wireless replacement for RS-232 serial cables, Bluetooth operates in the unlicensed 2.4 GHz ISM (Industrial, Scientific, and Medical) frequency band. It utilizes a spread-spectrum, frequency-hopping transceiver technology that divides data into packets and transmits them across 79 designated Bluetooth channels, hopping frequencies up to 1600 times per second to minimize interference from Wi-Fi networks and microwave ovens.</p>
+                    <p class="mb-5">As technology becomes increasingly mobile and users demand cleaner workspaces, physical wires often become a severe hindrance, restricting movement, getting tangled, and creating visual clutter. Wireless peripheral interfaces solve this major problem by allowing hardware to communicate directly through the air using specific, regulated frequency bands. This enables ultimate flexibility for devices that are moved frequently or used at a distance from the host computer.</p>
                     
-                    <p class="mb-5">The defining engineering objective of Bluetooth is ultra-low power consumption. Unlike Wi-Fi or cellular radios designed for long-range, high-bandwidth streaming, Bluetooth is specifically engineered to operate efficiently on tiny coin-cell batteries or small internal lithium-ion batteries. This makes Bluetooth the premier wireless protocol for portable accessories like wireless mice, mechanical keyboards, fitness trackers, wireless earbuds, and medical telemetry sensors.</p>
+                    <p class="mb-5"><strong>Bluetooth</strong> is by far the most universally recognized short-range wireless technology in the world. It operates on the 2.4 GHz frequency band and is specifically designed for incredible, universal compatibility across different brands. Crucially, it is also designed for extremely low power consumption. Because it uses so little battery life to maintain a connection, it has become the undisputed, dominant standard for connecting mobile and battery-operated peripherals.</p>
                     
-                    <p class="mb-5">Bluetooth architecture relies on a master-slave (or central-peripheral) topology forming a localized network known as a <strong>Piconet</strong>. A single central device (such as a smartphone or laptop) can act as the master controller, simultaneously managing connections with up to seven active peripheral slave devices. This enables a user to connect a Bluetooth mouse, keyboard, speaker, and headset to their laptop all at the same time without cross-talk or signal confusion.</p>
+                    <p class="mb-5">Almost all modern laptops, tablets, and smartphones have Bluetooth radio chips built directly into their motherboards at the factory. This makes it incredibly easy for users to pair wireless headphones, smartwatches, and standard office mice without needing to purchase or plug in any extra hardware dongles. However, this massive convenience does come with a technical trade-off: Bluetooth generally has slightly slower data transfer rates and higher latency (input delay) compared to wired connections or specialized wireless protocols.</p>
                     
-                    <p class="mb-5">Over the decades, Bluetooth has evolved through numerous version upgrades, each introducing significant performance improvements. Bluetooth 4.0 introduced Bluetooth Low Energy (BLE), which revolutionized IoT (Internet of Things) devices by allowing tiny sensors to run for years on a single battery. Modern Bluetooth 5.x iterations have doubled data transfer speeds (up to 2 Mbps) and quadrupled operational range (up to 240 meters in line-of-sight conditions), while improving audio streaming fidelity through advanced codecs.</p>
+                    <p class="mb-5"><strong>Radio Frequency (RF)</strong> is a broader technical term referring to a category of wireless communication that uses specific radio waves. In the specific context of PC peripherals, it usually refers to high-end devices that bypass Bluetooth entirely, instead connecting via a dedicated 2.4GHz USB dongle that must be physically plugged into the computer. These specific dongles are uniquely paired with their corresponding device (like a high-end gaming mouse or mechanical keyboard) directly at the factory.</p>
                     
-                    <p class="mb-5">Pairing is the foundational security and connection process in Bluetooth. Before two devices can exchange data, they must undergo a cryptographic handshake. Modern Bluetooth versions utilize Secure Simple Pairing (SSP), which often employs Numeric Comparison or Out-of-Band (NFC) pairing to prevent man-in-the-middle eavesdropping attacks while remaining user-friendly.</p>
+                    <p class="mb-5">By tuning the communication to a highly specific, tight frequency and using proprietary data protocols, these dedicated RF dongles can significantly reduce interference from other wireless signals (like Wi-Fi routers and nearby Bluetooth devices). The main advantage of dedicated RF over standard Bluetooth is raw performance and speed.</p>
                     
-                    <p class="mb-5">Despite its immense convenience, Bluetooth has inherent limitations compared to wired connections. Its data transfer speeds are generally slower, and it can suffer from audible audio latency or input lag in high-performance gaming scenarios. Furthermore, because it shares the crowded 2.4 GHz radio spectrum with Wi-Fi routers and baby monitors, heavy interference can occasionally cause dropped peripheral connections.</p>
-                    
-                    <p>IT support specialists frequently troubleshoot Bluetooth connectivity issues. Common resolutions include updating host Bluetooth controller firmware, clearing corrupted pairing caches in the operating system, and ensuring physical obstructions do not block the radio transceiver path.</p>
+                    <p>RF connections can provide near-wired response times with incredibly low latency, which is absolutely essential for fast-paced activities where milliseconds matter. However, this performance increase means they consume slightly more battery power than Bluetooth, and they require the user to actively manage and not lose the small, easy-to-misplace USB dongle.</p>
                 `
             },
-            'bluetooth-usecase': {
-                title: 'Bluetooth: Use Cases & Examples',
+            'wire-usecase': {
+                title: 'Wireless Interfaces Use Cases',
                 icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
                 html: `
                     <div class="mb-8">
-                        <h4 class="text-xl font-bold text-indigo-800 mb-2 border-b-2 border-indigo-200 pb-1">Case 1: Corporate Virtual Meeting Audio</h4>
-                        <p class="mb-2">Enterprise employees working in hybrid or open office environments require untethered mobility for continuous video conferencing.</p>
-                        <ul class="list-disc pl-5 mb-4 text-gray-700">
-                            <li class="mb-2"><strong>Example 1 (Wireless Headsets):</strong> An employee pairs a Bluetooth headset to their laptop, allowing them to stand up, walk to a whiteboard, and participate in a Zoom meeting without being tethered by audio cables.</li>
-                            <li><strong>Example 2 (Smartphone Hands-Free Calling):</strong> A traveling executive connects their smartphone to a rental car's Bluetooth audio system to conduct hands-free conference calls safely while driving.</li>
-                        </ul>
+                        <h4 class="text-xl font-bold text-orange-800 mb-2 border-b-2 border-orange-200 pb-1">Use Case 1: Corporate Virtual Meetings</h4>
+                        <img src="https://placehold.co/800x300/ffedd5/c2410c?text=Bluetooth+Office+Headsets" alt="Bluetooth Office Setup Diagram" class="w-full h-auto rounded-lg mb-4 shadow-sm border border-gray-200">
+                        <p>A company wants to give all employees wireless headphones to allow them to walk around their home offices, get water, and stretch during long virtual meetings. Because almost all company laptops, tablets, and mobile phones have <strong>Bluetooth</strong> built directly into the motherboard, this universal interface is chosen for easy connectivity. Employees can pair the headsets directly to any device without requiring the IT department to distribute and track extra USB dongles.</p>
                     </div>
                     <div class="mb-8">
-                        <h4 class="text-xl font-bold text-indigo-800 mb-2 border-b-2 border-indigo-200 pb-1">Case 2: Mobile Peripheral Ecosystems</h4>
-                        <p class="mb-2">Tablet and laptop users frequently connect portable input devices and health-tracking wearables without cluttering physical USB ports.</p>
-                        <ul class="list-disc pl-5 mb-4 text-gray-700">
-                            <li class="mb-2"><strong>Example 1 (Tablet Keyboards & Mice):</strong> A student pairs a Bluetooth wireless keyboard and mouse to their tablet, instantly transforming the mobile touchscreen device into a productive workstation.</li>
-                            <li><strong>Example 2 (Smartwatch Health Syncing):</strong> A user syncs their smartwatch via Bluetooth Low Energy (BLE) to their smartphone to continuously transmit daily step counts and heart rate telemetry.</li>
-                        </ul>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                        <div>
-                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Bluetooth Headset Pairing</p>
-                            <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&h=350" alt="Wireless headphones representing Bluetooth connectivity" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
-                        </div>
-                        <div>
-                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Virtual Meeting Mobility</p>
-                            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&h=350" alt="Professional wearing wireless headset during virtual meeting" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
-                        </div>
-                    </div>
-                `
-            },
-            'rf-details': {
-                title: 'Radio Frequency (RF) Wireless Technology',
-                icon: '<i class="fa-solid fa-tower-broadcast text-purple-600"></i>',
-                html: `
-                    <p class="mb-5">Radio Frequency (RF) wireless technology is a broad engineering category encompassing any form of wireless communication that utilizes electromagnetic radio waves to transmit data through the air. While technologies like Bluetooth and Wi-Fi are technically subsets of RF communication, in the context of computer peripheral devices, "RF" specifically refers to proprietary 2.4 GHz wireless connections that utilize dedicated USB dongles (transceivers) plugged directly into the host computer.</p>
-                    
-                    <p class="mb-5">The primary operational advantage of dedicated RF peripheral connections over standard Bluetooth is latency and performance consistency. When a user plugs a dedicated RF USB receiver into their computer, the receiver communicates directly and exclusively with its paired peripheral (such as a gaming mouse or mechanical keyboard) using a proprietary, highly optimized polling protocol. This bypasses the computer's generic Bluetooth stack, resulting in polling rates up to 1000 Hz (1ms response time) and near-wired performance.</p>
-                    
-                    <p class="mb-5">RF communication relies on modulating carrier radio waves with digital data streams. Transmitters encode binary 1s and 0s onto the radio frequency wave, and the USB receiver demodulates the wave back into digital inputs that the operating system interprets as keystrokes or mouse movements. To prevent signal collisions in crowded wireless environments, professional RF devices utilize frequency hopping and channel allocation algorithms.</p>
-                    
-                    <p class="mb-5">Power consumption characteristics vary significantly across RF implementations. Long-range RF remote controls and industrial wireless systems require higher transmitter power output and drain batteries quickly. Conversely, short-range RF peripheral dongles designed for desktop mice operate at very low power levels, allowing a single AA or AAA battery to power a wireless mouse for up to twelve to eighteen months of continuous daily use.</p>
-                    
-                    <p class="mb-5">Unlike Bluetooth, which requires device pairing and software handshakes managed by the operating system, many RF peripheral sets are entirely plug-and-play at the hardware level. The mouse and USB dongle are factory-paired at the silicon level, meaning the computer treats the wireless mouse exactly as if it were plugged into a physical USB cable, requiring no special driver installation or pairing menus.</p>
-                    
-                    <p class="mb-5">However, RF technology has notable limitations. Because each manufacturer (e.g., Logitech, Razer, Corsair) uses proprietary radio protocols for their RF dongles, a user cannot connect an RF mouse from Manufacturer A to an RF dongle from Manufacturer B. Furthermore, losing the tiny USB receiver dongle usually renders the wireless peripheral completely unusable until a replacement dongle is paired.</p>
-                    
-                    <p>In high-stakes environments like competitive esports gaming, professional trading floors, or wireless home theater control, understanding RF technology ensures users select hardware that delivers absolute reliability and imperceptible input latency.</p>
-                `
-            },
-            'rf-usecase': {
-                title: 'Radio Frequency (RF): Use Cases & Examples',
-                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
-                html: `
-                    <div class="mb-8">
-                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Case 1: Competitive Esports Gaming</h4>
-                        <p class="mb-2">Professional gamers and enthusiasts demand absolute zero input lag and uncompromised sensor accuracy without the physical drag of a mouse cable.</p>
-                        <ul class="list-disc pl-5 mb-4 text-gray-700">
-                            <li class="mb-2"><strong>Example 1 (Ultra-Low Latency Mouse):</strong> A competitive esports player uses a 2.4 GHz RF wireless gaming mouse connected via a dedicated USB dongle, achieving 1ms response times that match or beat traditional wired mice.</li>
-                            <li><strong>Example 2 (Wireless Mechanical Keyboard):</strong> The gamer uses an RF mechanical keyboard with proprietary hyper-polling technology to ensure rapid keystroke registration during intense multiplayer matches.</li>
-                        </ul>
-                    </div>
-                    <div class="mb-8">
-                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Case 2: Wireless Presentation & Home Theater Control</h4>
-                        <p class="mb-2">Presenters and media room users need reliable wireless connectivity that works instantly across conference room distances without Bluetooth pairing menus.</p>
-                        <ul class="list-disc pl-5 mb-4 text-gray-700">
-                            <li class="mb-2"><strong>Example 1 (Boardroom Presentation Clicker):</strong> A corporate speaker plugs a tiny RF USB receiver into a conference laptop and uses a handheld presentation clicker to advance slides reliably from across a large auditorium.</li>
-                            <li><strong>Example 2 (Living Room Media Keyboard):</strong> A homeowner uses an RF wireless keyboard with an integrated trackpad to control their media center PC from the comfort of their couch without line-of-sight restrictions.</li>
-                        </ul>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                        <div>
-                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: RF Wireless Gaming Mouse & Dongle</p>
-                            <img src="https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?auto=format&fit=crop&w=600&h=350" alt="Wireless gaming mouse and equipment representing RF technology" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
-                        </div>
-                        <div>
-                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Competitive Esports Gaming Setup</p>
-                            <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=600&h=350" alt="Competitive gaming setup with wireless peripherals" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
-                        </div>
-                    </div>
-                `
-            },
-            'lightning-details': {
-                title: 'Apple Lightning Connector Standard',
-                icon: '<i class="fa-solid fa-bolt-lightning text-amber-600"></i>',
-                html: `
-                    <p class="mb-5">The Lightning connector is a proprietary 8-pin hardware interface standard developed exclusively by Apple Inc. Introduced in late 2012 alongside the iPhone 5 as a direct replacement for the bulky 30-pin dock connector used by early Apple devices, Lightning represented a massive leap forward in physical mobile connector design. It was engineered to be exceptionally compact, durable, and optimized for mobile handheld devices where internal space is at an absolute premium.</p>
-                    
-                    <p class="mb-5">One of the most celebrated physical design innovations of the Lightning connector is its fully reversible orientation. Unlike legacy USB-A connectors that only insert in one correct direction, the Lightning plug features identical contact pads on both sides of its slender PCB tongue. A user can insert the cable into an iPhone or iPad in either "right-side up" or "upside down" orientation, greatly reducing user frustration and preventing physical damage to port pins caused by forced incorrect insertions.</p>
-                    
-                    <p class="mb-5">Technically, Lightning is a digital, adaptive interface. Unlike traditional analog cables where a pin has a fixed permanent function, the pins on a Lightning connector are dynamically assigned by a tiny authentication and control chip embedded inside the cable housing. When a Lightning cable is plugged in, the host device and cable handshake, and the internal switches route power, USB data, or audio signals dynamically across the 8 pins based on what accessory is attached.</p>
-                    
-                    <p class="mb-5">Throughout its lifecycle, Lightning has supported both USB 2.0 data transfer speeds for charging and media sync, as well as specialized digital adapters allowing users to connect HDMI displays, SD card readers, and USB-A cameras to their iOS devices. Apple also utilized Lightning for proprietary accessories such as AirPods charging cases, Apple Pencil (1st gen), and Magic Keyboards.</p>
-                    
-                    <p class="mb-5">However, as a proprietary standard controlled entirely by Apple, Lightning faced significant criticism and regulatory pressure. Because third-party accessory manufacturers had to join the MFi (Made for iPhone/iPad/iPod) licensing program and pay royalties to Apple to produce certified cables, Lightning accessories and replacement cables were consistently more expensive than generic USB cables.</p>
-                    
-                    <p class="mb-5">In recent years, regulatory mandates (such as European Union common charger laws) and technological advancements requiring faster data transfer and higher power delivery have driven Apple to transition their mobile product lineup away from Lightning in favor of universal USB-C ports.</p>
-                    
-                    <p>For IT support technicians managing corporate device fleets, understanding Lightning versus USB-C compatibility remains crucial when provisioning older corporate iPhones alongside modern laptops and tablets.</p>
-                `
-            },
-            'lightning-usecase': {
-                title: 'Lightning: Use Cases & Examples',
-                icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
-                html: `
-                    <div class="mb-8">
-                        <h4 class="text-xl font-bold text-amber-800 mb-2 border-b-2 border-amber-200 pb-1">Case 1: Corporate iPhone Fleet Management</h4>
-                        <p class="mb-2">Enterprise organizations that issued standardized iPhones to employees relied on the Lightning ecosystem for uniform charging and media transfer.</p>
-                        <ul class="list-disc pl-5 mb-4 text-gray-700">
-                            <li class="mb-2"><strong>Example 1 (Standardized Charging Stations):</strong> IT departments deployed multi-device charging docks utilizing Lightning cables in corporate offices so employees could quickly recharge company-issued iPhones between meetings.</li>
-                            <li><strong>Example 2 (Media & Photo Offloading):</strong> Field service workers connected their iPhones via Lightning cables to secure desktop computers to rapidly offload inspection photos and sync customer data logs.</li>
-                        </ul>
-                    </div>
-                    <div class="mb-8">
-                        <h4 class="text-xl font-bold text-amber-800 mb-2 border-b-2 border-amber-200 pb-1">Case 2: Mobile Accessory Integration</h4>
-                        <p class="mb-2">Users paired specialized Apple mobile accessories that relied on the compact physical footprint of the Lightning connector.</p>
-                        <ul class="list-disc pl-5 mb-4 text-gray-700">
-                            <li class="mb-2"><strong>Example 1 (Lightning Digital AV Adapters):</strong> A traveling speaker plugged a Lightning-to-HDMI adapter into their iPad to project presentation slides directly onto conference room projectors.</li>
-                            <li><strong>Example 2 (Accessory Charging):</strong> Users recharged Apple TV remotes, AirPods charging cases, and vintage peripherals using standard MFi-certified Lightning cables.</li>
-                        </ul>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                        <div>
-                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Apple Lightning Mobile Connector</p>
-                            <img src="https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?auto=format&fit=crop&w=600&h=350" alt="Apple iPhone representing Lightning interface compatibility" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
-                        </div>
-                        <div>
-                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Mobile Media & Syncing</p>
-                            <img src="https://images.unsplash.com/photo-1526738549149-8e07eca6c147?auto=format&fit=crop&w=600&h=350" alt="Mobile phone connected with charging cable" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
-                        </div>
+                        <h4 class="text-xl font-bold text-orange-800 mb-2 border-b-2 border-orange-200 pb-1">Use Case 2: Competitive E-Sports</h4>
+                        <img src="https://placehold.co/800x300/ffedd5/c2410c?text=Low-Latency+RF+Gaming" alt="RF Gaming Setup" class="w-full h-auto rounded-lg mb-4 shadow-sm border border-gray-200">
+                        <p>Alex is a competitive e-sports gamer who absolutely wants the physical freedom of a wireless keyboard and mouse to perform wide physical sweeps on her desk. However, she absolutely cannot risk the delay (latency) associated with standard Bluetooth. She chooses high-performance peripherals that utilize a dedicated <strong>Radio Frequency (RF)</strong> USB dongle. This operates on a highly specific band to reduce interference and deliver the split-second, near-wired reaction times that are crucial for competitive gaming.</p>
                     </div>
                 `
             }
         };
 
-        // Modal Control Functions
         function openBriefing(key) {
             const modal = document.getElementById('briefing-modal');
             const data = briefingData[key];
@@ -826,7 +641,9 @@
         }
 
         document.getElementById('briefing-modal').addEventListener('click', function(e) {
-            if(e.target === this) closeBriefing();
+            if(e.target === this) {
+                closeBriefing();
+            }
         });
         
         function switchTab(tabId) {
@@ -871,145 +688,126 @@
             document.getElementById('custom-modal').classList.add('hidden');
         }
 
-        // --- LAB 1: USB Matchmaker Logic ---
-        let selectedTerm = null;
-        let selectedDef = null;
-        let lab1Matches = 0;
+        // --- STREAMING_CHUNK:Javascript for Lab 1... ---
+        // --- Lab 1: Categorization Logic ---
+        let draggedCatItem = null;
 
-        function selectMatchCard(card, type) {
-            if(card.classList.contains('matched')) return;
-            
-            if(type === 'term') {
-                document.querySelectorAll('#usb-terms .match-card').forEach(c => c.classList.remove('selected'));
-                card.classList.add('selected');
-                selectedTerm = card;
-            } else {
-                document.querySelectorAll('#usb-defs .match-card').forEach(c => c.classList.remove('selected'));
-                card.classList.add('selected');
-                selectedDef = card;
-            }
+        document.querySelectorAll('.io-item').forEach(item => {
+            item.addEventListener('dragstart', function() {
+                draggedCatItem = this;
+                setTimeout(() => this.classList.add('opacity-50'), 0);
+            });
+            item.addEventListener('dragend', function() {
+                setTimeout(() => this.classList.remove('opacity-50'), 0);
+                draggedCatItem = null;
+            });
+        });
 
-            if(selectedTerm && selectedDef) {
-                if(selectedTerm.dataset.match === selectedDef.dataset.match) {
-                    selectedTerm.classList.remove('selected');
-                    selectedTerm.classList.add('matched');
-                    selectedDef.classList.remove('selected');
-                    selectedDef.classList.add('matched');
+        document.querySelectorAll('.cat-dropzone').forEach(zone => {
+            zone.addEventListener('dragover', e => e.preventDefault());
+            zone.addEventListener('dragenter', function(e) { e.preventDefault(); this.classList.add('brightness-95'); });
+            zone.addEventListener('dragleave', function() { this.classList.remove('brightness-95'); });
+            zone.addEventListener('drop', function() {
+                this.classList.remove('brightness-95');
+                if(draggedCatItem) {
+                    if(draggedCatItem.dataset.type === this.dataset.target) {
+                        this.appendChild(draggedCatItem);
+                        draggedCatItem.classList.remove('bg-indigo-100', 'cursor-grab');
+                        draggedCatItem.classList.add('bg-green-100', 'text-green-800', 'cursor-default', 'mb-2');
+                        draggedCatItem.setAttribute('draggable', 'false');
+                        
+                        document.getElementById('lab1-feedback').innerText = "Correctly Categorized!";
+                        document.getElementById('lab1-feedback').className = "text-center font-bold mt-4 h-6 text-green-600";
+                        
+                        if(document.getElementById('cat-items').children.length === 0) {
+                            setTimeout(() => showModal('Excellent!', 'You successfully categorized all the peripheral interfaces!', 'success'), 500);
+                        }
+                    } else {
+                        document.getElementById('lab1-feedback').innerText = "Incorrect category. Try again.";
+                        document.getElementById('lab1-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
+                    }
+                }
+            });
+        });
+
+        // --- STREAMING_CHUNK:Javascript for Lab 2 Matcher... ---
+        // --- Lab 2: Tool Scenario Matcher Logic ---
+        let selectedScenario = null;
+        let selectedTool = null;
+        let lab2Matches = 0;
+
+        document.querySelectorAll('.scenario-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if(this.classList.contains('matched')) return;
+                document.querySelectorAll('.scenario-btn').forEach(b => b.classList.remove('ring-4', 'ring-red-300', 'bg-red-50'));
+                this.classList.add('ring-4', 'ring-red-300', 'bg-red-50');
+                selectedScenario = this;
+                checkMatch2();
+            });
+        });
+
+        document.querySelectorAll('.tool-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if(this.classList.contains('matched')) return;
+                document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('ring-4', 'ring-red-300', 'bg-gray-100'));
+                this.classList.add('ring-4', 'ring-red-300', 'bg-gray-100');
+                selectedTool = this;
+                checkMatch2();
+            });
+        });
+
+        function checkMatch2() {
+            if(selectedScenario && selectedTool) {
+                if(selectedScenario.dataset.match === selectedTool.dataset.match) {
+                    selectedScenario.classList.add('matched', 'bg-green-100', 'text-green-800', 'border-green-500');
+                    selectedScenario.classList.remove('ring-4', 'ring-red-300');
+                    selectedTool.classList.add('matched', 'bg-green-100', 'text-green-800', 'border-green-500');
+                    selectedTool.classList.remove('ring-4', 'ring-red-300');
                     
-                    selectedTerm = null;
-                    selectedDef = null;
-                    lab1Matches++;
-
-                    document.getElementById('lab1-feedback').innerText = `Match Correct! (${lab1Matches}/3)`;
-                    document.getElementById('lab1-feedback').className = "text-center font-bold mt-4 h-6 text-green-600";
-
-                    if(lab1Matches === 3) {
-                        setTimeout(() => showModal('Lab 1 Complete!', 'You successfully matched all USB connector types and descriptions.', 'success'), 500);
+                    document.getElementById('lab2-feedback').innerText = "Correct Match!";
+                    document.getElementById('lab2-feedback').className = "text-center font-bold mt-4 h-6 text-green-600";
+                    lab2Matches++;
+                    
+                    if(lab2Matches === 5) {
+                        setTimeout(() => showModal('Great Job!', 'You properly identified the correct interfaces based on user constraints.', 'success'), 500);
                     }
                 } else {
-                    document.getElementById('lab1-feedback').innerText = "Incorrect match. Try a different combination.";
-                    document.getElementById('lab1-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
-                    setTimeout(() => {
-                        selectedTerm.classList.remove('selected');
-                        selectedDef.classList.remove('selected');
-                        selectedTerm = null;
-                        selectedDef = null;
-                    }, 800);
+                    document.getElementById('lab2-feedback').innerText = "Incorrect. Consider speed, platform, or wireless constraints.";
+                    document.getElementById('lab2-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
+                    selectedScenario.classList.remove('ring-4', 'ring-red-300', 'bg-red-50');
+                    selectedTool.classList.remove('ring-4', 'ring-red-300', 'bg-gray-100');
                 }
+                selectedScenario = null;
+                selectedTool = null;
             }
         }
 
-        // --- LAB 2: Thunderbolt Workstation Logic ---
-        function toggleTbItem(btn) {
-            btn.classList.toggle('border-cyan-600');
-            btn.classList.toggle('bg-cyan-50');
-            btn.classList.toggle('text-cyan-900');
-        }
-
-        function checkLab2() {
-            let items = document.querySelectorAll('.tb-item');
-            let allCorrect = true;
-            items.forEach(item => {
-                let isSelected = item.classList.contains('border-cyan-600');
-                let shouldBeSelected = item.dataset.correct === 'true';
-                if(isSelected !== shouldBeSelected) allCorrect = false;
-            });
-
-            if(allCorrect) {
-                document.getElementById('lab2-feedback').innerText = "Workstation Configured Successfully! Thunderbolt handles video, data, and power.";
-                document.getElementById('lab2-feedback').className = "text-center font-bold mt-4 h-6 text-green-600";
-                setTimeout(() => showModal('Lab 2 Complete!', 'Thunderbolt successfully configured for 4K video editing, NVMe SSD transfer, and laptop power delivery.', 'success'), 500);
-            } else {
-                document.getElementById('lab2-feedback').innerText = "Configuration incorrect. Ensure you select the 3 valid Thunderbolt peripherals and exclude legacy ports.";
-                document.getElementById('lab2-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
-            }
-        }
-
-        // --- LAB 3: Wireless Selector Logic ---
-        let lab3Score = 0;
-        let answeredLab3 = {1: false, 2: false};
-
-        function checkWireless(btn, scenarioNum, choice) {
-            let correctChoice = scenarioNum === 1 ? 'bluetooth' : 'rf';
-            if(choice === correctChoice) {
-                btn.classList.add('bg-green-100', 'border-green-500', 'text-green-800');
-                if(!answeredLab3[scenarioNum]) {
-                    answeredLab3[scenarioNum] = true;
-                    lab3Score++;
-                }
-                document.getElementById('lab3-feedback').innerText = `Scenario ${scenarioNum} Correct!`;
-                document.getElementById('lab3-feedback').className = "text-center font-bold mt-4 h-6 text-green-600";
-
-                if(lab3Score === 2) {
-                    setTimeout(() => showModal('Lab 3 Complete!', 'You correctly distinguished between Bluetooth and Radio Frequency wireless applications.', 'success'), 500);
-                }
-            } else {
-                btn.classList.add('bg-red-100', 'border-red-500', 'text-red-800');
-                document.getElementById('lab3-feedback').innerText = `Scenario ${scenarioNum} Incorrect. Review latency and pairing requirements.`;
-                document.getElementById('lab3-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
-            }
-        }
-
-        // --- LAB 4: Ecosystem Auditor Logic ---
-        function checkLab4() {
-            let lightningVal = document.getElementById('audit-lightning').value;
-            let usbcVal = document.getElementById('audit-usbc').value;
-
-            if(lightningVal === 'proprietary' && usbcVal === 'universal') {
-                document.getElementById('lab4-feedback').innerText = "Audit Passed: Correct ecosystem classifications!";
-                document.getElementById('lab4-feedback').className = "text-center font-bold mt-4 h-6 text-green-600";
-                setTimeout(() => showModal('Lab 4 Complete!', 'You successfully classified Apple proprietary Lightning versus universal USB-C standards.', 'success'), 500);
-            } else {
-                document.getElementById('lab4-feedback').innerText = "Audit Failed. Review Apple MFi proprietary status vs universal USB-IF standards.";
-                document.getElementById('lab4-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
-            }
-        }
-
-        // --- QUIZ LOGIC (20 Questions: 10 from doc + 10 from briefing details) ---
+        // --- STREAMING_CHUNK:Javascript for 20-Question Quiz... ---
+        // --- Quiz Logic (20 Questions) ---
         const quizData = [
-            // 10 provided in quiz document
+            // Original 10 Questions (With Q9 Fixed)
             { q: "What is the primary purpose of a peripheral interface?", options: ["To increase screen resolution", "To enable communication between devices", "To store files", "To improve battery life"], answer: 1 },
             { q: "Which interface is commonly used for Apple devices prior to the USB-C adaptation?", options: ["Radio frequency", "USB-A", "Lightning", "Thunderbolt"], answer: 2 },
             { q: "Which peripheral interface supports the fastest data transfer rates?", options: ["Thunderbolt", "USB-A", "USB-C", "Lightning"], answer: 0 },
             { q: "Which of the following is an advantage of wireless interfaces like Bluetooth?", options: ["Faster than Thunderbolt", "Requires no pairing", "Works without any power source", "Eliminates most cables"], answer: 3 },
             { q: "Which connector is most used for printers and scanners?", options: ["Thunderbolt", "USB-B", "USB-A", "USB-C"], answer: 1 },
-            { q: "Radio frequency technology can be used for:", options: ["Wireless keyboards and remote controls", "Charging phones", "Playing high-definition video only", "Storing data on hard drives"], answer: 0 },
-            { q: "What features make USB-C more advanced than older USB types?", options: ["Only supports power delivery", "Support higher data and power rates", "Only works with Apple devices", "Larger than USB-A"], answer: 1 },
-            { q: "Which of these technologies are NOT a peripheral interface?", options: ["Thunderbolt", "Bluetooth", "Ethernet", "USB-B"], answer: 2 },
+            { q: "Radio frequency (RF) technology is commonly used for:", options: ["Wireless keyboards and gaming controllers", "Charging phones", "Playing high-definition video only", "Storing data on hard drives"], answer: 0 },
+            { q: "What features make USB-C more advanced than older USB types?", options: ["It only supports power delivery", "It supports higher data and power rates", "It only works with Apple devices", "It is much larger than USB-A"], answer: 1 },
+            { q: "Which of these technologies is NOT considered a standard peripheral interface?", options: ["Thunderbolt", "Bluetooth", "Ethernet", "USB-B"], answer: 2 },
             { q: "Which interface is designed to transmit data, video, and power simultaneously over a single cable?", options: ["USB-C", "Lightning", "USB-A", "Thunderbolt"], answer: 3 },
-            { q: "What wireless connection is highly compatible with battery-operated devices? (Select two)", options: ["Bluetooth", "HDMI", "USB-C", "Radio frequency"], answer: 0 }, // Note: Quiz answer key specifies Bluetooth & Radio frequency (taking index 0 or treating multi-select)
+            { q: "Which wireless connection is highly compatible with battery-operated devices and known for utilizing low power?", options: ["Bluetooth", "HDMI", "USB-C", "DisplayPort"], answer: 0 },
             
-            // 10 additional questions from briefing details
-            { q: "What key feature characterizes the physical design of the USB-C connector compared to USB-A?", options: ["It is larger and square", "It is fully reversible", "It only supports power", "It is proprietary to Apple"], answer: 1 },
-            { q: "What underlying PCIe technology is tunneled through Thunderbolt cables to achieve extreme data rates?", options: ["PCI Express data streams", "Analog audio signals", "Bluetooth pairing packets", "Infrared pulses"], answer: 0 },
-            { q: "What is the maximum bi-directional bandwidth supported by modern Thunderbolt 3 and 4 standards?", options: ["480 Mbps", "5 Gbps", "10 Gbps", "40 Gbps"], answer: 3 },
-            { q: "What network topology does Bluetooth utilize to connect a master controller with up to seven active slave devices?", options: ["Bus topology", "Star Piconet topology", "Ring topology", "Mesh broadcast topology"], answer: 1 },
-            { q: "What specific frequency band does standard Bluetooth operate within?", options: ["900 MHz cellular band", "2.4 GHz ISM frequency band", "5 GHz dedicated radar band", "60 GHz millimeter wave band"], answer: 1 },
-            { q: "What is a primary advantage of dedicated 2.4 GHz RF USB dongle peripherals over standard Bluetooth for competitive gaming?", options: ["Lower cost", "Lower latency and high polling rates", "Longer range through thick concrete", "Universal cross-brand dongle compatibility"], answer: 1 },
-            { q: "How many pins does Apple's proprietary Lightning connector feature?", options: ["4 pins", "8 pins", "24 pins", "30 pins"], answer: 1 },
-            { q: "What program must third-party accessory manufacturers join to produce certified Lightning cables and accessories?", options: ["USB-IF Consortium", "MFi (Made for iPhone/iPad) Program", "Intel Thunderbolt Alliance", "Bluetooth SIG"], answer: 1 },
-            { q: "What feature allows multiple Thunderbolt devices to be connected in a linear series rather than a star hub?", options: ["Daisy Chaining", "Frequency Hopping", "Power Delivery (PD)", "Packet Tunneling"], answer: 0 },
-            { q: "Which wireless protocol introduced Bluetooth Low Energy (BLE) to revolutionize tiny IoT battery-operated sensors?", options: ["Bluetooth 1.0", "Bluetooth 2.0", "Bluetooth 4.0", "Bluetooth 5.2"], answer: 2 }
+            // 10 Additional Generated Questions
+            { q: "Which USB connector type is characterized by its large, rectangular shape and is non-reversible?", options: ["USB-B", "USB-C", "USB-A", "Lightning"], answer: 2 },
+            { q: "If you need a connection that offers near-wired performance and incredibly low latency for a wireless mouse, which should you choose?", options: ["Bluetooth", "Radio Frequency (RF) with dongle", "Wi-Fi", "Infrared"], answer: 1 },
+            { q: "Thunderbolt technology was initially developed in a collaboration between Apple and which other major tech company?", options: ["Microsoft", "AMD", "Intel", "IBM"], answer: 2 },
+            { q: "Which connector type is square with beveled top corners, ensuring a very secure fit for stationary devices?", options: ["USB-B", "USB-C", "USB-A", "Lightning"], answer: 0 },
+            { q: "Why is Apple currently transitioning away from the Lightning connector?", options: ["It transfers data too fast", "To adopt the universal USB-C standard", "It is too large for modern phones", "Because Thunderbolt is cheaper"], answer: 1 },
+            { q: "Which of the following describes a key benefit of standardizing peripheral interfaces?", options: ["It forces users to buy specific brands", "It minimizes compatibility issues between different manufacturers", "It eliminates the need for any wires", "It makes all devices run faster"], answer: 1 },
+            { q: "In addition to data transfer, what critical function do many peripheral interfaces like USB provide?", options: ["Data encryption", "Power supply", "Cooling for the device", "Screen recording"], answer: 1 },
+            { q: "Which interface relies on a dedicated 2.4GHz USB dongle to communicate with its specific peripheral?", options: ["Lightning", "Bluetooth", "USB-C", "Radio Frequency (RF)"], answer: 3 },
+            { q: "What is a significant physical advantage of USB-C over USB-A?", options: ["It is much larger and harder to lose", "It is entirely reversible", "It has fewer pins", "It only supports power, not data"], answer: 1 },
+            { q: "If a user needs to daisy-chain multiple 4K displays and an external graphics card, which interface is required?", options: ["USB-A", "Thunderbolt", "Bluetooth", "Lightning"], answer: 1 }
         ];
 
         const quizContainer = document.getElementById('quiz-container');
@@ -1072,6 +870,7 @@
             
             const percentage = (score / quizData.length) * 100;
             
+            // Requires 18/20 (90%)
             if(score >= 18) { 
                 const navGame = document.getElementById('nav-game');
                 const navGameMobile = document.getElementById('nav-game-mobile');
@@ -1092,7 +891,7 @@
                 document.getElementById('proceed-game-btn').classList.remove('hidden');
                 document.getElementById('submit-quiz-btn').classList.add('hidden');
 
-                showModal('Outstanding!', `You scored ${score}/20 (${percentage}%). You have unlocked your Certificate of Mastery AND Peripheral Breakout!`, 'success');
+                showModal('Outstanding!', `You scored ${score}/20 (${percentage}%). You have unlocked your Certificate of Mastery AND the Retro Game!`, 'success');
             } else {
                 quizData.forEach((_, i) => {
                     const selected = document.querySelector(`input[name="q${i}"]:checked`);
@@ -1103,193 +902,91 @@
             }
         }
 
-        // --- RETRO GAME LOGIC: Peripheral Breakout ---
+        // --- STREAMING_CHUNK:Javascript for Breakout Game... ---
+        // --- Retro Game Logic (Peripheral Breakout) ---
         const canvas = document.getElementById('game-canvas');
         const ctx = canvas.getContext('2d');
         
         let score = 0;
-        let lives = 3;
+        let highScore = 0;
         let gameRunning = false;
         let animationId;
-
-        // Paddle
-        const paddle = {
-            width: 100,
-            height: 14,
-            x: canvas.width / 2 - 50,
-            y: canvas.height - 30,
-            dx: 7,
-            isRightPressed: false,
-            isLeftPressed: false
-        };
-
-        // Ball (Data Packet)
-        const ball = {
-            x: canvas.width / 2,
-            y: paddle.y - 15,
-            radius: 8,
-            speed: 4,
-            dx: 3,
-            dy: -3
-        };
-
-        // Bricks (Peripheral Hardware Bricks)
+        
+        // Game Objects
+        const ball = { x: canvas.width/2, y: canvas.height-30, dx: 3.5, dy: -3.5, radius: 5 };
+        const paddle = { height: 12, width: 80, x: (canvas.width-80)/2, speed: 7, dx: 0 };
+        
         const brickRowCount = 5;
         const brickColumnCount = 7;
-        const brickWidth = 72;
-        const brickHeight = 22;
-        const brickPadding = 10;
+        const brickWidth = 46;
+        const brickHeight = 16;
+        const brickPadding = 8;
         const brickOffsetTop = 40;
-        const brickOffsetLeft = 35;
-
+        const brickOffsetLeft = 15;
+        
         let bricks = [];
-        const brickTypes = [
-            {label: 'USB-A', color: '#3b82f6'},
-            {label: 'USB-B', color: '#1d4ed8'},
-            {label: 'USB-C', color: '#60a5fa'},
-            {label: 'THNDR', color: '#06b6d4'},
-            {label: 'BLTH', color: '#6366f1'},
-            {label: 'RF', color: '#a855f7'},
-            {label: 'LIGHT', color: '#f59e0b'}
-        ];
+        let rightPressed = false;
+        let leftPressed = false;
+
+        const overlay = document.getElementById('game-overlay');
+        const startBtn = document.getElementById('start-game-btn');
+
+        startBtn.addEventListener('click', startGame);
+
+        document.addEventListener("keydown", keyDownHandler, false);
+        document.addEventListener("keyup", keyUpHandler, false);
+
+        // Touch Controls
+        const btnLeft = document.getElementById('btn-left');
+        const btnRight = document.getElementById('btn-right');
+
+        btnLeft.addEventListener("touchstart", (e) => { e.preventDefault(); leftPressed = true; }, {passive: false});
+        btnLeft.addEventListener("touchend", (e) => { e.preventDefault(); leftPressed = false; }, {passive: false});
+        btnLeft.addEventListener("mousedown", () => leftPressed = true);
+        btnLeft.addEventListener("mouseup", () => leftPressed = false);
+        btnLeft.addEventListener("mouseleave", () => leftPressed = false);
+
+        btnRight.addEventListener("touchstart", (e) => { e.preventDefault(); rightPressed = true; }, {passive: false});
+        btnRight.addEventListener("touchend", (e) => { e.preventDefault(); rightPressed = false; }, {passive: false});
+        btnRight.addEventListener("mousedown", () => rightPressed = true);
+        btnRight.addEventListener("mouseup", () => rightPressed = false);
+        btnRight.addEventListener("mouseleave", () => rightPressed = false);
+
+
+        function keyDownHandler(e) {
+            if(e.key == "Right" || e.key == "ArrowRight") {
+                rightPressed = true;
+            } else if(e.key == "Left" || e.key == "ArrowLeft") {
+                leftPressed = true;
+            }
+        }
+
+        function keyUpHandler(e) {
+            if(e.key == "Right" || e.key == "ArrowRight") {
+                rightPressed = false;
+            } else if(e.key == "Left" || e.key == "ArrowLeft") {
+                leftPressed = false;
+            }
+        }
 
         function initBricks() {
             bricks = [];
             for(let c=0; c<brickColumnCount; c++) {
                 bricks[c] = [];
                 for(let r=0; r<brickRowCount; r++) {
-                    let typeIndex = (c + r) % brickTypes.length;
-                    bricks[c][r] = { 
-                        x: 0, 
-                        y: 0, 
-                        status: 1, 
-                        label: brickTypes[typeIndex].label,
-                        color: brickTypes[typeIndex].color 
-                    };
-                }
-            }
-        }
-
-        const overlay = document.getElementById('game-overlay');
-        const startBtn = document.getElementById('start-game-btn');
-        startBtn.addEventListener('click', startGame);
-
-        // Keyboard controls
-        document.addEventListener('keydown', e => {
-            if(e.key === 'Right' || e.key === 'ArrowRight') paddle.isRightPressed = true;
-            else if(e.key === 'Left' || e.key === 'ArrowLeft') paddle.isLeftPressed = true;
-        });
-
-        document.addEventListener('keyup', e => {
-            if(e.key === 'Right' || e.key === 'ArrowRight') paddle.isRightPressed = false;
-            else if(e.key === 'Left' || e.key === 'ArrowLeft') paddle.isLeftPressed = false;
-        });
-
-        // Mouse & Touch paddle controls
-        canvas.addEventListener('mousemove', e => {
-            let rect = canvas.getBoundingClientRect();
-            let relativeX = e.clientX - rect.left;
-            let scaleX = canvas.width / rect.width;
-            paddle.x = (relativeX * scaleX) - paddle.width / 2;
-            if(paddle.x < 0) paddle.x = 0;
-            if(paddle.x + paddle.width > canvas.width) paddle.x = canvas.width - paddle.width;
-        });
-
-        canvas.addEventListener('touchmove', e => {
-            let rect = canvas.getBoundingClientRect();
-            if(e.touches.length > 0) {
-                let relativeX = e.touches[0].clientX - rect.left;
-                let scaleX = canvas.width / rect.width;
-                paddle.x = (relativeX * scaleX) - paddle.width / 2;
-                if(paddle.x < 0) paddle.x = 0;
-                if(paddle.x + paddle.width > canvas.width) paddle.x = canvas.width - paddle.width;
-            }
-            e.preventDefault();
-        }, {passive: false});
-
-        function collisionDetection() {
-            for(let c=0; c<brickColumnCount; c++) {
-                for(let r=0; r<brickRowCount; r++) {
-                    let b = bricks[c][r];
-                    if(b.status === 1) {
-                        if(ball.x > b.x && ball.x < b.x + brickWidth && ball.y > b.y && ball.y < b.y + brickHeight) {
-                            ball.dy = -ball.dy;
-                            b.status = 0;
-                            score += 15;
-                            document.getElementById('game-score').innerText = score;
-                            
-                            // Check win
-                            let won = true;
-                            for(let i=0; i<brickColumnCount; i++) {
-                                for(let j=0; j<brickRowCount; j++) {
-                                    if(bricks[i][j].status === 1) won = false;
-                                }
-                            }
-                            if(won) {
-                                showModal('Victory!', 'You successfully cleared all peripheral hardware bricks!', 'success');
-                                resetGame();
-                                startGame();
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        function drawBall() {
-            ctx.beginPath();
-            ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI*2);
-            ctx.fillStyle = '#38bdf8';
-            ctx.fill();
-            ctx.closePath();
-        }
-
-        function drawPaddle() {
-            ctx.beginPath();
-            ctx.roundRect(paddle.x, paddle.y, paddle.width, paddle.height, 6);
-            ctx.fillStyle = '#10b981';
-            ctx.fill();
-            ctx.closePath();
-        }
-
-        function drawBricks() {
-            for(let c=0; c<brickColumnCount; c++) {
-                for(let r=0; r<brickRowCount; r++) {
-                    if(bricks[c][r].status === 1) {
-                        let brickX = (c * (brickWidth + brickPadding)) + brickOffsetLeft;
-                        let brickY = (r * (brickHeight + brickPadding)) + brickOffsetTop;
-                        bricks[c][r].x = brickX;
-                        bricks[c][r].y = brickY;
-                        
-                        ctx.beginPath();
-                        ctx.roundRect(brickX, brickY, brickWidth, brickHeight, 4);
-                        ctx.fillStyle = bricks[c][r].color;
-                        ctx.fill();
-                        ctx.strokeStyle = '#ffffff';
-                        ctx.lineWidth = 1;
-                        ctx.stroke();
-                        ctx.closePath();
-
-                        ctx.fillStyle = '#ffffff';
-                        ctx.font = '10px monospace';
-                        ctx.textAlign = 'center';
-                        ctx.textBaseline = 'middle';
-                        ctx.fillText(bricks[c][r].label, brickX + brickWidth/2, brickY + brickHeight/2);
-                    }
+                    bricks[c][r] = { x: 0, y: 0, status: 1, color: r % 2 === 0 ? '#10b981' : '#8b5cf6' };
                 }
             }
         }
 
         function resetGame() {
+            ball.x = canvas.width/2;
+            ball.y = canvas.height-30;
+            ball.dx = 3.5 * (Math.random() > 0.5 ? 1 : -1); 
+            ball.dy = -3.5;
+            paddle.x = (canvas.width-paddle.width)/2;
             score = 0;
-            lives = 3;
             document.getElementById('game-score').innerText = score;
-            document.getElementById('game-lives').innerText = lives;
-            paddle.x = canvas.width / 2 - paddle.width / 2;
-            ball.x = canvas.width / 2;
-            ball.y = paddle.y - 15;
-            ball.dx = 3;
-            ball.dy = -3;
             initBricks();
         }
 
@@ -1299,6 +996,74 @@
                 resetGame();
                 gameRunning = true;
                 drawGame();
+            }
+        }
+
+        function collisionDetection() {
+            let activeBricks = 0;
+            for(let c=0; c<brickColumnCount; c++) {
+                for(let r=0; r<brickRowCount; r++) {
+                    let b = bricks[c][r];
+                    if(b.status == 1) {
+                        activeBricks++;
+                        if(ball.x > b.x && ball.x < b.x+brickWidth && ball.y > b.y && ball.y < b.y+brickHeight) {
+                            ball.dy = -ball.dy;
+                            b.status = 0;
+                            score += 10;
+                            document.getElementById('game-score').innerText = score;
+                            if(score > highScore) {
+                                highScore = score;
+                                document.getElementById('game-highscore').innerText = highScore;
+                            }
+                        }
+                    }
+                }
+            }
+            if(activeBricks === 0) {
+                initBricks();
+                ball.x = canvas.width/2;
+                ball.y = canvas.height-30;
+                ball.dx = (Math.abs(ball.dx) + 0.5) * Math.sign(ball.dx);
+                ball.dy = -(Math.abs(ball.dy) + 0.5);
+                paddle.x = (canvas.width-paddle.width)/2;
+            }
+        }
+
+        function drawBall() {
+            ctx.beginPath();
+            ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI*2);
+            ctx.fillStyle = "#38bdf8";
+            ctx.fill();
+            ctx.closePath();
+        }
+
+        function drawPaddle() {
+            ctx.beginPath();
+            ctx.rect(paddle.x, canvas.height-paddle.height, paddle.width, paddle.height);
+            ctx.fillStyle = "#9ca3af";
+            ctx.fill();
+            ctx.closePath();
+            
+            ctx.fillStyle = "#111827";
+            ctx.fillRect(paddle.x + 10, canvas.height-paddle.height + 3, 20, 6);
+            ctx.fillRect(paddle.x + 50, canvas.height-paddle.height + 3, 20, 6);
+        }
+
+        function drawBricks() {
+            for(let c=0; c<brickColumnCount; c++) {
+                for(let r=0; r<brickRowCount; r++) {
+                    if(bricks[c][r].status == 1) {
+                        let brickX = (c*(brickWidth+brickPadding))+brickOffsetLeft;
+                        let brickY = (r*(brickHeight+brickPadding))+brickOffsetTop;
+                        bricks[c][r].x = brickX;
+                        bricks[c][r].y = brickY;
+                        ctx.beginPath();
+                        ctx.rect(brickX, brickY, brickWidth, brickHeight);
+                        ctx.fillStyle = bricks[c][r].color;
+                        ctx.fill();
+                        ctx.closePath();
+                    }
+                }
             }
         }
 
@@ -1312,46 +1077,32 @@
             drawPaddle();
             collisionDetection();
 
-            // Ball movement
-            ball.x += ball.dx;
-            ball.y += ball.dy;
-
-            // Wall collisions (Left/Right)
-            if(ball.x + ball.radius > canvas.width || ball.x - ball.radius < 0) {
+            if(ball.x + ball.dx > canvas.width-ball.radius || ball.x + ball.dx < ball.radius) {
                 ball.dx = -ball.dx;
             }
-            // Wall collisions (Top)
-            if(ball.y - ball.radius < 0) {
+            if(ball.y + ball.dy < ball.radius) {
                 ball.dy = -ball.dy;
-            } 
-            // Paddle collision
-            else if(ball.y + ball.radius > paddle.y && ball.x > paddle.x && ball.x < paddle.x + paddle.width) {
-                // Calculate bounce angle based on hit position
-                let hitPoint = ball.x - (paddle.x + paddle.width/2);
-                ball.dx = hitPoint * 0.15;
-                ball.dy = -ball.dy;
-            }
-            // Bottom collision (Lose life)
-            else if(ball.y + ball.radius > canvas.height) {
-                lives--;
-                document.getElementById('game-lives').innerText = lives;
-                if(lives <= 0) {
+            } else if(ball.y + ball.dy > canvas.height-ball.radius) {
+                if(ball.x > paddle.x && ball.x < paddle.x + paddle.width) {
+                    ball.dy = -ball.dy;
+                    let hitPoint = ball.x - (paddle.x + paddle.width/2);
+                    ball.dx = hitPoint * 0.15;
+                }
+                else {
                     gameOver();
                     return;
-                } else {
-                    ball.x = canvas.width / 2;
-                    ball.y = paddle.y - 15;
-                    ball.dx = 3;
-                    ball.dy = -3;
                 }
             }
 
-            // Keyboard paddle movement
-            if(paddle.isRightPressed && paddle.x < canvas.width - paddle.width) {
-                paddle.x += paddle.dx;
-            } else if(paddle.isLeftPressed && paddle.x > 0) {
-                paddle.x -= paddle.dx;
+            if(rightPressed && paddle.x < canvas.width-paddle.width) {
+                paddle.x += paddle.speed;
             }
+            else if(leftPressed && paddle.x > 0) {
+                paddle.x -= paddle.speed;
+            }
+
+            ball.x += ball.dx;
+            ball.y += ball.dy;
 
             animationId = requestAnimationFrame(drawGame);
         }
@@ -1360,14 +1111,16 @@
             gameRunning = false;
             cancelAnimationFrame(animationId);
             overlay.classList.remove('hidden');
-            startBtn.innerText = "System Crash! Restart";
-            startBtn.classList.replace('bg-cyan-600', 'bg-red-600');
-            startBtn.classList.replace('border-cyan-800', 'border-red-800');
+            startBtn.innerText = "Game Over. Try Again";
+            startBtn.classList.replace('bg-purple-500', 'bg-red-500');
+            startBtn.classList.replace('border-purple-700', 'border-red-700');
         }
 
-        // --- CERTIFICATE LOGIC ---
+        // --- STREAMING_CHUNK:Javascript for Certificate Generation... ---
+        // --- Certificate Logic ---
         function updateCertName() {
             let name = document.getElementById('student-name-input').value.trim();
+            
             if(name) {
                 if (name.includes(' ')) {
                     name = name.split(' ')[0];
@@ -1386,9 +1139,9 @@
         function downloadCert() {
             const certEl = document.getElementById('certificate');
             const name = document.getElementById('cert-student-name').innerText;
-            let filename = 'Peripheral_Devices_Certificate.png';
+            let filename = 'Certificate.png';
             if (name && name !== 'Student') {
-                filename = `${name.replace(/\s+/g, '_')}_Peripheral_Certificate.png`;
+                filename = `${name.replace(/\s+/g, '_')}_Certificate.png`;
             }
 
             const originalTransform = certEl.style.transform;
@@ -1424,15 +1177,10 @@
 
         window.onload = () => {
             initBricks();
-            // Draw static preview on canvas
-            ctx.fillStyle = '#0f172a';
-            ctx.fillRect(0,0,canvas.width,canvas.height);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
             drawBricks();
+            drawBall();
             drawPaddle();
-            ctx.fillStyle = '#38bdf8';
-            ctx.beginPath();
-            ctx.arc(canvas.width/2, paddle.y - 15, 8, 0, Math.PI*2);
-            ctx.fill();
         }
     </script>
 </body>

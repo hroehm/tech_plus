@@ -3,10 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unit 03 Section 2.5.1 Mastery - Input Output Interfaces</title>
+    <title>Unit 03 Section 2.5.1 Mastery</title>
     
+    <!-- Load Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load HTML2Canvas for Certificate Download -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- Load Fonts -->
+    <!-- Inter for UI. Playfair Display for headers. Lora for body. Qwitcher Grypen for illegible signature -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Qwitcher+Grypen:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -19,6 +25,7 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         
+        /* Interactive Elements CSS */
         .io-dropzone { min-height: 70px; min-width: 130px; border: 2px dashed #9ca3af; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: #f9fafb; transition: all 0.2s;}
         .io-dropzone.drag-over { background: #e5e7eb; border-color: #16a34a; box-shadow: inset 0 0 10px rgba(22, 163, 74, 0.2);}
         
@@ -27,11 +34,13 @@
         
         .cat-dropzone { transition: background-color 0.2s ease; }
 
+        /* Scrollbar */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #e5e7eb; }
         ::-webkit-scrollbar-thumb { background: #10b981; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #059669; }
 
+        /* Retro Game Canvas */
         #game-canvas {
             background-color: #111827;
             border: 4px solid #374151;
@@ -39,12 +48,13 @@
             box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
             max-width: 100%;
             height: auto;
-            touch-action: none;
         }
-        .game-btn { touch-action: manipulation; user-select: none; }
+        .game-btn { touch-action: manipulation; }
 
+        /* --- CERTIFICATE REDESIGN STYLES --- */
         .font-serif { font-family: 'Playfair Display', serif; }
         .font-body { font-family: 'Lora', serif; }
+        /* Very messy signature font */
         .font-script { font-family: 'Qwitcher Grypen', cursive; }
         
         .cert-preview-container {
@@ -57,6 +67,7 @@
             border-radius: 0.5rem;
         }
 
+        /* Fixed Dimensions to guarantee perfect printing/downloading */
         #certificate {
             width: 1056px !important;
             height: 816px !important;
@@ -65,11 +76,13 @@
             position: relative;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
             overflow: hidden;
+            /* Geometric background via SVG to ensure html2canvas compatibility. Blue changed to light tan (%23fcd34d) */
             background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1056" height="816"><polygon points="0,0 250,0 0,650" fill="%23fcd34d"/><polygon points="0,0 350,0 0,900" fill="%23d97706" opacity="0.8"/><polygon points="0,0 120,0 0,300" fill="%23fcd34d"/><polygon points="0,450 650,816 0,816" fill="%23fcd34d"/><polygon points="0,550 450,816 0,816" fill="%23d97706" opacity="0.8"/><polygon points="800,0 1056,0 1056,256" fill="%23f3f4f6"/><polygon points="1056,500 1056,816 750,816" fill="%23f3f4f6"/></svg>');
             background-size: cover;
             border: 4px solid #e5e7eb;
         }
 
+        /* Gold Foil Seal */
         .gold-seal {
             position: absolute;
             left: 110px;
@@ -129,6 +142,7 @@
         .embossed-text-small { font-size: 11px; letter-spacing: 2px; margin: 2px 0; }
         .embossed-star { font-size: 12px; color: #b38728; text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.2); margin: 2px 0; }
 
+        /* Responsive scaling trick for small screens while preserving fixed DOM size */
         @media (max-width: 1100px) {
             #certificate { transform: scale(0.7); transform-origin: top left; margin-bottom: -240px; margin-right: -310px; }
         }
@@ -148,6 +162,7 @@
                     <span class="font-bold text-xl tracking-wider sm:hidden">2.5.1</span>
                 </div>
                 <div class="hidden md:block">
+                    <!-- Adjusted Tab Order -->
                     <div class="ml-10 flex items-baseline space-x-2">
                         <button onclick="switchTab('briefing')" class="nav-btn bg-green-900 px-3 py-2 rounded-md text-sm font-medium hover:bg-green-600 transition" id="nav-briefing"><i class="fa-solid fa-book-open mr-1"></i>Briefing</button>
                         <button onclick="switchTab('activity')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-green-600 transition" id="nav-activity"><i class="fa-solid fa-flask mr-1"></i>Lab Activity</button>
@@ -170,81 +185,84 @@
 
     <main class="flex-grow w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
         
+        <!-- BRIEFING SECTION -->
         <div id="briefing-section" class="tab-content active no-print">
             <div class="text-center mb-10">
-                <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">Input/Output Interfaces (Wired & Wireless)</h1>
-                <p class="text-lg text-gray-600 max-w-3xl mx-auto">Explore how computers and network devices connect, communicate, and exchange data through physical copper wires, fiber optics, and wireless radio frequencies.</p>
+                <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">Input / Output Interfaces</h1>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">Master the physical and wireless connections that allow hardware devices to communicate. Review this briefing before moving to the Lab Activity.</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <!-- Tile 1 -->
+                
+                <!-- Tile 1: Networking Interfaces -->
                 <div class="bg-white rounded-xl shadow-md border-t-4 border-blue-500 overflow-hidden flex flex-col">
                     <div class="p-6 flex-grow">
-                        <h2 class="text-2xl font-bold mb-3 text-blue-700"><i class="fa-solid fa-plug mr-2"></i>Wired Ethernet & RJ45</h2>
+                        <h2 class="text-2xl font-bold mb-3 text-blue-700"><i class="fa-solid fa-wifi mr-2"></i>Networking Interfaces</h2>
                         <ul class="space-y-3 text-gray-700 mb-4">
-                            <li><strong>RJ45 Connector:</strong> Standard physical interface for wired local area networks (LANs).</li>
-                            <li><strong>Copper Twisted Pairs:</strong> 8 pins arranged in 4 twisted color-coded pairs (orange, green, blue, brown).</li>
-                            <li><strong>Performance:</strong> High-speed connections with low latency, high stability, and zero wireless interference.</li>
+                            <li><strong>Ethernet (RJ-45):</strong> The standard wired connection for Local Area Networks (LANs). Uses twisted pair cables (Cat5e, Cat6). Highly reliable and fast (up to 10 Gbps).</li>
+                            <li><strong>Bluetooth:</strong> Short-range wireless tech used for Personal Area Networks (PANs). Connects peripherals like mice, keyboards, and headphones.</li>
+                            <li><strong>NFC (Near-Field Communication):</strong> Ultra short-range wireless (approx. 4 cm). Primarily used for contactless payments and quick pairing.</li>
                         </ul>
                     </div>
                     <div class="bg-gray-50 border-t border-gray-100 p-4">
                         <div class="flex gap-4">
-                            <button onclick="openBriefing('ethernet-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
-                            <button onclick="openBriefing('ethernet-usecase')" class="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                            <button onclick="openBriefing('net-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('net-usecase')" class="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Tile 2 -->
-                <div class="bg-white rounded-xl shadow-md border-t-4 border-green-500 overflow-hidden flex flex-col">
+                <!-- Tile 2: Networking Tools -->
+                <div class="bg-white rounded-xl shadow-md border-t-4 border-red-500 overflow-hidden flex flex-col">
                     <div class="p-6 flex-grow">
-                        <h2 class="text-2xl font-bold mb-3 text-green-700"><i class="fa-solid fa-bolt mr-2"></i>Fiber Optics & SFP Connectors</h2>
+                        <h2 class="text-2xl font-bold mb-3 text-red-700"><i class="fa-solid fa-toolbox mr-2"></i>Networking Tools</h2>
                         <ul class="space-y-3 text-gray-700 mb-4">
-                            <li><strong>Small Form-Factor Pluggable (SFP):</strong> Connectors used for high-speed fiber optic communications.</li>
-                            <li><strong>Light Transmission:</strong> Carries data via pulses of light for massive throughput over long distances.</li>
-                            <li><strong>Security & EMI Immunity:</strong> Completely immune to electromagnetic interference (EMI) and wiretapping.</li>
+                            <li><strong>Crimper:</strong> A physical, pliers-like tool used to attach connectors (like an RJ-45 plug) to the ends of network cables. It presses the metal pins into the wires.</li>
+                            <li><strong>Cable Tester:</strong> An electronic device used to verify the integrity of network cables. It tests for continuity, breaks, and miswirings (crossed wires).</li>
                         </ul>
                     </div>
                      <div class="bg-gray-50 border-t border-gray-100 p-4">
                         <div class="flex gap-4">
-                            <button onclick="openBriefing('sfp-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
-                            <button onclick="openBriefing('sfp-usecase')" class="flex-1 bg-green-100 hover:bg-green-200 text-green-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                            <button onclick="openBriefing('tool-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('tool-usecase')" class="flex-1 bg-red-100 hover:bg-red-200 text-red-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Tile 3 -->
+                <!-- Tile 3: Peripheral Interfaces -->
                 <div class="bg-white rounded-xl shadow-md border-t-4 border-purple-500 overflow-hidden flex flex-col">
                     <div class="p-6 flex-grow">
-                        <h2 class="text-2xl font-bold mb-3 text-purple-700"><i class="fa-solid fa-wifi mr-2"></i>Wireless (Bluetooth, NFC, Wi-Fi)</h2>
+                        <h2 class="text-2xl font-bold mb-3 text-purple-700"><i class="fa-brands fa-usb mr-2"></i>Peripheral Interfaces</h2>
                         <ul class="space-y-3 text-gray-700 mb-4">
-                            <li><strong>Bluetooth:</strong> Short-range (up to 33 feet) low-power wireless for battery-operated devices.</li>
-                            <li><strong>Near-Field Communication (NFC):</strong> Extremely short-range communication used for contactless payments.</li>
-                            <li><strong>802.11X (Wi-Fi):</strong> Wireless LAN standard providing high-speed mobility over larger coverage areas.</li>
+                            <li><strong>USB-A:</strong> The standard, rectangular port found on older PCs and laptops for mice, keyboards, and flash drives. Not reversible.</li>
+                            <li><strong>USB-B:</strong> Squarish port with beveled top corners. Almost exclusively used on peripheral devices like desktop printers.</li>
+                            <li><strong>USB-C:</strong> The modern standard. Oval-shaped and completely reversible. Supports high-speed data, high-wattage power delivery, and video output.</li>
+                            <li><strong>Lightning:</strong> Apple's proprietary reversible connector used on older iPhones and iPads (prior to the shift to USB-C).</li>
                         </ul>
                     </div>
                      <div class="bg-gray-50 border-t border-gray-100 p-4">
                         <div class="flex gap-4">
-                            <button onclick="openBriefing('wireless-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
-                            <button onclick="openBriefing('wireless-usecase')" class="flex-1 bg-purple-100 hover:bg-purple-200 text-purple-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                            <button onclick="openBriefing('per-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('per-usecase')" class="flex-1 bg-purple-100 hover:bg-purple-200 text-purple-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Tile 4 -->
+                <!-- Tile 4: Display Technologies -->
                 <div class="bg-white rounded-xl shadow-md border-t-4 border-orange-500 overflow-hidden flex flex-col">
                     <div class="p-6 flex-grow">
-                        <h2 class="text-2xl font-bold mb-3 text-orange-700"><i class="fa-solid fa-screwdriver-wrench mr-2"></i>Networking Tools (Crimpers & Testers)</h2>
+                        <h2 class="text-2xl font-bold mb-3 text-orange-700"><i class="fa-solid fa-desktop mr-2"></i>Display Technologies</h2>
                         <ul class="space-y-3 text-gray-700 mb-4">
-                            <li><strong>Crimpers:</strong> Specialized hand tools used to attach connectors (like RJ45) onto network cables for custom lengths.</li>
-                            <li><strong>Cable Testers:</strong> Diagnostic devices used to verify wiring integrity and detect short circuits or mis-pins.</li>
-                            <li><strong>Deployment:</strong> Essential hardware toolkit for IT technicians building and maintaining physical networks.</li>
+                            <li><strong>VGA:</strong> Very old standard. 15-pin, usually blue connector. Transmits <em>analog video only</em>. No audio.</li>
+                            <li><strong>DVI:</strong> Digital Visual Interface. Replaced VGA. Usually white connector. Digital (and sometimes analog) video only.</li>
+                            <li><strong>HDMI:</strong> High-Definition Multimedia Interface. The ubiquitous standard for TVs and monitors. Carries <strong>both digital video and audio</strong> over a single cable.</li>
+                            <li><strong>DisplayPort:</strong> Primary competitor to HDMI in the PC space. Highly versatile, supports daisy-chaining multiple monitors, high refresh rates, and audio.</li>
                         </ul>
                     </div>
                     <div class="bg-gray-50 border-t border-gray-100 p-4">
                         <div class="flex gap-4">
-                            <button onclick="openBriefing('tools-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
-                            <button onclick="openBriefing('tools-usecase')" class="flex-1 bg-orange-100 hover:bg-orange-200 text-orange-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
+                            <button onclick="openBriefing('disp-details')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-book-open mr-2"></i> Details</button>
+                            <button onclick="openBriefing('disp-usecase')" class="flex-1 bg-orange-100 hover:bg-orange-200 text-orange-900 py-3 rounded text-sm font-bold transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-lightbulb text-yellow-600 mr-2"></i> Use Cases</button>
                         </div>
                     </div>
                 </div>
@@ -255,103 +273,63 @@
             </div>
         </div>
 
+        <!-- LAB ACTIVITY SECTION -->
         <div id="activity-section" class="tab-content no-print">
             <div class="text-center mb-8">
                 <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Interactive Lab Activity</h1>
-                <p class="text-gray-600">Apply your knowledge across 4 distinct hands-on networking simulations to achieve mastery.</p>
+                <p class="text-gray-600">Test your hands-on hardware knowledge with these lab exercises.</p>
             </div>
 
-            <!-- Lab 1: Interface Categorization Sorter -->
+            <!-- Lab 1: Interface Categorization -->
             <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
-                <h2 class="text-xl font-bold mb-4 text-blue-700"><i class="fa-solid fa-sort mr-2"></i>Lab 1: Interface Type Sorter</h2>
-                <p class="text-sm text-gray-600 mb-4">Drag and drop each networking interface or tool into the correct category bucket.</p>
+                <h2 class="text-xl font-bold mb-4 text-blue-700"><i class="fa-solid fa-layer-group mr-2"></i>Lab 1: Protocol Categorization</h2>
+                <p class="text-sm text-gray-600 mb-4">Drag and drop the interface technologies into their correct primary use-case category.</p>
                 
                 <div class="flex flex-wrap gap-3 mb-6" id="cat-items">
-                    <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold text-sm" draggable="true" data-type="wired">RJ45 Ethernet Cable</div>
-                    <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold text-sm" draggable="true" data-type="wireless">Bluetooth Headset</div>
-                    <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold text-sm" draggable="true" data-type="wired">SFP Fiber Optic Transceiver</div>
-                    <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold text-sm" draggable="true" data-type="wireless">NFC Contactless Payment</div>
-                    <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold text-sm" draggable="true" data-type="tool">Cable Crimper Tool</div>
-                    <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold text-sm" draggable="true" data-type="wireless">802.11ax Wi-Fi Router</div>
+                    <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold" draggable="true" data-type="network">RJ-45</div>
+                    <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold" draggable="true" data-type="video">HDMI</div>
+                    <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold" draggable="true" data-type="peripheral">USB-A</div>
+                    <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold" draggable="true" data-type="video">VGA</div>
+                    <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold" draggable="true" data-type="network">NFC</div>
+                    <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold" draggable="true" data-type="peripheral">Lightning</div>
+                    <div class="io-item px-4 py-2 bg-indigo-100 border border-indigo-300 rounded font-bold" draggable="true" data-type="video">DisplayPort</div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="cat-dropzone border-2 border-dashed border-blue-400 bg-blue-50 rounded-lg p-3 min-h-[140px] flex flex-col items-center" data-target="wired">
-                        <h3 class="font-bold text-blue-800 mb-1 border-b border-blue-200 w-full text-center pb-1">Wired Interfaces</h3>
+                    <div class="cat-dropzone border-2 border-dashed border-blue-400 bg-blue-50 rounded-lg p-4 min-h-[150px] flex flex-col items-center" data-target="network">
+                        <h3 class="font-bold text-blue-800 mb-2 border-b border-blue-200 w-full text-center pb-1"><i class="fa-solid fa-wifi mr-1"></i>Networking</h3>
                     </div>
-                    <div class="cat-dropzone border-2 border-dashed border-purple-400 bg-purple-50 rounded-lg p-3 min-h-[140px] flex flex-col items-center" data-target="wireless">
-                        <h3 class="font-bold text-purple-800 mb-1 border-b border-purple-200 w-full text-center pb-1">Wireless Interfaces</h3>
+                    <div class="cat-dropzone border-2 border-dashed border-purple-400 bg-purple-50 rounded-lg p-4 min-h-[150px] flex flex-col items-center" data-target="peripheral">
+                        <h3 class="font-bold text-purple-800 mb-2 border-b border-purple-200 w-full text-center pb-1"><i class="fa-brands fa-usb mr-1"></i>Peripherals</h3>
                     </div>
-                    <div class="cat-dropzone border-2 border-dashed border-orange-400 bg-orange-50 rounded-lg p-3 min-h-[140px] flex flex-col items-center" data-target="tool">
-                        <h3 class="font-bold text-orange-800 mb-1 border-b border-orange-200 w-full text-center pb-1">Networking Tools</h3>
+                    <div class="cat-dropzone border-2 border-dashed border-orange-400 bg-orange-50 rounded-lg p-4 min-h-[150px] flex flex-col items-center" data-target="video">
+                        <h3 class="font-bold text-orange-800 mb-2 border-b border-orange-200 w-full text-center pb-1"><i class="fa-solid fa-desktop mr-1"></i>Video / Display</h3>
                     </div>
                 </div>
                 <div id="lab1-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
             </div>
 
-            <!-- Lab 2: Scenario Network Planner -->
+            <!-- Lab 2: Tool Scenario Matcher -->
             <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
-                <h2 class="text-xl font-bold mb-4 text-green-700"><i class="fa-solid fa-map-location-dot mr-2"></i>Lab 2: Scenario Network Planner</h2>
-                <p class="text-sm text-gray-600 mb-4">Select the ideal interface to solve each real-world networking challenge based on speed, security, and mobility.</p>
+                <h2 class="text-xl font-bold mb-4 text-red-700"><i class="fa-solid fa-wrench mr-2"></i>Lab 2: Scenario Tool Matcher</h2>
+                <p class="text-sm text-gray-600 mb-4">Click the scenario on the left, then click the correct tool/interface required to solve it.</p>
                 
-                <div class="space-y-4" id="scenario-container">
-                    <div class="p-4 bg-gray-50 rounded-lg border border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4">
-                        <div>
-                            <span class="font-bold text-gray-800">1. Competitive Esports Gaming PC</span>
-                            <p class="text-xs text-gray-500">Requires lowest possible latency and absolute zero packet loss.</p>
-                        </div>
-                        <div class="flex gap-2">
-                            <button onclick="checkLab2(this, true)" class="px-3 py-1 bg-white border border-gray-300 rounded text-sm hover:bg-green-100 font-semibold">Ethernet (RJ45)</button>
-                            <button onclick="checkLab2(this, false)" class="px-3 py-1 bg-white border border-gray-300 rounded text-sm hover:bg-red-100 font-semibold">Bluetooth</button>
-                        </div>
+                <div class="flex flex-col md:flex-row justify-around items-stretch gap-6">
+                    <div class="flex flex-col gap-3 flex-1">
+                        <button class="scenario-btn px-4 py-3 bg-gray-100 border-2 border-gray-300 rounded text-left hover:bg-red-50 text-sm font-semibold transition" data-match="crimper">"I need to attach an RJ-45 plug to this bare Cat6 wire."</button>
+                        <button class="scenario-btn px-4 py-3 bg-gray-100 border-2 border-gray-300 rounded text-left hover:bg-red-50 text-sm font-semibold transition" data-match="tester">"My network drop in the office is dead. I need to see if the wire is cut in the ceiling."</button>
+                        <button class="scenario-btn px-4 py-3 bg-gray-100 border-2 border-gray-300 rounded text-left hover:bg-red-50 text-sm font-semibold transition" data-match="nfc">"I want to tap my phone to the register to pay for groceries."</button>
+                        <button class="scenario-btn px-4 py-3 bg-gray-100 border-2 border-gray-300 rounded text-left hover:bg-red-50 text-sm font-semibold transition" data-match="hdmi">"I need to run 4K video AND surround sound audio to my TV."</button>
                     </div>
-                    <div class="p-4 bg-gray-50 rounded-lg border border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4">
-                        <div>
-                            <span class="font-bold text-gray-800">2. Smartphone Contactless Payment at Register</span>
-                            <p class="text-xs text-gray-500">Requires instant data exchange over a distance of only a few centimeters.</p>
-                        </div>
-                        <div class="flex gap-2">
-                            <button onclick="checkLab2(this, false)" class="px-3 py-1 bg-white border border-gray-300 rounded text-sm hover:bg-red-100 font-semibold">Ethernet (RJ45)</button>
-                            <button onclick="checkLab2(this, true)" class="px-3 py-1 bg-white border border-gray-300 rounded text-sm hover:bg-green-100 font-semibold">NFC</button>
-                        </div>
-                    </div>
-                    <div class="p-4 bg-gray-50 rounded-lg border border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4">
-                        <div>
-                            <span class="font-bold text-gray-800">3. Hospital Real-Time Patient Monitor</span>
-                            <p class="text-xs text-gray-500">Requires immunity to electromagnetic interference from medical imaging machines.</p>
-                        </div>
-                        <div class="flex gap-2">
-                            <button onclick="checkLab2(this, true)" class="px-3 py-1 bg-white border border-gray-300 rounded text-sm hover:bg-green-100 font-semibold">SFP Fiber Optic</button>
-                            <button onclick="checkLab2(this, false)" class="px-3 py-1 bg-white border border-gray-300 rounded text-sm hover:bg-red-100 font-semibold">Bluetooth</button>
-                        </div>
+                    
+                    <div class="flex flex-col gap-3 flex-1 justify-center">
+                        <button class="tool-btn px-4 py-3 bg-white border-2 border-gray-300 rounded text-center hover:bg-gray-100 font-bold text-gray-700 shadow-sm transition" data-match="hdmi"><i class="fa-solid fa-plug text-orange-500 mr-2"></i>HDMI Cable</button>
+                        <button class="tool-btn px-4 py-3 bg-white border-2 border-gray-300 rounded text-center hover:bg-gray-100 font-bold text-gray-700 shadow-sm transition" data-match="crimper"><i class="fa-solid fa-ruler-combined text-blue-500 mr-2"></i>Crimper</button>
+                        <button class="tool-btn px-4 py-3 bg-white border-2 border-gray-300 rounded text-center hover:bg-gray-100 font-bold text-gray-700 shadow-sm transition" data-match="nfc"><i class="fa-solid fa-mobile-screen-button text-purple-500 mr-2"></i>NFC</button>
+                        <button class="tool-btn px-4 py-3 bg-white border-2 border-gray-300 rounded text-center hover:bg-gray-100 font-bold text-gray-700 shadow-sm transition" data-match="tester"><i class="fa-solid fa-walkie-talkie text-green-500 mr-2"></i>Cable Tester</button>
                     </div>
                 </div>
                 <div id="lab2-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
-            </div>
-
-            <!-- Lab 3: Cable Pinout Matcher -->
-            <div class="bg-white p-6 rounded-xl shadow-md mb-8 border border-gray-200">
-                <h2 class="text-xl font-bold mb-4 text-purple-700"><i class="fa-solid fa-ethernet mr-2"></i>Lab 3: RJ45 Color Code Verification</h2>
-                <p class="text-sm text-gray-600 mb-4">Click the correct TIA/EIA-568B wire color for Pin 1 on an Ethernet connector to ensure proper transmission.</p>
-                
-                <div class="flex flex-wrap justify-center gap-3">
-                    <button onclick="checkLab3(false)" class="px-4 py-3 bg-blue-100 border border-blue-300 rounded font-bold text-blue-900 hover:bg-blue-200">Solid Blue</button>
-                    <button onclick="checkLab3(true)" class="px-4 py-3 bg-orange-100 border border-orange-300 rounded font-bold text-orange-900 hover:bg-orange-200">White/Orange Stripe</button>
-                    <button onclick="checkLab3(false)" class="px-4 py-3 bg-green-100 border border-green-300 rounded font-bold text-green-900 hover:bg-green-200">Solid Green</button>
-                    <button onclick="checkLab3(false)" class="px-4 py-3 bg-amber-100 border border-amber-300 rounded font-bold text-amber-900 hover:bg-amber-200">White/Brown Stripe</button>
-                </div>
-                <div id="lab3-feedback" class="text-center font-bold mt-4 h-6 text-green-600"></div>
-            </div>
-
-            <!-- Lab 4: Cable Tester Simulator -->
-            <div class="bg-gray-900 p-6 rounded-xl shadow-md mb-8 border-4 border-gray-700 font-mono">
-                <h2 class="text-xl font-bold mb-4 text-orange-400"><i class="fa-solid fa-bolt mr-2"></i>Lab 4: Cable Tester Diagnostic</h2>
-                <p class="text-sm text-gray-300 mb-6">A technician plugs a freshly crimped cable into a cable tester. Click the faulty pin indicated by the broken LED loop to diagnose the short circuit.</p>
-                
-                <div class="grid grid-cols-8 gap-2 max-w-md mx-auto mb-6" id="tester-pins">
-                    <!-- Generated via JS -->
-                </div>
-                <div id="lab4-feedback" class="text-center font-bold mt-4 h-6 text-green-400"></div>
             </div>
 
             <div class="text-center">
@@ -359,6 +337,7 @@
             </div>
         </div>
 
+        <!-- QUIZ SECTION -->
         <div id="quiz-section" class="tab-content no-print">
             <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-xl max-w-4xl mx-auto">
                 <div class="text-center mb-8 border-b pb-4">
@@ -377,48 +356,55 @@
             </div>
         </div>
 
+        <!-- RETRO GAME SECTION -->
         <div id="game-section" class="tab-content no-print">
-            <div class="bg-gray-900 p-6 sm:p-8 rounded-2xl shadow-xl max-w-4xl mx-auto border-4 border-gray-700 flex flex-col items-center">
-                <div class="text-center mb-4 w-full">
-                    <h1 class="text-3xl font-extrabold text-green-400 mb-2 tracking-widest uppercase" style="font-family: monospace;">Cable Connector (Snake)</h1>
-                    <p class="text-gray-300 text-sm">You are the Network Installer! Guide the Ethernet cable (Snake) using arrow keys or on-screen buttons to collect connector pins (RJ45, SFP, Wi-Fi) without crashing into the walls or yourself.</p>
+            <div class="bg-gray-900 p-6 sm:p-8 rounded-2xl shadow-xl max-w-4xl mx-auto border-4 border-gray-700">
+                <div class="text-center mb-4">
+                    <h1 class="text-3xl font-extrabold text-green-400 mb-2 tracking-widest uppercase" style="font-family: monospace;">Retro Cable Connector</h1>
+                    <p class="text-gray-300 text-sm">You are the Network Cable. Use arrow keys to connect to valid ports (blue/yellow squares) to increase your length and score. Avoid hitting the walls or yourself!</p>
                 </div>
                 
-                <div class="flex justify-between items-center w-full max-w-[400px] sm:max-w-[500px] mb-2 px-4 text-white font-mono text-xl">
+                <div class="flex justify-between items-center mb-2 px-4 text-white font-mono text-xl">
                     <div>Score: <span id="game-score" class="text-green-400 font-bold">0</span></div>
-                    <div>Length: <span id="game-length" class="text-blue-400 font-bold">3</span></div>
+                    <div>High Score: <span id="game-highscore" class="text-yellow-400 font-bold">0</span></div>
                 </div>
 
                 <div class="relative flex justify-center w-full">
-                    <canvas id="game-canvas" width="500" height="500" class="w-full max-w-[500px]"></canvas>
-                    <div id="game-overlay" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-70 rounded-lg max-w-[500px] mx-auto z-10">
-                        <button id="start-game-btn" class="bg-green-500 hover:bg-green-400 text-white font-bold font-mono py-3 px-6 rounded-lg text-xl border-4 border-green-700 uppercase transform transition hover:scale-105">Insert Coin (Start)</button>
+                    <!-- Game Canvas -->
+                    <canvas id="game-canvas" width="400" height="400" class="w-full max-w-[400px] sm:max-w-[500px]"></canvas>
+                    
+                    <!-- Overlay Start Button -->
+                    <div id="game-overlay" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-70 rounded-lg max-w-[400px] sm:max-w-[500px] mx-auto">
+                        <button id="start-game-btn" class="bg-green-500 hover:bg-green-400 text-black font-bold font-mono py-3 px-6 rounded-lg text-xl border-4 border-green-700 uppercase transform transition hover:scale-105">Insert Coin (Start)</button>
                     </div>
                 </div>
 
                 <!-- Mobile Controls -->
-                <div class="grid grid-cols-3 gap-2 w-full max-w-[240px] mt-6 sm:hidden">
+                <div class="grid grid-cols-3 gap-2 w-48 mx-auto mt-6 sm:hidden">
                     <div></div>
-                    <button id="btn-up" class="game-btn bg-gray-700 text-white rounded p-4 active:bg-gray-500 flex items-center justify-center"><i class="fa-solid fa-arrow-up text-xl"></i></button>
+                    <button class="game-btn bg-gray-700 text-white rounded p-4 active:bg-gray-500" onclick="setDirection(0, -1)"><i class="fa-solid fa-arrow-up"></i></button>
                     <div></div>
-                    <button id="btn-left" class="game-btn bg-gray-700 text-white rounded p-4 active:bg-gray-500 flex items-center justify-center"><i class="fa-solid fa-arrow-left text-xl"></i></button>
-                    <button id="btn-down" class="game-btn bg-gray-700 text-white rounded p-4 active:bg-gray-500 flex items-center justify-center"><i class="fa-solid fa-arrow-down text-xl"></i></button>
-                    <button id="btn-right" class="game-btn bg-gray-700 text-white rounded p-4 active:bg-gray-500 flex items-center justify-center"><i class="fa-solid fa-arrow-right text-xl"></i></button>
+                    <button class="game-btn bg-gray-700 text-white rounded p-4 active:bg-gray-500" onclick="setDirection(-1, 0)"><i class="fa-solid fa-arrow-left"></i></button>
+                    <button class="game-btn bg-gray-700 text-white rounded p-4 active:bg-gray-500" onclick="setDirection(0, 1)"><i class="fa-solid fa-arrow-down"></i></button>
+                    <button class="game-btn bg-gray-700 text-white rounded p-4 active:bg-gray-500" onclick="setDirection(1, 0)"><i class="fa-solid fa-arrow-right"></i></button>
                 </div>
 
-                <div class="mt-8 text-center w-full border-t border-gray-700 pt-6">
+                <div class="mt-8 text-center border-t border-gray-700 pt-6">
                     <button onclick="switchTab('cert')" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-lg transition w-full md:w-auto">View Certificate <i class="fa-solid fa-award ml-2"></i></button>
                 </div>
             </div>
         </div>
 
+        <!-- CERTIFICATE SECTION -->
         <div id="cert-section" class="tab-content">
             <div class="max-w-5xl mx-auto">
+                
+                <!-- Controls (No Print) -->
                 <div class="bg-white p-6 rounded shadow mb-6 no-print text-center border border-gray-200">
                     <h2 class="text-2xl font-bold text-green-600 mb-2">🎉 Congratulations! 🎉</h2>
-                    <p class="text-gray-700 mb-4">You have achieved mastery of Input/Output Interfaces.</p>
+                    <p class="text-gray-700 mb-4">You have achieved mastery of Input / Output Interfaces.</p>
                     <div class="flex flex-col md:flex-row justify-center items-center gap-4">
-                        <input type="text" id="student-name-input" value="Student" placeholder="Enter your first name" class="border-2 border-gray-300 rounded px-4 py-2 w-full md:w-64 focus:border-green-500 focus:outline-none">
+                        <input type="text" id="student-name-input" value="Jim" placeholder="Enter your first name" class="border-2 border-gray-300 rounded px-4 py-2 w-full md:w-64 focus:border-green-500 focus:outline-none">
                         <button onclick="updateCertName()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">Update Name</button>
                         <button id="download-btn" onclick="downloadCert()" class="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900 transition flex items-center justify-center">
                             <i class="fa-solid fa-download mr-2"></i>Download PNG
@@ -426,8 +412,13 @@
                     </div>
                 </div>
 
+                <!-- Certificate Render Container -->
                 <div class="cert-preview-container print:p-0 print:bg-white">
+                    
+                    <!-- Actual Certificate Canvas -->
                     <div id="certificate">
+                        
+                        <!-- Gold Realistic Seal -->
                         <div class="gold-seal">
                             <div class="gold-seal-inner-1">
                                 <div class="gold-seal-inner-2">
@@ -440,31 +431,45 @@
                             </div>
                         </div>
 
+                        <!-- Content Area (Pushed down 1/2 inch (48px) and right to clear geometry) -->
                         <div class="relative z-20 w-full h-full flex flex-col pt-[48px] pl-[380px] pr-[48px]">
+                            
+                            <!-- Headers -->
                             <h1 class="text-[#1e3a8a] text-[4.5rem] leading-none font-serif font-bold tracking-wide uppercase mb-2">CERTIFICATE</h1>
                             <h2 class="text-gray-800 text-3xl font-serif tracking-widest uppercase mb-10">Of Achievement</h2>
                             
+                            <!-- Introductory Text -->
                             <p class="text-[1.4rem] font-body text-gray-800 mb-4">This is to certify that</p>
                             
+                            <!-- Dynamic Student Name with specific underline style -->
                             <div class="relative mb-8 w-full">
-                                <h3 id="cert-student-name" class="text-[4rem] text-[#1e3a8a] font-serif italic leading-none pb-2 relative z-10 text-center w-full block">Student</h3>
+                                <!-- Name text centered -->
+                                <h3 id="cert-student-name" class="text-[4rem] text-[#1e3a8a] font-serif italic leading-none pb-2 relative z-10 text-center w-full block">Jim</h3>
+                                <!-- Lines -->
                                 <div class="w-full border-b-[2px] border-[#1e3a8a] absolute bottom-[4px] left-0 z-0"></div>
+                                <div class="w-full border-b-[2px] border-dotted border-red-500 absolute bottom-[0px] left-0 z-0"></div>
                             </div>
                             
+                            <!-- Body Text -->
                             <p class="text-[1.3rem] font-body text-gray-800 leading-relaxed w-full pr-4">
                                 Has successfully completed the assessment for 
                                 <strong class="text-[1.8rem] text-[#1e3a8a] block mt-4 mb-2 font-serif">Cyber.org Tech+ Unit 03 Section 2.5.1</strong>
-                                <strong class="text-[1.5rem] text-black block mb-4 font-serif italic">Input/Output Interfaces</strong>
-                                <span class="text-[1.1rem] text-gray-700 leading-snug block">Demonstrating proficiency in comparing and contrasting wired Ethernet connectors, fiber optic SFPs, wireless radio standards (Bluetooth, NFC, Wi-Fi), and professional networking tools.</span>
+                                <strong class="text-[1.5rem] text-black block mb-4 font-serif italic">Input and Output Interfaces</strong>
+                                <span class="text-[1.1rem] text-gray-700 leading-snug block">Demonstrating proficiency in understanding networking interfaces, identifying input and output devices, mastering peripheral connectors and cables, and explaining display technologies and port functions with distinction.</span>
                             </p>
                             
+                            <!-- Signatures & Footer (Shifted to the right to avoid bottom left polygon) -->
                             <div class="flex justify-end gap-16 items-end mt-auto mb-[60px] w-full pr-8">
+                                <!-- Instructor Signature Line -->
                                 <div class="w-64">
                                     <div class="border-b border-gray-600 mb-2 h-20 flex items-end justify-center relative">
+                                        <!-- Scribbled illegible signature using Qwitcher Grypen -->
                                         <span class="font-script text-[5rem] text-[#1e3a8a] absolute bottom-[-10px] transform -rotate-3 opacity-90">Dr. M. S</span>
                                     </div>
                                     <p class="font-serif text-xl text-gray-800 text-center">Administration</p>
                                 </div>
+                                
+                                <!-- Date Line -->
                                 <div class="w-64">
                                     <div class="border-b border-gray-600 mb-2 text-center h-20 flex items-end justify-center">
                                         <p id="cert-date" class="font-body text-2xl text-gray-800 pb-1">Date Here</p>
@@ -472,6 +477,7 @@
                                     <p class="font-serif text-xl text-gray-800 text-center">Date</p>
                                 </div>
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -479,8 +485,9 @@
         </div>
     </main>
 
+    <!-- Custom Modal -->
     <div id="custom-modal" class="fixed inset-0 bg-black bg-opacity-50 z-[100] hidden flex justify-center items-center backdrop-blur-sm">
-        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all">
             <div class="text-center">
                 <div id="modal-icon" class="text-5xl mb-4"></div>
                 <h3 id="modal-title" class="text-2xl font-bold mb-2 text-gray-900"></h3>
@@ -490,262 +497,228 @@
         </div>
     </div>
 
-    <!-- Briefing Modal with 7+ Paragraphs and Use Cases -->
-    <div id="briefing-modal" class="fixed inset-0 bg-black bg-opacity-70 z-[120] hidden flex justify-center items-center backdrop-blur-sm p-4">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col border-4 border-green-700 overflow-hidden">
-            <div class="p-6 border-b flex justify-between items-center bg-gray-50">
+    <!-- Content Briefing Modal -->
+    <div id="briefing-modal" class="fixed inset-0 bg-black bg-opacity-70 z-[120] hidden flex justify-center items-center backdrop-blur-sm p-4 sm:p-6">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col transform transition-all overflow-hidden border-4 border-green-700">
+            
+            <!-- Modal Header -->
+            <div class="p-6 border-b border-gray-200 flex justify-between items-center bg-gray-50">
                 <div class="flex items-center gap-4">
                     <div id="briefing-modal-icon" class="text-4xl"></div>
-                    <h3 id="briefing-modal-title" class="text-2xl font-bold text-gray-900"></h3>
+                    <h3 id="briefing-modal-title" class="text-2xl md:text-3xl font-bold text-gray-900"></h3>
                 </div>
-                <button onclick="closeBriefing()" class="text-gray-400 hover:text-red-600 text-4xl">&times;</button>
+                <button onclick="closeBriefing()" class="text-gray-400 hover:text-red-600 transition text-4xl leading-none">&times;</button>
             </div>
-            <div id="briefing-modal-content" class="p-6 md:p-10 overflow-y-auto flex-grow text-gray-700 text-lg leading-relaxed bg-white"></div>
-            <div class="p-6 border-t bg-gray-50 flex justify-end">
-                <button onclick="closeBriefing()" class="bg-green-700 text-white px-8 py-3 rounded-lg font-bold">Acknowledge & Close</button>
+            
+            <!-- Modal Body (Scrollable) -->
+            <div id="briefing-modal-content" class="p-6 md:p-10 overflow-y-auto flex-grow text-gray-700 text-lg leading-relaxed bg-white">
+                <!-- Dynamic Content Injected Here -->
+            </div>
+            
+            <!-- Modal Footer -->
+            <div class="p-6 border-t border-gray-200 bg-gray-50 flex justify-end">
+                <button onclick="closeBriefing()" class="bg-green-700 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-green-800 transition shadow-md">Acknowledge & Close</button>
             </div>
         </div>
     </div>
 
     <script>
+        // --- STREAMING_CHUNK:Briefing Content Data... ---
         const briefingData = {
-            'ethernet-details': {
-                title: 'Wired Ethernet & RJ45 Connectors: In-Depth Overview',
-                icon: '<i class="fa-solid fa-plug text-blue-600"></i>',
+            'net-details': {
+                title: 'Networking Interfaces: Detailed Breakdown',
+                icon: '<i class="fa-solid fa-network-wired text-blue-600"></i>',
                 html: `
-                    <p class="mb-5">Wired networking interfaces remain the absolute backbone of high-performance computing infrastructure. Among all physical connection standards, the <strong>RJ45 Ethernet connector</strong> is the most widely recognized and universally deployed standard for Local Area Networks (LANs). The acronym RJ45 stands for "Registered Jack 45," designating a standardized physical telecommunication network interface that pairs modular jacks with copper twisted-pair cables.</p>
+                    <p class="mb-5">Networking interfaces are the fundamental physical and wireless gateways that allow individual computing devices to communicate, share data, and form the backbone of the internet. Without these standardized interfaces, a computer is essentially an isolated island of data. They define the rules, physical connector shapes, and signal frequencies used to transmit binary data between hosts.</p>
                     
-                    <p class="mb-5">Inside a standard Ethernet cable (such as Cat5e or Cat6), you will find eight individual copper wires carefully organized into <strong>four twisted pairs</strong>. The colors of these insulated wires are standardized across the global networking industry: orange, green, blue, and brown. Within each pair, one wire is solid colored while its companion wire is white with a colored stripe. This precise twisted configuration is not arbitrary; twisting the wires together cancels out electromagnetic interference (EMI) caused by external electrical sources such as power cords and fluorescent lighting.</p>
+                    <p class="mb-5">The most ubiquitous wired networking interface is Ethernet, typically utilizing an RJ-45 (Registered Jack-45) connector. Unlike older telephone lines which used narrower RJ-11 jacks with 4 or 6 pins, an RJ-45 connector features 8 distinct metal pins. These pins align with the 8 colored wires inside twisted pair cables (like Category 5e or Category 6). Ethernet is highly favored in enterprise environments because it provides a dedicated, highly reliable, full-duplex connection capable of speeds ranging from 1 Gbps up to 10 Gbps and beyond, while being heavily resistant to outside interference.</p>
                     
-                    <p class="mb-5">To ensure that devices from different manufacturers can communicate flawlessly over copper Ethernet cables, technicians strictly follow universal wiring standards known as <strong>EIA/TIA-568A and EIA/TIA-568B</strong>. Both standards use the exact same 8 pins and twisted pairs, but the specific color order differs slightly. Standard B is by far the most commonly deployed wiring convention in modern commercial and residential buildings. Crimping these tiny wires into the gold-plated pins of an RJ45 connector requires precision and steady hands.</p>
+                    <p class="mb-5">Transitioning to wireless connectivity, Bluetooth serves as the primary protocol for establishing Personal Area Networks (PANs). Operating on the 2.4 GHz radio frequency, Bluetooth is not designed for heavy, long-distance network traffic like streaming 4K video across a building. Instead, it is highly optimized for short-range (typically 10 to 30 meters), low-power communication. This makes it the ideal interface for wirelessly connecting peripherals such as headsets, mice, keyboards, and smartwatches to a central host device without draining battery life.</p>
                     
-                    <p class="mb-5">When compared to wireless connections, wired Ethernet interfaces offer monumental performance advantages. Because data travels across physical copper traces as electrical pulses without having to fight through atmospheric obstacles, Ethernet cables provide exceptionally high data throughput rates (ranging from 1 Gbps up to 10 Gbps and beyond). Furthermore, wired connections boast <strong>extremely low latency</strong> (the time it takes data to travel from source to destination), which is critical for real-time applications like competitive gaming and financial stock trading.</p>
+                    <p class="mb-5">For even closer interactions, Near-Field Communication (NFC) provides an ultra-short-range wireless interface. NFC relies on electromagnetic induction to transmit data, meaning it requires devices to be within roughly 4 centimeters of one another—or even touching. While this extremely short range might seem like a limitation, it is actually NFC's greatest strength. It acts as a physical security barrier, ensuring that data (like credit card information) cannot be intercepted by someone sitting across the room.</p>
                     
-                    <p class="mb-5">Another massive benefit of wired Ethernet interfaces is absolute reliability and security. Wireless signals fluctuate based on physical distance, concrete walls, microwave ovens, and neighboring Wi-Fi networks. Ethernet connections experience zero atmospheric degradation. Additionally, because wired networks require physical access to the building's structured cabling or wall jacks to tap into the data stream, they are inherently more secure against casual remote eavesdropping than broadcasting radio waves through the air.</p>
+                    <p class="mb-5">When technicians and system architects design a network, they must carefully choose between these interfaces based on strict use case constraints. Ethernet is chosen when absolute speed, low latency, and physical security are required. Bluetooth is selected when mobility and power efficiency are paramount for user peripherals. NFC is specifically deployed when an interaction requires intentional, physical proximity to authorize a transaction or pair devices securely.</p>
                     
-                    <p class="mb-5">Despite their incredible speed and security, wired Ethernet interfaces do have inherent physical limitations. The most prominent constraint is <strong>mobility</strong>. Devices connected via RJ45 cables are permanently tethered to wall ports or routers, severely restricting movement. Additionally, standard copper Ethernet cables have a strict maximum continuous run distance of 100 meters (328 feet) before signal attenuation (degradation) forces the use of network repeaters or switches to boost the electrical signal.</p>
-                    
-                    <p class="mb-5">In enterprise environments, IT professionals rely heavily on structured Ethernet cabling routed through drop ceilings and walls to connect fixed workstations, VoIP office phones, and network switches. Understanding how these physical copper interfaces operate, how color codes align to pins, and how to test cable continuity with diagnostic tools is a fundamental competency for any aspiring IT support technician or network engineer.</p>
+                    <p>Modern devices rarely rely on just one of these technologies. A standard enterprise laptop, for example, will use an RJ-45 port (or a USB-C Ethernet adapter) to connect securely to the corporate intranet, employ Bluetooth to connect to the user's wireless headset for a conference call, and might even feature an NFC reader to allow the user to log in simply by tapping their company ID badge against the palm rest.</p>
                 `
             },
-            'ethernet-usecase': {
-                title: 'Wired Ethernet & RJ45: Use Cases',
+            'net-usecase': {
+                title: 'Networking Interfaces: Practical Use Cases',
                 icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
                 html: `
                     <div class="mb-8">
-                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Use Case 1: Competitive Gaming and High-Bandwidth Workstations</h4>
-                        <p class="mb-2">Gamers and video editors require uninterrupted data streams with zero packet loss.</p>
-                        <ul class="list-disc pl-5 mb-4 text-gray-700">
-                            <li class="mb-2"><strong>Example 1:</strong> Alex connects his newly built high-performance gaming PC directly to his room's wall Ethernet jack using a Cat6 cable, ensuring a stable 1Gbps link with under 5ms ping for esports tournaments.</li>
-                            <li><strong>Example 2:</strong> A video production studio hooks up editing workstations via Ethernet to instantly transfer massive 4K raw video files across the local NAS (Network Attached Storage) server without wireless buffering.</li>
-                        </ul>
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Use Case 1: The Corporate Office (Ethernet)</h4>
+                        <p>A new architectural firm is setting up a design studio. Because the architects work with massive 3D rendering files that exceed several gigabytes, connecting their desktop workstations via Wi-Fi would be too slow and susceptible to interference from other devices. The IT team runs Cat6 cable from the central server room to every desk, terminating them in <strong>RJ-45 (Ethernet)</strong> wall jacks. This ensures every architect has a dedicated, uninterrupted 10-Gigabit connection to the rendering server.</p>
                     </div>
                     <div class="mb-8">
-                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Use Case 2: Enterprise Office Infrastructure</h4>
-                        <p class="mb-2">Corporate buildings requiring dependable, secure connections for stationary office hardware.</p>
-                        <ul class="list-disc pl-5 mb-4 text-gray-700">
-                            <li class="mb-2"><strong>Example 1:</strong> An office deploys 100 VoIP desk phones connected via RJ45 cables supporting Power over Ethernet (PoE), allowing both data transmission and electrical power delivery over a single cable.</li>
-                            <li><strong>Example 2:</strong> Financial institutions utilize secured wired Ethernet ports for bank teller terminals to prevent wireless interception of sensitive monetary transaction data.</li>
-                        </ul>
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Use Case 2: The Mobile Worker (Bluetooth)</h4>
+                        <p>A traveling sales representative is working from a crowded coffee shop. They need to join a virtual meeting but do not want to disturb the other patrons or be tethered to their laptop by cords. They turn on their wireless noise-canceling headphones. The laptop and headphones communicate via a <strong>Bluetooth</strong> Personal Area Network (PAN), allowing the user to experience clear, low-latency audio while having the freedom to move their head and hands freely without getting tangled in wires.</p>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                        <div>
-                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: RJ45 Connector & Copper Pairs</p>
-                            <img src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=600&h=350" alt="Ethernet cables and RJ45 plugs" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
-                        </div>
-                        <div>
-                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Gaming & Workstations</p>
-                            <img src="https://images.unsplash.com/photo-1587202372775-e229f172b9d7?auto=format&fit=crop&w=600&h=350" alt="Gaming PC setup with wired connection" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
-                        </div>
+                    <div>
+                        <h4 class="text-xl font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">Use Case 3: Modern Retail Transactions (NFC)</h4>
+                        <p>A customer is purchasing groceries at a supermarket. Instead of sliding a credit card into a chip reader or handing cash to the cashier, the customer simply unlocks their smartphone and taps it directly against the point-of-sale terminal. The terminal and the phone exchange encrypted payment tokens using <strong>NFC (Near-Field Communication)</strong>. Because NFC only works within 4 centimeters, the customer's payment data cannot be accidentally read by the terminal of the cashier in the next lane over.</p>
                     </div>
                 `
             },
-            'sfp-details': {
-                title: 'Fiber Optics & SFP Connectors: In-Depth Overview',
-                icon: '<i class="fa-solid fa-bolt text-green-600"></i>',
+            'tool-details': {
+                title: 'Networking Tools: Detailed Breakdown',
+                icon: '<i class="fa-solid fa-toolbox text-red-600"></i>',
                 html: `
-                    <p class="mb-5">While copper Ethernet cables dominate desktop connections, enterprise backbone networks, data centers, and telecommunication providers require data transmission speeds and distances that far exceed the physical capabilities of copper wire. This is where <strong>Small Form-Factor Pluggable (SFP)</strong> connectors and fiber optic communications become essential. SFP transceivers are compact, hot-swappable modular interface devices that slide directly into network switches and routers.</p>
+                    <p class="mb-5">In the realm of IT infrastructure, understanding theoretical network protocols is only half the battle; the physical layer must actually be built, maintained, and repaired. This physical layer relies heavily on copper twisted-pair cables. To manage these physical connections, network technicians rely on specialized, purpose-built hardware tools. Two of the most indispensable tools in a technician's toolkit are the cable crimper and the cable tester.</p>
                     
-                    <p class="mb-5">Unlike copper cables that transmit data via electrical voltage fluctuations, fiber optic cables transmit data using <strong>pulses of light</strong> (photons) generated by tiny lasers or LEDs traveling through ultra-thin strands of pure glass or plastic fiber core. Because light travels at nearly the speed of light and does not suffer from electrical resistance, fiber optics provide astronomical throughput rates (ranging from 1 Gbps to 100 Gbps+) over immense distances spanning kilometers without requiring signal boosters.</p>
+                    <p class="mb-5">Before a cable can be used, it must be terminated. Bulk network cable (like Cat5e or Cat6) comes in massive spools containing hundreds of feet of wire with no ends attached. Inside the thick outer jacket of these cables are four pairs of tightly twisted, color-coded copper wires (eight wires total). To make a usable patch cable, a technician must cut the cable to length, carefully strip away the outer jacket, untwist the internal pairs, and arrange the eight wires into a highly specific color-coded sequence (known as the T568A or T568B wiring standard).</p>
                     
-                    <p class="mb-5">A massive advantage of fiber optic SFP interfaces in high-security environments is their <strong>complete immunity to Electromagnetic Interference (EMI)</strong>. Copper wires act like antennas; if run parallel to high-voltage power lines, they can pick up electrical noise that corrupts data. Glass fiber is completely non-conductive and impervious to EMI. Furthermore, fiber optic cables cannot be tapped surreptitiously without interrupting the light beam, making them exceptionally secure against physical wiretapping.</p>
+                    <p class="mb-5">This is where the <strong>Crimper</strong> comes into play. A crimper is a heavy-duty, pliers-like mechanical tool specifically designed to attach an RJ-45 plastic connector to the prepared end of a cable. Once the properly sequenced wires are pushed deep into the plastic RJ-45 plug, the plug is inserted into the die of the crimper. When the technician squeezes the handles, the tool permanently presses small, gold-plated metal pins inside the plug down into the copper wires, piercing their insulation and creating a solid electrical connection. Without a crimper, it is impossible to create custom-length network cables.</p>
                     
-                    <p class="mb-5">SFP connectors come in various types, including SX (Short Range) and LX (Long Range) variants, utilizing either multi-mode or single-mode fiber strands. Network administrators appreciate hot-swappable SFP slots because if a fiber link requires an upgrade from 1G to 10G, they don't need to replace the entire switch; they simply pull out the old SFP transceiver and slide in a new high-speed SFP+ module.</p>
+                    <p class="mb-5">Once a cable is crimped, or after a long cable has been pulled through the walls and ceilings of an office building, its physical integrity must be verified. Visual inspection is not enough; a wire might have broken inside its insulation during a tough pull, or the technician might have accidentally swapped the green and orange wires during the crimping process. To verify the cable, technicians use a <strong>Cable Tester</strong>.</p>
                     
-                    <p class="mb-5">However, SFP fiber optics do present distinct challenges. The transceivers and fiber patch cables are <strong>substantially more expensive</strong> than copper RJ45 cables and network cards. Additionally, fiber optic strands are delicate; bending a fiber patch cable too sharply will crack the glass core, permanently destroying the data link and requiring specialized fusion splicing tools to repair.</p>
+                    <p class="mb-5">A cable tester is an electronic diagnostic device that comes in two parts: a main unit and a detachable remote unit. The technician plugs one end of the network cable into the main unit and the other end into the remote. The tester then sends electrical signals down each of the eight individual wires in sequence. By reading the LED lights or LCD screen on the tester, the technician can instantly see if the cable has continuity (a complete circuit).</p>
                     
-                    <p class="mb-5">In hospital settings, industrial factories, and multi-building university campuses, fiber optic SFP links are deployed to connect distant server rooms. They prevent electrical ground loops between buildings and ensure that sensitive medical monitoring equipment or industrial machinery does not experience signal interference from nearby heavy electrical equipment.</p>
-                    
-                    <p class="mb-5">Mastering SFP technology requires understanding optical wavelengths (such as 850nm for multi-mode and 1310nm for single-mode), connector polish types (LC, SC), and strict cleaning protocols for fiber end-faces. Dust or microscopic oil from a fingerprint on an SFP fiber tip can completely block the laser light pulse and take down a critical enterprise network link.</p>
+                    <p>Furthermore, an advanced cable tester can diagnose specific faults. It can tell the technician if there is an "Open" (a broken wire that fails to reach the other side), a "Short" (two bare wires touching each other inside the jacket, causing data corruption), or a "Crossed Pair" (wires inserted in the wrong order at one end). Using these tools in tandem ensures that the physical network foundation is rock-solid before complex routers and switches are ever powered on.</p>
                 `
             },
-            'sfp-usecase': {
-                title: 'Fiber Optics & SFP: Use Cases',
+            'tool-usecase': {
+                title: 'Networking Tools: Practical Use Cases',
                 icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
                 html: `
                     <div class="mb-8">
-                        <h4 class="text-xl font-bold text-green-800 mb-2 border-b-2 border-green-200 pb-1">Use Case 1: Hospital Critical Patient Monitoring Systems</h4>
-                        <p class="mb-2">Medical environments require absolute data integrity free from electrical interference.</p>
-                        <ul class="list-disc pl-5 mb-4 text-gray-700">
-                            <li class="mb-2"><strong>Example 1:</strong> Dr. Patel deploys a hospital-wide patient monitoring network utilizing SFP fiber optic links. The glass cables are completely immune to electromagnetic interference generated by nearby MRI and X-ray machines.</li>
-                            <li><strong>Example 2:</strong> Real-time heart rate and oxygen sensor data streams instantaneously and securely from remote intensive care wings to central nursing stations over long fiber backbones without latency or packet loss.</li>
-                        </ul>
+                        <h4 class="text-xl font-bold text-red-800 mb-2 border-b-2 border-red-200 pb-1">Use Case 1: Custom Server Rack Wiring (Crimper)</h4>
+                        <p>An IT administrator is organizing a messy server rack that is currently overflowing with pre-bought 10-foot cables, even though the servers are only 2 feet away from the network switch. To clean up the airflow and organization, the administrator buys a spool of bulk Cat6 cable. They measure the exact distance from each server to the switch (e.g., 2.5 feet), cut the cable, arrange the internal wires to the T568B standard, and use a <strong>Crimper</strong> to attach RJ-45 plugs to the ends. They repeat this process to create perfectly sized, custom-length patch cables for the entire rack.</p>
                     </div>
                     <div class="mb-8">
-                        <h4 class="text-xl font-bold text-green-800 mb-2 border-b-2 border-green-200 pb-1">Use Case 2: Multi-Building University Campus Backbones</h4>
-                        <p class="mb-2">Connecting separated campus buildings over distances exceeding copper's 100-meter limit.</p>
-                        <ul class="list-disc pl-5 mb-4 text-gray-700">
-                            <li class="mb-2"><strong>Example 1:</strong> A university connects its Science Building network switch to the main Data Center located 500 meters away by plugging 10G SFP+ transceivers into single-mode fiber optic underground conduit runs.</li>
-                            <li><strong>Example 2:</strong> Financial data centers utilize internal SFP fiber links between server racks to achieve ultra-low latency high-frequency trading execution across thousands of interconnected blade servers.</li>
-                        </ul>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                        <div>
-                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Fiber SFP Transceiver</p>
-                            <img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=600&h=350" alt="Fiber optic cables and SFP module" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
-                        </div>
-                        <div>
-                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Enterprise Data Center</p>
-                            <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=600&h=350" alt="Data center server racks with fiber connections" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
-                        </div>
+                        <h4 class="text-xl font-bold text-red-800 mb-2 border-b-2 border-red-200 pb-1">Use Case 2: Post-Installation Verification (Tester)</h4>
+                        <p>A team of contractors has just finished running 150 feet of network cable through the drop-ceiling of a new office space, dropping it down inside the wall to a new cubicle. Before they close up the walls and declare the job finished, the lead technician plugs the wall-jack end into the remote of their <strong>Cable Tester</strong>, walks to the server room, and plugs the other end into the main tester unit. The tester reveals that pin #4 is not lighting up. The technician realizes the wire was nicked when it was pulled around a sharp corner in the ceiling, allowing them to replace the bad run immediately rather than dealing with troubleshooting later.</p>
                     </div>
                 `
             },
-            'wireless-details': {
-                title: 'Wireless Interfaces (Bluetooth, NFC, Wi-Fi): In-Depth Overview',
-                icon: '<i class="fa-solid fa-wifi text-purple-600"></i>',
+            'per-details': {
+                title: 'Peripheral Interfaces: Detailed Breakdown',
+                icon: '<i class="fa-brands fa-usb text-purple-600"></i>',
                 html: `
-                    <p class="mb-5">While wired and fiber interfaces provide unmatched speed and stability for stationary infrastructure, modern computing is defined by portability and mobility. <strong>Wireless networking interfaces</strong> utilize radio frequency (RF) electromagnetic waves to transmit data through the atmosphere without physical cables. The three most prevalent wireless standards taught in modern IT curricula are Bluetooth, Near-Field Communication (NFC), and 802.11x (Wi-Fi).</p>
+                    <p class="mb-5">Peripheral interfaces dictate how external devices—like keyboards, external hard drives, cameras, and printers—connect and communicate with a host computer. Historically, computers featured a chaotic array of proprietary ports: large parallel ports for printers, serial ports for mice, and PS/2 ports for keyboards. The introduction of the Universal Serial Bus (USB) revolutionized computing by providing a standardized, "plug-and-play" interface that could handle data and power simultaneously for almost any device.</p>
                     
-                    <p class="mb-5"><strong>Bluetooth</strong> is a short-range wireless technology designed primarily for connecting personal peripheral devices over relatively short distances (typically up to 33 feet or 10 meters). Engineered specifically with low power consumption in mind, Bluetooth is the gold standard for battery-operated accessories such as wireless headphones, mice, keyboards, and smartwatches. While its data transfer rates are substantially slower than Wi-Fi, its ability to pair securely using frequency-hopping spread spectrum technology makes it exceptionally versatile for personal area networks (PANs).</p>
+                    <p class="mb-5">The most recognizable legacy connector is <strong>USB Type-A</strong>. This is the flat, rectangular port found on almost every desktop computer, laptop, and gaming console made in the last two decades. USB-A relies on a non-reversible, asymmetrical internal pin structure, meaning it can only be plugged in one way (famously leading to users flipping the cable multiple times to plug it in). It remains ubiquitous for low-bandwidth devices like basic mice, keyboards, and USB flash drives.</p>
                     
-                    <p class="mb-5"><strong>Near-Field Communication (NFC)</strong> is an even more specialized subset of short-range wireless technology. NFC operates over microscopic distances—usually only a few centimeters or by directly tapping devices together. Because of this minuscule range, NFC requires deliberate physical proximity, which provides an inherent layer of security against remote interception. NFC is the underlying technology powering contactless smartphone payments (Apple Pay, Google Pay) and secure building badge door access readers.</p>
+                    <p class="mb-5">While USB-A is meant for the host computer, <strong>USB Type-B</strong> was designed for the peripheral device end. USB-B has a square shape with beveled top corners, making it exceptionally sturdy and difficult to accidentally pull out. Because of its physical robustness, it is almost exclusively used on large, stationary devices that remain permanently tethered to a desk, such as desktop laser printers, document scanners, and external audio interfaces.</p>
                     
-                    <p class="mb-5"><strong>802.11x (commonly known as Wi-Fi)</strong> represents the set of standards for Wireless Local Area Networks (WLANs). Unlike Bluetooth and NFC, Wi-Fi is designed to cover expansive areas such as homes, offices, coffee shops, and entire university campuses. Operating primarily on 2.4 GHz, 5 GHz, and 6 GHz radio bands, 802.11 standards (such as Wi-Fi 5 and Wi-Fi 6 / 802.11ax) deliver high-speed data transfers capable of streaming 4K video and hosting video conferences.</p>
+                    <p class="mb-5">The current frontier of peripheral connectivity is <strong>USB Type-C</strong>. Designed to fix the physical annoyances of previous generations, USB-C is a compact, oval-shaped connector that features 24 internal pins and is entirely reversible—it can be plugged in upside down or right-side up. Beyond physical convenience, USB-C is incredibly powerful. It supports massive data transfer speeds (upwards of 40 Gbps on USB4 protocols), can deliver up to 240 watts of power to charge high-end gaming laptops, and supports "Alternate Modes" which allow it to transmit native DisplayPort or Thunderbolt video signals.</p>
                     
-                    <p class="mb-5">Despite their incredible convenience and mobility, wireless networks face inherent vulnerabilities and challenges. Wi-Fi signals are <strong>susceptible to interference</strong> from physical obstructions like concrete walls, metal beams, microwave ovens, and overlapping channels from neighboring wireless routers. Furthermore, because radio waves broadcast openly through the air, anyone within range can attempt to listen in, requiring robust encryption protocols (like WPA3) to protect data privacy.</p>
+                    <p class="mb-5">Parallel to the evolution of USB, Apple utilized a proprietary connector called <strong>Lightning</strong> for its mobile ecosystem. Introduced in 2012, Lightning predated USB-C as an 8-pin, fully reversible connector for iPhones and iPads. While highly innovative at the time, its data transfer speeds remained largely capped at older USB 2.0 speeds. Due to increasing global regulations pushing for electronic waste reduction and standardization, the Lightning interface is being aggressively phased out in favor of the universal USB-C standard.</p>
                     
-                    <p class="mb-5">In smart home environments, wireless interfaces are transformative. Users connect dozens of smart lights, smart locks, security cameras, and voice assistants to central hubs using Wi-Fi and Bluetooth mesh networks, eliminating the need to tear open drywall to run physical Ethernet cords to every lightbulb in the house.</p>
-                    
-                    <p class="mb-5">IT professionals must carefully plan wireless access point (AP) placement, channel allocations, and signal overlap to ensure seamless roaming for mobile corporate laptop users while mitigating dead zones and unauthorized rogue access points.</p>
+                    <p>Understanding these interfaces is critical for IT professionals, as they must manage device compatibility, understand the power delivery limitations of older cables, and deploy the correct adapters when interfacing modern thin-and-light laptops (which may only possess USB-C ports) with legacy enterprise hardware (which often still rely on USB-A and USB-B).</p>
                 `
             },
-            'wireless-usecase': {
-                title: 'Wireless Interfaces: Use Cases',
+            'per-usecase': {
+                title: 'Peripheral Interfaces: Practical Use Cases',
                 icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
                 html: `
                     <div class="mb-8">
-                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Use Case 1: Smart Home IoT Ecosystems</h4>
-                        <p class="mb-2">Connecting distributed smart devices without running cables through residential walls.</p>
-                        <ul class="list-disc pl-5 mb-4 text-gray-700">
-                            <li class="mb-2"><strong>Example 1:</strong> Chris upgrades his home by installing smart LED lightbulbs, smart door locks, and a Wi-Fi video doorbell, linking everything to his smartphone app over standard 802.11ax Wi-Fi and Bluetooth low energy.</li>
-                            <li><strong>Example 2:</strong> A user pairs wireless noise-canceling Bluetooth earbuds to their smartphone while walking outdoors, enjoying untethered audio streaming up to 30 feet away from their pocket device.</li>
-                        </ul>
+                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Use Case 1: The Standard Office Desk (USB-A & USB-B)</h4>
+                        <p>An office worker is setting up a standard desktop PC provided by their company. They plug their wired mouse and mechanical keyboard into the rectangular <strong>USB-A</strong> ports on the back of the tower. They then need to connect a heavy-duty document scanner. They take a cable that has a standard USB-A plug on one end (which goes into the PC) and a square, beveled <strong>USB-B</strong> plug on the other end, which pushes firmly and securely into the back of the scanner.</p>
                     </div>
                     <div class="mb-8">
-                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Use Case 2: Mobile Retail and Corporate Guest Networks</h4>
-                        <p class="mb-2">Allowing flexible mobility and rapid data exchange in public or office spaces.</p>
-                        <ul class="list-disc pl-5 mb-4 text-gray-700">
-                            <li class="mb-2"><strong>Example 1:</strong> Customers at a coffee shop tap their smartphones against a payment terminal to complete an instant, secure purchase via Near-Field Communication (NFC).</li>
-                            <li><strong>Example 2:</strong> Office employees untether from their desks during meetings, roaming freely across the corporate campus while maintaining uninterrupted Wi-Fi VoIP call continuity.</li>
-                        </ul>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                        <div>
-                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Wireless IoT Devices</p>
-                            <img src="https://images.unsplash.com/photo-1558002038-1055907df827?auto=format&fit=crop&w=600&h=350" alt="Smart home wireless IoT connectivity" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
-                        </div>
-                        <div>
-                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Mobile Devices & Wi-Fi</p>
-                            <img src="https://images.unsplash.com/photo-1526738549149-8e07eca6c147?auto=format&fit=crop&w=600&h=350" alt="People using wireless smartphones" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
-                        </div>
+                        <h4 class="text-xl font-bold text-purple-800 mb-2 border-b-2 border-purple-200 pb-1">Use Case 2: The Modern Laptop Docking Station (USB-C)</h4>
+                        <p>A manager returns to their desk with an ultra-thin, modern laptop. Instead of plugging in a separate power brick, a monitor cable, and a mouse dongle, they simply take a single <strong>USB-C</strong> cable from their desk dock and plug it into the side of the laptop. Because of USB-C's immense capabilities, that single reversible cable simultaneously provides 100 watts of power to charge the battery, sends a 4K video signal to an external monitor via Alt Mode, and routes data to the external hard drive and gigabit ethernet port attached to the dock.</p>
                     </div>
                 `
             },
-            'tools-details': {
-                title: 'Networking Tools (Crimpers & Testers): In-Depth Overview',
-                icon: '<i class="fa-solid fa-screwdriver-wrench text-orange-600"></i>',
+            'disp-details': {
+                title: 'Display Technologies: Detailed Breakdown',
+                icon: '<i class="fa-solid fa-desktop text-orange-600"></i>',
                 html: `
-                    <p class="mb-5">Building, repairing, and maintaining physical wired networks requires specialized hardware tools that go beyond standard screwdrivers and pliers. When IT technicians install structured cabling in a new office building or repair a broken network drop, they rely heavily on two indispensable hand tools: <strong>cable crimpers</strong> and <strong>cable testers</strong>.</p>
+                    <p class="mb-5">Display technologies are responsible for transmitting visual data from a computer's graphics processing unit (GPU) to a monitor, television, or projector. The evolution of display interfaces over the last thirty years charts a steady progression from blurry analog signals to crystal-clear, high-bandwidth digital data streams.</p>
                     
-                    <p class="mb-5">A <strong>crimper</strong> (or crimping tool) is a heavy-duty specialized plier-like tool used to permanently attach modular connectors—such as RJ45 plugs—onto the exposed ends of raw twisted-pair Ethernet cables. Purchasing pre-made patch cables in fixed lengths is often inefficient when running cables through walls or custom server racks. Crimpers allow technicians to cut bulk spool cable to the exact length required, strip the outer jacket, arrange the 8 tiny colored wires into the correct TIA/EIA-568A or B pinout order, slide them into an RJ45 plug, and crush the metal teeth down to pierce the wire insulation and lock them in place.</p>
+                    <p class="mb-5">The oldest widely recognized standard is <strong>VGA (Video Graphics Array)</strong>. Instantly identifiable by its blue, 15-pin, D-sub connector and screw-in thumb knobs, VGA transmits an entirely analog signal. Because analog signals are rendered as continuous electrical waves, VGA is highly susceptible to electrical interference and signal degradation over long cable runs. As screen resolutions grew higher and LCD panels replaced old tube TVs, VGA's inability to render sharp, pixel-perfect digital images led to its obsolescence, though it is still occasionally found on legacy server racks and old classroom projectors. Notably, VGA carries only video data; it cannot transmit audio.</p>
                     
-                    <p class="mb-5">Using a crimper successfully requires immense skill, patience, and practice. If a technician makes even a minor mistake—such as reversing two wire colors or failing to push the wires all the way to the front of the plug before crimping—the cable will fail to transmit data correctly. Because of this human error factor, technicians never deploy a newly crimped cable without verifying its integrity.</p>
+                    <p class="mb-5">To bridge the gap between analog and digital, <strong>DVI (Digital Visual Interface)</strong> was introduced. Recognizable by its large, often white connector housing many pins and an off-center crosshair pin, DVI was the first standard to deliver a pure digital video signal to LCD monitors. While providing a massive leap in image sharpness over VGA, DVI connectors were physically bulky and, like VGA, were not natively designed to carry audio signals alongside the video.</p>
                     
-                    <p class="mb-5">This brings us to the second essential tool: the <strong>cable tester</strong>. A cable tester is an electronic diagnostic device composed of a main unit and a remote terminator. The technician plugs both ends of the newly crimped Ethernet cable into the tester. The device then sends electrical test signals sequentially down all 8 pins to check for continuity, wiring faults, short circuits, split pairs, and mis-pinned connections.</p>
+                    <p class="mb-5">The consumer electronics industry shifted dramatically with the introduction of <strong>HDMI (High-Definition Multimedia Interface)</strong>. HDMI was revolutionary because it was designed to carry uncompressed, high-definition digital video AND multi-channel digital audio simultaneously over a single, compact cable. This eliminated the need for separate audio cables, making it the undisputed, universal standard for home theater systems, televisions, and modern consumer monitors. HDMI also introduced mandatory HDCP (High-bandwidth Digital Content Protection) to prevent the piracy of movies and shows over the cable.</p>
                     
-                    <p class="mb-5">Modern cable testers feature clear LED indicator lights or digital screens that flash green for good pins or red for faults. If Pin 3 and Pin 6 are crossed (a common crimping mistake known as a mis-wire), the tester will instantly highlight the error, saving the technician hours of frustrating troubleshooting.</p>
+                    <p class="mb-5">While HDMI dominated the living room, <strong>DisplayPort</strong> was developed specifically to dominate the high-end PC and enterprise workspace. DisplayPort uses a packet-based data transmission system (similar to Ethernet), allowing for incredibly high bandwidth. This makes DisplayPort the preferred choice for running multiple 4K displays from a single port via "daisy-chaining," or for PC gamers who require extreme refresh rates (like 144Hz or 240Hz) to ensure smooth, tear-free motion on high-end gaming monitors. Like HDMI, DisplayPort also carries audio.</p>
                     
-                    <p class="mb-5">It is vital to understand the operational boundary of a standard cable tester: <strong>cable testers only evaluate the physical cable itself</strong>. They verify continuity and wiring correctness; they do not measure actual network bandwidth speed, diagnose software IP configuration issues, or troubleshoot faulty switch ports. For speed certification, advanced enterprise cable certifiers are required.</p>
-                    
-                    <p class="mb-5">In professional IT environments, mastering the crimper and cable tester combination is a rite of passage. Being able to craft a custom-length patch cable on the fly and verify its integrity in seconds ensures that network installations proceed smoothly and maintain rigorous enterprise performance standards.</p>
+                    <p>For an IT technician or systems administrator, knowing which port to use is critical. They must know to reach for DisplayPort when setting up a high-end graphic designer's multi-monitor workstation, utilize HDMI when setting up a digital signage TV in a lobby, and keep active VGA-to-HDMI adapters in their toolkit to handle inevitable encounters with legacy hardware.</p>
                 `
             },
-            'tools-usecase': {
-                title: 'Networking Tools: Use Cases',
+            'disp-usecase': {
+                title: 'Display Technologies: Practical Use Cases',
                 icon: '<i class="fa-solid fa-lightbulb text-yellow-500"></i>',
                 html: `
                     <div class="mb-8">
-                        <h4 class="text-xl font-bold text-orange-800 mb-2 border-b-2 border-orange-200 pb-1">Use Case 1: Custom Structured Cabling Installation</h4>
-                        <p class="mb-2">Running cables through tight server rack spaces requiring custom-cut lengths.</p>
-                        <ul class="list-disc pl-5 mb-4 text-gray-700">
-                            <li class="mb-2"><strong>Example 1:</strong> An IT technician pulls a bulk spool of Cat6 cable through a server rack, cuts a 3.5-foot custom patch cord, strips the jacket, aligns the TIA-568B wires, and uses a <strong>crimper</strong> to attach RJ45 plugs.</li>
-                            <li><strong>Example 2:</strong> To avoid messy excess cable coils behind patch panels, the technician custom-crafts every cable to exact millimeter precision using professional crimping dies.</li>
-                        </ul>
+                        <h4 class="text-xl font-bold text-orange-800 mb-2 border-b-2 border-orange-200 pb-1">Use Case 1: The Home Theater PC (HDMI)</h4>
+                        <p>A user is building a small media PC to place in their living room to stream movies and play casual games on their large flat-screen television. They connect the PC to the television using an <strong>HDMI</strong> cable. This is the optimal choice because the single HDMI cable flawlessly delivers the 4K digital video signal to the screen while simultaneously transmitting the 5.1 surround sound audio signal directly to the TV's soundbar setup.</p>
                     </div>
                     <div class="mb-8">
-                        <h4 class="text-xl font-bold text-orange-800 mb-2 border-b-2 border-orange-200 pb-1">Use Case 2: Troubleshooting Network Drop Failures</h4>
-                        <p class="mb-2">Diagnosing faulty or damaged wall ports in an office building.</p>
-                        <ul class="list-disc pl-5 mb-4 text-gray-700">
-                            <li class="mb-2"><strong>Example 1:</strong> A workstation loses network connectivity. The support technician plugs a handheld <strong>cable tester</strong> into the wall jack and remote patch panel, instantly discovering a short circuit on Pin 4 caused by a pinched cable.</li>
-                            <li><strong>Example 2:</strong> Before deploying a newly crimped run across a ceiling, the technician verifies continuity with a cable tester to ensure all 8 LEDs light up in sequence without faults.</li>
-                        </ul>
+                        <h4 class="text-xl font-bold text-orange-800 mb-2 border-b-2 border-orange-200 pb-1">Use Case 2: The Multi-Monitor Trading Desk (DisplayPort)</h4>
+                        <p>A financial analyst requires four high-resolution monitors to track various stock markets simultaneously. Their workstation's graphics card features four <strong>DisplayPort</strong> outputs. The IT technician uses DisplayPort cables because they offer the massive bandwidth required to push millions of pixels across four screens without any lag or frame dropping, ensuring the analyst has a real-time, crisp view of the market data.</p>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                        <div>
-                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">Concept: Professional Crimper Tool</p>
-                            <img src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=600&h=350" alt="Crimper tool and network cables" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
-                        </div>
-                        <div>
-                            <p class="text-xs font-bold text-center text-gray-500 uppercase tracking-wider mb-1">In Use: Cable Testing & Troubleshooting</p>
-                            <img src="https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=600&h=350" alt="IT technician testing network cables" class="w-full h-auto rounded shadow border border-gray-200 object-cover">
-                        </div>
+                     <div>
+                        <h4 class="text-xl font-bold text-orange-800 mb-2 border-b-2 border-orange-200 pb-1">Use Case 3: Supporting Legacy Infrastructure (VGA)</h4>
+                        <p>A guest speaker arrives at a university lecture hall with a modern, ultra-thin laptop. The ceiling-mounted projector in the hall is 15 years old and only has a thick blue cable hanging from it. The IT support staff provides the speaker with an active adapter dongle that takes the digital signal from the laptop and converts it to an analog signal to push through the <strong>VGA</strong> cable, allowing the older projector to display the presentation.</p>
                     </div>
                 `
             }
         };
 
+        // Modal Control Functions
         function openBriefing(key) {
             const modal = document.getElementById('briefing-modal');
             const data = briefingData[key];
+            
             if(data) {
                 document.getElementById('briefing-modal-icon').innerHTML = data.icon;
                 document.getElementById('briefing-modal-title').innerText = data.title;
                 document.getElementById('briefing-modal-content').innerHTML = data.html;
                 modal.classList.remove('hidden');
-                document.body.style.overflow = 'hidden'; 
+                document.body.style.overflow = 'hidden'; // Prevent background scrolling
             }
         }
+
         function closeBriefing() {
             document.getElementById('briefing-modal').classList.add('hidden');
-            document.body.style.overflow = 'auto'; 
+            document.body.style.overflow = 'auto'; // Restore background scrolling
         }
 
+        // Close on outside click
+        document.getElementById('briefing-modal').addEventListener('click', function(e) {
+            if(e.target === this) {
+                closeBriefing();
+            }
+        });
+        
+        // --- Navigation Logic ---
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.getElementById(tabId + '-section').classList.add('active');
             
+            // Desktop Nav
             document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-green-900'));
             const activeBtn = document.getElementById('nav-' + tabId);
             if(activeBtn && tabId !== 'cert') activeBtn.classList.add('bg-green-900');
             
+            // Mobile Nav
+            document.querySelectorAll('.nav-btn-mobile').forEach(btn => btn.classList.remove('bg-green-900'));
+            const activeMobileBtn = document.getElementById('nav-' + tabId + '-mobile');
+            if(activeMobileBtn && tabId !== 'cert') activeMobileBtn.classList.add('bg-green-900');
+
             window.scrollTo(0,0);
-            if (tabId === 'game' && !gameRunning) {
+
+            // Start game logic if tab is clicked
+            if (tabId === 'game' && !gameLoop) {
                 resetGame();
                 drawGame();
             }
         }
 
+        function toggleInfo(id) {
+            const el = document.getElementById(id);
+            if(el.classList.contains('hidden')) {
+                el.classList.remove('hidden');
+            } else {
+                el.classList.add('hidden');
+            }
+        }
+
+        // --- Custom Modal Logic ---
         function showModal(title, message, type = 'info') {
             const modal = document.getElementById('custom-modal');
             const icon = document.getElementById('modal-icon');
@@ -761,13 +734,16 @@
             } else {
                 icon.innerHTML = '<i class="fa-solid fa-circle-info text-blue-500"></i>';
             }
+            
             modal.classList.remove('hidden');
         }
-        function closeModal() { document.getElementById('custom-modal').classList.add('hidden'); }
 
-        // --- Lab 1: Categorization Drag & Drop ---
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        // --- Lab 1: Categorization Logic ---
         let draggedCatItem = null;
-        let lab1Count = 0;
 
         document.querySelectorAll('.io-item').forEach(item => {
             item.addEventListener('dragstart', function() {
@@ -790,112 +766,229 @@
                     if(draggedCatItem.dataset.type === this.dataset.target) {
                         this.appendChild(draggedCatItem);
                         draggedCatItem.classList.remove('bg-indigo-100', 'cursor-grab');
-                        draggedCatItem.classList.add('bg-green-100', 'text-green-800', 'cursor-default', 'mt-2', 'w-[90%]');
+                        draggedCatItem.classList.add('bg-green-100', 'text-green-800', 'cursor-default', 'mb-2');
                         draggedCatItem.setAttribute('draggable', 'false');
-                        lab1Count++;
                         
-                        document.getElementById('lab1-feedback').innerText = "Correct Interface Classification!";
+                        document.getElementById('lab1-feedback').innerText = "Correctly Categorized!";
                         document.getElementById('lab1-feedback').className = "text-center font-bold mt-4 h-6 text-green-600";
                         
-                        if(lab1Count === 6) {
-                            setTimeout(() => showModal('Lab 1 Complete!', 'You successfully sorted all interfaces and networking tools.', 'success'), 500);
+                        // Check if complete
+                        if(document.getElementById('cat-items').children.length === 0) {
+                            setTimeout(() => showModal('Excellent!', 'You successfully categorized all the interfaces!', 'success'), 500);
                         }
                     } else {
-                        document.getElementById('lab1-feedback').innerText = "Incorrect bucket. Consider whether it's wired, wireless, or a tool.";
+                        document.getElementById('lab1-feedback').innerText = "Incorrect category. Try again.";
                         document.getElementById('lab1-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
                     }
                 }
             });
         });
 
-        // --- Lab 2: Scenario Planner ---
-        let lab2CorrectCount = 0;
-        function checkLab2(btn, isCorrect) {
-            const parent = btn.closest('div').parentElement;
-            if(parent.classList.contains('solved')) return;
-            
-            if(isCorrect) {
-                parent.classList.add('solved', 'bg-green-50', 'border-green-300');
-                btn.classList.add('bg-green-600', 'text-white');
-                document.getElementById('lab2-feedback').innerText = "Correct interface selected!";
-                document.getElementById('lab2-feedback').className = "text-center font-bold mt-4 h-6 text-green-600";
-                lab2CorrectCount++;
-                
-                if(lab2CorrectCount === 3) {
-                    setTimeout(() => showModal('Lab 2 Complete!', 'You successfully matched all real-world scenarios to their optimal network interfaces.', 'success'), 500);
-                }
-            } else {
-                btn.classList.add('bg-red-600', 'text-white');
-                document.getElementById('lab2-feedback').innerText = "Incorrect choice for this scenario. Try another interface.";
-                document.getElementById('lab2-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
-            }
-        }
+        // --- STREAMING_CHUNK:Javascript for Lab 2 Matcher... ---
+        // --- Lab 2: Tool Scenario Matcher Logic ---
+        let selectedScenario = null;
+        let selectedTool = null;
+        let lab2Matches = 0;
 
-        // --- Lab 3: Cable Pinout ---
-        function checkLab3(isCorrect) {
-            if(isCorrect) {
-                document.getElementById('lab3-feedback').innerText = "Correct! Pin 1 on TIA/EIA-568B is White/Orange Stripe.";
-                document.getElementById('lab3-feedback').className = "text-center font-bold mt-4 h-6 text-green-600";
-                setTimeout(() => showModal('Lab 3 Complete!', 'You successfully identified the standard RJ45 pinout color code.', 'success'), 500);
-            } else {
-                document.getElementById('lab3-feedback').innerText = "Incorrect. Pin 1 is not that color.";
-                document.getElementById('lab3-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
-            }
-        }
+        document.querySelectorAll('.scenario-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if(this.classList.contains('matched')) return;
+                document.querySelectorAll('.scenario-btn').forEach(b => b.classList.remove('ring-4', 'ring-red-300', 'bg-red-50'));
+                this.classList.add('ring-4', 'ring-red-300', 'bg-red-50');
+                selectedScenario = this;
+                checkMatch2();
+            });
+        });
 
-        // --- Lab 4: Cable Tester ---
-        const testerPins = document.getElementById('tester-pins');
-        let lab4Solved = false;
-        const faultyPin = 4; // Pin 4 is shorted
-        
-        for(let i=1; i<=8; i++) {
-            let pinBtn = document.createElement('button');
-            pinBtn.className = "p-3 bg-black border-2 border-gray-600 rounded text-center font-bold text-green-400 hover:bg-gray-800 transition flex flex-col items-center justify-center";
-            pinBtn.innerHTML = `<span class="text-xs text-gray-500">PIN ${i}</span><i class="fa-solid fa-circle text-green-500 mt-1" id="pin-led-${i}"></i>`;
-            pinBtn.onclick = function() {
-                if(lab4Solved) return;
-                if(i === faultyPin) {
-                    lab4Solved = true;
-                    document.getElementById(`pin-led-${i}`).className = "fa-solid fa-circle text-red-500 mt-1";
-                    document.getElementById('lab4-feedback').innerText = "Fault Located! Pin 4 has a short circuit.";
-                    document.getElementById('lab4-feedback').className = "text-center font-bold mt-4 h-6 text-red-400";
-                    setTimeout(() => showModal('Lab 4 Complete!', 'You successfully diagnosed the faulty cable pin using the cable tester simulator.', 'success'), 500);
+        document.querySelectorAll('.tool-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if(this.classList.contains('matched')) return;
+                document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('ring-4', 'ring-red-300', 'bg-gray-100'));
+                this.classList.add('ring-4', 'ring-red-300', 'bg-gray-100');
+                selectedTool = this;
+                checkMatch2();
+            });
+        });
+
+        function checkMatch2() {
+            if(selectedScenario && selectedTool) {
+                if(selectedScenario.dataset.match === selectedTool.dataset.match) {
+                    selectedScenario.classList.add('matched', 'bg-green-100', 'text-green-800', 'border-green-500');
+                    selectedScenario.classList.remove('ring-4', 'ring-red-300');
+                    selectedTool.classList.add('matched', 'bg-green-100', 'text-green-800', 'border-green-500');
+                    selectedTool.classList.remove('ring-4', 'ring-red-300');
+                    
+                    document.getElementById('lab2-feedback').innerText = "Correct Match!";
+                    document.getElementById('lab2-feedback').className = "text-center font-bold mt-4 h-6 text-green-600";
+                    lab2Matches++;
+                    
+                    if(lab2Matches === 4) {
+                        setTimeout(() => showModal('Great Job!', 'You know your tools and cables perfectly.', 'success'), 500);
+                    }
                 } else {
-                    document.getElementById('lab4-feedback').innerText = `Pin ${i} tested OK. Continue troubleshooting.`;
-                    document.getElementById('lab4-feedback').className = "text-center font-bold mt-4 h-6 text-yellow-400";
+                    document.getElementById('lab2-feedback').innerText = "Incorrect. Think about the scenario requirement.";
+                    document.getElementById('lab2-feedback').className = "text-center font-bold mt-4 h-6 text-red-600";
+                    selectedScenario.classList.remove('ring-4', 'ring-red-300', 'bg-red-50');
+                    selectedTool.classList.remove('ring-4', 'ring-red-300', 'bg-gray-100');
                 }
-            };
-            testerPins.appendChild(pinBtn);
+                selectedScenario = null;
+                selectedTool = null;
+            }
         }
 
-        // --- Quiz Data (20 Questions) ---
-        const quizData = [
-            // 10 provided from Document
-            { q: "Which of the following is an example of a wired connection?", options: ["Wi-Fi", "Ethernet", "NFC", "Bluetooth"], answer: 1 },
-            { q: "What is an advantage of a wired connection over a wireless connection?", options: ["Higher speed and stability", "Better mobility", "Easier installation", "Works with all devices"], answer: 0 },
-            { q: "What wireless technology is commonly used for short-range communication between devices?", options: ["RJ-45", "Fiber Optic", "Bluetooth", "Ethernet"], answer: 2 },
-            { q: "Which connector type is used with Ethernet cables?", options: ["SFP", "USB", "RJ-45", "HDMI"], answer: 2 },
-            { q: "What is a disadvantage of wireless networks compared to wired networks?", options: ["Susceptible to interference", "Requires physical cabling", "High installation cost", "Limited device mobility"], answer: 0 },
-            { q: "What is the purpose of a crimping tool?", options: ["Tests network speed", "Terminates wires in a punch-down block", "Detects Wi-Fi signals", "Attaches connectors to a cable"], answer: 3 },
-            { q: "What tool is used to verify that an Ethernet cable is properly connected?", options: ["A punch down tool", "A crimper", "A toner probe", "A cable tester"], answer: 3 },
-            { q: "Which of the following is a benefit of wireless networking?", options: ["Higher latency", "Increased mobility", "Requires physical cables", "Lower security risks"], answer: 1 },
-            { q: "Which of the following is NOT a type of wireless technology?", options: ["RJ-45", "NFC", "Bluetooth", "Wi-Fi"], answer: 0 },
-            { q: "Why are wired connections typically more secure than wireless connections?", options: ["Wired networks experience constant interference", "Wired cables are slower and harder to hack", "Physical access is required for access", "They use encryption by default"], answer: 2 },
+        // --- STREAMING_CHUNK:Javascript for Retro Canvas Game... ---
+        // --- Retro Game Logic (Cable Snake) ---
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        const gridSize = 20; 
+        const tileCount = 20; 
+        
+        let snake = [{x: 10, y: 10}];
+        let velocity = {x: 0, y: 0};
+        let portItem = {x: 5, y: 5, type: 'usb'}; 
+        let score = 0;
+        let highScore = 0;
+        let gameLoop;
+        let isGameOver = false;
+
+        const portColors = {
+            'usb': '#9ca3af', 
+            'hdmi': '#eab308', 
+            'rj45': '#3b82f6'  
+        };
+
+        const overlay = document.getElementById('game-overlay');
+        const startBtn = document.getElementById('start-game-btn');
+
+        startBtn.addEventListener('click', startGame);
+
+        function startGame() {
+            overlay.classList.add('hidden');
+            resetGame();
+            velocity = {x: 1, y: 0}; 
+            isGameOver = false;
+            gameLoop = setInterval(updateGame, 1000 / 10); 
+        }
+
+        function resetGame() {
+            snake = [{x: 10, y: 10}];
+            velocity = {x: 0, y: 0};
+            score = 0;
+            document.getElementById('game-score').innerText = score;
+            placePort();
+        }
+
+        function placePort() {
+            const types = ['usb', 'hdmi', 'rj45'];
+            portItem = {
+                x: Math.floor(Math.random() * tileCount),
+                y: Math.floor(Math.random() * tileCount),
+                type: types[Math.floor(Math.random() * types.length)]
+            };
+            for(let part of snake) {
+                if(part.x === portItem.x && part.y === portItem.y) placePort();
+            }
+        }
+
+        function setDirection(dx, dy) {
+            if (velocity.x === 0 && dx !== 0 || velocity.y === 0 && dy !== 0) {
+                velocity = {x: dx, y: dy};
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if(isGameOver || overlay.classList.contains('hidden') === false) return;
+            switch(e.key) {
+                case 'ArrowUp': e.preventDefault(); setDirection(0, -1); break;
+                case 'ArrowDown': e.preventDefault(); setDirection(0, 1); break;
+                case 'ArrowLeft': e.preventDefault(); setDirection(-1, 0); break;
+                case 'ArrowRight': e.preventDefault(); setDirection(1, 0); break;
+            }
+        });
+
+        function updateGame() {
+            const head = {x: snake[0].x + velocity.x, y: snake[0].y + velocity.y};
             
-            // 10 new rigorous questions from briefing
-            { q: "How many individual copper wires (arranged in twisted pairs) are inside a standard RJ45 Ethernet cable?", options: ["2", "4", "8", "16"], answer: 2 },
-            { q: "What transmission medium do Small Form-Factor Pluggable (SFP) connectors utilize?", options: ["Coaxial copper shielding", "Pulses of light through fiber optic glass strands", "Radio frequency microwave beams", "Infrared optical diodes"], answer: 1 },
-            { q: "Which property makes SFP fiber optic links exceptionally secure in high-security government facilities?", options: ["They require passwords on every packet", "They are completely immune to electromagnetic interference (EMI) and difficult to wiretap", "They automatically encrypt all data twice", "They operate without any electricity"], answer: 1 },
-            { q: "What is the approximate maximum normal range for standard Bluetooth personal area network devices?", options: ["3 feet", "33 feet (10 meters)", "300 feet", "3 miles"], answer: 1 },
-            { q: "Which wireless technology requires devices to be within a few centimeters or physically tapped together for secure quick exchanges like payments?", options: ["Bluetooth", "802.11ax Wi-Fi", "NFC (Near-Field Communication)", "SFP"], answer: 2 },
-            { q: "What is the standard maximum continuous run length for copper Ethernet cables before signal degradation requires a repeater?", options: ["50 meters", "100 meters (328 feet)", "500 meters", "1000 meters"], answer: 1 },
-            { q: "What wiring standard color conventions are most commonly used for terminating RJ45 Ethernet connectors?", options: ["RGB-123 and CMYK", "EIA/TIA-568A and EIA/TIA-568B", "IEEE-802.3af and PoE+", "USB-C and Thunderbolt"], answer: 1 },
-            { q: "Which networking tool is specifically used by technicians to cut bulk cable, strip jackets, and crush metal pins onto the ends of wires?", options: ["Cable tester", "Crimper", "Punch-down tool", "Multimeter"], answer: 1 },
-            { q: "What is a key limitation of a standard Ethernet cable tester?", options: ["It costs thousands of dollars to operate", "It only evaluates the physical cable wiring/continuity and does not measure actual network speed", "It cannot test Cat6 cables", "It requires an internet connection to function"], answer: 1 },
-            { q: "Why are battery-operated peripherals like wireless mice and headphones designed to use Bluetooth rather than Wi-Fi?", options: ["Bluetooth has infinite range", "Bluetooth is engineered for extremely low power consumption", "Bluetooth transmits data 10 times faster than fiber optics", "Bluetooth requires no pairing"], answer: 1 }
+            if(head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount) {
+                gameOver();
+                return;
+            }
+
+            for(let i=0; i<snake.length; i++) {
+                if(head.x === snake[i].x && head.y === snake[i].y) {
+                    gameOver();
+                    return;
+                }
+            }
+
+            snake.unshift(head); 
+
+            if(head.x === portItem.x && head.y === portItem.y) {
+                score += 10;
+                document.getElementById('game-score').innerText = score;
+                if(score > highScore) {
+                    highScore = score;
+                    document.getElementById('game-highscore').innerText = highScore;
+                }
+                placePort();
+            } else {
+                snake.pop(); 
+            }
+
+            drawGame();
+        }
+
+        function drawGame() {
+            ctx.fillStyle = '#111827';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = portColors[portItem.type];
+            ctx.fillRect(portItem.x * gridSize + 2, portItem.y * gridSize + 2, gridSize - 4, gridSize - 4);
+
+            ctx.fillStyle = '#10b981'; 
+            for(let i=0; i<snake.length; i++) {
+                ctx.fillRect(snake[i].x * gridSize, snake[i].y * gridSize, gridSize - 1, gridSize - 1);
+            }
+        }
+
+        function gameOver() {
+            clearInterval(gameLoop);
+            isGameOver = true;
+            gameLoop = null;
+            overlay.classList.remove('hidden');
+            startBtn.innerText = "Game Over. Try Again";
+            startBtn.classList.replace('bg-green-500', 'bg-red-500');
+            startBtn.classList.replace('border-green-700', 'border-red-700');
+        }
+
+
+        // --- STREAMING_CHUNK:Javascript for Quiz Data and Grading... ---
+        // --- Quiz Logic ---
+        const quizData = [
+            { q: "Which of the following connectors is used for standard wired Ethernet networks?", options: ["RJ-11", "RJ-45", "USB-A", "VGA"], answer: 1 },
+            { q: "Which wireless technology operates at a very short range of about 4 cm and is commonly used for contactless payments?", options: ["Bluetooth", "Wi-Fi", "NFC", "RFID"], answer: 2 },
+            { q: "You need to attach an RJ-45 plug to the end of a Cat6 cable. Which tool should you use?", options: ["Cable Tester", "Punchdown Tool", "Crimper", "Wire Stripper"], answer: 2 },
+            { q: "Which USB standard is known for being completely reversible and supporting data, video, and high power delivery?", options: ["USB-A", "USB-B", "USB-C", "Micro-USB"], answer: 2 },
+            { q: "Which video interface is entirely analog and identifiable by its 15-pin blue connector?", options: ["HDMI", "DisplayPort", "DVI", "VGA"], answer: 3 },
+            { q: "Which of the following cables can transmit BOTH high-definition video and audio signals simultaneously?", options: ["VGA", "HDMI", "DVI", "USB-B"], answer: 1 },
+            { q: "What is the primary purpose of a cable tester?", options: ["To attach connectors to wires", "To measure power supply voltage", "To verify the physical integrity and continuity of network cables", "To boost the signal of a wireless network"], answer: 2 },
+            { q: "Which of the following is a proprietary connector primarily used by older Apple mobile devices before they adopted USB-C?", options: ["Lightning", "Thunderbolt", "USB-C", "FireWire"], answer: 0 },
+            { q: "A user wants to connect a wireless mouse to their laptop without using a USB dongle. Which interface is best suited for this?", options: ["NFC", "Bluetooth", "Wi-Fi Direct", "Infrared"], answer: 1 },
+            { q: "Which video interface is highly versatile, common on PC monitors, and supports multi-monitor daisy chaining?", options: ["VGA", "Composite", "DisplayPort", "DVI"], answer: 2 },
+            { q: "You are setting up a desktop printer. Which port shape are you most likely to plug into the back of the printer itself?", options: ["USB-A", "USB-B", "HDMI", "RJ-45"], answer: 1 },
+            { q: "Which of these provides the MOST reliable and fastest connection for a desktop computer in an office environment?", options: ["NFC", "Bluetooth", "Wi-Fi", "Ethernet (RJ-45)"], answer: 3 },
+            { q: "A user states their monitor has a white, digital-only connector. Which port is this likely describing?", options: ["VGA", "DVI", "HDMI", "USB-A"], answer: 1 },
+            { q: "If you need to connect two smartphones to quickly exchange a contact card simply by tapping them together, what technology is used?", options: ["NFC", "Ethernet", "DisplayPort", "USB-B"], answer: 0 },
+            { q: "Which tool physically presses metal pins into the wires of a twisted pair cable to secure an RJ-45 connector?", options: ["Cable Tester", "Multimeter", "Crimper", "Screwdriver"], answer: 2 },
+            { q: "True or False: USB-A ports can be plugged in either upside-up or upside-down.", options: ["True", "False"], answer: 1 },
+            { q: "Which connection is technically a Personal Area Network (PAN) and is often used for wireless headphones?", options: ["NFC", "RJ-45", "Bluetooth", "VGA"], answer: 2 },
+            { q: "A technician runs a long network cable through a wall. What tool MUST they use to ensure no wires broke inside the casing during the pull?", options: ["Crimper", "Cable Tester", "Loopback Plug", "Toner Probe"], answer: 1 },
+            { q: "Which of the following interfaces does NOT carry an audio signal by default?", options: ["HDMI", "DisplayPort", "VGA", "USB-C"], answer: 2 },
+            { q: "Which connector type was designed to eventually replace the larger USB-A on modern, ultra-thin laptops and phones?", options: ["USB-B", "USB-C", "Lightning", "RJ-11"], answer: 1 }
         ];
 
         const quizContainer = document.getElementById('quiz-container');
+        
         quizData.forEach((item, index) => {
             const qDiv = document.createElement('div');
             qDiv.className = "bg-gray-50 p-6 rounded-lg border border-gray-200 transition-all";
@@ -927,6 +1020,7 @@
                 label.appendChild(span);
                 optionsDiv.appendChild(label);
             });
+            
             qDiv.appendChild(optionsDiv);
             quizContainer.appendChild(qDiv);
         });
@@ -935,10 +1029,13 @@
             let score = 0;
             let allAnswered = true;
 
+            // Check answers without applying visual success/fail styles to individual questions
             for(let i = 0; i < quizData.length; i++) {
                 const selected = document.querySelector(`input[name="q${i}"]:checked`);
                 if(selected) {
-                    if(parseInt(selected.value) === quizData[i].answer) score++;
+                    if(parseInt(selected.value) === quizData[i].answer) {
+                        score++;
+                    }
                 } else {
                     allAnswered = false;
                 }
@@ -950,178 +1047,48 @@
             }
             
             const percentage = (score / quizData.length) * 100;
-            if(score >= 18) {
+            
+            if(percentage >= 90) {
+                // Unlock Game and Cert Tabs
                 const navGame = document.getElementById('nav-game');
+                const navGameMobile = document.getElementById('nav-game-mobile');
+                
                 navGame.classList.remove('text-gray-400', 'cursor-not-allowed');
                 navGame.classList.add('text-white', 'hover:bg-green-600');
                 navGame.disabled = false;
                 navGame.innerHTML = '<i class="fa-solid fa-gamepad mr-1"></i>Game';
+                
+                navGameMobile.classList.remove('text-gray-400', 'cursor-not-allowed');
+                navGameMobile.classList.add('text-white', 'hover:bg-green-600');
+                navGameMobile.disabled = false;
+                navGameMobile.innerHTML = '<i class="fa-solid fa-gamepad"></i> Game';
 
                 document.getElementById('nav-cert').classList.remove('hidden');
+                document.getElementById('nav-cert-mobile').classList.remove('hidden');
+                
+                // Show proceed to game button
                 document.getElementById('proceed-game-btn').classList.remove('hidden');
                 document.getElementById('submit-quiz-btn').classList.add('hidden');
 
-                showModal('Outstanding!', `You scored ${score}/20 (${percentage}%). Certificate and Cable Connector Game unlocked!`, 'success');
+                showModal('Outstanding!', `You scored ${score}/20 (${percentage}%). You have unlocked your Certificate of Mastery AND the Retro Game!`, 'success');
             } else {
+                // Wipe answers for re-attempt
                 quizData.forEach((_, i) => {
                     const selected = document.querySelector(`input[name="q${i}"]:checked`);
                     if(selected) selected.checked = false;
                 });
-                showModal('Keep Trying!', `You scored ${score}/20 (${percentage}%). You need 90% (18/20) to pass. Your answers have been reset so you can try again.`, 'error');
+                showModal('Keep Trying!', `You scored ${score}/20 (${percentage}%). You need 90% (18/20) to earn the certificate. Your answers have been reset so you can try again.`, 'error');
                 document.getElementById('quiz-section').scrollIntoView({ behavior: 'smooth' });
             }
         }
 
-        // --- Retro Game Logic: Cable Connector (Snake Game) ---
-        const canvas = document.getElementById('game-canvas');
-        const ctx = canvas.getContext('2d');
-        const gridSize = 20;
-        const tileCount = canvas.width / gridSize;
-        
-        let snake = [];
-        let food = {x: 0, y: 0, type: 'RJ45'};
-        let dx = gridSize;
-        let dy = 0;
-        let score = 0;
-        let gameRunning = false;
-        let gameInterval;
-        
-        const overlay = document.getElementById('game-overlay');
-        const startBtn = document.getElementById('start-game-btn');
-        startBtn.addEventListener('click', startGame);
-
-        document.addEventListener("keydown", (e) => {
-            if(!gameRunning) return;
-            if((e.code === 'ArrowLeft' || e.code === 'KeyA') && dx === 0) { dx = -gridSize; dy = 0; e.preventDefault(); }
-            if((e.code === 'ArrowRight' || e.code === 'KeyD') && dx === 0) { dx = gridSize; dy = 0; e.preventDefault(); }
-            if((e.code === 'ArrowUp' || e.code === 'KeyW') && dy === 0) { dx = 0; dy = -gridSize; e.preventDefault(); }
-            if((e.code === 'ArrowDown' || e.code === 'KeyS') && dy === 0) { dx = 0; gridSize; dy = gridSize; e.preventDefault(); }
-        });
-
-        // Mobile buttons
-        const setupMobileBtn = (id, newDx, newDy) => {
-            const btn = document.getElementById(id);
-            if(btn) {
-                btn.onclick = () => {
-                    if(!gameRunning) return;
-                    if(newDx !== 0 && dx === 0) { dx = newDx; dy = 0; }
-                    if(newDy !== 0 && dy === 0) { dx = 0; dy = newDy; }
-                };
-            }
-        };
-        setupMobileBtn('btn-up', 0, -gridSize);
-        setupMobileBtn('btn-down', 0, gridSize);
-        setupMobileBtn('btn-left', -gridSize, 0);
-        setupMobileBtn('btn-right', gridSize, 0);
-
-        function spawnFood() {
-            food.x = Math.floor(Math.random() * tileCount) * gridSize;
-            food.y = Math.floor(Math.random() * tileCount) * gridSize;
-            const types = ['RJ45', 'SFP', 'Wi-Fi'];
-            food.type = types[Math.floor(Math.random() * types.length)];
-            
-            // Ensure food doesn't spawn on snake
-            for(let part of snake) {
-                if(part.x === food.x && part.y === food.y) spawnFood();
-            }
-        }
-
-        function resetGame() {
-            snake = [
-                {x: 160, y: 160},
-                {x: 140, y: 160},
-                {x: 120, y: 160}
-            ];
-            dx = gridSize;
-            dy = 0;
-            score = 0;
-            document.getElementById('game-score').innerText = score;
-            document.getElementById('game-length').innerText = snake.length;
-            spawnFood();
-        }
-
-        function startGame() {
-            overlay.classList.add('hidden');
-            if(!gameRunning) {
-                resetGame();
-                gameRunning = true;
-                if(gameInterval) clearInterval(gameInterval);
-                gameInterval = setInterval(gameLoop, 100);
-            }
-        }
-
-        function gameLoop() {
-            // Move snake head
-            const head = {x: snake[0].x + dx, y: snake[0].y + dy};
-            
-            // Wall collision
-            if(head.x < 0 || head.x >= canvas.width || head.y < 0 || head.y >= canvas.height) {
-                gameOver();
-                return;
-            }
-            
-            // Self collision
-            for(let part of snake) {
-                if(head.x === part.x && head.y === part.y) {
-                    gameOver();
-                    return;
-                }
-            }
-            
-            snake.unshift(head);
-            
-            // Eat food
-            if(head.x === food.x && head.y === food.y) {
-                score += 15;
-                document.getElementById('game-score').innerText = score;
-                document.getElementById('game-length').innerText = snake.length;
-                spawnFood();
-            } else {
-                snake.pop();
-            }
-            
-            drawGame();
-        }
-
-        function drawGame() {
-            ctx.fillStyle = '#111827';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            // Draw grid lines
-            ctx.strokeStyle = '#1f2937';
-            for(let i=0; i<canvas.width; i+=gridSize) {
-                ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(canvas.width, i); ctx.stroke();
-            }
-            
-            // Draw food (Connector Pin)
-            ctx.fillStyle = food.type === 'RJ45' ? '#3b82f6' : (food.type === 'SFP' ? '#10b981' : '#a855f7');
-            ctx.fillRect(food.x+2, food.y+2, gridSize-4, gridSize-4);
-            ctx.fillStyle = '#ffffff';
-            ctx.font = '8px monospace';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(food.type, food.x + gridSize/2, food.y + gridSize/2);
-            
-            // Draw Snake (Ethernet Cable)
-            snake.forEach((part, idx) => {
-                ctx.fillStyle = idx === 0 ? '#22c55e' : '#15803d';
-                ctx.fillRect(part.x+1, part.y+1, gridSize-2, gridSize-2);
-            });
-        }
-
-        function gameOver() {
-            gameRunning = false;
-            clearInterval(gameInterval);
-            overlay.classList.remove('hidden');
-            startBtn.innerText = "Cable Fault! Try Again";
-            startBtn.classList.replace('bg-green-500', 'bg-red-600');
-            startBtn.classList.replace('border-green-700', 'border-red-800');
-        }
-
+        // --- STREAMING_CHUNK:Javascript for Certificate Generation... ---
+        // --- Certificate Logic ---
         function updateCertName() {
             let name = document.getElementById('student-name-input').value.trim();
+            
             if(name) {
+                // Enforce first name only by splitting at space
                 if (name.includes(' ')) {
                     name = name.split(' ')[0];
                     document.getElementById('student-name-input').value = name;
@@ -1133,6 +1100,7 @@
             }
         }
 
+        // Set Date dynamically
         const today = new Date();
         document.getElementById('cert-date').innerText = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
@@ -1140,7 +1108,7 @@
             const certEl = document.getElementById('certificate');
             const name = document.getElementById('cert-student-name').innerText;
             let filename = 'Certificate.png';
-            if (name && name !== 'Student') {
+            if (name) {
                 filename = `${name.replace(/\s+/g, '_')}_Certificate.png`;
             }
 
@@ -1165,22 +1133,19 @@
                 link.download = filename;
                 link.href = canvas.toDataURL('image/png');
                 link.click();
+                
             }).catch(err => {
                 console.error(err);
                 certEl.style.transform = originalTransform;
                 btn.innerHTML = originalBtnText;
                 btn.disabled = false;
-                showModal('Error', 'Failed to generate image.', 'error');
+                showModal('Error', 'Failed to generate image. Try using a desktop browser.', 'error');
             });
         }
 
         window.onload = () => {
-            ctx.fillStyle = '#111827';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = '#9ca3af';
-            ctx.font = '16px monospace';
-            ctx.textAlign = 'center';
-            ctx.fillText('PRESS START TO BOOT CABLE CONNECTOR', canvas.width/2, canvas.height/2);
+            resetGame();
+            drawGame();
         }
     </script>
 </body>
