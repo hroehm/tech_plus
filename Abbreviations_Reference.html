@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber.org Tech+ & Dual-Enrollment Cybersecurity Abbreviations Reference Guide</title>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --primary-dark: #0f172a;
+            --primary-light: #3b82f6;
+            --accent: #0284c7;
+            --accent-green: #059669;
+            --accent-amber: #d97706;
+            --bg-main: #f8fafc;
+            --card-bg: #ffffff;
+            --border-color: #e2e8f0;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --tag-bg: #e0f2fe;
+            --tag-text: #0369a1;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.5;
+            padding: 0;
+            margin: 0;
+        }
+
+        header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 70%, #0369a1 100%);
+            color: #ffffff;
+            padding: 2.5rem 1.5rem 2rem 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .badge-header {
+            display: inline-block;
+            background-color: rgba(255, 255, 255, 0.18);
+            backdrop-filter: blur(4px);
+            color: #93c5fd;
+            font-size: 0.82rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            margin-bottom: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            font-size: 1.05rem;
+            color: #cbd5e1;
+            max-width: 850px;
+            margin-bottom: 1.5rem;
+        }
+
+        .quick-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            font-size: 0.9rem;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stat-number {
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: #38bdf8;
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: -1.5rem auto 3rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .controls-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.25rem 1.5rem;
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.07);
+            border: 1px solid var(--border-color);
+            margin-bottom: 2rem;
+        }
+
+        .search-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-direction: column;
+        }
+
+        @media (min-width: 640px) {
+            .search-row {
+                flex-direction: row;
+            }
+        }
+
+        .search-box {
+            position: relative;
+            flex: 1;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.6rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.2s;
+            background-color: #f8fafc;
+        }
+
+        .search-box input:focus {
+            background-color: #ffffff;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.85rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            pointer-events: none;
+        }
+
+        .category-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .filter-btn {
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            padding: 0.45rem 0.9rem;
+            border-radius: 6px;
+            font-size: 0.83rem;
+            font-weight: 600;
+            color: #475569;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .filter-btn:hover {
+            background: #e2e8f0;
+            color: #1e293b;
+        }
+
+        .filter-btn.active {
+            background: var(--primary);
+            color: #ffffff;
+            border-color: var(--primary);
+        }
+
+        .table-wrapper {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f8fafc;
+            color: #475569;
+            font-weight: 700;
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 1rem 1.25rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        td {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: top;
+            font-size: 0.93rem;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background-color: #fbfcfe;
+        }
+
+        .abbr-col {
+            width: 140px;
+        }
+
+        .abbr-badge {
+            display: inline-block;
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+            font-weight: 800;
+            font-size: 1.05rem;
+            color: var(--primary);
+            background-color: #eff6ff;
+            padding: 0.2rem 0.6rem;
+            border-radius: 6px;
+            border: 1px solid #bfdbfe;
+            letter-spacing: -0.01em;
+        }
+
+        .meaning-text {
+            font-weight: 700;
+            color: #0f172a;
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .detail-desc {
+            color: #475569;
+            font-size: 0.88rem;
+            line-height: 1.45;
+        }
+
+        .domain-tag {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.25rem 0.6rem;
+            border-radius: 9999px;
+            white-space: nowrap;
+        }
+
+        .cat-security { background-color: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+        .cat-networking { background-color: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+        .cat-hardware { background-color: #fefce8; color: #a16207; border: 1px solid #fef08a; }
+        .cat-cloud { background-color: #faf5ff; color: #7e22ce; border: 1px solid #e9d5ff; }
+        .cat-software { background-color: #ecfeff; color: #0e7490; border: 1px solid #a5f3fc; }
+        .cat-data { background-color: #fff7ed; color: #c2410c; border: 1px solid #ffedd5; }
+        .cat-ports { background-color: #fdf2f8; color: #be185d; border: 1px solid #fbcfe8; }
+
+        .empty-state {
+            padding: 3rem;
+            text-align: center;
+            color: var(--text-muted);
+            display: none;
+        }
+
+        .footer-note {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.85rem;
+            color: #94a3b8;
+            padding: 1rem 0;
+        }
+
+        .print-btn {
+            background-color: #ffffff;
+            color: var(--primary);
+            border: 1px solid #cbd5e1;
+            padding: 0.45rem 0.9rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            float: right;
+            transition: all 0.2s;
+        }
+
+        .print-btn:hover {
+            background-color: #f8fafc;
+            border-color: #94a3b8;
+        }
+
+        @media print {
+            header {
+                padding: 1.5rem 1rem;
+                background: #1e3a8a !important;
+                -webkit-print-color-adjust: exact;
+            }
+            .controls-card, .print-btn {
+                display: none !important;
+            }
+            .main-container {
+                margin: 1rem auto;
+                padding: 0;
+            }
+            table {
+                font-size: 9pt;
+            }
+            td, th {
+                padding: 6pt 8pt;
+            }
+            .abbr-badge {
+                border: 1px solid #000;
+                color: #000;
+                background: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-content">
+        <span class="badge-header">Cyber.org & CompTIA Tech+ Curriculum Alignment</span>
+        <h1>Dual-Enrollment Cybersecurity I–II Abbreviations Directory</h1>
+        <p class="subtitle">
+            An operational reference guide detailing core technology and cybersecurity abbreviations, full terminology expansions, functional definitions, and contextual relevance for Dual-Enrollment Cybersecurity high school & collegiate coursework.
+        </p>
+        <div class="quick-stats">
+            <div class="stat-item">
+                <span class="stat-number" id="totalCount">0</span>
+                <span>Total Terms</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">6</span>
+                <span>Curricular Domains</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">CompTIA FC0-U71 / Cyber.org</span>
+                <span>Standard Baseline</span>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="main-container">
+    <div class="controls-card">
+        <div class="search-row">
+            <div class="search-box">
+                <svg class="search-icon" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+                <input type="text" id="searchInput" placeholder="Search abbreviation, term, definition, or port..." onkeyup="filterData()">
+            </div>
+            <button class="print-btn" onclick="window.print()">
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+                </svg>
+                Print / Save PDF
+            </button>
+        </div>
+
+        <div class="category-filters" id="filterContainer">
+            <button class="filter-btn active" onclick="setCategory('All', this)">All Categories (<span id="countAll">0</span>)</button>
+            <button class="filter-btn" onclick="setCategory('Security & Compliance', this)">Security & Compliance</button>
+            <button class="filter-btn" onclick="setCategory('Networking & Protocols', this)">Networking & Protocols</button>
+            <button class="filter-btn" onclick="setCategory('Hardware & Peripherals', this)">Hardware & Peripherals</button>
+            <button class="filter-btn" onclick="setCategory('Cloud & Virtualization', this)">Cloud & Virtualization</button>
+            <button class="filter-btn" onclick="setCategory('Operating Systems & Software', this)">OS & Software</button>
+            <button class="filter-btn" onclick="setCategory('Data & Storage', this)">Data & Storage</button>
+        </div>
+    </div>
+
+    <div class="table-wrapper">
+        <table id="abbrTable">
+            <thead>
+                <tr>
+                    <th class="abbr-col">Abbreviation</th>
+                    <th style="width: 28%;">What It Actually Means</th>
+                    <th>Cybersecurity & Technical Context</th>
+                    <th style="width: 170px;">Domain / Category</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <!-- Dynamic Rows Inserted Here -->
+            </tbody>
+        </table>
+        <div id="emptyState" class="empty-state">
+            <p>No abbreviations match your search query.</p>
+        </div>
+    </div>
+
+    <div class="footer-note">
+        <p>Collierville High School • Dual-Enrollment Cybersecurity I–II (TCAT Alignment) • Cyber.org & CompTIA Tech+ Curriculum Reference</p>
+    </div>
+</div>
+
+<script>
+const abbreviationData = [
+    // --- Security, Governance & Compliance ---
+    {
+        abbr: "AAA",
+        meaning: "Authentication, Authorization, and Accounting",
+        desc: "The tripartite security framework: verifying identity (Authentication), determining permitted privileges (Authorization), and logging resource access and actions (Accounting).",
+        cat: "Security & Compliance"
+    },
+    {
+        abbr: "ACL",
+        meaning: "Access Control List",
+        desc: "A sequential list of permit or deny statements applied to routers, firewalls, or file systems to control inbound and outbound traffic or file permissions.",
+        cat: "Security & Compliance"
+    },
+    {
+        abbr: "AES",
+        meaning: "Advanced Encryption Standard",
+        desc: "A symmetric-key block cipher (128, 192, or 256 bits) accepted worldwide as the gold standard for data encryption at rest and in transit.",
+        cat: "Security & Compliance"
+    },
+    {
+        abbr: "AUP",
+        meaning: "Acceptable Use Policy",
+        desc: "A formal organizational document specifying permissible and prohibited activities when using corporate networks, workstations, and digital resources.",
+        cat: "Security & Compliance"
+    },
+    {
+        abbr: "BYOD",
+        meaning: "Bring Your Own Device",
+        desc: "A policy framework allowing employees or students to connect personally owned devices to enterprise networks while enforcing security safeguards (e.g., MDM).",
+        cat: "Security & Compliance"
+    },
+    {
+        abbr: "CIA",
+        meaning: "Confidentiality, Integrity, and Availability",
+        desc: "The foundational triad of information security: ensuring data is hidden from unauthorized eyes (C), remains unaltered and authentic (I), and is accessible when needed (A).",
+        cat: "Security & Compliance"
+    },
+    {
+        abbr: "CVE",
+        meaning: "Common Vulnerabilities and Exposures",
+        desc: "A public, standardized dictionary of publicly known cybersecurity vulnerabilities and exposures used by security tools and researchers.",
+        cat: "Security & Compliance"
+    },
+    {
+        abbr: "DoS / DDoS",
+        meaning: "Denial of Service / Distributed Denial of Service",
+        desc: "A cyber attack designed to overwhelm a target server, service, or network with massive flood traffic to render it unavailable to legitimate users.",
+        cat: "Security & Compliance"
+    },
+    {
+        abbr: "EFS",
+        meaning: "Encrypting File System",
+        desc: "A Windows feature allowing transparent, filesystem-level encryption of individual files and folders on NTFS volumes.",
+        cat: "Security & Compliance"
+    },
+    {
+        abbr: "EULA",
+        meaning: "End-User License Agreement",
+        desc: "A legal contract between software creators and consumers defining permitted usage, intellectual property rights, and liability limitations.",
+        cat: "Security & Compliance"
+    },
+    {
+        abbr: "GDPR",
+        meaning: "General Data Protection Regulation",
+        desc: "Comprehensive European Union privacy law establishing stringent standards for consumer personal data collection, consent, processing, and breach notifications.",
+        cat: "Security & Compliance"
+    },
+    {
+        abbr: "HSM",
+        meaning: "Hardware Security Module",
+        desc: "A physical, tamper-evident computing device that securely generates, manages, and stores cryptographic keys for enterprise cryptographic operations.",
+        cat: "Security & Compliance"
+    },
+    {
+        abbr: "MFA",
+        meaning: "Multi-Factor Authentication",
+        desc: "An identity verification mechanism requiring two or more distinct factors across categories: something you know (password), something you have (token), and something you are (biometrics).",
+        cat: "Security & Compliance"
+    },
+    {
+        abbr: "PHI",
+        meaning: "Protected Health Information",
+        desc: "Any individually identifiable medical or healthcare record governed by regulations such as HIPAA requiring strict data privacy protections.",
+        cat: "Security & Compliance"
+    },
+    {
+        abbr: "PII",
+        meaning: "Personally Identifiable Information",
+        desc: "Any data capable of identifying a specific individual alone or combined with other data (e.g., SSN, full name, date of birth, biometric records).",
+        cat: "Security & Compliance"
+    },
+    {
+        abbr: "PIN",
+        meaning: "Personal Identification Number",
+        desc: "A numeric passcode used to authenticate an individual user to an access terminal, smart card, or workstation.",
+        cat: "Security & Compliance"
+    },
+    {
+        abbr: "PKI",
+        meaning: "Public Key Infrastructure",
+        desc: "The system of digital certificates, Certificate Authorities (CAs), and public-key cryptography used to verify identity and encrypt communications across the internet.",
+        cat: "Security & Compliance"
+    },
+    {
+        abbr: "PoLP",
+        meaning: "Principle of Least Privilege",
+        desc: "The core cybersecurity concept stating that users, processes, and systems should only be granted the absolute minimum privileges required to perform their intended duties.",
+        cat: "Security & Compliance"
+    },
+    {
+        abbr: "RBAC",
+        meaning: "Role-Based Access Control",
+        desc: "An access management approach where system permissions are granted based on organizational job roles rather than assigned individually to specific users.",
+        cat: "Security & Compliance"
+    },
+    {
+        abbr: "SSL",
+        meaning: "Secure Sockets Layer",
+        desc: "The legacy cryptographic protocol designed to provide secure web communication; largely replaced by Transport Layer Security (TLS) but the acronym persists.",
+        cat: "Security & Compliance"
+    },
+    {
+        abbr: "TLS",
+        meaning: "Transport Layer Security",
+        desc: "The modern cryptographic successor to SSL providing privacy, data integrity, and authentication for internet transmissions including HTTPS.",
+        cat: "Security & Compliance"
+    },
+    {
+        abbr: "TPM",
+        meaning: "Trusted Platform Module",
+        desc: "A dedicated cryptographic microchip on a computer's motherboard designed to store encryption keys (e.g., Windows BitLocker) and verify boot integrity.",
+        cat: "Security & Compliance"
+    },
+    {
+        abbr: "UAC",
+        meaning: "User Account Control",
+        desc: "A Windows security feature preventing unauthorized operating system changes by prompting users for administrative consent before running elevated actions.",
+        cat: "Security & Compliance"
+    },
+    {
+        abbr: "UTM",
+        meaning: "Unified Threat Management",
+        desc: "A single security appliance that consolidates multiple defensive capabilities: firewall, antivirus, IDS/IPS, content filtering, and VPN gateway.",
+        cat: "Security & Compliance"
+    },
+    {
+        abbr: "WEP",
+        meaning: "Wired Equivalent Privacy",
+        desc: "An early 802.11 wireless security algorithm now completely deprecated and insecure due to severe mathematical flaws in its key scheduling (RC4).",
+        cat: "Security & Compliance"
+    },
+    {
+        abbr: "WPA / WPA2 / WPA3",
+        meaning: "Wi-Fi Protected Access (Versions 1, 2, 3)",
+        desc: "Generational Wi-Fi encryption protocols. WPA replaced WEP; WPA2 mandated AES-CCMP; WPA3 introduced Simultaneous Authentication of Equals (SAE) against brute-force attacks.",
+        cat: "Security & Compliance"
+    },
+
+    // --- Networking & Protocols ---
+    {
+        abbr: "AP / WAP",
+        meaning: "Access Point / Wireless Access Point",
+        desc: "A networking hardware device connecting wireless Wi-Fi devices to a wired local area network.",
+        cat: "Networking & Protocols"
+    },
+    {
+        abbr: "APIPA",
+        meaning: "Automatic Private IP Addressing",
+        desc: "A zero-configuration networking feature where a host assigns itself an address in the 169.254.0.1 - 169.254.255.254 range when no DHCP server responds.",
+        cat: "Networking & Protocols"
+    },
+    {
+        abbr: "ARP",
+        meaning: "Address Resolution Protocol",
+        desc: "A protocol used to map an known Internet Protocol (IPv4) address to a physical Media Access Control (MAC) address on a local network segment.",
+        cat: "Networking & Protocols"
+    },
+    {
+        abbr: "CAN",
+        meaning: "Campus Area Network (or Controller Area Network)",
+        desc: "In networking: an interconnected network across a university or military base. In industrial/automotive: Controller Area Network bus for microcontrollers.",
+        cat: "Networking & Protocols"
+    },
+    {
+        abbr: "DHCP",
+        meaning: "Dynamic Host Configuration Protocol",
+        desc: "A client/server protocol that automatically assigns dynamic IP addresses, subnet masks, default gateways, and DNS servers to client devices (Ports 67/68).",
+        cat: "Networking & Protocols"
+    },
+    {
+        abbr: "DNS",
+        meaning: "Domain Name System",
+        desc: "The hierarchical directory service that translates human-readable domain names (e.g., example.com) into machine-routable IP addresses (Port 53).",
+        cat: "Networking & Protocols"
+    },
+    {
+        abbr: "DSL",
+        meaning: "Digital Subscriber Line",
+        desc: "A high-speed digital broadband communications technology operating over standard copper telephone lines.",
+        cat: "Networking & Protocols"
+    },
+    {
+        abbr: "FTP",
+        meaning: "File Transfer Protocol",
+        desc: "An unencrypted network protocol used to transfer computer files between a client and server (Ports 20/21). Transmits credentials in plaintext.",
+        cat: "Networking & Protocols"
+    },
+    {
+        abbr: "FTPS",
+        meaning: "File Transfer Protocol Secure",
+        desc: "An extension to FTP that adds support for Transport Layer Security (TLS) encryption to protect file data and authentication credentials.",
+        cat: "Networking & Protocols"
+    },
+    {
+        abbr: "HTTP",
+        meaning: "Hypertext Transfer Protocol",
+        desc: "The foundational application-layer protocol for the World Wide Web; transmits web documents in unencrypted plaintext over TCP port 80.",
+        cat: "Networking & Protocols"
+    },
+    {
+        abbr: "HTTPS",
+        meaning: "Hypertext Transfer Protocol Secure",
+        desc: "HTTP communication encapsulated within an encrypted TLS connection over TCP port 443 to safeguard authentication and data privacy.",
+        cat: "Networking & Protocols"
+    },
+    {
+        abbr: "IMAP / IMAPS",
+        meaning: "Internet Message Access Protocol (Secure)",
+        desc: "An email retrieval protocol allowing clients to synchronize messages directly with the server (Port 143; encrypted IMAPS port 993).",
+        cat: "Networking & Protocols"
+    },
+    {
+        abbr: "IP",
+        meaning: "Internet Protocol",
+        desc: "The primary Layer 3 network protocol responsible for logical addressing (IPv4 32-bit, IPv6 128-bit) and packet routing across network boundaries.",
+        cat: "Networking & Protocols"
+    },
+    {
+        abbr: "ISP",
+        meaning: "Internet Service Provider",
+        desc: "A telecommunications commercial organization that provisions Internet access, connectivity, and routing services to customers.",
+        cat: "Networking & Protocols"
+    },
+    {
+        abbr: "LAN",
+        meaning: "Local Area Network",
+        desc: "A computer network spanning a restricted geographical area such as a classroom, residence, or commercial office building.",
+        cat: "Networking & Protocols"
+    },
+    {
+        abbr: "LTE",
+        meaning: "Long-Term Evolution",
+        desc: "A high-speed cellular standard for wireless broadband mobile communication (commonly referred to as 4G LTE).",
+        cat: "Networking & Protocols"
+    },
+    {
+        abbr: "MAC",
+        meaning: "Media Access Control",
+        desc: "A unique 48-bit physical identifier (e.g., 00:1A:2B:3C:4D:5E) burned into every Network Interface Card at the hardware level (OSI Layer 2).",
+        cat: "Networking & Protocols"
+    },
+    {
+        abbr: "MAN",
+        meaning: "Metropolitan Area Network",
+        desc: "A telecommunications network spanning an entire town, municipality, or metropolitan area, larger than a LAN but smaller than a WAN.",
+        cat: "Networking & Protocols"
+    },
+    {
+        abbr: "NAT",
+        meaning: "Network Address Translation",
+        desc: "A routing technique that modifies IP address information in packet headers while in transit, enabling private RFC 1918 subnets to share public IP addresses.",
+        cat: "Networking & Protocols"
+    },
+    {
+        abbr: "NIC",
+        meaning: "Network Interface Card",
+        desc: "A physical internal hardware controller that enables a computer to connect to a network medium via Ethernet cable or Wi-Fi radio.",
+        cat: "Networking & Protocols"
+    },
+    {
+        abbr: "NFC",
+        meaning: "Near-Field Communication",
+        desc: "A short-range wireless standard (typically ≤ 4 cm) allowing secure bidirectional transactions for mobile payments (Apple Pay) and contactless credentials.",
+        cat: "Networking & Protocols"
+    },
+    {
+        abbr: "PAN",
+        meaning: "Personal Area Network",
+        desc: "A small-scale localized network designed around an individual's personal workspace (e.g., Bluetooth device pairings).",
+        cat: "Networking & Protocols"
+    },
+    {
+        abbr: "POP3 / POP3S",
+        meaning: "Post Office Protocol Version 3 (Secure)",
+        desc: "An email retrieval protocol that downloads messages from a server to a local client (Port 110; encrypted POP3S port 995).",
+        cat: "Networking & Protocols"
+    },
+    {
+        abbr: "RDP",
+        meaning: "Remote Desktop Protocol",
+        desc: "Microsoft's proprietary protocol allowing administrators and users to remotely control another Windows system graphical interface over port 3389.",
+        cat: "Networking & Protocols"
+    },
+    {
+        abbr: "RF / IR",
+        meaning: "Radio Frequency / Infrared",
+        desc: "Wireless signal transmission mediums. RF travels through walls and obstacles (Wi-Fi, Bluetooth); IR requires direct line-of-sight (remote controls).",
+        cat: "Networking & Protocols"
+    },
+    {
+        abbr: "SFTP",
+        meaning: "Secure File Transfer Protocol (SSH File Transfer)",
+        desc: "A secure file transfer subsystem running over the encrypted SSH protocol (Port 22), distinct from FTPS.",
+        cat: "Networking & Protocols"
+    },
+    {
+        abbr: "SMTP / SMTPS",
+        meaning: "Simple Mail Transfer Protocol (Secure)",
+        desc: "The standard push protocol used for routing and sending outbound email messages between mail servers (Port 25; submission 587; SMTPS 465).",
+        cat: "Networking & Protocols"
+    },
+    {
+        abbr: "SNMP",
+        meaning: "Simple Network Management Protocol",
+        desc: "An application-layer protocol used to collect diagnostic metrics and configure network devices like routers, switches, and printers (Ports 161/162).",
+        cat: "Networking & Protocols"
+    },
+    {
+        abbr: "SSH",
+        meaning: "Secure Shell",
+        desc: "A cryptographic network protocol designed for secure command-line shell access, remote server administration, and tunneling over port 22.",
+        cat: "Networking & Protocols"
+    },
+    {
+        abbr: "SSID",
+        meaning: "Service Set Identifier",
+        desc: "The 32-character case-sensitive textual name that uniquely identifies a specific 802.11 wireless network to connecting clients.",
+        cat: "Networking & Protocols"
+    },
+    {
+        abbr: "TCP / TCP/IP",
+        meaning: "Transmission Control Protocol / Internet Protocol",
+        desc: "The connection-oriented Layer 4 protocol providing reliable, ordered, and error-checked delivery of streams (via 3-way handshake SYN, SYN-ACK, ACK).",
+        cat: "Networking & Protocols"
+    },
+    {
+        abbr: "UDP",
+        meaning: "User Datagram Protocol",
+        desc: "A connectionless, lightweight transport layer protocol that transmits packets without handshake confirmation or error correction (ideal for DNS, VoIP, gaming).",
+        cat: "Networking & Protocols"
+    },
+    {
+        abbr: "URL",
+        meaning: "Uniform Resource Locator",
+        desc: "A formal web address referencing network resources, containing protocol specification, domain/hostname, and exact path directory.",
+        cat: "Networking & Protocols"
+    },
+    {
+        abbr: "VLAN",
+        meaning: "Virtual Local Area Network",
+        desc: "A logical grouping of network switch ports and host endpoints within the same broadcast domain, regardless of their physical location.",
+        cat: "Networking & Protocols"
+    },
+    {
+        abbr: "VoIP",
+        meaning: "Voice over Internet Protocol",
+        desc: "A methodology and group of technologies for delivery of voice communications and multimedia sessions over IP networks rather than traditional PSTN.",
+        cat: "Networking & Protocols"
+    },
+    {
+        abbr: "VPN",
+        meaning: "Virtual Private Network",
+        desc: "An encrypted tunnel established across an untrusted or public network (such as the Internet) to securely access private enterprise internal networks.",
+        cat: "Networking & Protocols"
+    },
+    {
+        abbr: "WAN",
+        meaning: "Wide Area Network",
+        desc: "A telecommunications network extending across broad geographic regions, states, nations, or globally (the Internet is the largest example).",
+        cat: "Networking & Protocols"
+    },
+    {
+        abbr: "WLAN",
+        meaning: "Wireless Local Area Network",
+        desc: "A local area network that links two or more devices using wireless communication (typically 802.11 Wi-Fi) within a delimited area.",
+        cat: "Networking & Protocols"
+    },
+
+    // --- Hardware & Peripherals ---
+    {
+        abbr: "ARM",
+        meaning: "Advanced RISC Machine",
+        desc: "A family of energy-efficient, reduced instruction set computer processor architectures heavily dominant in mobile devices, tablets, and Apple Silicon.",
+        cat: "Hardware & Peripherals"
+    },
+    {
+        abbr: "BIOS",
+        meaning: "Basic Input/Output System",
+        desc: "Legacy firmware stored on a motherboard ROM/flash chip that initializes hardware components during power-up and hands off boot to the OS.",
+        cat: "Hardware & Peripherals"
+    },
+    {
+        abbr: "CPU",
+        meaning: "Central Processing Unit",
+        desc: "The primary microprocessor of a computer responsible for fetching, decoding, and executing software instructions (the 'brain' of the PC).",
+        cat: "Hardware & Peripherals"
+    },
+    {
+        abbr: "DDR",
+        meaning: "Double Data Rate",
+        desc: "The standard synchronous dynamic RAM architecture that transfers data on both the rising and falling edges of the clock signal (e.g., DDR4, DDR5).",
+        cat: "Hardware & Peripherals"
+    },
+    {
+        abbr: "DIMM / SO-DIMM",
+        meaning: "Dual In-line Memory Module / Small Outline DIMM",
+        desc: "The physical printed circuit board holding RAM chips. Standard DIMMs are used in desktop computers; compact SO-DIMMs are built for laptops.",
+        cat: "Hardware & Peripherals"
+    },
+    {
+        abbr: "DVI",
+        meaning: "Digital Visual Interface",
+        desc: "A legacy video display interface standard used to transmit digital or analog video signals to monitors prior to HDMI and DisplayPort.",
+        cat: "Hardware & Peripherals"
+    },
+    {
+        abbr: "EMI",
+        meaning: "Electromagnetic Interference",
+        desc: "Disturbance generated by external radiation (power cables, motors, lightning) that induces unwanted noise and packet loss on unshielded copper cabling.",
+        cat: "Hardware & Peripherals"
+    },
+    {
+        abbr: "ESD",
+        meaning: "Electrostatic Discharge",
+        desc: "The sudden flow of static electricity between two objects, which can permanently destroy sensitive microchips (prevented by ESD wristbands and mats).",
+        cat: "Hardware & Peripherals"
+    },
+    {
+        abbr: "GPU",
+        meaning: "Graphics Processing Unit",
+        desc: "A specialized microprocessor with thousands of parallel execution cores optimized for rendering 3D graphics, video rendering, and machine learning computation.",
+        cat: "Hardware & Peripherals"
+    },
+    {
+        abbr: "HDMI",
+        meaning: "High-Definition Multimedia Interface",
+        desc: "A ubiquitous proprietary audio/video interface standard for transmitting uncompressed digital video and multi-channel digital audio over a single cable.",
+        cat: "Hardware & Peripherals"
+    },
+    {
+        abbr: "M.2",
+        meaning: "Next Generation Form Factor (M.2)",
+        desc: "A compact physical expansion slot specification designed for internally mounted computer components, primarily high-performance NVMe SSDs and Wi-Fi cards.",
+        cat: "Hardware & Peripherals"
+    },
+    {
+        abbr: "PCIe",
+        meaning: "Peripheral Component Interconnect Express",
+        desc: "The high-speed serial expansion bus standard connecting high-bandwidth peripherals (graphics cards, NVMe SSDs, network cards) directly to the CPU.",
+        cat: "Hardware & Peripherals"
+    },
+    {
+        abbr: "POST",
+        meaning: "Power-On Self-Test",
+        desc: "The initial diagnostic testing sequence executed by computer firmware (BIOS/UEFI) immediately after turning on power to verify basic hardware integrity.",
+        cat: "Hardware & Peripherals"
+    },
+    {
+        abbr: "PSU",
+        meaning: "Power Supply Unit",
+        desc: "The hardware internal converter that transforms alternating current (AC) from wall power into regulated low-voltage direct current (DC) for internal PC parts.",
+        cat: "Hardware & Peripherals"
+    },
+    {
+        abbr: "RAM",
+        meaning: "Random-Access Memory",
+        desc: "High-speed volatile main memory that stores operating system instructions and active program data while power is supplied; clears when powered off.",
+        cat: "Hardware & Peripherals"
+    },
+    {
+        abbr: "RISC",
+        meaning: "Reduced Instruction Set Computer",
+        desc: "A microprocessor architecture emphasizing a simplified, optimized set of CPU instructions to maximize processing speed per clock cycle.",
+        cat: "Hardware & Peripherals"
+    },
+    {
+        abbr: "RJ11 / RJ45",
+        meaning: "Registered Jack-11 / Registered Jack-45",
+        desc: "Modular physical connector jacks: RJ-11 has 4 or 6 pins used for analog telephone/DSL; RJ-45 has 8 pins used for twisted-pair Ethernet cables.",
+        cat: "Hardware & Peripherals"
+    },
+    {
+        abbr: "ROM",
+        meaning: "Read-Only Memory",
+        desc: "Non-volatile storage containing permanent firmware instructions that cannot be electronically modified (or requires specialized flashing).",
+        cat: "Hardware & Peripherals"
+    },
+    {
+        abbr: "UEFI",
+        meaning: "Unified Extensible Firmware Interface",
+        desc: "The modern successor to legacy BIOS that initializes hardware, supports GUID Partition Table (GPT) drives over 2.2 TB, and enforces Secure Boot.",
+        cat: "Hardware & Peripherals"
+    },
+    {
+        abbr: "UPS",
+        meaning: "Uninterruptible Power Supply",
+        desc: "A battery backup device that provides instantaneous emergency electrical power when utility line power fails, preventing abrupt system shutdown.",
+        cat: "Hardware & Peripherals"
+    },
+    {
+        abbr: "USB / USB-C",
+        meaning: "Universal Serial Bus / USB Type-C",
+        desc: "Industry standard cables and connectors for power and data transmission. USB-C features a reversible 24-pin connector supporting USB4, DisplayPort, and PD.",
+        cat: "Hardware & Peripherals"
+    },
+    {
+        abbr: "VGA",
+        meaning: "Video Graphics Array",
+        desc: "A legacy 15-pin analog display interface introduced in 1987, largely replaced by modern digital interfaces (HDMI, DisplayPort).",
+        cat: "Hardware & Peripherals"
+    },
+
+    // --- Cloud, Virtualization & Emerging Tech ---
+    {
+        abbr: "AI",
+        meaning: "Artificial Intelligence",
+        desc: "Computer systems and algorithms capable of performing tasks typically requiring human intelligence, such as pattern recognition, language processing, and decision-making.",
+        cat: "Cloud & Virtualization"
+    },
+    {
+        abbr: "DaaS",
+        meaning: "Desktop as a Service",
+        desc: "A cloud computing offering where a virtual desktop infrastructure (VDI) is hosted and managed by a third-party cloud provider.",
+        cat: "Cloud & Virtualization"
+    },
+    {
+        abbr: "IaaS",
+        meaning: "Infrastructure as a Service",
+        desc: "A cloud delivery model providing highly automated, scalable virtualized computing resources (virtual servers, networking, raw block storage) over the internet.",
+        cat: "Cloud & Virtualization"
+    },
+    {
+        abbr: "IoT",
+        meaning: "Internet of Things",
+        desc: "The collective network of physical devices, sensors, appliances, and industrial machinery embedded with software and internet connectivity.",
+        cat: "Cloud & Virtualization"
+    },
+    {
+        abbr: "PaaS",
+        meaning: "Platform as a Service",
+        desc: "A cloud model delivering hardware and software tools over the internet, typically needed for application development and deployment (e.g., Azure App Service).",
+        cat: "Cloud & Virtualization"
+    },
+    {
+        abbr: "SaaS",
+        meaning: "Software as a Service",
+        desc: "A cloud computing model delivering complete applications over the web on a subscription basis, eliminating local client software installation (e.g., M365, Google Workspace).",
+        cat: "Cloud & Virtualization"
+    },
+    {
+        abbr: "VDI",
+        meaning: "Virtual Desktop Infrastructure",
+        desc: "A virtualization technology hosting desktop operating systems within centralized virtual machines running on datacenter servers.",
+        cat: "Cloud & Virtualization"
+    },
+    {
+        abbr: "VM",
+        meaning: "Virtual Machine",
+        desc: "A software emulation of a physical computer system that executes programs and operating systems isolated from the host hardware via a hypervisor.",
+        cat: "Cloud & Virtualization"
+    },
+    {
+        abbr: "vCPU / vRAM / vNIC / vHDD",
+        meaning: "Virtual CPU / Virtual RAM / Virtual NIC / Virtual Hard Drive",
+        desc: "Virtual hardware allocations abstracted from physical server hardware and dedicated to an individual virtual machine container or guest OS.",
+        cat: "Cloud & Virtualization"
+    },
+
+    // --- Operating Systems & Software ---
+    {
+        abbr: "CLI",
+        meaning: "Command Line Interface",
+        desc: "A text-based user interface used to view, manage, and execute system commands (e.g., Bash in Linux, PowerShell / CMD in Windows).",
+        cat: "Operating Systems & Software"
+    },
+    {
+        abbr: "GUI",
+        meaning: "Graphical User Interface",
+        desc: "A visual interface that allows human users to interact with computing devices through graphical icons and visual indicators like windows and menus.",
+        cat: "Operating Systems & Software"
+    },
+    {
+        abbr: "HTML",
+        meaning: "Hypertext Markup Language",
+        desc: "The standard authoring language used to create and structure web pages and applications displayed in web browsers.",
+        cat: "Operating Systems & Software"
+    },
+    {
+        abbr: "IDE",
+        meaning: "Integrated Development Environment",
+        desc: "A comprehensive software application providing code editing, building, debugging, and terminal capabilities in a single interface (e.g., VS Code, PyCharm).",
+        cat: "Operating Systems & Software"
+    },
+    {
+        abbr: "OEM",
+        meaning: "Original Equipment Manufacturer",
+        desc: "A company that produces hardware parts or pre-assembled computers (e.g., Dell, HP) that are marketed and sold to consumers.",
+        cat: "Operating Systems & Software"
+    },
+    {
+        abbr: "OS",
+        meaning: "Operating System",
+        desc: "System software managing computer hardware and software resources while providing common services for application programs (Windows, macOS, Linux).",
+        cat: "Operating Systems & Software"
+    },
+    {
+        abbr: "GPO",
+        meaning: "Group Policy Object",
+        desc: "A feature of Microsoft Windows Active Directory that controls the working environment of user accounts and computer accounts centrally.",
+        cat: "Operating Systems & Software"
+    },
+
+    // --- Data & Storage ---
+    {
+        abbr: "APFS",
+        meaning: "Apple File System",
+        desc: "The proprietary, optimized 64-bit file system developed by Apple for macOS, iOS, iPadOS, featuring strong encryption and copy-on-write snapshots.",
+        cat: "Data & Storage"
+    },
+    {
+        abbr: "DAS",
+        meaning: "Direct-Attached Storage",
+        desc: "Digital storage directly connected to a computer host without passing through a network switch (e.g., internal SATA drives, external USB hard drives).",
+        cat: "Data & Storage"
+    },
+    {
+        abbr: "FAT32 / exFAT",
+        meaning: "File Allocation Table (32-bit) / Extended FAT",
+        desc: "Legacy universal file systems. FAT32 has a 4 GB single-file limit; exFAT removes file size limits and is optimized for cross-platform flash drives.",
+        cat: "Data & Storage"
+    },
+    {
+        abbr: "HDD",
+        meaning: "Hard Disk Drive",
+        desc: "A traditional non-volatile electromechanical magnetic storage device consisting of spinning magnetic platters and read/write actuator heads.",
+        cat: "Data & Storage"
+    },
+    {
+        abbr: "NAS",
+        meaning: "Network-Attached Storage",
+        desc: "A dedicated file-level data storage server connected to a TCP/IP network, providing centralized data access to heterogeneous clients.",
+        cat: "Data & Storage"
+    },
+    {
+        abbr: "NTFS",
+        meaning: "New Technology File System",
+        desc: "The standard proprietary file system used by Microsoft Windows, offering features like journaling, file-level permissions, and EFS encryption.",
+        cat: "Data & Storage"
+    },
+    {
+        abbr: "NVMe",
+        meaning: "Non-Volatile Memory Express",
+        desc: "An ultra-fast open host controller interface specification designed specifically for solid-state storage communicating directly over PCIe lanes.",
+        cat: "Data & Storage"
+    },
+    {
+        abbr: "RAID",
+        meaning: "Redundant Array of Independent Disks",
+        desc: "A data storage virtualization technology combining multiple physical drive components into one or more logical units for data redundancy or performance.",
+        cat: "Data & Storage"
+    },
+    {
+        abbr: "SAN",
+        meaning: "Storage Area Network",
+        desc: "A dedicated high-speed network that interconnects and delivers shared pools of block-level storage devices to enterprise servers.",
+        cat: "Data & Storage"
+    },
+    {
+        abbr: "SATA / eSATA",
+        meaning: "Serial Advanced Technology Attachment (External)",
+        desc: "A bus interface that connects host bus adapters to mass storage devices like hard drives and optical drives.",
+        cat: "Data & Storage"
+    },
+    {
+        abbr: "SSD",
+        meaning: "Solid-State Drive",
+        desc: "A non-volatile solid-state storage device that uses flash memory chips to store data persistently with no moving parts.",
+        cat: "Data & Storage"
+    },
+    {
+        abbr: "Data Units: b, B, KB, MB, GB, TB, PB",
+        meaning: "bit, Byte, Kilobyte, Megabyte, Gigabyte, Terabyte, Petabyte",
+        desc: "Standard metric computing units: bit (single 0 or 1), Byte (8 bits). 1,000 (or 1,024) multiplier scale across KB, MB, GB, TB, and PB tiers.",
+        cat: "Data & Storage"
+    }
+];
+
+// Sort alphabetically by abbreviation
+abbreviationData.sort((a, b) => a.abbr.localeCompare(b.abbr));
+
+let currentCategory = 'All';
+
+function renderTable(data) {
+    const tbody = document.getElementById('tableBody');
+    const emptyState = document.getElementById('emptyState');
+    tbody.innerHTML = '';
+
+    if (data.length === 0) {
+        emptyState.style.display = 'block';
+        return;
+    } else {
+        emptyState.style.display = 'none';
+    }
+
+    data.forEach(item => {
+        const row = document.createElement('tr');
+        
+        let catClass = 'cat-security';
+        if (item.cat.includes('Networking')) catClass = 'cat-networking';
+        else if (item.cat.includes('Hardware')) catClass = 'cat-hardware';
+        else if (item.cat.includes('Cloud')) catClass = 'cat-cloud';
+        else if (item.cat.includes('Software')) catClass = 'cat-software';
+        else if (item.cat.includes('Storage')) catClass = 'cat-data';
+
+        row.innerHTML = `
+            <td class="abbr-col"><span class="abbr-badge">${escapeHtml(item.abbr)}</span></td>
+            <td><div class="meaning-text">${escapeHtml(item.meaning)}</div></td>
+            <td><div class="detail-desc">${escapeHtml(item.desc)}</div></td>
+            <td><span class="domain-tag ${catClass}">${escapeHtml(item.cat)}</span></td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+function escapeHtml(text) {
+    return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+function filterData() {
+    const query = document.getElementById('searchInput').value.toLowerCase().trim();
+    const filtered = abbreviationData.filter(item => {
+        const matchesCat = (currentCategory === 'All' || item.cat === currentCategory);
+        const matchesQuery = item.abbr.toLowerCase().includes(query) ||
+                             item.meaning.toLowerCase().includes(query) ||
+                             item.desc.toLowerCase().includes(query) ||
+                             item.cat.toLowerCase().includes(query);
+        return matchesCat && matchesQuery;
+    });
+    renderTable(filtered);
+}
+
+function setCategory(cat, btn) {
+    currentCategory = cat;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    filterData();
+}
+
+// Initial counts and load
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('totalCount').innerText = abbreviationData.length;
+    document.getElementById('countAll').innerText = abbreviationData.length;
+    renderTable(abbreviationData);
+});
+</script>
+</body>
+</html>
