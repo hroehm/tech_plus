@@ -134,7 +134,7 @@
           </div>
           <div class="text-right font-mono text-[11px] text-zinc-400">
             <div>PENALTY RATE: <span class="text-red-400 font-bold">-1:00</span> / ERR</div>
-            <div id="strikeCount" class="text-amber-400 font-bold">FAILS: 0</div>
+            <div id="strikeCount" class="text-amber-400 font-bold">FAILS: 0 / 5</div>
           </div>
         </div>
         <div class="w-full bg-zinc-950 h-2.5 rounded-full mt-2 overflow-hidden border border-zinc-800">
@@ -269,7 +269,7 @@
             <p class="text-[11px] text-zinc-400 mt-2 font-mono flex items-center justify-between">
               <span class="flex items-center gap-1">
                 <span>⚠️</span>
-                <span>Incorrect inputs dock <strong class="text-red-400 font-bold">-1 minute</strong> from system countdown.</span>
+                <span>Incorrect inputs dock <strong class="text-red-400 font-bold">-1 minute</strong>. <strong>5 failures</strong> trigger immediate collapse!</span>
               </span>
               <span class="text-zinc-500 text-[10px] hidden sm:inline">Answers are case-insensitive</span>
             </p>
@@ -386,16 +386,16 @@
         <div class="w-16 h-16 bg-red-500/20 border-2 border-red-500 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl animate-pulse">
           ⚠️
         </div>
-        <h2 class="text-2xl sm:text-3xl font-terminal font-extrabold text-red-500 glow-red mb-2">
+        <h2 id="gameOverTitle" class="text-2xl sm:text-3xl font-terminal font-extrabold text-red-500 glow-red mb-2">
           CRITICAL TIMEOUT: NETWORK COLLAPSE!
         </h2>
-        <p class="text-red-300 text-sm mb-4">
+        <p id="gameOverSubtitle" class="text-red-300 text-sm mb-4">
           The 20-minute watchdog timer expired before the infrastructure could be stabilized.
         </p>
         <div class="bg-black/70 border border-red-900/60 rounded-lg p-4 text-left text-xs text-zinc-300 space-y-1.5 mb-6">
           <p class="text-red-400 font-bold">Post-Incident Report:</p>
           <p>• Nodes Successfully Restored: <span id="failLocksSolved" class="text-white font-bold">0 / 20</span></p>
-          <p>• Packet collisions and unroutable subnets brought down the core switch.</p>
+          <p id="failReasonLine">• Packet collisions and unroutable subnets brought down the core switch.</p>
           <p>• Tip: Check the Network Handbook to avoid penalty deductions on tough commands and port numbers!</p>
         </div>
         <button id="retryGameOverBtn" class="w-full py-3 bg-red-600 hover:bg-red-500 text-white font-extrabold text-base rounded-lg transition active:scale-95 shadow-lg shadow-red-600/30 cursor-pointer">
@@ -852,6 +852,7 @@ Source: Kitchen appliance running at ~2.45 GHz magnetron frequency.`,
        STREAMING_CHUNK:Initializing state engine and UI controller...
        ========================================================= */
     const TOTAL_SECONDS = 20 * 60; // 20 minutes = 1200 seconds
+    const MAX_STRIKES = 5; // Immediate network collapse threshold
     let gameState = {
       currentStepIndex: 0,
       secondsRemaining: TOTAL_SECONDS,
@@ -889,6 +890,9 @@ Source: Kitchen appliance running at ~2.45 GHz magnetron frequency.`,
     const terminalLogBox = document.getElementById('terminalLogBox');
     const winModal = document.getElementById('winModal');
     const gameOverModal = document.getElementById('gameOverModal');
+    const gameOverTitle = document.getElementById('gameOverTitle');
+    const gameOverSubtitle = document.getElementById('gameOverSubtitle');
+    const failReasonLine = document.getElementById('failReasonLine');
     const handbookModal = document.getElementById('handbookModal');
     const handbookBtn = document.getElementById('handbookBtn');
     const closeHandbookBtn = document.getElementById('closeHandbookBtn');
@@ -1099,18 +1103,36 @@ Source: Kitchen appliance running at ~2.45 GHz magnetron frequency.`,
 
     function applyPenalty() {
       gameState.strikes++;
-      strikeCount.textContent = `FAILS: ${gameState.strikes}`;
+      const strikesLeft = Math.max(0, MAX_STRIKES - gameState.strikes);
+      strikeCount.textContent = `FAILS: ${gameState.strikes} / ${MAX_STRIKES}`;
+      
+      if (gameState.strikes >= 4) {
+        strikeCount.className = "text-red-500 font-extrabold animate-pulse";
+      } else if (gameState.strikes >= 2) {
+        strikeCount.className = "text-amber-400 font-bold";
+      } else {
+        strikeCount.className = "text-zinc-300 font-bold";
+      }
+
       // Subtract 60 seconds (1 minute penalty for wrong answer)
       gameState.secondsRemaining = Math.max(0, gameState.secondsRemaining - 60);
       renderWatchdogTimer();
 
       sound.penaltyAlarm();
-      triggerPenaltyBadge("-1 MINUTE PENALTY!");
 
-      addTerminalLog(`SECURITY FAULT: Invalid protocol response! -1 MINUTE DEDUCTION PENALTY applied.`, 'danger');
+      // Check immediate network collapse condition (5 strikes)
+      if (gameState.strikes >= MAX_STRIKES) {
+        triggerPenaltyBadge("5 FAILS: IMMEDIATE COLLAPSE!");
+        addTerminalLog(`CRITICAL FAILURE THRESHOLD: 5 incorrect inputs recorded! Immediate network collapse triggered!`, 'danger');
+        triggerGameOver('strikes');
+        return;
+      }
+
+      triggerPenaltyBadge(`-1 MIN (-1:00) | ${strikesLeft} FAILS LEFT!`);
+      addTerminalLog(`SECURITY FAULT: Invalid protocol response! -1 MINUTE applied (${gameState.strikes}/${MAX_STRIKES} fails).`, 'danger');
 
       if (gameState.secondsRemaining <= 0) {
-        triggerGameOver();
+        triggerGameOver('timeout');
       }
     }
 
@@ -1171,22 +1193,33 @@ Source: Kitchen appliance running at ~2.45 GHz magnetron frequency.`,
       sound.missionVictory();
 
       finalTimeRemaining.textContent = formatTime(gameState.secondsRemaining);
-      finalStrikes.textContent = gameState.strikes;
+      finalStrikes.textContent = `${gameState.strikes} / ${MAX_STRIKES}`;
       updateStepGrid();
       winModal.classList.remove('hidden');
 
       addTerminalLog(`NETWORK INFRASTRUCTURE RESTORED: All 20 switches, routers, and Wi-Fi bands operational!`, 'success');
     }
 
-    function triggerGameOver() {
+    function triggerGameOver(reason = 'timeout') {
       gameState.isGameOver = true;
       clearInterval(gameState.timerId);
       sound.penaltyAlarm();
 
       failLocksSolved.textContent = `${gameState.currentStepIndex} / 20 Steps Resolved`;
+
+      if (reason === 'strikes') {
+        gameOverTitle.textContent = "5 FAILS: IMMEDIATE NETWORK COLLAPSE!";
+        gameOverSubtitle.textContent = "Security lockdown engaged: The system reached the maximum threshold of 5 incorrect inputs.";
+        failReasonLine.textContent = "• Security abort: Repeated configuration faults triggered a defensive shutdown of core switches.";
+      } else {
+        gameOverTitle.textContent = "CRITICAL TIMEOUT: NETWORK COLLAPSE!";
+        gameOverSubtitle.textContent = "The 20-minute watchdog timer expired before the infrastructure could be stabilized.";
+        failReasonLine.textContent = "• Packet collisions and unroutable subnets brought down the core switch.";
+      }
+
       gameOverModal.classList.remove('hidden');
 
-      addTerminalLog(`FATAL WATCHDOG EXPIRATION: Network routing collapsed. Packet loss hit 100%.`, 'danger');
+      addTerminalLog(`FATAL COLLAPSE: Infrastructure disconnected (${reason === 'strikes' ? '5 Strikes Exceeded' : 'Watchdog Timeout'}).`, 'danger');
     }
 
     function restartEscapeRoom() {
@@ -1197,13 +1230,14 @@ Source: Kitchen appliance running at ~2.45 GHz magnetron frequency.`,
       gameState.isGameOver = false;
       gameState.isVictory = false;
 
-      strikeCount.textContent = `FAILS: 0`;
+      strikeCount.textContent = `FAILS: 0 / ${MAX_STRIKES}`;
+      strikeCount.className = "text-amber-400 font-bold";
       winModal.classList.add('hidden');
       gameOverModal.classList.add('hidden');
 
       terminalLogBox.innerHTML = '';
       addTerminalLog("Core Range Controller online. Initializing 20-stage Net Stabilization handshake...", 'cyan');
-      addTerminalLog("Advisory: Keep latency low and check Network Handbook for port & command references.", 'warn');
+      addTerminalLog(`Advisory: Incorrect answers deduct -1 min. 5 incorrect answers trigger immediate collapse!`, 'warn');
 
       createStepGrid();
       loadStep(0);
