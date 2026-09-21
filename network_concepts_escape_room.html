@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OPERATION NET-RESTORE // Network & Wi-Fi Command Center</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: JetBrains Mono & Share Tech Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  
+  <style>
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background-color: #030708;
+      color: #00ffaa;
+    }
+    .font-terminal {
+      font-family: 'Share Tech Mono', monospace;
+    }
+    /* CRT Scanline Overlay */
+    .scanlines {
+      background: linear-gradient(
+        rgba(10, 15, 13, 0) 50%, 
+        rgba(0, 0, 0, 0.45) 50%
+      ), linear-gradient(
+        90deg,
+        rgba(0, 255, 170, 0.02),
+        rgba(0, 0, 0, 0.01),
+        rgba(0, 200, 255, 0.02)
+      );
+      background-size: 100% 3px, 3px 100%;
+      pointer-events: none;
+    }
+    @keyframes subtleFlicker {
+      0% { opacity: 0.985; }
+      50% { opacity: 1; }
+      100% { opacity: 0.99; }
+    }
+    .crt-screen {
+      animation: subtleFlicker 0.2s infinite;
+      box-shadow: 0 0 35px rgba(0, 255, 170, 0.08) inset, 0 0 20px rgba(0, 255, 170, 0.12);
+    }
+    /* Glow Utilities */
+    .glow-cyan {
+      text-shadow: 0 0 10px rgba(6, 182, 212, 0.8), 0 0 20px rgba(6, 182, 212, 0.4);
+    }
+    .glow-emerald {
+      text-shadow: 0 0 10px rgba(16, 185, 129, 0.8), 0 0 20px rgba(16, 185, 129, 0.4);
+    }
+    .glow-red {
+      text-shadow: 0 0 10px rgba(239, 68, 68, 0.85), 0 0 20px rgba(239, 68, 68, 0.5);
+    }
+    /* Shake animation for incorrect answer penalty */
+    @keyframes shakeEffect {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-9px); }
+      40% { transform: translateX(9px); }
+      60% { transform: translateX(-6px); }
+      80% { transform: translateX(6px); }
+    }
+    .penalty-shake {
+      animation: shakeEffect 0.45s ease-in-out;
+    }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #06110e;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #0f4032;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #10b981;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-[#030708] text-[#22e7a0] flex flex-col relative selection:bg-[#064e3b] selection:text-white">
+  <!-- Scanlines overlay -->
+  <div class="fixed inset-0 scanlines z-40 pointer-events-none"></div>
+
+  <header class="border-b border-emerald-900/60 bg-[#051310]/95 backdrop-blur sticky top-0 z-30 px-3 sm:px-5 py-2.5 flex flex-wrap items-center justify-between gap-3 text-xs sm:text-sm">
+    <div class="flex items-center gap-2 sm:gap-3">
+      <div class="relative flex h-3 w-3">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-3 w-3 bg-cyan-500"></span>
+      </div>
+      <div>
+        <span class="font-terminal font-extrabold tracking-wider text-white text-base sm:text-lg">
+          NET-RESTORE <span class="text-emerald-400 text-xs font-normal">v2.9.1-OPS</span>
+        </span>
+        <span class="hidden lg:inline-block ml-3 px-2 py-0.5 rounded bg-emerald-950/70 border border-emerald-800 text-emerald-300 text-[11px] font-mono">
+          NETWORK TOPOLOGY: CRITICAL DESYNCHRONIZATION
+        </span>
+      </div>
+    </div>
+
+    <!-- Header Action Controls -->
+    <div class="flex items-center gap-2.5 sm:gap-4">
+      <button id="soundToggleBtn" class="px-2.5 py-1 rounded bg-[#09221b] hover:bg-[#0f342a] border border-emerald-500/40 text-emerald-300 flex items-center gap-1.5 transition-colors font-mono text-xs">
+        <span id="soundIcon">🔊</span>
+        <span id="soundText">AUDIO: ON</span>
+      </button>
+      <button id="handbookBtn" class="px-3 py-1 rounded bg-[#09221b] hover:bg-[#0f342a] border border-cyan-500/40 text-cyan-300 flex items-center gap-1.5 transition-colors font-mono text-xs shadow-sm">
+        <span>📖</span>
+        <span>NET HANDBOOK</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Mission Interface Layout -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-5 flex flex-col gap-4 relative z-10">
+
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-3">
+      <!-- 20-Minute Mission Countdown Clock -->
+      <div id="timerCard" class="bg-[#051410] border-2 border-emerald-700/80 rounded-lg p-3 sm:p-4 flex flex-col justify-between shadow-lg relative overflow-hidden transition-all duration-300">
+        <div class="flex justify-between items-center text-xs font-mono text-emerald-400 mb-1">
+          <span class="flex items-center gap-1.5 font-bold tracking-wider">
+            ⏱️ SYSTEM TIMEOUT WATCHDOG
+          </span>
+          <span id="penaltyBadge" class="hidden text-red-400 font-bold tracking-widest bg-red-950/90 px-2 py-0.5 rounded border border-red-700 animate-bounce">
+            -1 MINUTE PENALTY!
+          </span>
+        </div>
+        <div class="flex items-baseline justify-between mt-1">
+          <div id="timerDisplay" class="text-3xl sm:text-4xl font-extrabold font-terminal tracking-wider glow-emerald text-emerald-300">
+            20:00
+          </div>
+          <div class="text-right font-mono text-[11px] text-zinc-400">
+            <div>PENALTY RATE: <span class="text-red-400 font-bold">-1:00</span> / ERR</div>
+            <div id="strikeCount" class="text-amber-400 font-bold">FAILS: 0</div>
+          </div>
+        </div>
+        <div class="w-full bg-zinc-950 h-2.5 rounded-full mt-2 overflow-hidden border border-zinc-800">
+          <div id="timerBar" class="bg-emerald-500 h-full w-full transition-all duration-1000 ease-linear"></div>
+        </div>
+      </div>
+
+      <!-- Live Infrastructure Stabilization Gauge -->
+      <div class="bg-[#051410] border-2 border-cyan-800/80 rounded-lg p-3 sm:p-4 flex flex-col justify-between shadow-lg">
+        <div class="flex justify-between items-center text-xs font-mono text-cyan-400 mb-1">
+          <span class="font-bold flex items-center gap-1.5">
+            📶 CAMPUS WI-FI & RACK STABILITY
+          </span>
+          <span id="stabilityPercent" class="font-extrabold text-cyan-300">0%</span>
+        </div>
+        <div>
+          <div class="flex justify-between text-[11px] text-zinc-300 mb-1 font-mono">
+            <span id="activeBandTelemetry">BAND SPECTRUM: <span class="text-yellow-400">OFFLINE</span></span>
+            <span id="packetLossTelemetry" class="text-red-400">LOSS: 100%</span>
+          </div>
+          <div class="w-full bg-zinc-950 h-2.5 rounded-full overflow-hidden border border-cyan-950">
+            <div id="stabilityProgressBar" class="bg-gradient-to-r from-red-500 via-amber-500 to-cyan-400 h-full w-[0%] transition-all duration-500"></div>
+          </div>
+        </div>
+        <div class="text-[11px] text-zinc-400 font-mono mt-1.5 flex justify-between items-center">
+          <span>ROUTER GATEWAY: <span id="gatewayStatus" class="text-zinc-300">10.29.0.1</span></span>
+          <span id="networkLinkState" class="text-red-400 font-bold animate-pulse">DISCONNECTED</span>
+        </div>
+      </div>
+
+      <!-- 20-Node Grid Sequence Matrix -->
+      <div class="bg-[#051410] border-2 border-emerald-700/80 rounded-lg p-3 sm:p-4 flex flex-col justify-between shadow-lg">
+        <div class="flex justify-between items-center text-xs font-mono text-emerald-400 mb-1">
+          <span class="font-bold">🛡️ NETWORK STABILIZATION STEPS</span>
+          <span id="stepCounter" class="font-extrabold text-white">STEP 1 / 20</span>
+        </div>
+        <!-- 20 Mini Node Markers -->
+        <div class="grid grid-cols-10 gap-1 my-1" id="stepGrid">
+          <!-- Populated dynamically (1 to 20) -->
+        </div>
+        <div class="text-[11px] text-emerald-300/80 font-mono flex items-center justify-between">
+          <span>PHASE: <span id="phaseCategoryName" class="text-cyan-400 font-bold">PHYSICAL & IP IDS</span></span>
+          <span id="clearedCount" class="text-emerald-400 font-bold">0/20 RESOLVED</span>
+        </div>
+      </div>
+    </section>
+
+    <div id="gameplayWorkspace" class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4">
+      
+      <!-- Left Column: Hacker/Engineer Command Console (7 cols) -->
+      <section class="lg:col-span-7 flex flex-col gap-4">
+        <div class="crt-screen bg-[#04110e] border-2 border-emerald-600/60 rounded-lg p-4 sm:p-5 flex-1 flex flex-col shadow-2xl relative">
+          <!-- Terminal Title Bar -->
+          <div class="flex items-center justify-between border-b border-emerald-900/80 pb-2 mb-3 text-xs font-mono">
+            <div class="flex items-center gap-2">
+              <span class="inline-block w-2.5 h-2.5 rounded-full bg-red-500/80"></span>
+              <span class="inline-block w-2.5 h-2.5 rounded-full bg-yellow-500/80"></span>
+              <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500/80"></span>
+              <span id="terminalPromptPath" class="text-zinc-300 ml-2 font-terminal">ENGINEER_CONSOLE: ~/cisa_lab_net_stabilizer.sh</span>
+            </div>
+            <div id="osPill" class="px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-950 text-cyan-300 border border-cyan-700">
+              WINDOWS / LINUX HYBRID RANGE
+            </div>
+          </div>
+
+          <!-- Scenario Narrative Briefing -->
+          <div class="bg-[#020b08] border border-emerald-900 rounded p-3 mb-3 text-xs sm:text-sm text-zinc-300 font-mono leading-relaxed">
+            <div class="flex items-center justify-between gap-2 mb-1">
+              <span class="text-cyan-400 font-bold text-xs uppercase tracking-wider flex items-center gap-1">
+                <span>⚡</span> <span id="puzzleTitle">NODE #01: HARDWARE FINGERPRINTING</span>
+              </span>
+              <span id="difficultyBadge" class="text-[10px] px-1.5 py-0.2 bg-emerald-950 text-emerald-400 border border-emerald-800 rounded">
+                NET 2.8.1
+              </span>
+            </div>
+            <p id="scenarioStory" class="text-zinc-300">
+              The primary network bridge has lost its addressing cache! To establish communication on the local segment, identify the permanent physical hardware address assigned by the manufacturer to each Network Interface Card (NIC).
+            </p>
+          </div>
+
+          <!-- Interactive Code/Snippet Display Box -->
+          <div class="relative bg-[#020705] border-2 border-emerald-500/40 rounded-lg p-3.5 font-mono text-xs sm:text-sm shadow-inner overflow-x-auto">
+            <div class="flex justify-between items-center text-[10px] tracking-widest text-emerald-500/70 uppercase mb-1.5 border-b border-emerald-950 pb-1">
+              <span id="terminalOutputTag">Captured Packet / Config Buffer</span>
+              <span class="text-zinc-500">DIAGNOSTIC DATA</span>
+            </div>
+            <pre id="codeBufferDisplay" class="text-emerald-300 leading-relaxed font-bold font-terminal whitespace-pre-wrap"></pre>
+          </div>
+
+          <!-- Challenge Prompt & Concept Hint Bar -->
+          <div class="mt-4 flex flex-col gap-2">
+            <div class="text-xs sm:text-sm font-bold text-yellow-300 flex items-start gap-2">
+              <span class="text-base sm:text-lg">🎯</span>
+              <span id="questionPromptText">What is the 12-digit hexadecimal physical address called that uniquely identifies a network card?</span>
+            </div>
+            <div class="text-xs text-zinc-400 bg-zinc-950/70 p-2.5 rounded border border-zinc-800 flex justify-between items-center gap-2">
+              <span id="conceptSummary" class="truncate">💡 <strong class="text-emerald-300">Concept:</strong> Hardware MAC addresses work at the data link layer.</span>
+              <button id="showHintBtn" class="shrink-0 text-[11px] bg-emerald-950 hover:bg-emerald-900 border border-emerald-700 text-emerald-300 px-2.5 py-1 rounded transition">
+                Need Hint?
+              </button>
+            </div>
+            <div id="hintBox" class="hidden text-xs text-yellow-200/90 bg-yellow-950/50 p-2.5 rounded border border-yellow-800 font-mono">
+              <!-- Dynamically populated hint -->
+            </div>
+          </div>
+
+          <!-- User Input Submission Form -->
+          <div class="mt-4 pt-3 border-t border-emerald-900/80">
+            <form id="submissionForm" class="flex flex-col sm:flex-row gap-2">
+              <div class="flex-1 relative flex items-center">
+                <span class="absolute left-3 text-emerald-400 font-bold font-mono select-none">&gt;&gt;&gt;</span>
+                <input 
+                  type="text" 
+                  id="userAnswerInput" 
+                  autocomplete="off" 
+                  spellcheck="false"
+                  placeholder="Enter network parameter, command, or port number..."
+                  class="w-full bg-[#010504] border-2 border-emerald-600 focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 rounded-lg pl-12 pr-3 py-2.5 text-xs sm:text-sm font-mono text-white placeholder-zinc-600 outline-none transition"
+                >
+              </div>
+              <button 
+                type="submit" 
+                id="submitBtn"
+                class="px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-black font-extrabold rounded-lg font-mono text-xs sm:text-sm tracking-wider flex items-center justify-center gap-2 transition active:scale-95 shadow-md cursor-pointer"
+              >
+                <span>EXECUTE</span>
+                <span>↵</span>
+              </button>
+            </form>
+            <p class="text-[11px] text-zinc-400 mt-2 font-mono flex items-center justify-between">
+              <span class="flex items-center gap-1">
+                <span>⚠️</span>
+                <span>Incorrect inputs dock <strong class="text-red-400 font-bold">-1 minute</strong> from system countdown.</span>
+              </span>
+              <span class="text-zinc-500 text-[10px] hidden sm:inline">Answers are case-insensitive</span>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Column: Live Network Monitor & Audit Trail (5 cols) -->
+      <section class="lg:col-span-5 flex flex-col gap-4">
+        
+        <!-- Interactive Network Rack & Wi-Fi Node Monitor -->
+        <div class="bg-[#051410] border-2 border-cyan-900/80 rounded-lg p-3 sm:p-4 text-xs font-mono flex flex-col gap-2 shadow-lg">
+          <div class="flex items-center justify-between border-b border-cyan-900/60 pb-1.5">
+            <span class="text-cyan-300 font-bold flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+              CORE RACK & WIRELESS SPECTRUM TELEMETRY
+            </span>
+            <span class="text-zinc-500 text-[10px]">CISA LAB RANGE</span>
+          </div>
+
+          <!-- Network Architecture Diagram Blocks -->
+          <div class="grid grid-cols-2 gap-2 text-[11px]">
+            <div class="bg-black/50 p-2 rounded border border-emerald-900/60">
+              <div class="text-zinc-400">WIN7 VM (Host)</div>
+              <div class="text-emerald-400 font-bold" id="rackWin7Ip">IP: 10.29.90.192</div>
+              <div class="text-[10px] text-zinc-500">MAC: 0E-BB-87-83-97-21</div>
+            </div>
+            <div class="bg-black/50 p-2 rounded border border-emerald-900/60">
+              <div class="text-zinc-400">UBUNTU VM (Host)</div>
+              <div class="text-emerald-400 font-bold" id="rackUbuntuIp">IP: 10.29.80.89</div>
+              <div class="text-[10px] text-zinc-500">MAC: 0e:a8:3b:a9:58:15</div>
+            </div>
+            <div class="bg-black/50 p-2 rounded border border-emerald-900/60">
+              <div class="text-zinc-400">CORE ROUTER / NAT</div>
+              <div class="text-yellow-400 font-bold" id="rackRouterState">GATEWAY: 10.29.0.1</div>
+              <div class="text-[10px] text-zinc-500">DNS: 10.29.0.2 (Port 53)</div>
+            </div>
+            <div class="bg-black/50 p-2 rounded border border-emerald-900/60">
+              <div class="text-zinc-400">ACCESS POINT (WLAN)</div>
+              <div class="text-cyan-400 font-bold" id="rackApState">TRI-BAND: 2.4 / 5 / 6 GHz</div>
+              <div class="text-[10px] text-zinc-500">STANDARDS: 802.11ax/ac</div>
+            </div>
+          </div>
+
+          <!-- Wireless Performance Gauges -->
+          <div class="bg-[#020907] p-2 rounded border border-zinc-800 text-[11px] space-y-1.5">
+            <div class="flex justify-between items-center text-zinc-300">
+              <span>LATENCY (RTT):</span>
+              <span id="latencyMetric" class="text-emerald-400 font-bold">14 ms (Good)</span>
+            </div>
+            <div class="flex justify-between items-center text-zinc-300">
+              <span>ACTIVE WI-FI CHANNELS:</span>
+              <span id="channelMetric" class="text-zinc-400">20/40/80/160 MHz Ready</span>
+            </div>
+            <div class="flex justify-between items-center text-zinc-300">
+              <span>INTERFERENCE SHIELD:</span>
+              <span id="interferenceMetric" class="text-amber-400">Microwave: Inactive</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Terminal System Audit Logs -->
+        <div class="bg-[#020806] border-2 border-emerald-800/80 rounded-lg p-3 sm:p-4 flex-1 flex flex-col font-mono text-xs shadow-inner min-h-[220px]">
+          <div class="flex items-center justify-between border-b border-emerald-900/60 pb-1.5 mb-2 text-zinc-400">
+            <span class="text-emerald-400 font-bold flex items-center gap-1.5">
+              <span>📜</span> CONSOLE AUDIT TRAIL
+            </span>
+            <span class="text-[10px] text-zinc-500">REALTIME DIAGNOSTICS</span>
+          </div>
+          
+          <div id="terminalLogBox" class="flex-1 overflow-y-auto space-y-1.5 pr-1 max-h-56 sm:max-h-72 text-[11px]">
+            <!-- Audit lines appended here -->
+          </div>
+
+          <!-- Console Utility controls -->
+          <div class="border-t border-emerald-950 pt-2 mt-2 flex items-center justify-between text-[11px] text-zinc-500">
+            <span>Subnet: 255.255.128.0 (/17)</span>
+            <button class="text-emerald-400 hover:underline cursor-pointer" id="clearLogBtn">Clear Trail</button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- MISSION SUCCESS MODAL -->
+    <div id="winModal" class="hidden fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
+      <div class="max-w-xl w-full bg-[#031510] border-4 border-emerald-400 rounded-xl p-6 sm:p-8 text-center font-mono shadow-[0_0_80px_rgba(16,185,129,0.4)] relative">
+        <div class="w-16 h-16 bg-emerald-500/20 border-2 border-emerald-400 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl animate-bounce">
+          🏆
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-terminal font-extrabold text-white glow-emerald mb-2">
+          NETWORK STABILIZED!
+        </h2>
+        <p class="text-cyan-300 font-bold tracking-wider text-sm mb-4">
+          ALL 20 INFRASTRUCTURE & WIRELESS PROTOCOL LOCKS RESTORED
+        </p>
+        <div class="bg-black/60 border border-emerald-900 rounded-lg p-4 text-left text-xs sm:text-sm text-zinc-300 space-y-2 mb-6">
+          <p>✔️ <span class="text-emerald-400 font-bold">20 of 20 Nodes Resolved:</span> Physical IDs, Routing, NAT, Ports, DNS, DHCP, ICMP Firewalling, and Wi-Fi Bands restored.</p>
+          <p>✔️ <strong>Time Remaining:</strong> <span id="finalTimeRemaining" class="text-white font-bold text-base"></span></p>
+          <p>✔️ <strong>Penalty Strikes Incurred:</strong> <span id="finalStrikes" class="text-yellow-400 font-bold"></span></p>
+          <p>✔️ <strong>Network Status:</strong> 100% Online, 0% Packet Loss, Low Latency, Multi-Band Wi-Fi 6 Operational.</p>
+        </div>
+        <p class="text-xs text-zinc-400 mb-6 italic">
+          "Sensational work, Network Specialist! You have proven mastery over IP addresses, port security, routing devices, diagnostic commands, and wireless spectrum performance."
+        </p>
+        <button id="playAgainWinBtn" class="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-black font-extrabold text-base rounded-lg transition active:scale-95 shadow-lg shadow-emerald-500/30 cursor-pointer">
+          RE-INITIALIZE RANGE (PLAY AGAIN)
+        </button>
+      </div>
+    </div>
+
+    <!-- GAME OVER MODAL -->
+    <div id="gameOverModal" class="hidden fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
+      <div class="max-w-xl w-full bg-[#180505] border-4 border-red-500 rounded-xl p-6 sm:p-8 text-center font-mono shadow-[0_0_80px_rgba(239,68,68,0.5)]">
+        <div class="w-16 h-16 bg-red-500/20 border-2 border-red-500 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl animate-pulse">
+          ⚠️
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-terminal font-extrabold text-red-500 glow-red mb-2">
+          CRITICAL TIMEOUT: NETWORK COLLAPSE!
+        </h2>
+        <p class="text-red-300 text-sm mb-4">
+          The 20-minute watchdog timer expired before the infrastructure could be stabilized.
+        </p>
+        <div class="bg-black/70 border border-red-900/60 rounded-lg p-4 text-left text-xs text-zinc-300 space-y-1.5 mb-6">
+          <p class="text-red-400 font-bold">Post-Incident Report:</p>
+          <p>• Nodes Successfully Restored: <span id="failLocksSolved" class="text-white font-bold">0 / 20</span></p>
+          <p>• Packet collisions and unroutable subnets brought down the core switch.</p>
+          <p>• Tip: Check the Network Handbook to avoid penalty deductions on tough commands and port numbers!</p>
+        </div>
+        <button id="retryGameOverBtn" class="w-full py-3 bg-red-600 hover:bg-red-500 text-white font-extrabold text-base rounded-lg transition active:scale-95 shadow-lg shadow-red-600/30 cursor-pointer">
+          REBOOT CORE SYSTEM & RETRY
+        </button>
+      </div>
+    </div>
+
+    <!-- NET HANDBOOK / CHEAT SHEET MODAL -->
+    <div id="handbookModal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
+      <div class="max-w-2xl w-full bg-[#04110e] border-2 border-cyan-500 rounded-xl p-4 sm:p-6 font-mono text-xs shadow-2xl relative flex flex-col max-h-[85vh]">
+        <div class="flex justify-between items-center border-b border-cyan-800 pb-2 mb-3">
+          <span class="text-cyan-300 font-bold text-sm flex items-center gap-2">
+            <span>📘</span> CISA 2.8.1 & 2.9.1 NETWORKING FIELD HANDBOOK
+          </span>
+          <button id="closeHandbookBtn" class="text-zinc-400 hover:text-white text-lg font-bold px-2 cursor-pointer">✕</button>
+        </div>
+        
+        <div class="space-y-3.5 text-zinc-300 overflow-y-auto pr-2">
+          <!-- Commands Reference -->
+          <div class="bg-black/50 p-2.5 rounded border border-emerald-950">
+            <span class="text-emerald-400 font-bold text-xs uppercase">Terminal Diagnostics Commands</span>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-1.5 text-[11px]">
+              <div>• <code>ipconfig /all</code> : Win7 IP, MAC, Subnet & Gateway</div>
+              <div>• <code>ifconfig</code> : Ubuntu Linux network configuration</div>
+              <div>• <code>nslookup</code> : Queries DNS for IP of a domain</div>
+              <div>• <code>netstat -an</code> : Windows active listening ports</div>
+              <div>• <code>ss -tuln</code> : Modern Ubuntu active TCP/UDP ports</div>
+              <div>• <code>ping 127.0.0.1</code> : Local device loopback test</div>
+              <div>• <code>tracert</code> (Win) / <code>traceroute</code> (Linux) : Hop count & path</div>
+              <div>• <code>ping -c 4</code> : Ubuntu 4-packet ICMP test</div>
+            </div>
+          </div>
+
+          <!-- Common Ports Reference -->
+          <div class="bg-black/50 p-2.5 rounded border border-cyan-950">
+            <span class="text-cyan-400 font-bold text-xs uppercase">Essential Network Ports</span>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-1.5 text-[11px]">
+              <div>• <strong>21:</strong> FTP (Files)</div>
+              <div>• <strong>22:</strong> SSH (Secure Shell)</div>
+              <div>• <strong>23:</strong> Telnet (Insecure)</div>
+              <div>• <strong>25:</strong> SMTP (Old email)</div>
+              <div>• <strong>53:</strong> DNS (Name lookup)</div>
+              <div>• <strong>80:</strong> HTTP (Web)</div>
+              <div>• <strong>110:</strong> POP3 (Mail download)</div>
+              <div>• <strong>143:</strong> IMAP (Mail sync)</div>
+              <div>• <strong>443:</strong> HTTPS (Secure Web)</div>
+              <div>• <strong>587:</strong> SMTP (Secure email)</div>
+              <div>• <strong>631:</strong> CUPS (Unix Print)</div>
+              <div>• <strong>3389:</strong> RDP (Remote Desktop)</div>
+            </div>
+          </div>
+
+          <!-- Core Network Hardware & Protocols -->
+          <div class="bg-black/50 p-2.5 rounded border border-zinc-800">
+            <span class="text-amber-400 font-bold text-xs uppercase">Devices & Addressing Concepts</span>
+            <ul class="list-disc pl-4 mt-1 space-y-1 text-[11px] text-zinc-300">
+              <li><strong>MAC Address:</strong> 48-bit physical hex address permanently baked into NIC. Used by <em>switches</em>.</li>
+              <li><strong>IP Address:</strong> Logical address (IPv4 32-bit, IPv6 128-bit hex). Separated into network vs host by <em>Subnet Mask</em>.</li>
+              <li><strong>Router & NAT:</strong> Connects LAN to WAN. Network Address Translation translates private IPs to one public IP.</li>
+              <li><strong>TCP vs UDP:</strong> TCP is reliable/guaranteed (certified mail). UDP is fast/connectionless (tossing flyers).</li>
+              <li><strong>DHCP:</strong> Dynamically hands out IP addresses using ports 67 (server) & 68 (client).</li>
+              <li><strong>ICMP:</strong> Protocol used by <code>ping</code>. Frequently blocked by Windows Firewall by default.</li>
+            </ul>
+          </div>
+
+          <!-- Wireless Concepts Reference -->
+          <div class="bg-black/50 p-2.5 rounded border border-purple-950">
+            <span class="text-purple-400 font-bold text-xs uppercase">Wireless Bands & Performance (2.9.1)</span>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-1.5 text-[11px]">
+              <div class="p-1.5 bg-black/40 rounded border border-zinc-800">
+                <span class="text-yellow-400 font-bold">2.4 GHz</span>
+                <p>Longest range, best wall penetration, slowest speed, highest interference (microwaves, bluetooth, smart plugs).</p>
+              </div>
+              <div class="p-1.5 bg-black/40 rounded border border-zinc-800">
+                <span class="text-cyan-400 font-bold">5 GHz</span>
+                <p>Medium range, fast speed, lower interference, struggles more with solid walls.</p>
+              </div>
+              <div class="p-1.5 bg-black/40 rounded border border-zinc-800">
+                <span class="text-emerald-400 font-bold">6 GHz</span>
+                <p>Shortest range, ultra-fast speeds, widest channels, cannot easily penetrate walls, cleanest spectrum.</p>
+              </div>
+            </div>
+            <div class="mt-2 text-[11px] text-zinc-400">
+              • <strong>Attenuation:</strong> Signal loss over distance/walls. • <strong>Latency:</strong> Millisecond delay before data travels (low is best). • <strong>TWT (Target Wake Time):</strong> Wi-Fi 6 power-saving scheduling.
+            </div>
+          </div>
+        </div>
+
+        <button id="ackHandbookBtn" class="w-full mt-3 py-2 bg-cyan-800 hover:bg-cyan-700 text-white rounded font-bold cursor-pointer transition">
+          RETURN TO NETWORK CONSOLE
+        </button>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    /* =========================================================
+       AUDIO SYNTHESIZER (Native Web Audio API - Zero External URLs)
+       ========================================================= */
+    class NetworkAudioSynth {
+      constructor() {
+        this.ctx = null;
+        this.enabled = true;
+      }
+      
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContext();
+        }
+        if (this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      playTone(freq, type = 'sine', duration = 0.1, gainVal = 0.1) {
+        if (!this.enabled) return;
+        try {
+          this.init();
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+          gain.gain.setValueAtTime(gainVal, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          
+          osc.start();
+          osc.stop(this.ctx.currentTime + duration);
+        } catch(e) {}
+      }
+
+      keyPress() {
+        this.playTone(1100, 'triangle', 0.03, 0.02);
+      }
+
+      nodeUnlocked() {
+        if (!this.enabled) return;
+        this.playTone(440, 'triangle', 0.08, 0.1);
+        setTimeout(() => this.playTone(554.37, 'triangle', 0.09, 0.1), 70);
+        setTimeout(() => this.playTone(659.25, 'triangle', 0.12, 0.1), 140);
+        setTimeout(() => this.playTone(880, 'triangle', 0.22, 0.12), 210);
+      }
+
+      penaltyAlarm() {
+        if (!this.enabled) return;
+        this.playTone(240, 'sawtooth', 0.25, 0.18);
+        setTimeout(() => this.playTone(190, 'sawtooth', 0.35, 0.18), 120);
+      }
+
+      missionVictory() {
+        if (!this.enabled) return;
+        const notes = [523.25, 659.25, 783.99, 1046.50];
+        notes.forEach((freq, idx) => {
+          setTimeout(() => this.playTone(freq, 'sine', 0.3, 0.15), idx * 130);
+        });
+      }
+    }
+
+    const sound = new NetworkAudioSynth();
+
+    /* =========================================================
+       STREAMING_CHUNK:Defining the 20 network & wireless escape room steps...
+       ========================================================= */
+    const NETWORK_STEPS = [
+      {
+        step: 1,
+        title: "LOCK 01: HARDWARE FINGERPRINTING",
+        category: "PHYSICAL IDENTIFIERS",
+        story: "The local switch cannot forward Ethernet frames because the physical interface tables are corrupted! Identify the permanent hardware address assigned by the manufacturer to every Network Interface Card (NIC).",
+        codeBuffer: `Ethernet adapter Local Area Connection 2:
+   Description . . . . . . . : AWS PV Network Device #0
+   Physical Address. . . . . : 0E-BB-87-83-97-21
+   IPv4 Address. . . . . . . : 10.29.90.192`,
+        prompt: "What is this 48-bit permanent hexadecimal physical identifier called?",
+        concept: "The MAC (Media Access Control) address acts as a hardware fingerprint for Layer 2 delivery.",
+        hint: "It stands for Media Access Control address (3 letters or full name).",
+        accepted: ["mac address", "mac", "media access control", "media access control address", "mac-address"]
+      },
+      {
+        step: 2,
+        title: "LOCK 02: WINDOWS TCP/IP DIAGNOSTICS",
+        category: "COMMAND TOOLS",
+        story: "You are on the Windows 7 VM and need to inspect the full TCP/IP configuration including DNS Suffix, DHCP status, Default Gateway, and Physical Address.",
+        codeBuffer: `C:\\Users\\windows> [ ??? ]
+Windows IP Configuration
+   Host Name . . . . . . . . : student-PC
+   IPv4 Address. . . . . . . : 10.29.90.192
+   Subnet Mask . . . . . . . : 255.255.128.0
+   Default Gateway . . . . . : 10.29.0.1`,
+        prompt: "What Windows command with its flag displays this comprehensive network configuration?",
+        concept: "Standard ipconfig shows basic IPs; adding /all exposes physical MACs and DHCP leases.",
+        hint: "Type the full command with the slash flag (e.g., ipconfig ...).",
+        accepted: ["ipconfig /all", "ipconfig/all"]
+      },
+      {
+        step: 3,
+        title: "LOCK 03: LOCAL LOOPBACK STACK TEST",
+        category: "CONNECTIVITY",
+        story: "To verify whether the operating system's internal TCP/IP network protocol stack is functioning without sending packets onto the physical wire, you must test the loopback interface.",
+        codeBuffer: `C:\\Users\\windows> ping [ ??? ]
+Pinging [ ??? ] with 32 bytes of data:
+Reply from [ ??? ]: bytes=32 time<1ms TTL=128
+Reply from [ ??? ]: bytes=32 time<1ms TTL=128
+Packets: Sent = 4, Received = 4, Lost = 0 (0% loss)`,
+        prompt: "What standard IPv4 loopback IP address is used to ping your own local machine?",
+        concept: "127.0.0.1 is the reserved IPv4 loopback address for internal self-testing.",
+        hint: "It starts with 127 and ends with 1.",
+        accepted: ["127.0.0.1", "127.0.0.1/8"]
+      },
+      {
+        step: 4,
+        title: "LOCK 04: NETWORK SUBNET BOUNDARY",
+        category: "IP ADDRESSING",
+        story: "The device received the IPv4 address 10.29.50.182. A critical configuration value defines which bits represent the network ID and which bits represent host devices.",
+        codeBuffer: `IPv4 Address. . . . . . . : 10.29.50.182
+Subnet Mask . . . . . . . : 255.255.128.0
+Default Gateway . . . . . : 10.29.0.1`,
+        prompt: "What network configuration item separates the network portion of an IP from the device portion?",
+        concept: "The subnet mask masks out the network portion so routers know if traffic is local or remote.",
+        hint: "Two words: Subnet ...",
+        accepted: ["subnet mask", "subnet", "subnetmask"]
+      },
+      {
+        step: 5,
+        title: "LOCK 05: LOCAL LAN FORWARDING DEVICE",
+        category: "HARDWARE DEVICES",
+        story: "Traffic inside Local Area Connection 2 is dropping. Multiple client PCs within the same building need to connect together using their MAC addresses to send frames directly to the correct device.",
+        codeBuffer: `[ Host A: MAC 0E-BB-87 ] ---\\
+[ Host B: MAC 02-42-37 ] ----> [  DEVICE ?  ] ---> Direct Unicast Delivery
+[ Host C: MAC 0E-A8-3B ] ---/`,
+        prompt: "Which networking hardware device connects devices in a LAN and forwards traffic using MAC addresses?",
+        concept: "Switches maintain MAC address tables to direct traffic only to the destined physical port.",
+        hint: "A standard LAN device that operates between hosts (not a router).",
+        accepted: ["switch", "network switch", "ethernet switch"]
+      },
+      {
+        step: 6,
+        title: "LOCK 06: PUBLIC ADDRESS TRANSLATION",
+        category: "ROUTING & NAT",
+        story: "Hundreds of lab machines are running internal private IPs like 10.29.x.x. To access the public internet, the gateway router must translate these into a single shared public IP address.",
+        codeBuffer: `Private LAN: [10.29.90.192] --\\
+Private LAN: [10.29.80.89]  ----> [ ROUTER: ??? ] ---> Public Internet: [54.192.12.8]
+Private LAN: [10.29.3.112]  --/`,
+        prompt: "What service/protocol translates private IP addresses into a public IP address for internet access?",
+        concept: "NAT (Network Address Translation) acts like a hotel front desk routing external messages to rooms.",
+        hint: "Three letters (or full name): Network Address ...",
+        accepted: ["nat", "network address translation"]
+      },
+      {
+        step: 7,
+        title: "LOCK 07: LOGICAL NETWORK SEGMENTATION",
+        category: "VIRTUAL NETWORKS",
+        story: "Security policy requires isolating guest Wi-Fi devices from sensitive internal database servers without buying separate physical switches.",
+        codeBuffer: `Physical Switch #1:
+  ├─ Ports 1-12 : Department Accounting (Isolated)
+  └─ Ports 13-24: Guest Public Wi-Fi (Isolated)
+Technology: Logical network division on shared hardware.`,
+        prompt: "What technology logically divides a physical LAN into separate, isolated networks for security?",
+        concept: "A VLAN (Virtual Local Area Network) splits a switch into independent broadcast domains.",
+        hint: "Four letters: Virtual Local ...",
+        accepted: ["vlan", "virtual local area network", "virtual lan"]
+      },
+      {
+        step: 8,
+        title: "LOCK 08: RELIABLE TRANSPORT PROTOCOL",
+        category: "PROTOCOLS",
+        story: "We are establishing a mission-critical session where every byte must arrive in order with guaranteed delivery, acknowledgments, and retransmission if dropped (like certified mail).",
+        codeBuffer: `Proto   Local Address          Foreign Address        State
+[ ? ]   10.29.6.203:5901       10.29.128.23:58928     ESTABLISHED
+Characteristics: Connection-oriented, 3-way handshake, reliable sequence tracking.`,
+        prompt: "Which transport protocol guarantees delivery and order (TCP or UDP)?",
+        concept: "TCP guarantees reliable delivery, whereas UDP trades guarantees for speed.",
+        hint: "Transmission Control Protocol (3 letters).",
+        accepted: ["tcp", "transmission control protocol"]
+      },
+      {
+        step: 9,
+        title: "LOCK 09: FAST CONNECTIONLESS STREAMING",
+        category: "PROTOCOLS",
+        story: "For real-time voice and video telemetry across the range, latency matters more than perfect delivery. Packets are fired continuously without checking or waiting for confirmations (like tossing flyers).",
+        codeBuffer: `Proto   Local Address          Foreign Address        State
+[ ? ]   0.0.0.0:123            *:*                    UNCONN
+Characteristics: Fast, connectionless, no delivery confirmation, minimal overhead.`,
+        prompt: "What transport protocol is lightweight and connectionless (does not guarantee packet delivery)?",
+        concept: "UDP (User Datagram Protocol) does not perform handshakes or track retransmissions.",
+        hint: "User Datagram Protocol (3 letters).",
+        accepted: ["udp", "user datagram protocol"]
+      },
+      {
+        step: 10,
+        title: "LOCK 10: DOMAIN NAME RESOLUTION SERVICE",
+        category: "CORE SERVICES",
+        story: "Engineers can reach 104.21.96.40, but typing 'cyber.org' or 'cisa.gov' in the browser fails. The phonebook system that translates domain names into IP addresses is offline!",
+        codeBuffer: `C:\\Users\\windows> nslookup cyber.org
+Server:  UnKnown
+Address: 10.29.0.2
+Non-authoritative answer:
+Name:    cyber.org
+Address: 104.21.96.40`,
+        prompt: "What vital service converts human-friendly domain names into numerical IP addresses over port 53?",
+        concept: "DNS (Domain Name System) translates names to IPs like an automated directory.",
+        hint: "Three letters: Domain Name ...",
+        accepted: ["dns", "domain name system"]
+      },
+      {
+        step: 11,
+        title: "LOCK 11: SECURE WEB ENCRYPTION PORT",
+        category: "PORT SECURITY",
+        story: "The web console was found listening on insecure plaintext port 80. You must enforce SSL/TLS encrypted traffic so attackers cannot eavesdrop on administrative credentials.",
+        codeBuffer: `Security Rule Violation: Plaintext HTTP detected on Port 80!
+Target Upgrade: HTTPS (Hypertext Transfer Protocol Secure)
+Encryption: SSL / TLS Handshake Enabled.`,
+        prompt: "What standard port number does HTTPS use for secure, encrypted web browsing?",
+        concept: "Port 443 is the standard port for HTTPS web encryption.",
+        hint: "A 3-digit port number starting with 4.",
+        accepted: ["443", "port 443"]
+      },
+      {
+        step: 12,
+        title: "LOCK 12: SECURE REMOTE LINUX SHELL",
+        category: "PORT SECURITY",
+        story: "To manage the Ubuntu VM remotely, you refuse to use unencrypted Telnet (port 23). You need the secure, encrypted remote login protocol that runs on standard port 22.",
+        codeBuffer: `ubuntu@ip-10-29-80-89:~$ ss -tuln
+Netid  State   Local Address:Port
+tcp    LISTEN  0.0.0.0:22            <-- Secure Remote Shell Protocol
+tcp    LISTEN  0.0.0.0:5901          <-- VNC Remote Desktop`,
+        prompt: "What protocol operates on port 22 for secure command-line administration?",
+        concept: "SSH (Secure Shell) provides encrypted remote administrative access.",
+        hint: "Three letters: Secure Shell...",
+        accepted: ["ssh", "secure shell"]
+      },
+      {
+        step: 13,
+        title: "LOCK 13: MODERN ENCRYPTED EMAIL SUBMISSION",
+        category: "PORT SECURITY",
+        story: "Legacy SMTP over unencrypted port 25 has been abused and phased out. To configure the mail server securely for outbound email transmission, set the modern encrypted SMTP port.",
+        codeBuffer: `SMTP Submission Standard Update:
+  - Port 25  : Legacy, unencrypted, blocked by most ISPs.
+  - Port [ ? ] : Modern standard with mandatory TLS encryption for sending mail.`,
+        prompt: "Which port number is the modern standard for sending email securely via SMTP?",
+        concept: "Port 587 is the modern submission port for secure encrypted SMTP email.",
+        hint: "A 3-digit number between 580 and 590.",
+        accepted: ["587", "port 587"]
+      },
+      {
+        step: 14,
+        title: "LOCK 14: AUTOMATIC IP CONFIGURATION (DHCP)",
+        category: "CORE SERVICES",
+        story: "New devices joining the network shouldn't require manual IP configuration. What protocol automatically assigns IP addresses, subnet masks, and default gateways to client devices?",
+        codeBuffer: `Ethernet adapter Local Area Connection 2:
+   DHCP Enabled. . . . . . . : Yes
+   DHCP Server . . . . . . . : 10.29.0.1
+   Lease Obtained. . . . . . : Monday, April 14, 2025`,
+        prompt: "What protocol automatically leases IP addresses to devices on a network (ports 67/68)?",
+        concept: "DHCP (Dynamic Host Configuration Protocol) assigns IP leases automatically like dinner seating.",
+        hint: "Four letters: Dynamic Host Configuration ...",
+        accepted: ["dhcp", "dynamic host configuration protocol"]
+      },
+      {
+        step: 15,
+        title: "LOCK 15: FIREWALL ICMP BLOCK DETECTION",
+        category: "FIREWALL & DIAGNOSTICS",
+        story: "Pinging the Windows 7 VM results in 'Request timed out' (100% packet loss) even though the machine is powered on. What specific protocol used by ping is Windows Firewall blocking by default?",
+        codeBuffer: `C:\\Users\\windows> ping 10.29.90.192
+Pinging 10.29.90.192 with 32 bytes of data:
+Request timed out.
+Request timed out.
+(Inbound Rule Required: File and Printer Sharing (Echo Request - [???]v4-In))`,
+        prompt: "What protocol does the ping command use that is blocked by default in Windows Firewall?",
+        concept: "ICMP (Internet Control Message Protocol) handles echo requests/replies for diagnostics.",
+        hint: "Four letters: Internet Control Message Protocol.",
+        accepted: ["icmp", "icmpv4", "internet control message protocol"]
+      },
+      {
+        step: 16,
+        title: "LOCK 16: HOP-BY-HOP ROUTE TRACING",
+        category: "DIAGNOSTICS",
+        story: "A packet sent to 8.8.8.8 travels through internal private 10.x routers before reaching public transit. You need to map the exact path and count how many router hops it takes.",
+        codeBuffer: `Tracing route to dns.google [8.8.8.8] over a maximum of 30 hops:
+  1    23 ms   22 ms   19 ms  10.10.101.1
+  2     1 ms    1 ms    1 ms  10.50.1.4
+  3     *       *       *     Request timed out.
+  11    6 ms    5 ms    6 ms  8.8.8.8`,
+        prompt: "What Windows command maps the route and hop count to a remote destination?",
+        concept: "tracert (traceroute on Linux) tracks router hops by sending UDP/ICMP packets with increasing TTL.",
+        hint: "In Windows cmd, it is a 7-letter abbreviation of 'trace route'.",
+        accepted: ["tracert", "traceroute"]
+      },
+      {
+        step: 17,
+        title: "LOCK 17: LINUX SOCKET STATISTICS UTILITY",
+        category: "COMMAND TOOLS",
+        story: "On modern Ubuntu Linux, the older `netstat` command is considered outdated. Which fast terminal command displays listening TCP and UDP sockets with numeric ports?",
+        codeBuffer: `ubuntu@ip-10-29-80-89:~$ [ ??? ]
+Netid  State   Recv-Q  Send-Q  Local Address:Port
+udp    UNCONN  0       0       0.0.0.0:631
+tcp    LISTEN  0       128     0.0.0.0:22
+tcp    LISTEN  0       5       127.0.0.1:3306
+tcp    LISTEN  0       511     *:80`,
+        prompt: "What modern Ubuntu Linux command (with flags) lists listening TCP/UDP ports?",
+        concept: "ss -tuln (Socket Statistics: TCP, UDP, Listening, Numeric) replaces netstat.",
+        hint: "Starts with 'ss -...'",
+        accepted: ["ss -tuln", "ss", "ss-tuln", "ss -tlun"]
+      },
+      {
+        step: 18,
+        title: "LOCK 18: LONG-RANGE WI-FI BAND (2.9.1)",
+        category: "WIRELESS SPECTRUM",
+        story: "You are setting up smart IoT thermostats and door sensors located far from the router behind multiple walls. They don't need high speed, but they require maximum range and wall penetration.",
+        codeBuffer: `Wi-Fi Frequency Bands Evaluation:
+  [ Band A ]: Longest range, passes through walls easily, lower speed, crowded.
+  [ Band B ]: Medium range, faster speed, struggles with thick walls.
+  [ Band C ]: Shortest reach, ultra-fast, cannot easily pass through walls.`,
+        prompt: "Which Wi-Fi frequency band is best suited for long distance and wall penetration (2.4 GHz, 5 GHz, or 6 GHz)?",
+        concept: "The 2.4 GHz frequency wave has longer wavelength, allowing superior penetration through drywall and concrete.",
+        hint: "Enter the band frequency (e.g., 2.4 GHz or 2.4).",
+        accepted: ["2.4 ghz", "2.4", "2.4ghz"]
+      },
+      {
+        step: 19,
+        title: "LOCK 19: RF SIGNAL INTERFERENCE SOURCE",
+        category: "WIRELESS INTERFERENCE",
+        story: "A packet stream on the 2.4 GHz band suddenly suffered 100% frame corruption and dropped connections in the kitchen area. What common home heating appliance radiates 2.4 GHz frequency noise?",
+        codeBuffer: `EVENT CALL: Network Chaos Detected!
+Symptom: Severe RF interference spike across channels 1, 6, and 11.
+Source: Kitchen appliance running at ~2.45 GHz magnetron frequency.`,
+        prompt: "What kitchen appliance is a notorious source of Wi-Fi interference on the 2.4 GHz band?",
+        concept: "Microwave ovens operate around 2.45 GHz and disrupt 2.4 GHz Wi-Fi transmissions.",
+        hint: "Starts with 'M' (where you heat up food).",
+        accepted: ["microwave", "microwave oven", "microwaves"]
+      },
+      {
+        step: 20,
+        title: "LOCK 20: TARGET WAKE TIME EFFICIENCY",
+        category: "WI-FI STANDARDS (802.11ax)",
+        story: "FINAL NODE 20: To complete stabilization, enable the Wi-Fi 6 (802.11ax) power-saving feature that allows mobile and IoT devices to sleep and wake on schedule to conserve battery life.",
+        codeBuffer: `802.11ax High-Efficiency Feature Suite:
+  - OFDMA: Subdivides channels for simultaneous multi-device transmissions.
+  - MU-MIMO: Multiple directional spatial streams.
+  - [ ??? ] (Target Wake Time): Schedules device wake times to extend battery life.`,
+        prompt: "What is this battery-saving scheduled sleep/wake feature called in 802.11ax (Acronym or 3 words)?",
+        concept: "Target Wake Time (TWT) allows endpoints to negotiate when and how frequently they wake up.",
+        hint: "Three letters: TWT (Target ... Time).",
+        accepted: ["twt", "target wake time"]
+      }
+    ];
+
+    /* =========================================================
+       STREAMING_CHUNK:Initializing state engine and UI controller...
+       ========================================================= */
+    const TOTAL_SECONDS = 20 * 60; // 20 minutes = 1200 seconds
+    let gameState = {
+      currentStepIndex: 0,
+      secondsRemaining: TOTAL_SECONDS,
+      strikes: 0,
+      timerId: null,
+      isGameOver: false,
+      isVictory: false
+    };
+
+    // DOM Element References
+    const timerDisplay = document.getElementById('timerDisplay');
+    const timerBar = document.getElementById('timerBar');
+    const timerCard = document.getElementById('timerCard');
+    const penaltyBadge = document.getElementById('penaltyBadge');
+    const strikeCount = document.getElementById('strikeCount');
+    const stabilityPercent = document.getElementById('stabilityPercent');
+    const stabilityProgressBar = document.getElementById('stabilityProgressBar');
+    const activeBandTelemetry = document.getElementById('activeBandTelemetry');
+    const packetLossTelemetry = document.getElementById('packetLossTelemetry');
+    const networkLinkState = document.getElementById('networkLinkState');
+    const stepGrid = document.getElementById('stepGrid');
+    const stepCounter = document.getElementById('stepCounter');
+    const clearedCount = document.getElementById('clearedCount');
+    const phaseCategoryName = document.getElementById('phaseCategoryName');
+    const puzzleTitle = document.getElementById('puzzleTitle');
+    const scenarioStory = document.getElementById('scenarioStory');
+    const codeBufferDisplay = document.getElementById('codeBufferDisplay');
+    const questionPromptText = document.getElementById('questionPromptText');
+    const conceptSummary = document.getElementById('conceptSummary');
+    const hintBox = document.getElementById('hintBox');
+    const showHintBtn = document.getElementById('showHintBtn');
+    const userAnswerInput = document.getElementById('userAnswerInput');
+    const submissionForm = document.getElementById('submissionForm');
+    const terminalLogBox = document.getElementById('terminalLogBox');
+    const winModal = document.getElementById('winModal');
+    const gameOverModal = document.getElementById('gameOverModal');
+    const handbookModal = document.getElementById('handbookModal');
+    const handbookBtn = document.getElementById('handbookBtn');
+    const closeHandbookBtn = document.getElementById('closeHandbookBtn');
+    const ackHandbookBtn = document.getElementById('ackHandbookBtn');
+    const soundToggleBtn = document.getElementById('soundToggleBtn');
+    const soundText = document.getElementById('soundText');
+    const soundIcon = document.getElementById('soundIcon');
+    const clearLogBtn = document.getElementById('clearLogBtn');
+    const playAgainWinBtn = document.getElementById('playAgainWinBtn');
+    const retryGameOverBtn = document.getElementById('retryGameOverBtn');
+    const finalTimeRemaining = document.getElementById('finalTimeRemaining');
+    const finalStrikes = document.getElementById('finalStrikes');
+    const failLocksSolved = document.getElementById('failLocksSolved');
+    const latencyMetric = document.getElementById('latencyMetric');
+    const interferenceMetric = document.getElementById('interferenceMetric');
+
+    /* =========================================================
+       STREAMING_CHUNK:Rendering step grid and telemetry log functions...
+       ========================================================= */
+    function addTerminalLog(message, type = 'info') {
+      const line = document.createElement('div');
+      const timeStr = new Date().toLocaleTimeString([], { hour12: false });
+      
+      let colorClass = 'text-zinc-400';
+      let symbol = '›';
+
+      if (type === 'success') {
+        colorClass = 'text-emerald-400 font-bold';
+        symbol = '✔';
+      } else if (type === 'danger') {
+        colorClass = 'text-red-400 font-bold';
+        symbol = '✖';
+      } else if (type === 'warn') {
+        colorClass = 'text-amber-400 font-bold';
+        symbol = '⚠';
+      } else if (type === 'cyan') {
+        colorClass = 'text-cyan-300';
+        symbol = '⚡';
+      }
+
+      line.className = `${colorClass} flex items-start gap-1.5 py-0.5 leading-snug`;
+      line.innerHTML = `<span class="text-zinc-600 select-none">[${timeStr}]</span> <span class="select-none font-bold">${symbol}</span> <span>${message}</span>`;
+      terminalLogBox.appendChild(line);
+      terminalLogBox.scrollTop = terminalLogBox.scrollHeight;
+    }
+
+    function formatTime(totalSecs) {
+      const minutes = Math.floor(totalSecs / 60);
+      const seconds = totalSecs % 60;
+      return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+
+    function createStepGrid() {
+      stepGrid.innerHTML = '';
+      NETWORK_STEPS.forEach((s, idx) => {
+        const cell = document.createElement('div');
+        cell.id = `step-node-${idx}`;
+        cell.className = `py-1 text-center font-mono text-[10px] rounded border transition-all ${
+          idx === 0 
+            ? 'bg-emerald-950/80 border-cyan-400 text-cyan-300 font-bold animate-pulse' 
+            : 'bg-zinc-950/50 border-zinc-800 text-zinc-600'
+        }`;
+        cell.textContent = `${idx + 1}`;
+        stepGrid.appendChild(cell);
+      });
+    }
+
+    function updateStepGrid() {
+      NETWORK_STEPS.forEach((s, idx) => {
+        const cell = document.getElementById(`step-node-${idx}`);
+        if (!cell) return;
+        if (idx < gameState.currentStepIndex) {
+          cell.className = 'py-1 text-center font-mono text-[10px] rounded border bg-emerald-900/60 border-emerald-500 text-emerald-300 font-bold';
+          cell.textContent = `✓`;
+        } else if (idx === gameState.currentStepIndex) {
+          cell.className = 'py-1 text-center font-mono text-[10px] rounded border bg-cyan-400 border-white text-black font-extrabold animate-pulse shadow-sm';
+          cell.textContent = `${idx + 1}`;
+        } else {
+          cell.className = 'py-1 text-center font-mono text-[10px] rounded border bg-zinc-950/40 border-zinc-800 text-zinc-600';
+          cell.textContent = `${idx + 1}`;
+        }
+      });
+
+      stepCounter.textContent = `STEP ${Math.min(gameState.currentStepIndex + 1, 20)} / 20`;
+      clearedCount.textContent = `${gameState.currentStepIndex}/20 RESOLVED`;
+      
+      // Update Stability Telemetry
+      const pct = Math.round((gameState.currentStepIndex / NETWORK_STEPS.length) * 100);
+      stabilityPercent.textContent = `${pct}%`;
+      stabilityProgressBar.style.width = `${pct}%`;
+
+      if (pct === 100) {
+        networkLinkState.textContent = "ONLINE & OPTIMAL";
+        networkLinkState.className = "text-emerald-400 font-bold";
+        packetLossTelemetry.textContent = "LOSS: 0.0%";
+        packetLossTelemetry.className = "text-emerald-400 font-bold";
+        activeBandTelemetry.innerHTML = `SPECTRUM: <span class="text-emerald-400 font-bold">2.4 + 5 + 6 GHz (Wi-Fi 6)</span>`;
+        latencyMetric.textContent = "3 ms (Excellent)";
+        latencyMetric.className = "text-emerald-400 font-bold";
+      } else if (pct >= 60) {
+        networkLinkState.textContent = "RESTABILIZING";
+        networkLinkState.className = "text-yellow-400 font-bold";
+        packetLossTelemetry.textContent = "LOSS: 5.2%";
+        packetLossTelemetry.className = "text-yellow-400";
+        activeBandTelemetry.innerHTML = `SPECTRUM: <span class="text-cyan-400 font-bold">2.4 & 5 GHz Online</span>`;
+        latencyMetric.textContent = "12 ms (Good)";
+      } else if (pct >= 30) {
+        networkLinkState.textContent = "PARTIAL SYNC";
+        networkLinkState.className = "text-amber-400 font-bold";
+        packetLossTelemetry.textContent = "LOSS: 40.0%";
+        packetLossTelemetry.className = "text-amber-400";
+        activeBandTelemetry.innerHTML = `SPECTRUM: <span class="text-amber-400 font-bold">LAN Wired Only</span>`;
+        latencyMetric.textContent = "45 ms (Acceptable)";
+      } else {
+        networkLinkState.textContent = "DISCONNECTED";
+        networkLinkState.className = "text-red-400 font-bold animate-pulse";
+        packetLossTelemetry.textContent = "LOSS: 100%";
+        packetLossTelemetry.className = "text-red-400";
+        activeBandTelemetry.innerHTML = `SPECTRUM: <span class="text-yellow-400 font-bold">OFFLINE</span>`;
+        latencyMetric.textContent = "TIMEOUT (Unreachable)";
+        latencyMetric.className = "text-red-400";
+      }
+    }
+
+    /* =========================================================
+       STREAMING_CHUNK:Loading puzzles and handling input verification...
+       ========================================================= */
+    function loadStep(index) {
+      const stepData = NETWORK_STEPS[index];
+      if (!stepData) return;
+
+      puzzleTitle.textContent = stepData.title;
+      phaseCategoryName.textContent = stepData.category;
+      scenarioStory.textContent = stepData.story;
+      codeBufferDisplay.textContent = stepData.codeBuffer;
+      questionPromptText.textContent = stepData.prompt;
+      conceptSummary.innerHTML = `💡 <strong class="text-emerald-300">Concept:</strong> ${stepData.concept}`;
+      hintBox.textContent = `HINT: ${stepData.hint}`;
+      hintBox.classList.add('hidden');
+      showHintBtn.textContent = "Need Hint?";
+      
+      userAnswerInput.value = '';
+      userAnswerInput.focus();
+
+      updateStepGrid();
+      addTerminalLog(`Handshake initiated on Step #${stepData.step} (${stepData.category})`, 'cyan');
+    }
+
+    function startWatchdogTimer() {
+      if (gameState.timerId) clearInterval(gameState.timerId);
+
+      gameState.timerId = setInterval(() => {
+        if (gameState.isGameOver || gameState.isVictory) {
+          clearInterval(gameState.timerId);
+          return;
+        }
+
+        gameState.secondsRemaining--;
+        renderWatchdogTimer();
+
+        if (gameState.secondsRemaining <= 0) {
+          triggerGameOver();
+        }
+      }, 1000);
+    }
+
+    function renderWatchdogTimer() {
+      const displayStr = formatTime(Math.max(0, gameState.secondsRemaining));
+      timerDisplay.textContent = displayStr;
+
+      const pct = (gameState.secondsRemaining / TOTAL_SECONDS) * 100;
+      timerBar.style.width = `${Math.max(0, pct)}%`;
+
+      if (gameState.secondsRemaining <= 180) { // < 3 mins
+        timerDisplay.classList.remove('glow-emerald', 'text-emerald-300', 'text-amber-400');
+        timerDisplay.classList.add('glow-red', 'text-red-500');
+        timerBar.className = 'bg-red-500 h-full transition-all duration-1000 ease-linear';
+      } else if (gameState.secondsRemaining <= 420) { // < 7 mins
+        timerDisplay.classList.remove('glow-emerald', 'text-emerald-300', 'glow-red', 'text-red-500');
+        timerDisplay.classList.add('text-amber-400');
+        timerBar.className = 'bg-amber-400 h-full transition-all duration-1000 ease-linear';
+      } else {
+        timerDisplay.classList.add('glow-emerald', 'text-emerald-300');
+        timerDisplay.classList.remove('glow-red', 'text-red-500', 'text-amber-400');
+        timerBar.className = 'bg-emerald-500 h-full transition-all duration-1000 ease-linear';
+      }
+    }
+
+    function applyPenalty() {
+      gameState.strikes++;
+      strikeCount.textContent = `FAILS: ${gameState.strikes}`;
+      // Subtract 60 seconds (1 minute penalty)
+      gameState.secondsRemaining = Math.max(0, gameState.secondsRemaining - 60);
+      renderWatchdogTimer();
+
+      sound.penaltyAlarm();
+
+      // UI visual feedback
+      timerCard.classList.add('penalty-shake', 'border-red-500');
+      penaltyBadge.classList.remove('hidden');
+
+      setTimeout(() => {
+        timerCard.classList.remove('penalty-shake');
+        penaltyBadge.classList.add('hidden');
+        if (gameState.secondsRemaining > 180) {
+          timerCard.classList.remove('border-red-500');
+        }
+      }, 1200);
+
+      addTerminalLog(`SECURITY FAULT: Invalid protocol response! -1 MINUTE DEDUCTION PENALTY applied.`, 'danger');
+
+      if (gameState.secondsRemaining <= 0) {
+        triggerGameOver();
+      }
+    }
+
+    function checkAnswer(rawInput) {
+      if (gameState.isGameOver || gameState.isVictory) return;
+
+      const currentStep = NETWORK_STEPS[gameState.currentStepIndex];
+      // Normalize input: lowercase, trim whitespace, normalize internal multiple spaces
+      const cleanInput = rawInput.trim().toLowerCase().replace(/\s+/g, ' ');
+
+      // Check if user submitted quotes around answer
+      if ((cleanInput.startsWith('"') && cleanInput.endsWith('"')) || (cleanInput.startsWith("'") && cleanInput.endsWith("'"))) {
+        addTerminalLog(`ADVISORY: Do not enclose your answer in quotation marks.`, 'warn');
+      }
+
+      const isMatch = currentStep.accepted.some(ans => {
+        const normAns = ans.toLowerCase().trim();
+        return cleanInput === normAns;
+      });
+
+      if (isMatch) {
+        sound.nodeUnlocked();
+        addTerminalLog(`NODE #${currentStep.step} SYNCHRONIZED: Protocol verified! [${rawInput.trim()}]`, 'success');
+
+        gameState.currentStepIndex++;
+
+        if (gameState.currentStepIndex >= NETWORK_STEPS.length) {
+          triggerVictory();
+        } else {
+          loadStep(gameState.currentStepIndex);
+        }
+      } else {
+        applyPenalty();
+      }
+    }
+
+    /* =========================================================
+       STREAMING_CHUNK:Managing victory, timeout, and reset cycles...
+       ========================================================= */
+    function triggerVictory() {
+      gameState.isVictory = true;
+      clearInterval(gameState.timerId);
+      sound.missionVictory();
+
+      finalTimeRemaining.textContent = formatTime(gameState.secondsRemaining);
+      finalStrikes.textContent = gameState.strikes;
+      updateStepGrid();
+      winModal.classList.remove('hidden');
+
+      addTerminalLog(`NETWORK INFRASTRUCTURE RESTORED: All 20 switches, routers, and Wi-Fi bands operational!`, 'success');
+    }
+
+    function triggerGameOver() {
+      gameState.isGameOver = true;
+      clearInterval(gameState.timerId);
+      sound.penaltyAlarm();
+
+      failLocksSolved.textContent = `${gameState.currentStepIndex} / 20 Steps Resolved`;
+      gameOverModal.classList.remove('hidden');
+
+      addTerminalLog(`FATAL WATCHDOG EXPIRATION: Network routing collapsed. Packet loss hit 100%.`, 'danger');
+    }
+
+    function restartEscapeRoom() {
+      gameState.currentStepIndex = 0;
+      gameState.secondsRemaining = TOTAL_SECONDS;
+      gameState.strikes = 0;
+      gameState.isGameOver = false;
+      gameState.isVictory = false;
+
+      strikeCount.textContent = `FAILS: 0`;
+      winModal.classList.add('hidden');
+      gameOverModal.classList.add('hidden');
+
+      terminalLogBox.innerHTML = '';
+      addTerminalLog("Core Range Controller online. Initializing 20-stage Net Stabilization handshake...", 'cyan');
+      addTerminalLog("Advisory: Keep latency low and check Network Handbook for port & command references.", 'warn');
+
+      createStepGrid();
+      loadStep(0);
+      renderWatchdogTimer();
+      startWatchdogTimer();
+    }
+
+    /* =========================================================
+       STREAMING_CHUNK:Attaching event listeners and user controls...
+       ========================================================= */
+    submissionForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const val = userAnswerInput.value;
+      if (!val && val !== "0") {
+        userAnswerInput.focus();
+        return;
+      }
+      checkAnswer(val);
+    });
+
+    userAnswerInput.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter') {
+        sound.keyPress();
+      }
+    });
+
+    showHintBtn.addEventListener('click', () => {
+      if (hintBox.classList.contains('hidden')) {
+        hintBox.classList.remove('hidden');
+        showHintBtn.textContent = "Hide Hint";
+        addTerminalLog(`Guidance requested on Step #${gameState.currentStepIndex + 1}`, 'warn');
+      } else {
+        hintBox.classList.add('hidden');
+        showHintBtn.textContent = "Need Hint?";
+      }
+    });
+
+    // Sound toggle listener
+    soundToggleBtn.addEventListener('click', () => {
+      sound.enabled = !sound.enabled;
+      if (sound.enabled) {
+        soundText.textContent = "AUDIO: ON";
+        soundIcon.textContent = "🔊";
+        soundToggleBtn.classList.remove('opacity-50');
+        sound.init();
+        sound.keyPress();
+      } else {
+        soundText.textContent = "AUDIO: OFF";
+        soundIcon.textContent = "🔇";
+        soundToggleBtn.classList.add('opacity-50');
+      }
+    });
+
+    // Handbook Modal listeners
+    handbookBtn.addEventListener('click', () => {
+      handbookModal.classList.remove('hidden');
+    });
+    closeHandbookBtn.addEventListener('click', () => {
+      handbookModal.classList.add('hidden');
+    });
+    ackHandbookBtn.addEventListener('click', () => {
+      handbookModal.classList.add('hidden');
+    });
+
+    // Clear Audit Log
+    clearLogBtn.addEventListener('click', () => {
+      terminalLogBox.innerHTML = '';
+      addTerminalLog("Audit trail cleared by engineer.", 'cyan');
+    });
+
+    // Replay and Retry Buttons
+    playAgainWinBtn.addEventListener('click', restartEscapeRoom);
+    retryGameOverBtn.addEventListener('click', restartEscapeRoom);
+
+    // Bootstrap app on window load
+    window.onload = function() {
+      restartEscapeRoom();
+    };
+  </script>
+</body>
+</html>
